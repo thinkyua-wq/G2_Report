@@ -563,12 +563,12 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .ptable input:disabled{color:var(--faint)}
 /* 일정 상세 목록: 네모칸(테두리·입력박스) 제거 · 전부 동일 크기 */
 .ptable.miletbl,.ptable.miletbl td,.ptable.miletbl th{border:none}
-.ptable.miletbl th{background:transparent;text-align:left;color:var(--dim);font-size:12px;font-weight:700;padding:4px 6px;border-bottom:1px solid var(--ln2)}
-.ptable.miletbl td{font-size:12.5px;color:var(--ink);padding:3px 6px;vertical-align:middle;text-align:left}
+.ptable.miletbl th{background:transparent;text-align:left;color:var(--ink2);font-size:13px;font-weight:700;padding:5px 6px;border-bottom:1px solid var(--ln2)}
+.ptable.miletbl td{font-size:13.5px;font-weight:500;color:var(--ink);padding:4px 6px;vertical-align:middle;text-align:left}
 .ptable.miletbl tbody tr:not(:last-child) td{border-bottom:1px solid var(--ln2)}
-.ptable.miletbl td.mut{color:var(--faint);text-align:center;font-size:12.5px}
-.ptable.miletbl input,.ptable.miletbl select{border:0;background:transparent;font:inherit;font-size:12.5px;color:var(--ink);padding:2px 3px;text-align:left;min-width:0;border-radius:5px}
-.ptable.miletbl td.nmc input{font-weight:700}
+.ptable.miletbl td.mut{color:var(--dim);text-align:center;font-size:13.5px;font-weight:500}
+.ptable.miletbl input,.ptable.miletbl select{border:0;background:transparent;font:inherit;font-size:13.5px;font-weight:500;color:var(--ink);padding:2px 3px;text-align:left;min-width:0;border-radius:5px}
+.ptable.miletbl td.nmc input{font-weight:800}
 .ptable.miletbl input:focus,.ptable.miletbl select:focus{outline:none;background:var(--accentSoft)}
 /* 주요일정·업무진행율 KPI 카드 컴팩트(하단 여백 축소) */
 .kpis.compact .kpi{padding:11px 14px 9px}
@@ -1418,7 +1418,7 @@ function mileTable(){
   const catOpts=(sel)=>Object.keys(MCATLB).map(c=>`<option value="${c}" ${sel===c?'selected':''}>${MCATLB[c]}</option>`).join('');
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집</h3><span class="unit">셀을 수정하면 오른쪽 상세와 자동 연동 · 총 ${list.length}건</span></div>
-    <div style="overflow-x:auto"><table class="ptable edit miletbl" style="width:100%;table-layout:fixed"><thead><tr><th style="width:36px">No</th><th style="text-align:left;width:210px">일정명</th><th style="text-align:left;width:130px">구분</th><th style="width:70px">국가</th><th style="width:50px">월</th><th style="width:100px">일자</th><th style="text-align:left;width:auto">내용 · 개요</th></tr></thead><tbody>`;
+    <div style="overflow-x:auto"><table class="ptable edit miletbl" style="width:100%;min-width:1280px;table-layout:fixed"><thead><tr><th style="width:34px">No</th><th style="text-align:left;width:210px">일정명</th><th style="text-align:left;width:132px">구분</th><th style="width:70px">국가</th><th style="width:46px">월</th><th style="width:150px">일자</th><th style="text-align:left;width:auto">내용 · 개요</th></tr></thead><tbody>`;
   if(!list.length){html+=`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     html+=`<tr>
