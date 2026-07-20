@@ -195,13 +195,13 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .kpi.rrsum:hover{border-color:var(--accent2)}
 .kpi.rrsum .rs-h{display:flex;align-items:center;gap:7px}
 .kpi.rrsum .rs-h .av{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:800;flex:none}
-.kpi.rrsum .rs-h b{font-size:12px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi.rrsum .rs-hi{margin-left:auto;font-size:10px;font-weight:800;color:#c0392b;background:#fbe7e7;border-radius:9px;padding:1px 7px;flex:none}
+.kpi.rrsum .rs-h b{font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.rrsum .rs-hi{margin-left:auto;font-size:11px;font-weight:800;color:#c0392b;background:#fbe7e7;border-radius:9px;padding:1px 7px;flex:none}
 .kpi.rrsum .rs-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.kpi.rrsum .rs-l li{font-size:11px;font-weight:600;color:var(--ink2);line-height:1.3;display:flex;align-items:flex-start;gap:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpi.rrsum .rs-l li{font-size:12px;font-weight:600;color:var(--ink2);line-height:1.32;display:flex;align-items:flex-start;gap:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kpi.rrsum .rs-l li.mut{color:var(--faint);font-weight:500}
 .kpi.rrsum .rs-l li .pd{width:5px;height:5px;border-radius:50%;flex:none;margin-top:5px}
-.kpi.rrsum .rs-none{font-size:11px;color:var(--faint);font-weight:600}
+.kpi.rrsum .rs-none{font-size:12px;color:var(--faint);font-weight:600}
 .weeknote{background:var(--reviewSoft);border:1px solid #ecd9a6;border-radius:var(--rd);padding:16px 18px;font-size:13px;color:var(--ink2);font-weight:600;line-height:1.6}
 .weeknote b{color:var(--ink)}
 .calband{background:var(--sf);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln2);padding:7px 14px;font-size:11px;font-weight:800;color:var(--ink2);letter-spacing:.02em}
@@ -555,11 +555,28 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .ptable-wrap{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);padding:16px 18px;box-shadow:var(--sh)}
 .ptable{width:100%;border-collapse:collapse;font-size:11.5px}
 .ptable th,.ptable td{border:1px solid var(--ln2);padding:4px 3px;text-align:center}
-.ptable th{background:var(--sf);font-weight:700;color:var(--ink2);font-size:10px}
-.ptable td.rl{background:var(--sf);font-weight:700;text-align:left;padding-left:10px;white-space:nowrap;font-size:11px}
-.ptable input{width:100%;min-width:44px;border:0;background:transparent;text-align:center;font:inherit;font-size:11px;color:var(--ink);padding:3px 1px;border-radius:4px}
+.ptable th{background:var(--sf);font-weight:700;color:var(--ink2);font-size:11px}
+.ptable td.rl{background:var(--sf);font-weight:700;text-align:left;padding-left:10px;white-space:nowrap;font-size:12px}
+.ptable td{font-size:12px}
+.ptable input{width:100%;min-width:44px;border:0;background:transparent;text-align:center;font:inherit;font-size:12px;color:var(--ink);padding:3px 1px;border-radius:4px}
 .ptable input:focus{outline:none;background:var(--accentSoft)}
 .ptable input:disabled{color:var(--faint)}
+/* 일정 상세 목록: 네모칸(테두리·입력박스) 제거 · 전부 동일 크기 */
+.ptable.miletbl,.ptable.miletbl td,.ptable.miletbl th{border:none}
+.ptable.miletbl th{background:transparent;text-align:left;color:var(--dim);font-size:12px;font-weight:700;padding:4px 6px;border-bottom:1px solid var(--ln2)}
+.ptable.miletbl td{font-size:12.5px;color:var(--ink);padding:3px 6px;vertical-align:middle;text-align:left}
+.ptable.miletbl tbody tr:not(:last-child) td{border-bottom:1px solid var(--ln2)}
+.ptable.miletbl td.mut{color:var(--faint);text-align:center;font-size:12.5px}
+.ptable.miletbl input,.ptable.miletbl select{border:0;background:transparent;font:inherit;font-size:12.5px;color:var(--ink);padding:2px 3px;text-align:left;min-width:0;border-radius:5px}
+.ptable.miletbl td.nmc input{font-weight:700}
+.ptable.miletbl input:focus,.ptable.miletbl select:focus{outline:none;background:var(--accentSoft)}
+/* 주요일정·업무진행율 KPI 카드 컴팩트(하단 여백 축소) */
+.kpis.compact .kpi{padding:11px 14px 9px}
+.kpis.compact .kpi .val{font-size:23px;margin-top:3px}
+.kpis.compact .kpi .foot{margin-top:3px;font-size:10.5px}
+.kpis.compact .kpi.hero .ring{width:64px;height:64px;right:-16px;top:-16px}
+.kpis.cal4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.kpis.cal4{grid-template-columns:repeat(2,1fr)}}
 .pastebox{margin-top:14px}
 .pastebox textarea{width:100%;min-height:64px;border:1px dashed var(--faint);border-radius:8px;padding:10px;font:inherit;font-size:12px;resize:vertical;color:var(--ink)}
 .pastebox textarea:focus{outline:none;border-color:var(--accent)}
@@ -568,6 +585,16 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .pastebox button{background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:8px 15px;border-radius:8px}
 .pastebox button:disabled{opacity:.4}
 .pastebox .hint{font-size:10.5px;color:var(--dim);font-weight:600;line-height:1.5}
+/* 월별 데이터·본부: 편집·붙여넣기 전부 검정 + 2pt 크게 */
+.perf-month h4{font-size:15px;color:#000}
+.perf-month .ptable th{font-size:13px;color:#000}
+.perf-month .ptable td,.perf-month .ptable td.rl{font-size:14px;color:#000}
+.perf-month .ptable input{font-size:14px;color:#000;font-weight:600}
+.perf-month .ptable input:disabled{color:#000;opacity:.55}
+.perf-month .pastebox textarea{font-size:14px;color:#000}
+.perf-month .pastebox select{font-size:14px;color:#000}
+.perf-month .pastebox .hint{font-size:12.5px;color:#000}
+.perf-month .pastebox button{font-size:14px}
 
 /* ---- 중화권 사업계획 (성과·매출) ---- */
 .mkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -951,7 +978,7 @@ function perfSeries(metKey,bumon){
 }
 
 /* ============ STATE / HELPERS ============ */
-let W=2, TAB='rr', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[];
+let W=2, TAB='rr', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[];
 let SUNIT='month', SMKT='', SY=2026, SI=7, SMATK='newc';  // 담당자별 실적: 집계단위·시장·연·기간index·매트릭스지표
 let YEAR=2026;  // 상단 기간: 연도
 let PMET='법인매출', PBUMON='전체', PMON=6;
@@ -1073,8 +1100,9 @@ function render(){
   // KPI / goalbar visibility
   const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales');
   document.getElementById('kpis').style.display=showKPI?'':'none';
+  document.getElementById('kpis').className='kpis'+(TAB==='calendar'?' compact cal4':(TAB==='kanban'?' compact':''));
   document.getElementById('goalbar').style.display=(TAB==='goals'||TAB==='sales')?'':'none';
-  if(showKPI){ if(TAB==='rr')renderRRsummary(rows); else renderKPI(rows); }
+  if(showKPI){ if(TAB==='rr')renderRRsummary(rows); else if(TAB==='calendar')renderCalKPI(); else renderKPI(rows); }
   // view
   const v=document.getElementById('view');
   if(TAB==='rr')v.innerHTML=viewRR(rows);
@@ -1180,14 +1208,39 @@ function viewRR(rows){
   html+='</div>';
   return html;
 }
+/* 주요일정 KPI — 마일스톤(중점시장활동) 기준 · 국가·담당자·검색 필터에 연동 */
+function calMiles(){
+  const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
+  return MILESTONES.filter(x=>(!q||x.name.toLowerCase().includes(q)||(x.info||'').toLowerCase().includes(q))
+    &&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR));
+}
+function renderCalKPI(){
+  const miles=calMiles();
+  const nowM=TODAY.getMonth()+1;
+  const total=miles.length;
+  const monthN=miles.filter(x=>x.month===MONTH).length;
+  const upcoming=miles.filter(x=>x.month>=nowM).length;
+  const past=miles.filter(x=>x.month<nowM).length;
+  const fstat=`${MILECTRY||'전체 국가'} · ${MILEMGR?((mgrById(MILEMGR)||{}).name||'')+' 담당':'전체 담당자'}`;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi hero"><div class="ring"></div>
+      <div class="lb">전체 일정 <span style="font-size:9px;color:rgba(255,255,255,.7)">필터 반영</span></div><div class="val">${total}<small>건</small></div>
+      <div class="foot">${esc(fstat)}</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>${MONTH}월 일정</div>
+      <div class="val">${monthN}<small>건</small></div><div class="foot">선택한 달 기준</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accent)"></span>다가오는 일정</div>
+      <div class="val">${upcoming}<small>건</small></div><div class="foot">${nowM}월 이후 예정</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--wait)"></span>종료 일정</div>
+      <div class="val">${past}<small>건</small></div><div class="foot">${nowM}월 이전</div></div>`;
+}
 function renderRRsummary(rows){
   const html=MGRS.map(m=>{
     const mine=rows.filter(r=>r.mgr===m.id);
     const high=mine.filter(r=>prioKo(r.prio)==='상');
     const top=(high.length?high:mine.filter(r=>r.p<100)).slice(0,3);
-    return `<div class="kpi rrsum" onclick="RRGROUP='mgr';MGRSEL=['${m.id}'];render()">
-      <div class="rs-h"><span class="av" style="width:21px;height:21px;font-size:9px;background:${m.color}">${m.ini}</span><b>${m.name} ${m.title}</b>${high.length?`<span class="rs-hi">상 ${high.length}</span>`:''}</div>
-      ${mine.length?`<ul class="rs-l">${(top.length?top:[{label:'진행 과제 없음',_m:1}]).map(r=>`<li class="${r._m?'mut':''}"><i class="pd" style="background:${!r._m&&prioKo(r.prio)==='상'?'#c0392b':'#cbd0d8'}"></i>${esc(r.label)}</li>`).join('')}</ul>`:'<div class="rs-none">이번 주 과제 없음</div>'}</div>`;
+    return `<div class="kpi rrsum">
+      <div class="rs-h" style="cursor:pointer" onclick="RRGROUP='mgr';MGRSEL=['${m.id}'];render()"><span class="av" style="width:21px;height:21px;font-size:9px;background:${m.color}">${m.ini}</span><b>${m.name} ${m.title}</b>${high.length?`<span class="rs-hi">상 ${high.length}</span>`:''}</div>
+      ${mine.length?`<ul class="rs-l">${(top.length?top:[{label:'진행 과제 없음',_m:1}]).map(r=>`<li class="${r._m?'mut':''}" ${r._m?'':`onclick="openDetail(${r.ti})" style="cursor:pointer" title="클릭 → 상세 열기 · 과제명 수정 시 전체 반영"`}><i class="pd" style="background:${!r._m&&prioKo(r.prio)==='상'?'#c0392b':'#cbd0d8'}"></i>${esc(r.label)}</li>`).join('')}</ul>`:'<div class="rs-none">이번 주 과제 없음</div>'}</div>`;
   }).join('');
   document.getElementById('kpis').innerHTML=html;
 }
@@ -1354,8 +1407,32 @@ function calItems(){
 }
 function viewCalendar(){
   let html='<div class="sec-h"><h2>주요일정</h2><span class="hint">2026 중점시장활동 · 주요사항 밴드</span><span class="line"></span></div>';
-  return html+calMileMatrix();
+  return html+calMileMatrix()+mileTable();
 }
+/* 오른쪽 상세 입력 내용을 표로 정리 · 셀 수정 시 드로어와 동일 데이터(연동) */
+function mileTable(){
+  const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
+  const list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
+    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR))
+    .sort((a,b)=>(a.x.month-b.x.month)||String(a.x.date).localeCompare(String(b.x.date)));
+  const catOpts=(sel)=>Object.keys(MCATLB).map(c=>`<option value="${c}" ${sel===c?'selected':''}>${MCATLB[c]}</option>`).join('');
+  const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
+  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집</h3><span class="unit">셀을 수정하면 오른쪽 상세와 자동 연동 · 총 ${list.length}건</span></div>
+    <div style="overflow-x:auto"><table class="ptable edit miletbl" style="width:100%;table-layout:fixed"><thead><tr><th style="width:36px">No</th><th style="text-align:left;width:210px">일정명</th><th style="text-align:left;width:130px">구분</th><th style="width:70px">국가</th><th style="width:50px">월</th><th style="width:100px">일자</th><th style="text-align:left;width:auto">내용 · 개요</th></tr></thead><tbody>`;
+  if(!list.length){html+=`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다.</td></tr>`;}
+  list.forEach((o,n)=>{const x=o.x,i=o.i;
+    html+=`<tr>
+      <td class="mut">${n+1}</td>
+      <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
+      <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
+      <td><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
+      <td><input type="number" min="1" max="12" value="${x.month}" onchange="editMileTbl(${i},'month',this.value)"></td>
+      <td><input value="${esc(x.date)}" onchange="editMileTbl(${i},'date',this.value)"></td>
+      <td class="infc"><input value="${esc(x.info||'')}" onchange="editMileTbl(${i},'info',this.value)"></td>
+    </tr>`;});
+  return html+`</tbody></table></div><div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다.</div></div>`;
+}
+function editMileTbl(i,k,val){MILESTONES[i][k]=(k==='month')?(Math.max(1,Math.min(12,+val||1))):val;saveMile();render();}
 function setMileCtry(c){MILECTRY=c;render();}
 function setMileMgr(id){MILEMGR=id;render();}
 function calMileMatrix(){
@@ -1408,16 +1485,22 @@ function schedInPeriod(t){
   for(let k=Math.min(W,(t.wk?t.wk.length-1:0));k>=0;k--){if(t.wk&&t.wk[k])return true;}
   return false;
 }
+function toggleKanMgr(id){if(id===''){KANMGRSEL=[];}else{const i=KANMGRSEL.indexOf(id);if(i>=0)KANMGRSEL.splice(i,1);else KANMGRSEL.push(id);}render();}
 function calMgrTable(){
   const fc=document.getElementById('fCountry').value, fm=document.getElementById('fMgr').value;
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
   const nowM=TODAY.getMonth()+1;
   const tf=((TODAY.getMonth())+(TODAY.getDate()-1)/GMDAYS[TODAY.getMonth()])/12;
   const mhead='<div class="gmhead">'+Array.from({length:12},(_,i)=>`<span class="${(i+1)===nowM?'gnow':''}">${i+1}월</span>`).join('')+'</div>';
-  let html='<div class="ptable-wrap"><div style="font-size:12px;color:var(--dim);font-weight:600;margin-bottom:10px">담당자 · 주요활동 · 진행율 · 일정(1~12월 간트) · 상태 &nbsp;—&nbsp; 진행율 직접 수정 · 활동명 클릭 시 상세/일정 수정 · <span style="color:#e5484d">빨간선=오늘</span></div><div style="overflow-x:auto"><table class="ptable edit sched"><thead><tr><th style="width:104px">구분</th><th style="text-align:left;width:210px">주요 활동</th><th style="width:60px">국가</th><th class="gth" style="min-width:536px;text-align:left">일정 &nbsp;<span style="font-weight:400;color:var(--faint)">(시작일→완료일)</span>'+mhead+'</th><th style="width:74px">상태</th><th style="width:78px">진행율</th></tr></thead><tbody>';
+  const perTxt=(PERIOD==='year')?'연간 전체':(PERIOD==='month'?`${MONTH}월`:(WEEKS[W]?WEEKS[W].name:'주간'));
+  let html='';
+  // 담당자 다중 선택 (교차 필터 · 상단 기간바의 월/주와 함께 동작)
+  html+=`<div class="nametabs"><button class="${KANMGRSEL.length?'':'on'}" onclick="toggleKanMgr('')">전체</button>`
+    +MGRS.map(m=>`<button class="${KANMGRSEL.includes(m.id)?'on':''}" onclick="toggleKanMgr('${m.id}')">${m.name}</button>`).join('')+'</div>';
+  html+=`<div class="ptable-wrap"><div style="font-size:12px;color:var(--dim);font-weight:600;margin-bottom:10px">담당자 다중선택 × <b style="color:var(--accentInk)">${perTxt}</b>(상단 기간바) 교차 · 진행율 직접 수정 · 활동명 클릭 시 상세/일정 수정 · <span style="color:#e5484d">빨간선=오늘</span></div><div style="overflow-x:auto"><table class="ptable edit sched"><thead><tr><th style="width:104px">구분</th><th style="text-align:left;width:210px">주요 활동</th><th style="width:60px">국가</th><th class="gth" style="min-width:536px;text-align:left">일정 &nbsp;<span style="font-weight:400;color:var(--faint)">(시작일→완료일)</span>${mhead}</th><th style="width:74px">상태</th><th style="width:78px">진행율</th></tr></thead><tbody>`;
   let anyRow=false;
   MGRS.forEach(m=>{
-    if(fm&&m.id!==fm)return;
+    if(KANMGRSEL.length){if(!KANMGRSEL.includes(m.id))return;}else if(fm&&m.id!==fm)return;
     const idxs=TASKS.map((t,ti)=>({t,ti})).filter(o=>o.t.mgr===m.id);
     const flt=idxs.filter(o=>{if(!schedInPeriod(o.t))return false;const cur=curP(o.t);if(HIDEDONE&&cur>=100)return false;if(fc&&o.t.country!==fc)return false;let label=o.t.name;for(let k=WEEKS.length-1;k>=0;k--){if(o.t.wk[k]&&o.t.wk[k].label){label=o.t.wk[k].label;break;}}if(q&&!label.toLowerCase().includes(q))return false;return true;});
     flt.sort((a,b)=>{const pa=curP(a.t),pb=curP(b.t);const ra=(pa<100&&isDate(a.t.due)&&new Date(a.t.due)<TODAY)?0:1,rb=(pb<100&&isDate(b.t.due)&&new Date(b.t.due)<TODAY)?0:1;if(ra!==rb)return ra-rb;const da=isDate(a.t.due)?a.t.due:'9999',db=isDate(b.t.due)?b.t.due:'9999';if(da!==db)return da<db?-1:1;return pb-pa;});
@@ -1477,7 +1560,7 @@ function openDetail(ti){
         <span class="chip ${ccls[t.country]} tag-cn">${t.country}</span>
         <span class="chip st ${s}">${stLabel[s]}</span>
         <span class="chip" style="background:var(--accentSoft);color:var(--accentInk)">${t.priority||PRIO[ti]||'중간'} 우선순위</span>
-      </div><h3>${esc(label)}</h3></div>
+      </div><h3><input class="dw-edit-h" value="${esc(label)}" onchange="editTaskNameKeep(${ti},this.value)" title="여기서 과제명을 고치면 담당자 업무현황·업무진행율·주요일정에 모두 반영됩니다"></h3></div>
       <button class="close" onclick="closeDetail()">✕</button></div></div>
     <div class="dw-b">
       <div class="dw-meta">
@@ -1684,7 +1767,7 @@ function perfTable(S,sel,mt){
     const cells=Array.from({length:12},(_,m)=>`<td><input type="number" value="${S[rk][m]}" ${editable?'':'disabled'} onchange="editPerf('${rk}',${m},this.value)"></td>`).join('');
     return `<tr><td class="rl">${rl}</td>${cells}</tr>`;
   }).join('');
-  return `<div class="ptable-wrap"><h4 style="font-size:13px;font-weight:800;margin-bottom:10px">📋 월별 데이터 ${editable?'· 셀 직접 수정':'· 본부를 선택하면 편집·붙여넣기'}</h4>
+  return `<div class="ptable-wrap perf-month"><h4 style="font-weight:800;margin-bottom:10px">📋 월별 데이터 ${editable?'· 셀 직접 수정':'· 본부를 선택하면 편집·붙여넣기'}</h4>
     <div style="overflow-x:auto"><table class="ptable"><thead><tr><th>구분</th>${th}</tr></thead><tbody>${body}</tbody></table></div>
     <div class="pastebox">
       <div class="hint">엑셀에서 12개월 값을 복사해 붙여넣으세요 (탭·쉼표·공백 구분). 여러 줄이면 KPI → 2026 실적 → 2025 실적 순으로 반영됩니다.</div>
@@ -1747,7 +1830,8 @@ const CATRULES=[[/세미나|교육|메가스쿨|살롱|Salon|학회/,'세미나'
 function autoCat(t){const cats=catsOf(t.mgr);const n=(t.name||'')+' '+((t.wk?(t.wk.find(x=>x&&x.note)||{}).note:'')||'');for(const[re,c]of CATRULES){if(re.test(n)&&cats.includes(c))return c;}return cats[0];}
 function normalizeTasks(){TASKS.forEach(t=>{if(!Array.isArray(t.wk))t.wk=[];while(t.wk.length<WEEKS.length)t.wk.push(null);if(t.wk.length>WEEKS.length)t.wk.length=WEEKS.length;if(!t.start)t.start='2026-07-06';if(!t.cat)t.cat=autoCat(t);});}
 function curP(t){for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k])return t.wk[k].p;}return 0;}
-function editTaskField(ti,field,val){const t=TASKS[ti];if(field==='start')t.start=val;else if(field==='due')t.due=val;else if(field==='prog'){let done=false;for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k]){t.wk[k].p=Math.max(0,Math.min(100,+val||0));done=true;break;}}if(!done)t.wk[WEEKS.length-1]={p:Math.max(0,Math.min(100,+val||0)),note:''};}saveTasks();render();}
+function editTaskField(ti,field,val){const t=TASKS[ti];if(field==='start')t.start=val;else if(field==='due')t.due=val;else if(field==='name'){t.name=val;t.wk.forEach(c=>{if(c&&c.label)c.label=val;});}else if(field==='note'){for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k]){t.wk[k].note=val;break;}}}else if(field==='prog'){let done=false;for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k]){t.wk[k].p=Math.max(0,Math.min(100,+val||0));done=true;break;}}if(!done)t.wk[WEEKS.length-1]={p:Math.max(0,Math.min(100,+val||0)),note:''};}saveTasks();render();}
+function editTaskNameKeep(ti,val){editTaskField(ti,'name',val);openDetail(ti);}
 let toastT;
 function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2200);}
 const DUETYPES=['정규 일자','행사일정 기준','방한일정 기준','상시'];
@@ -2100,16 +2184,20 @@ function viewSales(){
     <div class="skc2"><div class="skc2-i"><span class="k">수출</span><span class="v ${acc?'acc':''}">$${fmtMoney(ex)}</span></div><div class="skc2-i"><span class="k">수금</span><span class="v">${su?'$'+fmtMoney(su):'-'}</span></div></div><div class="skc-s">${sub||''}</div></div>`;
   const cnEx=sumC('중국','수출'), cnSuV=sumC('중국','수금'), twEx=sumC('대만','수출'), twSu=sumC('대만','수금'), hkEx=sumC('홍콩','수출'), hkSu=sumC('홍콩','수금');
   let html=`<div class="sec-h"><h2>실적 현황</h2><span class="hint">${esc(cur.week||'')} · 수출·수금 + 중국법인 매출</span><span class="line"></span></div>`;
-  // 주간/월간 + 선택기
-  let sel='';
+  // 주간/월간 + 선택기 (담당자 업무현황과 동일한 기간바 서식)
+  let chips='';
   if(SPERFVIEW==='week'){
-    sel=`<select class="per-dd" onchange="selSPweek(this.value)">`+weeks.map(w=>`<option value="${w._key||spMeta(w).key}" ${w===cur?'selected':''}>${esc(w.week)}</option>`).join('')+`</select>`;
+    chips=weeks.map(w=>{const key=w._key||spMeta(w).key;const wn=w.wk||spMeta(w).wk;return `<button class="wchip${w===cur?' on':''}" onclick="selSPweek('${key}')">W${wn}<small>${w.month||spMeta(w).month}월</small></button>`;}).join('');
   } else {
     const mos=[...new Set(weeks.map(w=>w.month||7))].sort((a,b)=>a-b);
     const curMo=SPMOSEL||cur.month||7;
-    sel=`<select class="per-dd" onchange="selSPmonth(this.value)">`+mos.map(m=>`<option value="${m}" ${m===curMo?'selected':''}>2026년 ${m}월</option>`).join('')+`</select><span class="spv-lb" style="font-size:11px;color:var(--dim)">월말 기준(최신 주차)</span>`;
+    chips=mos.map(m=>`<button class="wchip${m===curMo?' on':''}" onclick="selSPmonth(${m})">${m}월<small>${YEAR}</small></button>`).join('');
   }
-  html+=`<div class="spview"><div class="sseg2"><button class="${SPERFVIEW==='week'?'on':''}" onclick="setSPview('week')">주간</button><button class="${SPERFVIEW==='month'?'on':''}" onclick="setSPview('month')">월간</button></div>${sel}</div>`;
+  html+=`<div class="tbar tbar-sp" style="margin:2px 0 16px"><div class="tbar-per">`
+    +`<div class="per-seg"><button class="${SPERFVIEW==='week'?'on':''}" onclick="setSPview('week')">주간</button><button class="${SPERFVIEW==='month'?'on':''}" onclick="setSPview('month')">월간</button></div>`
+    +`<span class="pl">${SPERFVIEW==='week'?'주차':'월'}</span><div class="wks">${chips}</div>`
+    +(SPERFVIEW==='month'?`<span class="pl" style="color:var(--dim)">월말 기준(최신 주차)</span>`:'')
+    +`</div></div>`;
   // 스코어카드 · 중국 / 중국법인 매출 / 대만 / 홍콩
   html+='<div class="skgrid">'
     +sc2('중국 수출·수금',cnEx,cnSuV, cnExp.target?('수출 달성 '+pct(cnExp.actual,cnExp.target)+'% · 수금 '+(cnSu.target?pct(cnSu.actual,cnSu.target)+'%':'-')):'닝보·북경',1)
