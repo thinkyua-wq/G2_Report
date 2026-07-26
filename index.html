@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="업무보고">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='38' fill='%232e7d52'/%3E%3Ctext x='90' y='120' font-size='96' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3E주%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1098,7 +1099,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.07.26-D</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.07.26-E</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1124,6 +1125,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
         <button class="tb-b prim" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
+        <button class="tb-b" style="border-color:#c8a24a;color:#8a6d1a;background:#fdf7e6" onclick="genGooglePPT()">🖼 구글 PPT</button>
         <span id="syncBadge" style="display:none;align-items:center;font-size:11px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
         <div class="tb-dd">
           <button class="tb-b" onclick="toggleDataMenu(event)">데이터 ▾</button>
@@ -3336,6 +3338,91 @@ async function doCloudLoad(silent){
   catch(e){if(!silent)toast('불러오는 중 오류가 발생했습니다');}
 }
 function cloudLoad(){cloudAuth(()=>doCloudLoad(false));}
+/* ============ 구글 슬라이드(PPT) 생성 → 중화팀업무보고 폴더 저장 ============ */
+const WRFOLDER='1m89LgxdjzL-8HyVPo1ibqzAVqquPv4J1';
+function pptWLabel(){const wk=WEEKS[W]||{name:'',range:''};return `${YEAR}년 ${MONTH}월 · ${wk.name}${wk.range?' ('+wk.range+')':''}`;}
+function pptPC(p){return p>=100?'2E7D52':(p>=50?'222222':'B3781C');}
+async function buildDeckBase64(){
+  const G='2E7D52',DG='1F5C3B',LT='EAF2ED',INK='222222',MUT='6B7280',LN='D9E2DC',F='맑은 고딕';
+  const P=new PptxGenJS(); P.defineLayout({name:'WR',width:13.33,height:7.5}); P.layout='WR';
+  const rows=activeRows();
+  const byM={}; MGRS.forEach(m=>byM[m.id]=[]); rows.forEach(r=>{if(byM[r.mgr])byM[r.mgr].push(r);});
+  const people=MGRS.filter(m=>byM[m.id].length);
+  const total=rows.length, avg=total?Math.round(rows.reduce((s,r)=>s+r.p,0)/total):0, done=rows.filter(r=>r.p>=100).length;
+  const wkName=(WEEKS[W]&&WEEKS[W].name)||'';
+  let s=P.addSlide(); s.background={color:G};
+  s.addText('중화팀 주간 업무보고',{x:0.6,y:2.4,w:12,h:1,fontFace:F,fontSize:44,bold:true,color:'FFFFFF'});
+  s.addText(pptWLabel(),{x:0.6,y:3.4,w:12,h:0.6,fontFace:F,fontSize:22,color:'D8ECE0'});
+  s.addText('G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.6,y:6.6,w:12,h:0.4,fontFace:F,fontSize:14,color:'CFE3D8'});
+  s.addShape(P.ShapeType.ellipse,{x:10.7,y:0.7,w:1.9,h:1.9,fill:{color:DG},line:{color:'6FAE8C',width:1}});
+  s.addText(wkName,{x:10.7,y:1.35,w:1.9,h:0.6,fontFace:F,fontSize:22,bold:true,color:'FFFFFF',align:'center'});
+  s=P.addSlide(); s.background={color:'FFFFFF'};
+  s.addText('주간 개요',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
+  s.addText(pptWLabel(),{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+  [['총 과제',total+'건'],['담당자',people.length+'명'],['평균 진행률',avg+'%'],['완료',done+'건']].forEach((st,i)=>{const x=0.55+i*3.05;
+    s.addShape(P.ShapeType.roundRect,{x,y:1.7,w:2.75,h:1.5,rectRadius:0.1,fill:{color:LT},line:{color:LN,width:1}});
+    s.addText(st[1],{x,y:1.9,w:2.75,h:0.8,fontFace:F,fontSize:38,bold:true,color:G,align:'center'});
+    s.addText(st[0],{x,y:2.75,w:2.75,h:0.35,fontFace:F,fontSize:13,color:MUT,align:'center'});});
+  people.forEach(m=>{const list=byM[m.id],per=6;
+    for(let i=0;i<list.length;i+=per){const ch=list.slice(i,i+per);
+      const sl=P.addSlide(); sl.background={color:'FFFFFF'};
+      const avgP=Math.round(list.reduce((a,r)=>a+r.p,0)/list.length), cnt=Math.ceil(list.length/per), idx=Math.floor(i/per)+1;
+      sl.addText(`${m.name} ${m.title}`+(cnt>1?`  (${idx}/${cnt})`:''),{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:26,bold:true,color:DG});
+      sl.addText(`과제 ${list.length}건 · 평균 진행률 ${avgP}%`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+      const th=['구분','국가','핵심과제','완료예정일','진행률','진행사항 (비고)'];
+      const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:11}}))];
+      ch.forEach(r=>{tr.push([
+        {text:r.cat||'',options:{align:'center',color:INK,valign:'middle'}},
+        {text:r.country||'',options:{align:'center',color:INK,valign:'middle'}},
+        {text:r.label||'',options:{align:'left',color:INK,bold:true,valign:'middle'}},
+        {text:(r.due&&isDate(r.due))?r.due:(r.due||'상시'),options:{align:'center',color:MUT,fontSize:9,valign:'middle'}},
+        {text:r.p+'%',options:{align:'center',color:pptPC(r.p),bold:true,valign:'middle'}},
+        {text:r.note||'',options:{align:'left',color:'333333',fontSize:9,valign:'middle'}}]);});
+      sl.addTable(tr,{x:0.55,y:1.55,w:12.23,colW:[1.0,0.65,2.7,1.05,0.85,6.0],rowH:0.3,fontFace:F,fontSize:10,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+    }});
+  const D=(SPCUR&&SPCUR.deal)||(SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:null);
+  if(D&&D.length){const sl=P.addSlide(); sl.background={color:'FFFFFF'};
+    sl.addText('실적 현황 · 거래처별 수출·수금',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
+    sl.addText('단위: 천불(USD)',{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+    const kU=v=>v==null?'—':Math.round(v/1000).toLocaleString();
+    const hd=['구분','거래처','수출 목표','수출 실적','KPI','선적','수금 목표','수금 실적'];
+    const dt=[hd.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center'}}))];
+    D.forEach(d=>{dt.push([
+      {text:d.grp==='중국'?'중국':'홍콩·대만',options:{align:'center',color:INK}},
+      {text:d.dealer||'',options:{align:'left',color:INK}},
+      {text:kU(d.exT),options:{align:'right',color:INK}},
+      {text:kU(d.exA),options:{align:'right',color:INK}},
+      {text:d.exT?Math.round(d.exA/d.exT*100)+'%':'—',options:{align:'center',color:INK}},
+      {text:d.ship!=null?Math.round(d.ship*100)+'%':'—',options:{align:'center',color:INK}},
+      {text:kU(d.suT),options:{align:'right',color:INK}},
+      {text:kU(d.suA),options:{align:'right',color:INK}}]);});
+    sl.addTable(dt,{x:0.55,y:1.6,w:12.23,colW:[1.4,2.8,1.6,1.6,1.0,1.0,1.6,1.63],rowH:0.5,fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+  }
+  return await P.write({outputType:'base64'});
+}
+function genGooglePPT(){
+  if(typeof PptxGenJS==='undefined'){toast('PPT 모듈을 불러오는 중입니다. 잠시 후 다시 시도하세요.');return;}
+  if(!activeRows().length){toast('현재 주차에 표시할 과제가 없습니다. 주차를 확인하세요.');return;}
+  if(!cloudAvailable()){toast('먼저 구글 연동(설정)을 해주세요');openSettings('cloud');return;}
+  cloudAuth(async()=>{
+    try{toast('구글 PPT 생성 중...'); setSyncBadge('sync');
+      const b64=await buildDeckBase64();
+      const name=`중화팀_주간업무보고_${YEAR}_${MONTH}월_${((WEEKS[W]&&WEEKS[W].name)||'').replace(/\s/g,'')}`;
+      const bd='wr_ppt_bd7';
+      const media=`\r\nContent-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation\r\nContent-Transfer-Encoding: base64\r\n\r\n${b64}\r\n--${bd}--`;
+      const mk=meta=>`--${bd}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${bd}${media}`;
+      const url='https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink';
+      let res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'multipart/related; boundary='+bd},body:mk({name,mimeType:'application/vnd.google-apps.presentation',parents:[WRFOLDER]})});
+      let j=await res.json();
+      if(!res.ok){ // 폴더 접근 실패 시 루트에 저장 재시도
+        res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'multipart/related; boundary='+bd},body:mk({name,mimeType:'application/vnd.google-apps.presentation'})});
+        j=await res.json();
+      }
+      if(res.ok&&j.id){setSyncBadge('ok');toast('구글 PPT 저장 완료 · 새 탭에서 엽니다');window.open(j.webViewLink||('https://docs.google.com/presentation/d/'+j.id+'/edit'),'_blank');}
+      else{setSyncBadge('err');toast('PPT 저장 실패: '+((j.error&&j.error.message)||('HTTP '+res.status)));}
+    }catch(e){setSyncBadge('err');toast('PPT 생성 오류: '+((e&&e.message)||''));}
+  });
+}
 /* ---- 실시간 자동 동기화 ---- */
 function scheduleSync(){
   if(!SYNCON||!SYNC_READY||!cloudAvailable())return;
