@@ -3179,14 +3179,21 @@ function importWeekly(input){
     const numOf=x=>{const v=String(x==null?'':x).replace(/[^0-9.\-]/g,'');return v===''?null:+v;};
     // 과제 (빈 줄은 건너뛰고 ■ 구분에서만 멈춤)
     if(tH>=0){const H=(A[tH]||[]).map(c=>norm(c));const ci=n=>H.findIndex(x=>x.includes(norm(n)));
-      const cC=ci('국가'),cW=ci('담당자'),cNr=ci('핵심과제'),cN=cNr>=0?cNr:0,cS=ci('상태'),cD=ci('완료예정일'),cB=ci('비고');
-      const STP={'완료':100,'진행중':60,'예정':10,'대기':25,'보류':20};const out=[];
+      const cC=ci('국가'),cW=ci('담당자'),cNr=ci('핵심과제'),cN=cNr>=0?cNr:0,cS=ci('상태'),cPg=ci('진행율'),cPr=ci('우선순위'),cSt=ci('시작일'),cCat=ci('구분'),cD=ci('완료예정일'),cB=ci('비고');
+      const STP={'완료':100,'진행중':60,'예정':10,'대기':25,'보류':20,'착수전':0};
+      const progOf=v=>{v=String(v==null?'':v).trim().replace('%','').trim();if(v==='')return null;if(STP[v]!=null)return STP[v];const n=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(n)?null:Math.max(0,Math.min(100,Math.round(n)));};
+      const PRK={'상':'높음','중':'중간','하':'낮음'};const out=[];
       for(let i=tH+1;i<A.length;i++){const s=rs(A[i]);const nm=String(s[cN]==null?'':s[cN]).trim();
         if(/^■/.test(nm)||/^■/.test(String(s[0]||'')))break;
-        if(!nm)continue;
-        const who=mgrByName(cW>=0?s[cW]:'');const status=String((cS>=0?s[cS]:'')||'진행중').trim();
-        const wk=WEEKS.map((_,k)=>k===wIdx?{p:(STP[status]!=null?STP[status]:50),note:String((cB>=0?s[cB]:'')||'')}:null);
-        out.push({mgr:who?who.id:'tak',country:String((cC>=0?s[cC]:'')||'중국').trim(),name:nm,start:`${YEAR}-${String(MONTH).padStart(2,'0')}-01`,due:toDateStr(cD>=0?s[cD]:'')||'상시',priority:'중간',status,wk});}
+        if(!nm||/^◀/.test(nm)||/^예\)/.test(nm))continue;
+        const who=mgrByName(cW>=0?s[cW]:'');
+        let p=cPg>=0?progOf(s[cPg]):null;
+        const status=String((cS>=0?s[cS]:'')||'').trim()||(p!=null?(p>=100?'완료':(p<=0?'대기':'진행중')):'진행중');
+        if(p==null)p=(STP[status]!=null?STP[status]:50);
+        const wk=WEEKS.map((_,k)=>k===wIdx?{p:p,note:String((cB>=0?s[cB]:'')||'')}:null);
+        const prio=cPr>=0?(PRK[String(s[cPr]||'').trim()]||'중간'):'중간';
+        const st0=(cSt>=0&&toDateStr(s[cSt])&&/\d{4}-\d{2}-\d{2}/.test(toDateStr(s[cSt])))?toDateStr(s[cSt]):`${YEAR}-${String(MONTH).padStart(2,'0')}-01`;
+        out.push({mgr:who?who.id:'tak',country:String((cC>=0?s[cC]:'')||'중국').trim()||'중국',name:nm,cat:String((cCat>=0?s[cCat]:'')||'').trim(),start:st0,due:toDateStr(cD>=0?s[cD]:'')||'상시',priority:prio,status,wk});}
       if(out.length){TASKS=out;normalizeTasks();saveTasks();nTask=out.length;}}
     // KPI 실적
     if(kH>=0){const H=(A[kH]||[]).map(c=>norm(c));const ci=n=>H.findIndex(x=>x.includes(norm(n)));
