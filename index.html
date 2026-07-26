@@ -3442,6 +3442,15 @@ function salesMonthAgg(weeks,m){
   const cnEx=g('중국','수출'),cnSu=g('중국','수금'),htEx=[...g('홍콩','수출'),...g('대만','수출')];
   return {m,cnExA:sf(cnEx,'actual'),cnExT:sf(cnEx,'target'),cnSuA:sf(cnSu,'actual'),cnSuT:sf(cnSu,'target'),htExA:sf(htEx,'actual'),htExT:sf(htEx,'target'),has:true};
 }
+/* 거래처별 표(deal)에서 국가별 수출·수금 집계 — KPI카드·추이그래프 데이터원 */
+function dealSummary(D){
+  const s={cnExT:0,cnExA:0,cnSuT:0,cnSuA:0,twExT:0,twExA:0,hkExT:0,hkExA:0};
+  (D||[]).forEach(d=>{const exT=+d.exT||0,exA=+d.exA||0,suT=+d.suT||0,suA=+d.suA||0;
+    if(d.grp==='중국'){s.cnExT+=exT;s.cnExA+=exA;s.cnSuT+=suT;s.cnSuA+=suA;}
+    else if((d.dealer||'').indexOf('대만')>=0){s.twExT+=exT;s.twExA+=exA;}
+    else{s.hkExT+=exT;s.hkExA+=exA;}});
+  return s;
+}
 function miniBarChart(title,unit,data,series,rateFn){
   const W=520,H=205,ml=42,mr=38,mt=12,mb=26,pw=W-ml-mr,ph=H-mt-mb,yb=mt+ph;
   const kv=v=>Math.round((v||0)/1000);
@@ -3458,9 +3467,11 @@ function miniBarChart(title,unit,data,series,rateFn){
   const leg=series.map(s=>`<span class="lg-i"><i style="background:${s[1]}"></i>${s[2]}</span>`).join('')+`<span class="lg-i"><i style="background:#c0392b;border-radius:50%"></i>달성율</span>`;
   return `<div class="chbox"><div class="chbox-h" style="font-size:13px">${title} <span class="unit">${unit}</span></div><div class="chlegend" style="font-size:10.5px;gap:10px;margin-top:6px">${leg}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin-top:4px">${grid}${bars}${line?`<path d="${line}" fill="none" stroke="#c0392b" stroke-width="1.8"/>`:''}${dots}${xlab}</svg></div>`;
 }
-function salesTrendChart(weeks,selMonth){
+function salesTrendChart(weeks,selMonth,D){
   const MN=Math.max(1,Math.min(12,selMonth));
   const data=Array.from({length:MN},(_,i)=>salesMonthAgg(weeks,i+1));
+  if(D&&D.length){const ds=dealSummary(D),cm=data[MN-1];
+    if(cm&&!cm.has){cm.cnExA=ds.cnExA;cm.cnExT=ds.cnExT;cm.cnSuA=ds.cnSuA;cm.cnSuT=ds.cnSuT;cm.htExA=ds.twExA+ds.hkExA;cm.htExT=ds.twExT+ds.hkExT;cm.has=true;}}
   const cn=miniBarChart('중국 수출·수금 추이','천불·1~'+MN+'월',data,[['cnExA','#2e7d52','수출'],['cnSuA','#2f6fb0','수금']],d=>d.cnExT?d.cnExA/d.cnExT:null);
   const ht=miniBarChart('홍콩·대만 수출 추이','천불·1~'+MN+'월',data,[['htExA','#d99429','수출']],d=>d.htExT?d.htExA/d.htExT:null);
   return `<div class="schart2" style="margin-bottom:16px">${cn}${ht}</div>`;
@@ -3500,11 +3511,13 @@ function viewSales(){
   const sumT=(c,kind)=>K.filter(r=>r.country===c&&(r.metric||'').includes(kind)&&!/수량|EA/.test(r.metric||'')).reduce((s,r)=>s+(+r.target||0),0);
   const rateCls=r=>r==null?'':(r>=0.7?'g':r>=0.5?'o':'r');
   const skCard=(lb,v,t,sub)=>{const r=t?v/t:null;const cls=rateCls(r);return `<div class="skcard2"><div class="sk2-l">${lb} <span class="sk2-dr">달성률</span></div><div class="sk2-v">$${svFmt(v)}</div><div class="sk2-p ${cls}">${r!=null?(Math.round(r*1000)/10)+'%':'-'}</div><div class="sk2-bar"><i class="${cls}" style="width:${Math.min(100,(r||0)*100).toFixed(0)}%"></i></div><div class="sk2-t">목표 $${svFmt(t)}${sub?' · '+sub:''}</div></div>`;};
+  if(!cur.deal)cur.deal=JSON.parse(JSON.stringify(DEALSEED));
+  const DS=dealSummary(cur.deal);
   html+='<div class="skgrid">'
-    +skCard('중국 수출 실적',cnEx,sumT('중국','수출'),'닝보+북경')
-    +skCard('중국 수금 실적',cnSuV,sumT('중국','수금'),'닝보+북경')
-    +skCard('대만 수출 실적',twEx,sumT('대만','수출'),'TBMS·Sunriser')
-    +skCard('홍콩 대리점',hkEx,sumT('홍콩','수출'),'킨월드')
+    +skCard('중국 수출 실적',DS.cnExA,DS.cnExT,'닝보+북경')
+    +skCard('중국 수금 실적',DS.cnSuA,DS.cnSuT,'닝보+북경')
+    +skCard('대만 수출 실적',DS.twExA,DS.twExT,'TBMS·Sunriser')
+    +skCard('홍콩 대리점',DS.hkExA,DS.hkExT,'킨월드')
     +'</div>';
   html+='<div class="pm-tabs" style="margin:16px 0 8px">'+[['deal','거래처별 수출·수금 실적'],['corp','중국 법인 매출 예상'],['hq','법인·본사 매출 관리']].map(([k,l])=>`<button class="${SALESTAB===k?'on':''}" onclick="setSalesTab('${k}')">${l}</button>`).join('')+'</div>';
   // 거래처별 수출·수금 실적 (첨부 표) — 더블클릭 편집
@@ -3526,7 +3539,7 @@ function viewSales(){
     return `<tr class="trtot"><td class="rl">중국 소계 (닝보+북경)</td><td>${kU(exT)}</td><td>${kU(exA)}</td><td class="pc">${kr}%</td><td class="pc">${shipW!=null?Math.round(shipW*100)+'%':'—'}</td><td>${kU(suT)}</td><td>${kU(suA)}</td><td class="pc">${sr}%</td><td>${kU(eExp)}</td><td class="pc">${er}%</td><td>${kU(eSu)}</td><td class="pc">${esr}%</td></tr>`;};
   const dgap=`<tr class="dgap"><td colspan="13"></td></tr>`;
   if(SALESTAB==='deal'){
-  html+=salesTrendChart(weeks, SPMOSEL||cur.month||spMeta(cur).month||7);
+  html+=salesTrendChart(weeks, SPMOSEL||cur.month||spMeta(cur).month||7, D);
   html+='<div class="chbox"><div class="chbox-h">거래처별 수출·수금 실적 <span class="unit">단위: 천불(USD) · 더블클릭 수정</span></div><div style="overflow-x:auto"><table class="ptable deal"><thead><tr><th style="text-align:left">구분</th><th style="text-align:left">거래처</th><th>수출 목표</th><th>수출 실적</th><th>KPI<br>달성률</th><th>선적<br>진행률</th><th>수금 목표</th><th>수금 실적</th><th>수금<br>달성률</th><th>예상 수출</th><th>예상<br>달성률</th><th>예상 수금</th><th>예상<br>달성률</th></tr></thead><tbody>';
   cnI.forEach((o,k)=>{html+=dealRow(o.i,k===0?`<td class="rl gcol" rowspan="${cnI.length+1}">중국</td>`:'');});
   html+=subRow();
