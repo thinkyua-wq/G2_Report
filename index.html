@@ -1098,7 +1098,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부</p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.07.26-D</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1438,8 +1438,7 @@ function riskOf(t,w){const c=t.wk[w]; if(!c||c.p>=100)return false; const d=dueM
 /* 기간(주/월/연) 기준 진행값 선택 */
 function pickAt(t){
   if(PERIOD==='week'){
-    let c=t.wk[W], carried=false;
-    if(!c){for(let k=W-1;k>=0;k--){if(t.wk[k]){c=t.wk[k];carried=true;break;}}}
+    const c=t.wk[W]; const carried=false;   // 이월 없음: 해당 주차에 값이 없으면 표시 안 함(비움)
     if(!c)return null;
     const due=(c.due)||t.due;
     return {p:c.p,note:c.note,label:c.label||t.name,due,risk:(c.p<100&&isDate(due)&&new Date(due)<TODAY),prev:(W>0&&t.wk[W-1])?t.wk[W-1].p:null,carried};}
@@ -1895,10 +1894,7 @@ function cardHTML(r){
   const delta=(r.prev!=null&&r.p>r.prev)?`<span class="deltaup">▲${r.p-r.prev}</span>`:'';
   return `<div class="card${r.carried?' carried':''}" onclick="openDetail(${r.ti})">
     <div class="chips">
-      <span class="chip ${ccls[r.country]} tag-cn">${r.country}</span>
-      <span class="chip prio-${prioKo(r.prio)}">${prioKo(r.prio)}</span>
       ${r.cat?`<span class="chip" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${r.cat}</span>`:''}
-      ${r.carried?'<span class="chip carry">전주 유지</span>':''}
       ${(()=>{const cs=r.st==='done'?'완료':(r.st==='wait'?'대기':'진행중');return `<select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)">`+['진행중','완료','대기'].map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
     </div>
     <div class="ttl">${esc(r.label)}</div>
@@ -1956,7 +1952,7 @@ function kanbanBoard(rows){
 function kcardHTML(r){
   const m=mgrById(r.mgr);
   return `<div class="kcard" style="border-left-color:${stColor[r.st]}" onclick="openDetail(${r.ti})">
-    <div class="chips" style="margin-bottom:6px"><span class="chip ${ccls[r.country]} tag-cn">${r.country}</span>${r.carried?'<span class="chip carry">전주 유지</span>':''}${r.risk?'<span class="chip st" style="background:var(--riskSoft);color:var(--risk);margin-left:auto">지연주의</span>':''}</div>
+    <div class="chips" style="margin-bottom:6px"><span class="chip ${ccls[r.country]} tag-cn">${r.country}</span>${r.risk?'<span class="chip st" style="background:var(--riskSoft);color:var(--risk);margin-left:auto">지연주의</span>':''}</div>
     <div class="ttl">${esc(r.label)}</div>
     <div class="foot"><span class="av" style="background:${m.color}">${m.ini}</span>
       <span class="who">${m.name} ${m.title}</span>
@@ -3194,7 +3190,18 @@ function importWeekly(input){
         const prio=cPr>=0?(PRK[String(s[cPr]||'').trim()]||'중간'):'중간';
         const st0=(cSt>=0&&toDateStr(s[cSt])&&/\d{4}-\d{2}-\d{2}/.test(toDateStr(s[cSt])))?toDateStr(s[cSt]):`${YEAR}-${String(MONTH).padStart(2,'0')}-01`;
         out.push({mgr:who?who.id:'tak',country:String((cC>=0?s[cC]:'')||'중국').trim()||'중국',name:nm,cat:String((cCat>=0?s[cCat]:'')||'').trim(),start:st0,due:toDateStr(cD>=0?s[cD]:'')||'상시',priority:prio,status,wk});}
-      if(out.length){TASKS=out;normalizeTasks();saveTasks();nTask=out.length;}}
+      if(out.length){
+        // 주차별 누적: 기존 과제(담당자+과제명 일치)에 이번 주차 값만 갱신, 없으면 신규 추가
+        out.forEach(nt=>{
+          const ex=TASKS.find(t=>t.mgr===nt.mgr && normName(t.name)===normName(nt.name));
+          if(ex){ if(!Array.isArray(ex.wk))ex.wk=[]; ex.wk[wIdx]=nt.wk[wIdx];
+            if(nt.cat&&!ex.cat)ex.cat=nt.cat;
+            if(nt.due&&(!ex.due||ex.due==='상시'))ex.due=nt.due;
+            if(nt.priority)ex.priority=nt.priority;
+            if(nt.country)ex.country=nt.country;
+          } else { TASKS.push(nt); }
+        });
+        normalizeTasks();saveTasks();nTask=out.length;}}
     // KPI 실적
     if(kH>=0){const H=(A[kH]||[]).map(c=>norm(c));const ci=n=>H.findIndex(x=>x.includes(norm(n)));
       const cC=ci('국가'),cM=ci('지표'),cT=ci('목표'),cE=ci('예상'),cA=ci('실적'),cB=H.length-1;const kpi=[];
