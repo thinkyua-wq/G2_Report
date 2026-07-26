@@ -1124,6 +1124,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
         <button class="tb-b prim" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
+        <span id="syncBadge" style="display:none;align-items:center;font-size:11px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
         <div class="tb-dd">
           <button class="tb-b" onclick="toggleDataMenu(event)">데이터 ▾</button>
           <div class="tb-menu hide" id="dataMenu">
@@ -3285,27 +3286,68 @@ function downloadTemplate(){
 }
 
 /* ============ 클라우드(구글 드라이브) ============ */
-const CLOUD={clientId:'',fileName:'주간업무보고_현황판.json',token:null,autoWeekly:true};
+const CLOUD={clientId:'',fileName:'주간업무보고_현황판.json',token:null,tokenExp:0,autoWeekly:true};
+let SYNCON=false, SYNC_READY=false, _syncTimer=null, _syncing=false, _syncState='off';
+try{SYNCON=localStorage.getItem('wr_autosync')==='1';}catch(e){}
 function cloudAvailable(){return !!CLOUD.clientId && location.protocol!=='file:' && window.google && google.accounts && google.accounts.oauth2;}
-function cloudAuth(cb){
-  if(!cloudAvailable()){openSettings('cloud');return;}
+function cloudTokenValid(){return CLOUD.token && Date.now()<(CLOUD.tokenExp-60000);}
+function cloudAuth(cb,silent){
+  if(!cloudAvailable()){ if(!silent) openSettings('cloud'); return; }
+  if(cloudTokenValid()){cb();return;}
   try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file',
-    callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;cb();}else toast('구글 인증에 실패했습니다');}});
-    tc.requestAccessToken();}catch(e){toast('구글 인증을 시작할 수 없습니다');}
+    callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncBadge('err');}}});
+    tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');}
 }
-function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG});}
+function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,_ts:Date.now()});}
 async function driveFind(){const q=encodeURIComponent(`name='${CLOUD.fileName}' and trashed=false`);
   const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`,{headers:{Authorization:'Bearer '+CLOUD.token}});
   const j=await res.json();return (j.files&&j.files[0])?j.files[0].id:null;}
-function cloudSave(){cloudAuth(async()=>{try{const id=await driveFind();const b='wr_boundary_7c3f9';
+async function doCloudSave(silent){
+  setSyncBadge('sync');
+  try{const id=await driveFind();const b='wr_boundary_7c3f9';
     const meta={name:CLOUD.fileName,mimeType:'application/json'};
     const body=`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${cloudPayload()}\r\n--${b}--`;
     const url=id?`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=multipart`:`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
     const res=await fetch(url,{method:id?'PATCH':'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'multipart/related; boundary='+b},body});
-    toast(res.ok?'구글 드라이브에 저장했습니다':'저장에 실패했습니다');}catch(e){toast('저장 중 오류가 발생했습니다');}});}
-function cloudLoad(){cloudAuth(async()=>{try{const id=await driveFind();if(!id){toast('드라이브에 저장된 파일이 없습니다');return;}
+    if(res.ok){if(!silent)toast('구글 드라이브에 저장했습니다');setSyncBadge('ok');}
+    else{if(!silent)toast('저장에 실패했습니다');setSyncBadge('err');}}
+  catch(e){if(!silent)toast('저장 중 오류가 발생했습니다');setSyncBadge('err');}
+}
+function cloudSave(){cloudAuth(()=>doCloudSave(false));}
+async function doCloudLoad(silent){
+  try{const id=await driveFind();if(!id){if(!silent)toast('드라이브에 저장된 파일이 없습니다');return;}
     const res=await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`,{headers:{Authorization:'Bearer '+CLOUD.token}});
-    if(!res.ok){toast('불러오기에 실패했습니다');return;}applyBackup(await res.json());toast('구글 드라이브에서 불러왔습니다');}catch(e){toast('불러오는 중 오류가 발생했습니다');}});}
+    if(!res.ok){if(!silent)toast('불러오기에 실패했습니다');return;}
+    applyBackup(await res.json());if(!silent)toast('구글 드라이브에서 불러왔습니다');setSyncBadge('ok');}
+  catch(e){if(!silent)toast('불러오는 중 오류가 발생했습니다');}
+}
+function cloudLoad(){cloudAuth(()=>doCloudLoad(false));}
+/* ---- 실시간 자동 동기화 ---- */
+function scheduleSync(){
+  if(!SYNCON||!SYNC_READY||!cloudAvailable())return;
+  setSyncBadge('pending');
+  if(_syncTimer)clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(()=>{_syncTimer=null;cloudAuth(()=>{if(_syncing)return;_syncing=true;doCloudSave(true).finally(()=>{_syncing=false;});},true);},2500);
+}
+function setSyncBadge(state){_syncState=state;const el=document.getElementById('syncBadge');if(!el)return;
+  const map={off:['',''],pending:['⏳ 동기화 대기','#8a6d1a'],sync:['⟳ 동기화 중','#1f6f52'],ok:['✅ 구글 동기화됨','#1f6f52'],err:['⚠ 동기화 오류','#c0392b']};
+  const m=map[state]||map.off;el.textContent=m[0];el.style.color=m[1];el.style.display=SYNCON&&m[0]?'inline-flex':'none';}
+function cloudStartup(){
+  if(!SYNCON){setSyncBadge('off');return;}
+  let tries=0;
+  (function wait(){
+    if(cloudAvailable()){
+      cloudAuth(async()=>{await doCloudLoad(true);SYNC_READY=true;setSyncBadge('ok');},true);
+      setTimeout(()=>{SYNC_READY=true;},4000);
+    } else if(tries++<20){setTimeout(wait,500);} else {SYNC_READY=true;}
+  })();
+}
+/* localStorage 저장 시 자동으로 구글 동기화 예약 (모든 wr_ 데이터 변경 포착) */
+(function(){const _set=localStorage.setItem.bind(localStorage);
+  localStorage.setItem=function(k,v){_set(k,v);
+    try{if(SYNCON&&SYNC_READY&&typeof k==='string'&&k.indexOf('wr_')===0&&k!=='wr_gcid'&&k!=='wr_autosync'&&k!=='wr_login'&&k!=='wr_vrole'&&k!=='wr_memberid')scheduleSync();}catch(e){}};
+})();
+window.addEventListener('load',()=>setTimeout(cloudStartup,600));
 
 /* ============ 설정 · PWA ============ */
 function installPWA(){if(window.__pwa){window.__pwa.prompt();window.__pwa=null;}else toast('설치는 웹 호스팅(https) 후 브라우저 주소창의 설치 아이콘으로 가능합니다');}
@@ -3323,11 +3365,12 @@ function openSettings(focus){
       <div class="dw-save"><button onclick="downloadTemplate()">엑셀 등록양식 다운로드</button></div>
       <div class="dw-sec">주차별 불러오기</div>
       <div class="set-p">현재 선택된 <b>${WEEKS[W]?WEEKS[W].name:'주차'}</b>에 <b>핵심과제·진행률</b> 열만 매칭해 업데이트합니다. (과제명이 기존과 일치해야 함)</div>
-      <div class="dw-sec">클라우드 · 구글 드라이브</div>
-      <div class="set-p">${cloudOn?'✅ 연동 준비됨 — 클라우드 저장/불러오기를 사용할 수 있습니다.':(local?'⚠️ 지금은 <b>로컬 파일</b>로 열려 있어 구글 드라이브 연동이 비활성화됩니다. 이 파일을 웹(https)에 올리고 아래 클라이언트 ID를 설정하면 활성화됩니다.':'⚠️ 구글 <b>클라이언트 ID</b>가 설정되지 않았습니다. 아래에 입력하면 활성화됩니다.')}</div>
-      <div class="set-row"><input class="dw-edit-i" id="gcid" placeholder="구글 OAuth 클라이언트 ID (선택)" value="${esc(CLOUD.clientId||'')}"><button onclick="saveCloudId()">적용</button></div>
-      <div class="set-hint">발급: Google Cloud Console → API 및 서비스 → 사용자 인증 정보 → OAuth 클라이언트 ID(웹). 승인된 JavaScript 원본에 이 페이지 주소를 등록하세요. 저장 데이터는 백업(JSON)과 동일합니다.</div>
-      <div class="set-row" style="align-items:center;gap:10px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" id="autoweekly" ${CLOUD.autoWeekly?'checked':''} onchange="toggleAutoWeekly(this)" style="width:16px;height:16px;accent-color:var(--accent)"><b>매주 자동 저장</b> — 엑셀 주차 불러오기 시 클라우드에 자동 저장</label></div>
+      <div class="dw-sec">구글 드라이브 실시간 동기화</div>
+      <div class="set-p">${cloudOn?'✅ <b>연동 준비됨</b> — 아래 「자동 동기화」를 켜면 데이터를 바꿀 때마다 구글 드라이브에 자동 저장되고, 다른 기기에서 열면 최신 데이터를 자동으로 불러옵니다.':(local?'⚠️ 지금은 <b>로컬 파일</b>로 열려 있어 구글 연동이 꺼져 있습니다. 이 파일을 웹(https)에 올린 뒤 아래 클라이언트 ID를 설정하세요.':'⚠️ 구글 <b>클라이언트 ID</b>가 아직 없습니다. 아래 2단계를 따라 설정하면 실시간 동기화가 켜집니다.')}</div>
+      <div class="set-hint" style="margin-bottom:8px"><b>설정 방법 (최초 1회)</b><br>① 이 파일을 웹(https)에 올립니다 — 예: GitHub Pages.<br>② Google Cloud Console → API 및 서비스 → 사용자 인증 정보 → <b>OAuth 클라이언트 ID(웹)</b> 발급 → 「승인된 JavaScript 원본」에 이 페이지 주소(https://…)를 등록 → 발급된 <b>클라이언트 ID</b>를 아래에 붙여넣기.</div>
+      <div class="set-row"><input class="dw-edit-i" id="gcid" placeholder="구글 OAuth 클라이언트 ID (xxxxx.apps.googleusercontent.com)" value="${esc(CLOUD.clientId||'')}"><button onclick="saveCloudId()">적용</button></div>
+      <div class="set-row" style="align-items:center;gap:10px;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" id="autosync" ${SYNCON?'checked':''} onchange="toggleAutoSync(this)" style="width:16px;height:16px;accent-color:var(--accent)"><b>자동 동기화</b> — 변경 시 구글에 자동 저장 + 시작 시 자동 불러오기</label></div>
+      <div class="set-hint">동기화 대상: 이 현황판의 모든 데이터(과제·실적·목표·일정·주요보고 등)가 구글 드라이브의 <b>${esc(CLOUD.fileName)}</b> 파일 하나로 저장됩니다. 「☁ 저장 / ☁ 불러오기」로 수동 실행도 가능합니다.</div>
       <div class="dw-sec">앱으로 설치 (PWA)</div>
       <div class="set-p">웹에 올린 뒤 브라우저에서 <b>홈 화면에 추가 / 설치</b>로 앱처럼 사용할 수 있습니다.</div>
       <div class="dw-save"><button onclick="installPWA()">앱 설치</button></div>
@@ -3341,6 +3384,13 @@ function openSettings(focus){
 function saveCloudId(){const v=(document.getElementById('gcid').value||'').trim();CLOUD.clientId=v;try{localStorage.setItem('wr_gcid',v);}catch(e){}
   toast(v?(cloudAvailable()?'구글 연동이 활성화되었습니다':'저장됨 · 웹(https) 호스팅에서 활성화됩니다'):'클라이언트 ID를 비웠습니다');}
 function toggleAutoWeekly(el){CLOUD.autoWeekly=!!el.checked;try{localStorage.setItem('wr_autoweekly',CLOUD.autoWeekly?'1':'0');}catch(e){}toast(CLOUD.autoWeekly?'매주 자동 저장을 켰습니다':'매주 자동 저장을 껐습니다');}
+function toggleAutoSync(el){SYNCON=!!el.checked;try{localStorage.setItem('wr_autosync',SYNCON?'1':'0');}catch(e){}
+  if(SYNCON){
+    if(!cloudAvailable()){toast('먼저 클라이언트 ID·https 호스팅을 설정하세요');openSettings('cloud');SYNCON=false;try{localStorage.setItem('wr_autosync','0');}catch(e){}return;}
+    toast('자동 동기화를 켰습니다 · 구글 인증을 진행하세요');
+    cloudAuth(async()=>{await doCloudLoad(true);SYNC_READY=true;setSyncBadge('ok');doCloudSave(true);});
+  } else {SYNC_READY=false;setSyncBadge('off');toast('자동 동기화를 껐습니다');}
+}
 try{const gc=localStorage.getItem('wr_gcid');if(gc)CLOUD.clientId=gc;}catch(e){}
 try{const aw=localStorage.getItem('wr_autoweekly');if(aw!=null)CLOUD.autoWeekly=(aw==='1');}catch(e){}
 
