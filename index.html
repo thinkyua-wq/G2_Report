@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="업무보고">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='38' fill='%232e7d52'/%3E%3Ctext x='90' y='120' font-size='96' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3E주%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1099,7 +1099,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.07.26-E</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.07.26-F</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1125,7 +1125,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
         <button class="tb-b prim" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
-        <button class="tb-b" style="border-color:#c8a24a;color:#8a6d1a;background:#fdf7e6" onclick="genGooglePPT()">🖼 구글 PPT</button>
+        <button class="tb-b" onclick="genGooglePPT()">🖼 구글 PPT</button>
         <span id="syncBadge" style="display:none;align-items:center;font-size:11px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
         <div class="tb-dd">
           <button class="tb-b" onclick="toggleDataMenu(event)">데이터 ▾</button>
@@ -3401,7 +3401,11 @@ async function buildDeckBase64(){
   return await P.write({outputType:'base64'});
 }
 function genGooglePPT(){
-  if(typeof PptxGenJS==='undefined'){toast('PPT 모듈을 불러오는 중입니다. 잠시 후 다시 시도하세요.');return;}
+  if(typeof PptxGenJS==='undefined'){
+    toast('PPT 모듈 준비 중... 잠시만요');
+    let n=0;const iv=setInterval(()=>{if(typeof PptxGenJS!=='undefined'){clearInterval(iv);genGooglePPT();}else if(++n>20){clearInterval(iv);toast('PPT 모듈 로딩 실패 · 새로고침 후 다시 시도하세요');}},300);
+    return;
+  }
   if(!activeRows().length){toast('현재 주차에 표시할 과제가 없습니다. 주차를 확인하세요.');return;}
   if(!cloudAvailable()){toast('먼저 구글 연동(설정)을 해주세요');openSettings('cloud');return;}
   cloudAuth(async()=>{
@@ -3438,7 +3442,12 @@ function cloudStartup(){
   let tries=0;
   (function wait(){
     if(cloudAvailable()){
-      cloudAuth(async()=>{await doCloudLoad(true);SYNC_READY=true;setSyncBadge('ok');},true);
+      const localEmpty=!Array.isArray(TASKS)||TASKS.length===0;
+      cloudAuth(async()=>{
+        // 로컬에 데이터가 있으면 구글에서 덮어쓰지 않음(직접 불러온 주차 데이터 보호). 비었을 때만 구글에서 복구.
+        if(localEmpty){await doCloudLoad(true);}
+        SYNC_READY=true;setSyncBadge('ok');
+      },true);
       setTimeout(()=>{SYNC_READY=true;},4000);
     } else if(tries++<20){setTimeout(wait,500);} else {SYNC_READY=true;}
   })();
@@ -3470,7 +3479,7 @@ function openSettings(focus){
       <div class="set-p">${cloudOn?'✅ <b>연동 준비됨</b> — 아래 「자동 동기화」를 켜면 데이터를 바꿀 때마다 구글 드라이브에 자동 저장되고, 다른 기기에서 열면 최신 데이터를 자동으로 불러옵니다.':(local?'⚠️ 지금은 <b>로컬 파일</b>로 열려 있어 구글 연동이 꺼져 있습니다. 이 파일을 웹(https)에 올린 뒤 아래 클라이언트 ID를 설정하세요.':'⚠️ 구글 <b>클라이언트 ID</b>가 아직 없습니다. 아래 2단계를 따라 설정하면 실시간 동기화가 켜집니다.')}</div>
       <div class="set-hint" style="margin-bottom:8px"><b>설정 방법 (최초 1회)</b><br>① 이 파일을 웹(https)에 올립니다 — 예: GitHub Pages.<br>② Google Cloud Console → API 및 서비스 → 사용자 인증 정보 → <b>OAuth 클라이언트 ID(웹)</b> 발급 → 「승인된 JavaScript 원본」에 이 페이지 주소(https://…)를 등록 → 발급된 <b>클라이언트 ID</b>를 아래에 붙여넣기.</div>
       <div class="set-row"><input class="dw-edit-i" id="gcid" placeholder="구글 OAuth 클라이언트 ID (xxxxx.apps.googleusercontent.com)" value="${esc(CLOUD.clientId||'')}"><button onclick="saveCloudId()">적용</button></div>
-      <div class="set-row" style="align-items:center;gap:10px;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" id="autosync" ${SYNCON?'checked':''} onchange="toggleAutoSync(this)" style="width:16px;height:16px;accent-color:var(--accent)"><b>자동 동기화</b> — 변경 시 구글에 자동 저장 + 시작 시 자동 불러오기</label></div>
+      <div class="set-row" style="align-items:center;gap:10px;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" id="autosync" ${SYNCON?'checked':''} onchange="toggleAutoSync(this)" style="width:16px;height:16px;accent-color:var(--accent)"><b>자동 동기화</b> — 변경 시 구글에 자동 저장(백업). 로컬 데이터를 덮어쓰지 않으며, 다른 기기 데이터를 받아오려면 「☁ 불러오기」 사용</label></div>
       <div class="set-hint">동기화 대상: 이 현황판의 모든 데이터(과제·실적·목표·일정·주요보고 등)가 구글 드라이브의 <b>${esc(CLOUD.fileName)}</b> 파일 하나로 저장됩니다. 「☁ 저장 / ☁ 불러오기」로 수동 실행도 가능합니다.</div>
       <div class="dw-sec">앱으로 설치 (PWA)</div>
       <div class="set-p">웹에 올린 뒤 브라우저에서 <b>홈 화면에 추가 / 설치</b>로 앱처럼 사용할 수 있습니다.</div>
@@ -3489,7 +3498,8 @@ function toggleAutoSync(el){SYNCON=!!el.checked;try{localStorage.setItem('wr_aut
   if(SYNCON){
     if(!cloudAvailable()){toast('먼저 클라이언트 ID·https 호스팅을 설정하세요');openSettings('cloud');SYNCON=false;try{localStorage.setItem('wr_autosync','0');}catch(e){}return;}
     toast('자동 동기화를 켰습니다 · 구글 인증을 진행하세요');
-    cloudAuth(async()=>{await doCloudLoad(true);SYNC_READY=true;setSyncBadge('ok');doCloudSave(true);});
+    // 켤 때는 현재 로컬 데이터를 구글로 올림(로컬 기준). 구글에서 받아오려면 「☁ 불러오기」를 쓰세요.
+    cloudAuth(async()=>{SYNC_READY=true;setSyncBadge('ok');doCloudSave(true);});
   } else {SYNC_READY=false;setSyncBadge('off');toast('자동 동기화를 껐습니다');}
 }
 try{const gc=localStorage.getItem('wr_gcid');if(gc)CLOUD.clientId=gc;}catch(e){}
