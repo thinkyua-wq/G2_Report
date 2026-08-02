@@ -1362,7 +1362,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-K</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-L</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -4174,7 +4174,7 @@ function downloadTemplate(){
 }
 
 /* ============ 클라우드(구글 드라이브) ============ */
-const CLOUD={clientId:'',fileName:'주간업무보고_현황판.json',token:null,tokenExp:0,autoWeekly:true};
+const CLOUD={clientId:'550669844310-47n3icgmav49iabg2jsklbd4sldrqu3t.apps.googleusercontent.com',fileName:'주간업무보고_현황판.json',token:null,tokenExp:0,autoWeekly:true};
 let SYNCON=false, SYNC_READY=false, _syncTimer=null, _syncing=false, _syncState='off';
 try{SYNCON=localStorage.getItem('wr_autosync')==='1';}catch(e){}
 function cloudAvailable(){return !!CLOUD.clientId && location.protocol!=='file:' && window.google && google.accounts && google.accounts.oauth2;}
