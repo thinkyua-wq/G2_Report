@@ -1362,7 +1362,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-M</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-N</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -3784,6 +3784,9 @@ function applyRRRows(rows){
 function syncApplyWeekly(rows){
   if(!rows||!rows.length)return 0;
   WEEKS=buildWeeks(MONTH); const wIdx=Math.min(W,WEEKS.length-1);
+  // 주차 열(W31 등) → 해당 월의 ISO 주차 칸으로 자동 배치
+  const wkNumToIdx={}; WEEKS.forEach((w,i)=>{const num=isoWeekNum(`${YEAR}-${String(MONTH).padStart(2,'0')}-${String(w.id*7+1).padStart(2,'0')}`); if(num&&wkNumToIdx[num]==null)wkNumToIdx[num]=i;});
+  const slotOf=o=>{const m=String(svPick(o,['주차'])||'').match(/(\d{1,2})/); if(m){const n=+m[1]; if(wkNumToIdx[n]!=null)return wkNumToIdx[n];} return wIdx;};
   const STP={'완료':100,'진행중':60,'예정':10,'대기':25,'보류':20,'착수전':0};
   const progOf=v=>{v=String(v==null?'':v).trim().replace('%','').trim();if(v==='')return null;if(STP[v]!=null)return STP[v];const n=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(n)?null:Math.max(0,Math.min(100,Math.round(n)));};
   const PRK={'상':'높음','중':'중간','하':'낮음'}; let n=0;
@@ -3792,12 +3795,13 @@ function syncApplyWeekly(rows){
     const who=mgrByName(svPick(o,['담당자']));
     let p=progOf(svPick(o,['진행율','진행률'])); const status=p!=null?(p>=100?'완료':(p<=0?'대기':'진행중')):'진행중'; if(p==null)p=50;
     const note=String(svPick(o,['진행사항','비고'])||'').trim();
-    const wk=WEEKS.map((_,k)=>k===wIdx?{p:p,note:note}:null);
+    const tIdx=slotOf(o);
+    const wk=WEEKS.map((_,k)=>k===tIdx?{p:p,note:note}:null);
     const prio=PRK[String(svPick(o,['우선순위'])||'').trim()]||'중간';
     const stR=toDateStr(svPick(o,['시작일'])); const st0=(stR&&/\d{4}-\d{2}-\d{2}/.test(stR))?stR:`${YEAR}-${String(MONTH).padStart(2,'0')}-01`;
     const nt={mgr:who?who.id:'tak',country:String(svPick(o,['국가'])||'중국').trim()||'중국',name:nm,cat:String(svPick(o,['구분'])||'').trim(),start:st0,due:toDateStr(svPick(o,['완료예정일']))||'상시',priority:prio,status,wk};
     const ex=TASKS.find(t=>t.mgr===nt.mgr && normName(t.name)===normName(nt.name));
-    if(ex){ if(!Array.isArray(ex.wk))ex.wk=[]; ex.wk[wIdx]=nt.wk[wIdx]; if(nt.cat&&!ex.cat)ex.cat=nt.cat; if(nt.due&&(!ex.due||ex.due==='상시'))ex.due=nt.due; if(nt.priority)ex.priority=nt.priority; if(nt.country)ex.country=nt.country; }
+    if(ex){ if(!Array.isArray(ex.wk))ex.wk=[]; ex.wk[tIdx]=nt.wk[tIdx]; if(nt.cat&&!ex.cat)ex.cat=nt.cat; if(nt.due&&(!ex.due||ex.due==='상시'))ex.due=nt.due; if(nt.priority)ex.priority=nt.priority; if(nt.country)ex.country=nt.country; }
     else TASKS.push(nt);
     n++;
   });
