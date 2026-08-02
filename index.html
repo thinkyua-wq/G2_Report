@@ -1362,7 +1362,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-L</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-M</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1382,7 +1382,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div class="tbar">
       <div class="tbar-per" id="perbar"></div>
       <div class="tbar-data">
-        <button class="tb-b prim" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
+        <button class="tb-b prim" onclick="cloudLoadSheet()">📊 구글시트 불러오기</button>
+        <button class="tb-b" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
         <button class="tb-b" onclick="printOverview()">📄 PDF 저장</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
@@ -4182,7 +4183,7 @@ function cloudTokenValid(){return CLOUD.token && Date.now()<(CLOUD.tokenExp-6000
 function cloudAuth(cb,silent){
   if(!cloudAvailable()){ if(!silent) openSettings('cloud'); return; }
   if(cloudTokenValid()){cb();return;}
-  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file',
+  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly',
     callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncBadge('err');}}});
     tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');}
 }
@@ -4210,6 +4211,27 @@ async function doCloudLoad(silent){
   catch(e){if(!silent)toast('불러오는 중 오류가 발생했습니다');}
 }
 function cloudLoad(){cloudAuth(()=>doCloudLoad(false));}
+/* ===== 구글 드라이브의 연동 마스터 시트를 직접 불러오기 (엑셀 다운로드 불필요) ===== */
+const MASTER_SHEET_NAME='중화팀_대시보드_연동마스터_2026';
+async function driveFindSheet(name){
+  const q=encodeURIComponent(`name='${name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`);
+  const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&orderBy=${encodeURIComponent('modifiedTime desc')}&fields=files(id,name,modifiedTime)`,{headers:{Authorization:'Bearer '+CLOUD.token}});
+  const j=await res.json();return (j.files&&j.files[0])?j.files[0].id:null;
+}
+async function doSheetPull(silent){
+  setSyncBadge('sync');
+  try{const id=await driveFindSheet(MASTER_SHEET_NAME);
+    if(!id){if(!silent)toast('드라이브에서 「'+MASTER_SHEET_NAME+'」 시트를 찾지 못했습니다 (이름 확인)');setSyncBadge('err');return;}
+    const url=`https://www.googleapis.com/drive/v3/files/${id}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
+    const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
+    if(!res.ok){if(!silent)toast('시트 내보내기에 실패했습니다 ('+res.status+')');setSyncBadge('err');return;}
+    const buf=new Uint8Array(await res.arrayBuffer());
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const parts=importMasterWB(wb);render();setSyncBadge('ok');
+    if(!silent)toast('구글시트 연동 반영 · '+(parts.length?parts.join(' / '):'인식된 탭 없음 (열 제목 확인)'));
+  }catch(e){if(!silent)toast('시트 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
+}
+function cloudLoadSheet(){cloudAuth(()=>doSheetPull(false));}
 /* ============ 구글 슬라이드(PPT) 생성 → 중화팀업무보고 폴더 저장 ============ */
 const WRFOLDER='1m89LgxdjzL-8HyVPo1ibqzAVqquPv4J1';
 function pptWLabel(){const wk=WEEKS[W]||{name:'',range:''};return `${YEAR}년 ${MONTH}월 · ${wk.name}${wk.range?' ('+wk.range+')':''}`;}
