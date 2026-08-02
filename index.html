@@ -775,14 +775,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.assign input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);padding:0}
 .ptable.assign .adone td{opacity:.5}
 .ptable.assign .adone .rl input{text-decoration:line-through}
-.ptable.assign tr.agrp th{background:#fff;padding:5px 8px;font-size:11px;font-weight:800;letter-spacing:.3px;border-bottom:0}
-.ptable.assign tr.agrp th.grp-lead{color:#1c6b46;background:#eaf6ef;border-radius:6px 6px 0 0}
-.ptable.assign tr.agrp th.grp-do{color:#215a8f;background:#e9f1fa;border-radius:6px 6px 0 0}
-.ptable.assign td.c-lead{background:#f4fbf7}
-.ptable.assign td.c-do{background:#f2f7fc}
-.ptable.assign td.c-lead input,.ptable.assign td.c-lead select{background:#fff}
-.ptable.assign td.c-do input,.ptable.assign td.c-do select{background:#fff}
-.ptable.assign td.c-do input[type=number]{display:inline-block;width:52px}
+.ptable.assign thead th{background:#e2e8f0;color:#334155;font-weight:700;font-size:12px;padding:7px 8px;border:1px solid #cbd5e1}
 .xbtn{border:0;background:var(--riskSoft);color:var(--risk);border-radius:6px;padding:4px 8px;font-weight:800;cursor:pointer}
 .xbtn.mailx{background:#e7f0fb;color:#215a8f}
 /* 목표 달성율 */
@@ -810,6 +803,51 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .fk-mtabs button{font-size:12.5px}
 .fk-ph{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;margin-bottom:10px}
 .fk-pct2{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+/* ===== KPI 달성현황 · 법인별 2컬럼 (ck-) ===== */
+.ck-cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.ck-cbox{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:13px}
+.ck-cflag{font-size:21px}.ck-cn{font-size:14px;font-weight:800;color:#1e293b}.ck-ccur{font-size:11px;color:#64748b;font-weight:700}
+.ck-cbig{margin-left:auto;text-align:right}.ck-cbig b{font-size:25px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums}.ck-cbig small{font-size:12px;color:#64748b;font-weight:700}
+.ck-crate{font-size:13px;font-weight:800;padding:2px 10px;border-radius:20px;display:inline-block;margin-top:3px}
+.ck-crate.g,.ck-pill.g,.ck-rr.g{background:#dcfce7;color:#16a34a}.ck-crate.a,.ck-pill.a,.ck-rr.a{background:#fef3c7;color:#b45309}.ck-crate.r,.ck-pill.r,.ck-rr.r{background:#fee2e2;color:#dc2626}
+.ck-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.ck-cmp,.ck-cols{grid-template-columns:1fr}}
+.ck-col{background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden}
+.ck-h{padding:11px 15px;color:#fff;display:flex;align-items:center;gap:9px}
+.ck-h.cn{background:#2e7d52}.ck-h.tw{background:#2f7d8f}
+.ck-flag{font-size:19px}.ck-name{font-size:16px;font-weight:800}.ck-unit{margin-left:auto;font-size:11px;font-weight:700;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:3px 10px}
+.ck-sec{font-size:12.5px;font-weight:800;color:#334155;padding:12px 15px 6px;display:flex;align-items:center;gap:6px}
+.ck-no{width:17px;height:17px;border-radius:50%;background:#334155;color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+.ck-tag{font-size:9.5px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:4px}.ck-tag.auto{color:#0369a1;background:#e0f2fe}.ck-tag.man{color:#a16207;background:#fef9c3}
+.ck-wk{margin-left:auto;font-size:10.5px;font-weight:800;color:#64748b}
+.ck-rev{margin:0 15px;border:1px solid #e2e8f0;border-radius:12px;padding:13px 15px;background:#fbfdfc}
+.ck-rtop{display:flex;align-items:flex-end;gap:10px}
+.ck-ract{font-size:32px;font-weight:800;line-height:1;color:#0f172a;font-variant-numeric:tabular-nums}.ck-ru{font-size:13px;color:#64748b;font-weight:700;margin-left:4px}
+.ck-rtg{margin-left:auto;text-align:right;font-size:11.5px;color:#64748b;font-weight:700;line-height:1.5}
+.ck-rr{font-size:14px;font-weight:800;padding:2px 10px;border-radius:20px;margin-top:4px;display:inline-block}
+.ck-gauge{height:9px;border-radius:6px;background:#eef2f7;margin:11px 0 6px;overflow:hidden}.ck-gauge i{display:block;height:100%;border-radius:6px;transition:width .3s}
+.ck-rmeta{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#475569;font-weight:600}
+.ck-rmeta .up{color:#16a34a}.ck-rmeta .dn{color:#dc2626}
+.ck-spark{display:flex;align-items:flex-end;gap:5px;height:44px;margin-top:13px;padding-top:8px;border-top:1px dashed #e2e8f0}
+.ck-bar{flex:1;border-radius:3px 3px 0 0;position:relative;min-height:8px}
+.ck-bar.cn{background:#a7d3ba}.ck-bar.tw{background:#a9cdd6}.ck-bar.cn.last{background:#2e7d52}.ck-bar.tw.last{background:#2f7d8f}
+.ck-bl{position:absolute;bottom:-15px;left:0;right:0;text-align:center;font-size:8.5px;color:#94a3b8}
+.ck-pad{padding:2px 15px 14px}
+.ck-kt{width:100%;border-collapse:collapse}
+.ck-kt th,.ck-kt td{border:1px solid #e2e8f0;padding:6px 8px;font-size:12px;text-align:center;color:#000}
+.ck-kt th{background:#e2e8f0;color:#334155;font-weight:700}
+.ck-lb{text-align:left!important;font-weight:700}
+.ck-in{border:1px solid var(--ln);border-radius:6px;padding:4px 6px;font:inherit;font-size:12px;width:64px;text-align:right;color:#000;background:#fff;font-variant-numeric:tabular-nums}
+.ck-u{font-size:10px;color:#64748b;margin-left:3px}
+.ck-pill{font-weight:800;padding:1px 8px;border-radius:20px;font-size:11.5px}
+.ck-mini{height:5px;background:#eef2f7;border-radius:4px;overflow:hidden;margin-top:4px}.ck-mini i{display:block;height:100%;border-radius:4px}
+.ck-evt{width:100%;border-collapse:collapse}
+.ck-evt td{border-bottom:1px solid #eef2f7;padding:5px 6px;font-size:12px;color:#0f172a;vertical-align:middle}
+.ck-dt{white-space:nowrap;width:150px}.ck-dt input{border:1px solid var(--ln);border-radius:6px;padding:3px 5px;font:inherit;font-size:11px;width:112px;color:#000;background:#fff}
+.ck-dd{font-size:9.5px;font-weight:800;color:#fff;border-radius:5px;padding:1px 5px;margin-left:4px}.ck-dd.cn{background:#2e7d52}.ck-dd.tw{background:#2f7d8f}.ck-dd.done{background:#94a3b8}
+.ck-etitle input,.ck-eown input{border:1px solid transparent;border-radius:6px;padding:3px 5px;font:inherit;font-size:12px;width:100%;color:#000;background:#fff}
+.ck-etitle input:focus,.ck-eown input:focus,.ck-dt input:focus{border-color:var(--ln)}
+.ck-eown{width:74px}
 /* ===== 중화팀 관리 현황판 (overview) ===== */
 .ovw{max-width:100%}
 .ov-sec{font-size:15px;font-weight:800;color:var(--accentInk);padding-left:11px;border-left:4px solid var(--accent);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
@@ -1387,7 +1425,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-Y</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-AF</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1654,6 +1692,7 @@ const MENULB={overview:'중화팀 관리 현황판',rr:'담당자 업무현황',
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
 let VALL=false;
+const MEMBER_TABS=['overview','calendar','calmonth']; // 팀원 열람 허용: 관리 현황판·행사·일정
 function memberScopeId(){return (VROLE==='member'&&MEMBERID&&!VALL&&TAB!=='overview')?MEMBERID:'';}
 function rrIdxOf(id){const m=mgrById(id);if(!m)return '';const i=RRDATA.findIndex(r=>String(r.who||'').includes(m.name));return i<0?'':i;}
 function applyMemberScope(){const s=memberScopeId();if(!s)return;KANMGRSEL=[s];MGSEL=s;RRSEL=rrIdxOf(s);
@@ -1803,7 +1842,7 @@ function render(){
   if(!USERS[LOGINUID]){if(lr){lr.innerHTML=loginScreen();lr.style.display='';}return;}
   if(lr){lr.innerHTML='';lr.style.display='none';}
   // 권한: 팀원(member)은 「중화팀 관리 현황판」만
-  if(VROLE==='member'&&TAB!=='overview')TAB='overview';
+  if(VROLE==='member'&&!MEMBER_TABS.includes(TAB))TAB='overview';
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
   // avatars
@@ -1817,7 +1856,7 @@ function render(){
   const cnt={overview:'',rr:rows.length,kanban:rows.length,calendar:MILESTONES.length,calmonth:'',goals:'',perf:rows.length,sales:'',separate:MGRS.filter(m=>m.empty&&!TASKS.some(t=>t.mgr===m.id)).length+PROJECTS.length};
   renderRailRole();
   applyMemberScope();
-  const menuItems=(VROLE==='member')?MENU.filter(([k])=>k==='overview'):MENU;
+  const menuItems=(VROLE==='member')?MENU.filter(([k])=>MEMBER_TABS.includes(k)):MENU;
   document.getElementById('rnav').innerHTML=menuItems.map(([k,l,ic])=>
     `<button class="${TAB===k?'on':''}" onclick="setTab('${k}')">${l}${cnt[k]!==''?`<span class="cnt">${cnt[k]}</span>`:''}</button>`).join('');
   // period control: 연도 · 월 · 주
@@ -1843,11 +1882,11 @@ function render(){
   document.getElementById('viewTitle').textContent=MENULB[TAB];
   {const mc=document.getElementById('mtCur');if(mc)mc.textContent=MENULB[TAB];}
   const extra=(TAB==='goals'||TAB==='perf'||TAB==='sales'||TAB==='overview')?'':(TAB==='separate')?` · 별도 항목 ${cnt.separate}건`:` · 표시 과제 ${rows.length}건${HIDEDONE?' · 완료 숨김':''}`;
-  document.getElementById('asof').innerHTML=(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 수출·수금 KPI + 중국법인 매출 예상'):`${periodLabel()}${extra}`;
+  document.getElementById('asof').innerHTML=(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
   // KPI / goalbar visibility
   const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='rr');
   document.getElementById('kpis').style.display=showKPI?'':'none';
-  document.getElementById('kpis').className='kpis'+(TAB==='calendar'?' compact cal4':(TAB==='kanban'?' compact':''));
+  document.getElementById('kpis').className='kpis'+((TAB==='calendar'||TAB==='calmonth')?' compact cal4':(TAB==='kanban'?' compact':''));
   document.getElementById('goalbar').style.display='none';
   if(showKPI){ if(TAB==='calendar')renderCalKPI(); else if(TAB==='calmonth')renderCalMonthKPI(); else renderKPI(rows); }
   // view
@@ -1980,6 +2019,70 @@ const FKDEF={
 let FKDATA=JSON.parse(JSON.stringify(FKDEF));
 try{const s=localStorage.getItem('wr_focuskpi_v1');if(s){const o=JSON.parse(s);if(o&&o.kpi)FKDATA=o;}}catch(e){}
 function saveFK(){try{localStorage.setItem('wr_focuskpi_v1',JSON.stringify(FKDATA));}catch(e){}}
+
+/* ===== KPI 달성현황 · 법인별(중국 左·万RMB / 대만 右·천TWD) 기초데이터 (CORPREV·CORPKPI·CORPEVENT 연동) ===== */
+const CK_CORPS=[
+  {id:'중국',flag:'🇨🇳',name:'중국법인',unit:'万RMB',sub:'닝보+북경',cls:'cn',col:'#2e7d52'},
+  {id:'대만',flag:'🇹🇼',name:'대만법인',unit:'천TWD',sub:'TBMS·Sunriser',cls:'tw',col:'#2f7d8f'}
+];
+const CK_METRICS=['M/S','하부고객','DSO','BD','ARi','진입점','판매개수'];
+const CK_UNITDEF={'M/S':'%','하부고객':'점','DSO':'점','BD':'점','ARi':'점','진입점':'개','판매개수':'EA'};
+const CORPKPIDEF={
+  rev:{W31:[
+    {법인:'중국',세부:'닝보',목표:2000,실적:1423,단위:'万RMB',비고:''},
+    {법인:'중국',세부:'북경',목표:461,실적:275,단위:'万RMB',비고:''},
+    {법인:'대만',세부:'TBMS',목표:4500,실적:3628,단위:'천TWD',비고:''},
+    {법인:'대만',세부:'Sunriser',목표:500,실적:552,단위:'천TWD',비고:''}
+  ]},
+  kpi:{W31:[
+    {법인:'중국',지표:'M/S',목표:8.5,실적:7.6,단위:'%'},{법인:'중국',지표:'하부고객',목표:8500,실적:6800,단위:'점'},
+    {법인:'중국',지표:'DSO',목표:250,실적:210,단위:'점'},{법인:'중국',지표:'BD',목표:1500,실적:1200,단위:'점'},
+    {법인:'중국',지표:'ARi',목표:500,실적:360,단위:'점'},{법인:'중국',지표:'진입점',목표:40,실적:22,단위:'개'},
+    {법인:'중국',지표:'판매개수',목표:60000,실적:41000,단위:'EA'},
+    {법인:'대만',지표:'M/S',목표:3.0,실적:2.8,단위:'%'},{법인:'대만',지표:'하부고객',목표:400,실적:320,단위:'점'},
+    {법인:'대만',지표:'DSO',목표:60,실적:38,단위:'점'},{법인:'대만',지표:'BD',목표:250,실적:180,단위:'점'},
+    {법인:'대만',지표:'ARi',목표:80,실적:55,단위:'점'},{법인:'대만',지표:'진입점',목표:15,실적:9,단위:'개'},
+    {법인:'대만',지표:'판매개수',목표:3000,실적:2100,단위:'EA'}
+  ]},
+  events:[
+    {법인:'중국',date:'2026-08-10',title:'메가젠 COXO 생산 출장',owner:'이유아'},
+    {법인:'중국',date:'2026-09-01',title:'화남본부 마오쥐 한국 방문(23명)',owner:'이유아'},
+    {법인:'중국',date:'2026-10-08',title:'청두 대형 전시회',owner:'탁종민'},
+    {법인:'대만',date:'2026-08-12',title:'광동 임플란트 교육·핸즈온',owner:'유훈종'},
+    {법인:'대만',date:'2026-08-29',title:'대만 신광병원 세미나',owner:'유훈종'},
+    {법인:'대만',date:'2026-10-25',title:'대만 대리상 계약·법인설립 심포지엄',owner:'유훈종'}
+  ]
+};
+let CORPKPI=JSON.parse(JSON.stringify(CORPKPIDEF));
+try{const s=localStorage.getItem('wr_corpkpi_v1');if(s){const o=JSON.parse(s);if(o&&(o.rev||o.kpi||o.events))CORPKPI=Object.assign({rev:{},kpi:{},events:[]},o);}}catch(e){}
+function saveCORPKPI(){try{localStorage.setItem('wr_corpkpi_v1',JSON.stringify(CORPKPI));}catch(e){}}
+function ckKeys(kind){return Object.keys((CORPKPI[kind]||{})).filter(k=>/^W\d+$/.test(k)).sort((a,b)=>(+a.slice(1))-(+b.slice(1)));}
+function ckLatestKey(kind){const ks=ckKeys(kind);return ks.length?ks[ks.length-1]:null;}
+function ckCurKey(kind){const wk=(typeof ovWeekKey==='function')?ovWeekKey():null;const d=CORPKPI[kind]||{};if(wk&&d[wk]&&d[wk].length)return wk;return ckLatestKey(kind);}
+function ckRows(kind){const k=ckCurKey(kind);return {key:k,rows:(k&&CORPKPI[kind][k])?CORPKPI[kind][k]:[]};}
+function ckEnsureRow(kind,match,make){ // 현재(또는 최신) 주차에 편집 대상 행 확보
+  let k=ckCurKey(kind);if(!k){k=(typeof ovWeekKey==='function')?ovWeekKey():'W'+((TODAY&&TODAY.getMonth?1:1));CORPKPI[kind][k]=CORPKPI[kind][k]||[];}
+  const arr=CORPKPI[kind][k]=CORPKPI[kind][k]||[];let r=arr.find(match);if(!r){r=make();arr.push(r);}return r;}
+function ckNum(n){if(n===''||n==null||isNaN(n))return '-';return (+n).toLocaleString('en-US');}
+function ckFmt(n){if(n===''||n==null||isNaN(n))return '';return (+n).toLocaleString('en-US');}
+function ckParse(v){const s=(''+v).replace(/,/g,'').trim();return s===''?'':(+s.replace(/[^0-9.\-]/g,'')||0);}
+function ckSig(rate){if(rate==null)return {c:'#94a3b8',cls:'a'};const p=rate*100;return p>=90?{c:'#16a34a',cls:'g'}:p>=70?{c:'#f59e0b',cls:'a'}:{c:'#dc2626',cls:'r'};}
+function ckHasA(v){return v!==''&&v!=null&&!isNaN(+v);}
+function ckRevForCorp(corp){const {rows,key}=ckRows('rev');
+  const parts=rows.filter(r=>r.법인===corp&&!/합계|소계|전체/.test(String(r.세부||'')));
+  let tgt=0,act=0,hasA=false;parts.forEach(p=>{tgt+=(+p.목표||0);if(ckHasA(p.실적)){act+=(+p.실적||0);hasA=true;}});
+  return {parts,tgt,act:hasA?act:null,rate:(hasA&&tgt)?act/tgt:null,key};}
+function ckSpark(corp){return ckKeys('rev').map(k=>{let a=0,has=false;(CORPKPI.rev[k]||[]).filter(r=>r.법인===corp&&!/합계|소계|전체/.test(String(r.세부||''))).forEach(p=>{if(ckHasA(p.실적)){a+=(+p.실적||0);has=true;}});return has?{k,v:a}:null;}).filter(Boolean).slice(-6);}
+function ckDelta(corp){const sp=ckSpark(corp);if(sp.length<2)return null;const a=sp[sp.length-1].v,b=sp[sp.length-2].v;if(!b)return null;return (a-b)/b;}
+function ckKpiForCorp(corp){const {rows}=ckRows('kpi');const byM={};rows.filter(r=>r.법인===corp).forEach(r=>byM[r.지표]=r);
+  return CK_METRICS.map(m=>byM[m]||{법인:corp,지표:m,목표:'',실적:'',단위:CK_UNITDEF[m]||''});}
+function ckEventsForCorp(corp){return (CORPKPI.events||[]).map((e,i)=>({e,i})).filter(x=>x.e.법인===corp).sort((a,b)=>String(a.e.date).localeCompare(String(b.e.date)));}
+function ckDday(date){if(!date)return null;const d=new Date(date+'T00:00:00');if(isNaN(d))return null;const t=new Date(todayStr()+'T00:00:00');return Math.round((d-t)/86400000);}
+function editCKrev(corp,sub,field,v){const r=ckEnsureRow('rev',x=>x.법인===corp&&x.세부===sub,()=>({법인:corp,세부:sub,목표:'',실적:'',단위:(corp==='중국'?'万RMB':'천TWD')}));r[field]=ckParse(v);saveCORPKPI();render();}
+function editCKkpi(corp,metric,field,v){const r=ckEnsureRow('kpi',x=>x.법인===corp&&x.지표===metric,()=>({법인:corp,지표:metric,목표:'',실적:'',단위:CK_UNITDEF[metric]||''}));r[field]=ckParse(v);saveCORPKPI();render();}
+function addCKevent(corp){(CORPKPI.events=CORPKPI.events||[]).unshift({법인:corp,date:todayStr(),title:'',owner:''});saveCORPKPI();render();}
+function editCKevent(i,field,v){const e=CORPKPI.events[i];if(e){e[field]=v;saveCORPKPI();render();}}
+function delCKevent(i){CORPKPI.events.splice(i,1);saveCORPKPI();render();}
 function setFKMonth(m){FKMONTH=m;render();}
 function fkNum(n){if(n===''||n==null||isNaN(n))return '-';return (+n).toLocaleString('en-US');}
 function fkFmt(n){if(n===''||n==null||isNaN(n))return '';return (+n).toLocaleString('en-US');}
@@ -2016,49 +2119,51 @@ function fkSperfRate(metric){ // 실적현황(DEAL·거래처별) 연동: 중국
     return fkKpiRow(metric); // 수량 등은 기존 지표
   }catch(e){return null;}}
 function fkPctTxt(rate){if(rate==null||isNaN(rate))return '<span style="color:#94a3b8">미입력</span>';const p=Math.round(rate*100);const c=p>=80?'#16a34a':p>=50?'#f59e0b':'#dc2626';return `<b style="color:${c}">${p}%</b>`;}
+function ckColHTML(c){
+  const rev=ckRevForCorp(c.id);const delta=ckDelta(c.id);const sp=ckSpark(c.id);
+  const maxSp=Math.max(1,...sp.map(x=>x.v));const sig=ckSig(rev.rate);
+  const rateP=rev.rate==null?null:Math.round(rev.rate*100);
+  const rem=(rev.tgt&&rev.act!=null)?Math.max(0,rev.tgt-rev.act):null;
+  let h=`<div class="ck-col"><div class="ck-h ${c.cls}"><span class="ck-flag">${c.flag}</span><span class="ck-name">${esc(c.name)}</span><span class="ck-unit">${esc(c.unit)} · ${esc(c.sub)}</span></div>`;
+  // ① 법인매출 KPI 카드
+  h+=`<div class="ck-sec"><span class="ck-no">1</span>법인매출 KPI<span class="ck-tag auto">주차별 실적시트 자동연동</span><span class="ck-wk">${rev.key?esc(rev.key):'미입력'}</span></div>`;
+  h+=`<div class="ck-rev">
+    <div class="ck-rtop"><div class="ck-ract">${rev.act!=null?ckNum(rev.act):'-'}<span class="ck-ru">${esc(c.unit)}</span></div>
+      <div class="ck-rtg">하반기 목표 ${rev.tgt?ckNum(rev.tgt):'-'} ${esc(c.unit)}<br>남은 목표 <b style="color:#dc2626">${rem!=null?ckNum(rem):'-'}</b> ${esc(c.unit)}<br><span class="ck-rr ${sig.cls}">달성율 ${rateP==null?'-':rateP+'%'}</span></div></div>
+    <div class="ck-gauge"><i style="width:${rateP==null?0:Math.min(100,rateP)}%;background:${sig.c}"></i></div>
+    <div class="ck-rmeta"><span>${rev.act==null?'세부 실적 미입력':(rev.parts.filter(p=>ckHasA(p.실적)).map(p=>esc(p.세부)+' '+ckNum(p.실적)).join(' · ')||'세부 미입력')}</span><span class="${delta==null?'':(delta>=0?'up':'dn')}">${delta==null?'':(delta>=0?'▲':'▼')+' 전주比 '+(delta>=0?'+':'')+Math.round(delta*100)+'%'}</span></div>
+    <div class="ck-spark">${sp.length?sp.map((x,i)=>`<div class="ck-bar ${c.cls}${i===sp.length-1?' last':''}" style="height:${Math.max(8,Math.round(x.v/maxSp*100))}%"><span class="ck-bl">${esc(x.k)}</span></div>`).join(''):'<span class="ck-mut" style="align-self:center;font-size:11px">주차 누적 시 추세 표시</span>'}</div>
+  </div>`;
+  // ② KPI 달성율
+  h+=`<div class="ck-sec" style="margin-top:20px"><span class="ck-no">2</span>KPI 달성율<span class="ck-tag man">지표 직접입력</span></div>`;
+  h+='<div class="ck-pad"><table class="ck-kt"><thead><tr><th style="text-align:left;width:24%">지표</th><th>목표</th><th>실적</th><th style="width:32%">달성율</th></tr></thead><tbody>';
+  ckKpiForCorp(c.id).forEach(k=>{const t=(+k.목표||0),a=(k.실적===''||k.실적==null)?null:(+k.실적||0);const rate=(t&&a!=null)?a/t:null;const s=ckSig(rate);const p=rate==null?null:Math.round(rate*100);
+    h+=`<tr><td class="ck-lb">${esc(k.지표)}</td>
+      <td><input class="ck-in" type="text" inputmode="numeric" value="${ckFmt(k.목표)}" onchange="editCKkpi('${c.id}','${k.지표}','목표',this.value)"><span class="ck-u">${esc(k.단위||'')}</span></td>
+      <td><input class="ck-in" type="text" inputmode="numeric" value="${ckFmt(k.실적)}" onchange="editCKkpi('${c.id}','${k.지표}','실적',this.value)"></td>
+      <td><span class="ck-pill ${s.cls}">${p==null?'-':p+'%'}</span><div class="ck-mini"><i style="width:${p==null?0:Math.min(100,p)}%;background:${s.c}"></i></div></td></tr>`;});
+  h+='</tbody></table></div>';
+  // ③ 하반기 주요행사
+  const evs=ckEventsForCorp(c.id);
+  h+=`<div class="ck-sec" style="margin-top:16px"><span class="ck-no">3</span>주요 행사일정 · 하반기<button class="mile-add" style="margin-left:auto" onclick="addCKevent('${c.id}')">＋ 추가</button></div>`;
+  h+='<div class="ck-pad"><table class="ck-evt"><tbody>';
+  if(!evs.length)h+=`<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:14px">등록된 일정이 없습니다.</td></tr>`;
+  evs.forEach(({e,i})=>{const dd=ckDday(e.date);const ddH=(dd!=null&&dd>=0)?`<span class="ck-dd ${c.cls}">D-${dd}</span>`:(dd!=null&&dd<0?`<span class="ck-dd done">완료</span>`:'');
+    h+=`<tr><td class="ck-dt"><input type="date" value="${esc(e.date||'')}" onchange="editCKevent(${i},'date',this.value)">${ddH}</td>
+      <td class="ck-etitle"><input value="${esc(e.title||'')}" onchange="editCKevent(${i},'title',this.value)" placeholder="행사·일정"></td>
+      <td class="ck-eown"><input value="${esc(e.owner||'')}" onchange="editCKevent(${i},'owner',this.value)" placeholder="담당"></td>
+      <td style="width:30px"><button class="mile-del" onclick="delCKevent(${i})" title="삭제">🗑</button></td></tr>`;});
+  h+='</tbody></table></div></div>';
+  return h;
+}
 function renderFocusKPI(){
-  const mlab=(FKMONTH==='h2')?`하반기 종합 (최신 ${fkLatestMonth()}월 누적)`:`${FKMONTH}월 누적`;
-  const secH=(t,s)=>`<div class="rr-sec-h">${esc(t)} <span style="font-size:11px;font-weight:600;color:#64748b">${esc(s)}</span></div>`;
-  let h=`<div class="pm-tabs fk-mtabs" style="margin-bottom:14px">`+FKMONTHS.map(([k,l])=>`<button class="${FKMONTH===k?'on':''}" onclick="setFKMonth('${k}')">${l}</button>`).join('')+`</div>`;
-  h+=`<div class="fk-note">기준: 누적 실적 ÷ 하반기 목표 = 달성율. 목표·실적 셀 직접 입력 시 자동 계산·저장 · <b>${esc(mlab)}</b></div>`;
-  // 1) 핵심 지표
-  h+=secH('핵심 지표','중국법인 매출 · 대만 법인/대리점 · 홍콩 대리점');
-  h+='<div class="fk-pillars">'+FKDATA.pillar.map(p=>{const r=fkRate(p);const v=fkVal(p);
-    return `<div class="fk-pcard"><div class="fk-ph"><b>${esc(p.name)}</b><span class="fk-pct2">${fkPctTxt(r)}</span></div>
-      <div class="fk-prow"><span class="fk-pl">목표</span><input class="fk-in" type="text" inputmode="numeric" value="${fkFmt(p.target)}" onchange="editFKfield('pillar','${p.id}','target',this.value)"> <span class="fk-u">${esc(p.unit)}</span></div>
-      <div class="fk-prow"><span class="fk-pl">실적</span><input class="fk-in" type="text" inputmode="numeric" value="${fkFmt(v)}" onchange="editFKval('pillar','${p.id}',this.value)"> <span class="fk-u">${esc(p.unit)}</span></div>
-      <div class="fk-pnote">${esc(p.note||'')}</div></div>`;}).join('')+'</div>';
-  // 2·3·4) 좌: 중국 수출·수금 + KPI 달성율 / 우: 주요 행사
-  h+='<div class="fk-2col"><div class="fk-left">';
-  // 2) 중국 수출·수금 달성율 (실적현황 연동)
-  h+=secH('중국 수출 · 수금 달성율','「실적 현황」 자동 연동');
-  const trade=[['수출액($)','수출 달성율'],['수금($)','수금 달성율'],['수출 수량(EA)','수량 달성율']];
-  h+='<table class="ptable fktbl"><thead><tr><th style="text-align:left;width:140px">항목</th><th style="width:120px">목표</th><th style="width:120px">실적</th><th style="width:90px">달성율</th><th style="text-align:left">비고</th></tr></thead><tbody>';
-  trade.forEach(([metric,lab])=>{const d=fkSperfRate(metric);
-    if(!d){h+=`<tr><td class="rl">${esc(lab)}</td><td colspan="4" style="color:#94a3b8">실적현황 데이터 없음</td></tr>`;return;}
-    h+=`<tr><td class="rl">${esc(lab)}</td><td class="fk-r">${d.target?fkNum(d.target):'-'}</td><td class="fk-r">${d.actual!=null?fkNum(d.actual):'-'}</td><td class="fk-r">${fkPctTxt(d.arate)}</td><td class="rl" style="font-size:11.5px;color:#64748b;white-space:normal">${esc(d.note||'')}</td></tr>`;});
-  h+='</tbody></table><div class="fk-note" style="margin-top:6px">수출·수금 수치는 「중화팀 관리 현황판」 실적 현황 및 주간보고(엑셀 불러오기)와 자동 연동됩니다.</div>';
-  // 3) KPI 달성율 (중국)
-  h+=secH('KPI 달성율','중국 · 하반기 목표 대비 누적');
-  h+='<table class="ptable fktbl"><thead><tr><th style="width:80px">구분</th><th style="text-align:left">지표</th><th style="width:130px">하반기 목표</th><th style="width:130px">누적 실적</th><th style="width:90px">달성율</th></tr></thead><tbody>';
-  FKDATA.kpi.forEach(k=>{const r=fkRate(k);const v=fkVal(k);
-    h+=`<tr><td>${esc(k.grp)}</td><td class="rl">${esc(k.name)}</td>
-      <td class="fk-r"><input class="fk-in" type="text" inputmode="numeric" value="${fkFmt(k.target)}" onchange="editFKfield('kpi','${k.id}','target',this.value)"> <span class="fk-u">${esc(k.unit)}</span></td>
-      <td class="fk-r"><input class="fk-in" type="text" inputmode="numeric" value="${fkFmt(v)}" onchange="editFKval('kpi','${k.id}',this.value)"> <span class="fk-u">${esc(k.unit)}</span></td>
-      <td class="fk-r">${fkPctTxt(r)}</td></tr>`;});
-  h+='</tbody></table>';
-  h+='</div><div class="fk-right">';
-  // 4) 주요 행사 일정
-  const evs=fkEvents().map((e,i)=>({e,i})).sort((a,b)=>String(a.e.date).localeCompare(String(b.e.date)));
-  h+=`<div class="pm-head" style="margin:0 0 8px"><h3 style="font-size:14px">주요 행사 일정 <span style="font-size:11px;color:#64748b;font-weight:600">· ${FKMONTH==='h2'?'하반기':FKMONTH+'월'} · ${evs.length}건</span></h3><button class="mile-add" onclick="addFKevent()">＋ 일정 추가</button></div>`;
-  h+='<table class="ptable fktbl"><thead><tr><th style="width:130px">일자</th><th style="text-align:left">행사·일정</th><th style="width:130px">담당/지역</th><th style="width:40px"></th></tr></thead><tbody>';
-  if(!evs.length)h+=`<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px">등록된 일정이 없습니다.</td></tr>`;
-  evs.forEach(({e,i})=>{h+=`<tr><td><input type="date" value="${esc(e.date||'')}" onchange="editFKevent(${i},'date',this.value)"></td>
-    <td class="rl"><input value="${esc(e.title||'')}" onchange="editFKevent(${i},'title',this.value)" placeholder="행사·일정" style="text-align:left"></td>
-    <td><input value="${esc(e.owner||'')}" onchange="editFKevent(${i},'owner',this.value)" placeholder="담당/지역"></td>
-    <td style="text-align:center"><button class="mile-del" onclick="delFKevent(${i})" title="삭제">🗑</button></td></tr>`;});
-  h+='</tbody></table>';
-  h+='</div></div>';
+  const selW=ovWeekKey();const dataW=ckCurKey('rev')||ckCurKey('kpi');const wLab=(dataW&&dataW!==selW)?`${esc(selW)} 선택 · 데이터 ${esc(dataW)}(최신)`:esc(dataW||selW);
+  let h=`<div class="fk-note">법인별 KPI 달성현황 · 중국(左·万RMB) / 대만(右·천TWD) · ①법인매출은 <b>CORPREV</b>, ②KPI 달성율은 <b>CORPKPI</b>, ③행사는 <b>CORPEVENT</b> 시트와 자동 연동(직접 입력·수정 시 저장) · 기준 주차 <b>${wLab}</b></div>`;
+  // 상단 비교 스트립
+  h+='<div class="ck-cmp">'+CK_CORPS.map(c=>{const rev=ckRevForCorp(c.id);const s=ckSig(rev.rate);const p=rev.rate==null?null:Math.round(rev.rate*100);
+    return `<div class="ck-cbox"><span class="ck-cflag">${c.flag}</span><div><div class="ck-cn">${esc(c.name)}</div><div class="ck-ccur">단위 ${esc(c.unit)}</div></div>
+      <div class="ck-cbig"><b>${rev.act!=null?ckNum(rev.act):'-'}</b> <small>/ ${rev.tgt?ckNum(rev.tgt):'-'} ${esc(c.unit)}</small><br><span class="ck-crate ${s.cls}">달성 ${p==null?'-':p+'%'}</span></div></div>`;}).join('')+'</div>';
+  h+='<div class="ck-cols">'+CK_CORPS.map(ckColHTML).join('')+'</div>';
   return h;
 }
 /* ===== 중화팀 관리 현황판 (메인 · 라이브 요약) ===== */
@@ -2095,7 +2200,8 @@ try{const mm=(OVMEET.monthly||[]).find(x=>x.wk==='말일');if(mm&&/실적점검\
 function saveOVMEET(){try{localStorage.setItem('wr_ovmeet_v1',JSON.stringify(OVMEET));}catch(e){}}
 function ovRows(){const out=[];TASKS.forEach((t,ti)=>{let idx=-1;const wk=t.wk||[];for(let i=wk.length-1;i>=0;i--){if(wk[i]){idx=i;break;}}if(idx<0)return;const c=wk[idx];out.push({t,ti,mgr:t.mgr,country:t.country,label:c.label||t.name,p:(c.p||0),note:c.note||'',due:c.due||t.due,cat:t.cat||''});});return out;}
 function ovSaleRate(metric){try{const r=(SPERF.kpi||[]).find(k=>k.country==='중국'&&k.metric===metric);return r&&r.arate!=null?r.arate:null;}catch(e){return null;}}
-function ovCorpRev(){try{const r=(ovRevD()||[]).find(x=>x.corp==='전체'&&x.region==='합계');return r?r.expect:null;}catch(e){return null;}}
+function ovCorpRev(){try{const r=ckRevForCorp('중국');return r&&r.act!=null?r.act:null;}catch(e){return null;}}
+function ovTwRev(){try{const r=ckRevForCorp('대만');return r&&r.act!=null?r.act:null;}catch(e){return null;}}
 function ovPct(p){return (p==null)?'–':Math.round(p*100)+'%';}
 function ovStatusBadge(p){const n=p||0;if(n>=100)return '<span class="ov-st done">완료</span>';if(n<=20)return '<span class="ov-st start">착수</span>';return '<span class="ov-st prog">진행중</span>';}
 function ovExportSum(country){try{return (SPERF.kpi||[]).filter(k=>k.country===country&&/수출/.test(k.metric)&&!/수량/.test(k.metric)).reduce((s,k)=>s+(k.actual||0),0);}catch(e){return 0;}}
@@ -2165,7 +2271,7 @@ function renderOverview(){
   h+='<table class="ov-tbl" style="margin-top:12px"><thead><tr><th style="width:52px">주차</th><th style="text-align:left">매월 반복 회의</th></tr></thead><tbody>';
   OVMEET.monthly.forEach(m=>{h+=`<tr><td><b>${esc(m.wk)}</b></td><td class="rl">${esc(m.desc)}</td></tr>`;});
   h+='</tbody></table></div></div>';
-  {const rev=ovCorpRev();h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인 매출 예상 ${rev!=null?rev.toLocaleString('en-US')+'만RMB':'–'}</span></div>`;}
+  {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
   h+=ovDealTable();
   h+='<div class="ov-foot">※ 데이터: 담당자 업무현황·지시 업무·거래처별 실적·중화팀 R&R/루틴에서 자동 집계 · 매주 갱신</div>';
   return h+'</div>';
@@ -2223,34 +2329,25 @@ function renderAssign(){
   const prioOpt=(sel)=>[['높음','상'],['중간','중'],['낮음','하']].map(([v,o])=>`<option value="${v}" ${(sel||'중간')===v?'selected':''}>${o}</option>`).join('');
   const stOpt=(sel)=>['착수전','진행중','완료'].map(o=>`<option ${(sel||'착수전')===o?'selected':''}>${o}</option>`).join('');
   const openN=ASSIGN.filter(a=>!a.done).length;
-  let h=`<div class="ptable-wrap" style="margin:0 0 18px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📌 지시 업무 <span style="font-size:11px;color:var(--dim);font-weight:600">· 진행 ${openN} / 전체 ${ASSIGN.length} · 담당자별 업무에 반영</span></h3><span class="unit">🟩 팀장 지시 · 🟦 담당자 수행 · 자동저장</span><button class="reset" onclick="addAssign()">＋ 지시 추가</button></div>`;
+  let h=`<div class="ptable-wrap" style="margin:0 0 18px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📌 지시 업무 <span style="font-size:11px;color:var(--dim);font-weight:600">· 진행 ${openN} / 전체 ${ASSIGN.length} · 담당자별 업무에 반영</span></h3><span class="unit">자동저장</span><button class="reset" onclick="addAssign()">＋ 지시 추가</button></div>`;
   h+='<div style="overflow-x:auto"><table class="ptable assign">'
-    +'<thead><tr class="agrp">'
-    +'<th colspan="5" class="grp-lead">🟩 팀장 지시</th>'
-    +'<th colspan="3" class="grp-do">🟦 담당자 수행</th>'
-    +'<th colspan="2"></th></tr>'
-    +'<tr>'
+    +'<thead><tr>'
     +'<th style="width:120px">지시일</th>'
     +'<th style="width:120px">기한</th>'
-    +'<th style="width:120px">담당자</th>'
+    +'<th style="width:130px">담당자</th>'
     +'<th style="text-align:left">지시사항</th>'
     +'<th style="width:64px">중요도</th>'
-    +'<th style="width:120px">착수일</th>'
-    +'<th style="width:80px">상태</th>'
-    +'<th style="width:72px">진행율</th>'
-    +'<th style="width:40px"></th><th style="width:36px"></th></tr></thead><tbody>';
-  if(!ASSIGN.length)h+=`<tr><td colspan="10" style="text-align:center;color:var(--faint);padding:18px">지시 업무가 없습니다. 「＋ 지시 추가」로 등록하세요.</td></tr>`;
+    +'<th style="width:52px">통지</th>'
+    +'<th style="width:48px">삭제</th></tr></thead><tbody>';
+  if(!ASSIGN.length)h+=`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:18px">지시 업무가 없습니다. 「＋ 지시 추가」로 등록하세요.</td></tr>`;
   ASSIGN.forEach((a,i)=>{
     h+=`<tr class="${a.done?'adone':''}">
-      <td class="c-lead"><input type="date" value="${esc(a.since||'')}" onchange="editAssign(${i},'since',this.value)"></td>
-      <td class="c-lead"><input type="date" value="${esc(a.due||'')}" onchange="editAssign(${i},'due',this.value)"></td>
-      <td class="c-lead"><select onchange="editAssign(${i},'mgr',this.value)">${mgrOpt(a.mgr)}</select></td>
-      <td class="c-lead rl"><input value="${esc(a.task||'')}" onchange="editAssign(${i},'task',this.value)" placeholder="지시사항 입력" style="text-align:left"></td>
-      <td class="c-lead"><select onchange="editAssign(${i},'prio',this.value)">${prioOpt(a.prio)}</select></td>
-      <td class="c-do"><input type="date" value="${esc(a.start||'')}" onchange="editAssign(${i},'start',this.value)"></td>
-      <td class="c-do"><select onchange="editAssign(${i},'status',this.value)">${stOpt(a.status)}</select></td>
-      <td class="c-do" style="text-align:center"><input type="number" min="0" max="100" value="${a.prog||0}" onchange="editAssign(${i},'prog',this.value)" style="width:52px;text-align:center">%</td>
-      <td style="text-align:center"><button class="xbtn mailx" title="담당자에게 이메일 전송" onclick="emailAssign(${i})">✉</button></td>
+      <td><input type="date" value="${esc(a.since||'')}" onchange="editAssign(${i},'since',this.value)"></td>
+      <td><input type="date" value="${esc(a.due||'')}" onchange="editAssign(${i},'due',this.value)"></td>
+      <td><select onchange="editAssign(${i},'mgr',this.value)">${mgrOpt(a.mgr)}</select></td>
+      <td class="rl"><input value="${esc(a.task||'')}" onchange="editAssign(${i},'task',this.value)" placeholder="지시사항 입력" style="text-align:left"></td>
+      <td><select onchange="editAssign(${i},'prio',this.value)">${prioOpt(a.prio)}</select></td>
+      <td style="text-align:center"><button class="xbtn mailx" title="담당자에게 이메일 전송(통지)" onclick="emailAssign(${i})">✉</button></td>
       <td style="text-align:center"><button class="mile-del" onclick="delAssign(${i})" title="삭제">🗑</button></td>
     </tr>`;});
   return h+'</tbody></table></div></div>';
@@ -4000,7 +4097,7 @@ function saveForm(idx){
 }
 function delTask(idx){TASKS.splice(idx,1);saveTasks();closeForm();closeDetail();render();toast('삭제되었습니다');}
 function exportData(){
-  const data={tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,vrole:VROLE,memberid:MEMBERID,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS};
+  const data={tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,vrole:VROLE,memberid:MEMBERID,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,corpkpi:CORPKPI,ovmeet:OVMEET,fdocs:FOCUSDOCS};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='주간업무보고_백업.json';a.click();
   toast('전체 데이터 백업을 내려받았습니다');
@@ -4029,6 +4126,7 @@ function applyBackup(d){
   if(typeof d.vrole==='string'){VROLE=d.vrole;try{localStorage.setItem('wr_vrole',VROLE);}catch(e){}}
   if(typeof d.memberid==='string'){MEMBERID=d.memberid;try{localStorage.setItem('wr_memberid',MEMBERID);}catch(e){}}
   if(d.fkkpi&&d.fkkpi.kpi){FKDATA=d.fkkpi;saveFK();}
+  if(d.corpkpi&&(d.corpkpi.rev||d.corpkpi.kpi||d.corpkpi.events)){CORPKPI=Object.assign({rev:{},kpi:{},events:[]},d.corpkpi);saveCORPKPI();}
   if(d.ovmeet&&d.ovmeet.weekly){OVMEET=d.ovmeet;saveOVMEET();}
   if(d.fdocs&&typeof d.fdocs==='object'){FOCUSDOCS=d.fdocs;saveFocusDocs();}
   render();
@@ -4077,7 +4175,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){TAB=(VROLE==='member')?'overview':t;document.body.classList.remove('rail-open');render();}
+function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'overview':t;document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -4150,13 +4248,34 @@ function applyMarketRows(rows){
     if(ex)Object.assign(ex,rec);else MILESTONES.push(Object.assign({id:'ml'+Date.now()+'_'+n},rec));n++;});
   if(n)try{saveMile();}catch(e){}return n;
 }
+function applyCorpRevRows(rows){
+  const byWk={};rows.forEach(o=>{const corp=String(svPick(o,['법인'])||'').trim();const sub=String(svPick(o,['세부','지역','딜러'])||'').trim();if(!corp)return;
+    const wm=String(svPick(o,['주차'])||'').match(/(\d{1,2})/);const key=wm?('W'+wm[1]):((typeof ovWeekKey==='function')?ovWeekKey():'W0');
+    (byWk[key]=byWk[key]||[]).push({법인:corp,세부:sub,목표:svNum(svPick(o,['목표'])),실적:svNum(svPick(o,['실적'])),단위:String(svPick(o,['단위'])||'').trim(),비고:String(svPick(o,['비고'])||'').trim()});});
+  let n=0;CORPKPI.rev=CORPKPI.rev||{};Object.keys(byWk).forEach(k=>{CORPKPI.rev[k]=byWk[k];n+=byWk[k].length;});
+  if(n)saveCORPKPI();return n;
+}
+function applyCorpKpiRows(rows){
+  const byWk={};rows.forEach(o=>{const corp=String(svPick(o,['법인'])||'').trim();const metric=String(svPick(o,['지표'])||'').trim();if(!corp||!metric)return;
+    const wm=String(svPick(o,['주차'])||'').match(/(\d{1,2})/);const key=wm?('W'+wm[1]):((typeof ovWeekKey==='function')?ovWeekKey():'W0');
+    (byWk[key]=byWk[key]||[]).push({법인:corp,지표:metric,목표:svNum(svPick(o,['목표'])),실적:svNum(svPick(o,['실적'])),단위:String(svPick(o,['단위'])||'').trim()});});
+  let n=0;CORPKPI.kpi=CORPKPI.kpi||{};Object.keys(byWk).forEach(k=>{CORPKPI.kpi[k]=byWk[k];n+=byWk[k].length;});
+  if(n)saveCORPKPI();return n;
+}
+function applyCorpEventRows(rows){
+  const out=[];rows.forEach(o=>{const corp=String(svPick(o,['법인'])||'').trim();const title=String(svPick(o,['행사','일정','활동'])||'').trim();if(!corp||!title)return;
+    out.push({법인:corp,date:toDateStr(svPick(o,['일자','날짜','일시'])),title,owner:String(svPick(o,['담당'])||'').trim()});});
+  if(out.length){CORPKPI.events=out;saveCORPKPI();}return out.length;
+}
 function importMasterWB(wb){
   const byName={};wb.SheetNames.forEach(n=>byName[n.trim().toUpperCase()]=n);
   const rowsOf=key=>{const nm=byName[key];if(!nm)return null;return xsHeaderObjs(XLSX.utils.sheet_to_json(wb.Sheets[nm],{header:1,defval:null}));};
   const parts=[];
   const w=rowsOf('WEEKLY');if(w&&w.length){const n=syncApplyWeekly(w);if(n)parts.push('업무 '+n+'건');}
   const d=rowsOf('DEAL');if(d&&d.length){const n=applyDealRows(d);if(n)parts.push('실적 '+n+'건');}
-  const rv=rowsOf('REV');if(rv&&rv.length){const n=applyRevRows(rv);if(n)parts.push('법인매출 '+n+'행');}
+  const cr=rowsOf('CORPREV');if(cr&&cr.length){const n=applyCorpRevRows(cr);if(n)parts.push('법인매출현황 '+n+'행');}
+  const ck=rowsOf('CORPKPI');if(ck&&ck.length){const n=applyCorpKpiRows(ck);if(n)parts.push('법인KPI '+n+'행');}
+  const ce=rowsOf('CORPEVENT');if(ce&&ce.length){const n=applyCorpEventRows(ce);if(n)parts.push('하반기행사 '+n+'건');}
   const mk=rowsOf('MARKET');if(mk&&mk.length){const n=applyMarketRows(mk);if(n)parts.push('마케팅 '+n+'건');}
   const sc=rowsOf('SCHEDULE');if(sc&&sc.length){const n=applySchedRows(sc);if(n)parts.push('일정 '+n+'건');}
   const rr=rowsOf('RR');if(rr&&rr.length){const n=applyRRRows(rr);if(n)parts.push('R&R '+n+'명');}
@@ -4169,7 +4288,7 @@ function importWeekly(input){
   r.onload=e=>{try{
     const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
     const upper=wb.SheetNames.map(n=>n.trim().toUpperCase());
-    if(['RR','SCHEDULE','WEEKLY','MARKET','DEAL','REV'].some(k=>upper.includes(k))){
+    if(['RR','SCHEDULE','WEEKLY','MARKET','DEAL','REV','CORPREV','CORPKPI','CORPEVENT'].some(k=>upper.includes(k))){
       const parts=importMasterWB(wb);render();
       toast('연동 마스터 반영 · '+(parts.length?parts.join(' / '):'인식된 탭 없음'));
       input.value='';return;
@@ -4178,12 +4297,13 @@ function importWeekly(input){
     const A=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
     const rs=row=>(row||[]).map(c=>(c instanceof Date)?c:String(c==null?'':c).trim());
     const norm=x=>String(x==null?'':x).replace(/\s/g,'');
-    let tH=-1,kH=-1,rH=-1;
+    let tH=-1,kH=-1,rH=-1,dH=-1;
     A.forEach((row,i)=>{const s=(row||[]).map(c=>norm(c));
       if(tH<0&&s.some(x=>x.includes('핵심과제')))tH=i;
-      if(kH<0&&s.some(x=>x.includes('지표'))&&s.some(x=>x.includes('목표')))kH=i;
+      if(dH<0&&s.some(x=>x.includes('수출목표'))&&s.some(x=>x.includes('수금')))dH=i;
+      if(kH<0&&s.some(x=>x.includes('지표'))&&s.some(x=>x.includes('목표'))&&!s.some(x=>x.includes('수출목표')))kH=i;
       if(rH<0&&s.some(x=>x.includes('법인'))&&s.some(x=>x.includes('지역')))rH=i;});
-    if(tH<0&&kH<0&&rH<0){toast('엑셀 양식을 인식하지 못했습니다 — 「핵심과제」 또는 「지표+목표」/「법인+지역」 헤더가 있어야 합니다');input.value='';return;}
+    if(tH<0&&kH<0&&rH<0&&dH<0){toast('엑셀 양식을 인식하지 못했습니다 — 「핵심과제」 또는 「거래처+수출목표」/「법인+지역」 헤더가 있어야 합니다');input.value='';return;}
     if(mM)MONTH=Math.min(12,Math.max(1,+mM[1]));
     WEEKS=buildWeeks(MONTH); let wIdx=Math.min(W,WEEKS.length-1);
     if(wM){const iso=+wM[1];for(let k=0;k<WEEKS.length;k++){if(isoWeekNum(`${YEAR}-${String(MONTH).padStart(2,'0')}-${String(k*7+1).padStart(2,'0')}`)===iso){wIdx=k;break;}}}
@@ -4233,11 +4353,23 @@ function importWeekly(input){
         let rate=numOf(s[cRt]);if(rate!=null&&rate>1)rate=rate/100;
         rev.push({corp,region,expect:numOf(s[cE]),rate,note:String(s[cB]||'').trim()});}
       if(rev.length)impRev=rev;}
+    // 거래처별 수출·수금 실적 → 그 주차 deal
+    let impDeal=null;
+    if(dH>=0){const H=(A[dH]||[]).map(c=>norm(c));const ci=n=>H.findIndex(x=>x.includes(norm(n)));
+      let cD=ci('거래처');if(cD<0)cD=0;const cET=ci('수출목표'),cEA=ci('수출실적'),cST=ci('수금목표'),cSA=ci('수금실적'),cSh=ci('선적');
+      const deal=[];
+      for(let i=dH+1;i<A.length;i++){const s=rs(A[i]);const c0=String(s[0]||'').trim();if(/^■/.test(c0))break;
+        const dealer=String((cD>=0?s[cD]:'')||'').trim();if(!dealer||/^(소계|합계|계)$/.test(dealer))continue;
+        const grp=/홍콩/.test(dealer)?'홍콩':(/대만/.test(dealer)?'대만':'중국');
+        let ship=numOf(cSh>=0?s[cSh]:null);if(ship!=null&&ship>1)ship/=100;
+        deal.push({dealer,grp,exT:numOf(cET>=0?s[cET]:null),exA:numOf(cEA>=0?s[cEA]:null),suT:numOf(cST>=0?s[cST]:null),suA:numOf(cSA>=0?s[cSA]:null),ship});}
+      if(deal.length)impDeal=deal;}
     const md={key:'W'+(wM?wM[1]:String(wIdx+27)),wk:wM?+wM[1]:(wIdx+27),month:MONTH};
-    const snap={week:`${YEAR}년 ${MONTH}월${wM?' · W'+wM[1]:''}`,_key:md.key,wk:md.wk,month:md.month,kpi:impKpi||(SPERF.kpi||[]),rev:impRev||(SPERF.rev||[])};
+    const prevDeal=(SPHIST[md.key]&&SPHIST[md.key].deal)||null;
+    const snap={week:`${YEAR}년 ${MONTH}월${wM?' · W'+wM[1]:''}`,_key:md.key,wk:md.wk,month:md.month,kpi:impKpi||(SPERF.kpi||[]),rev:impRev||(SPERF.rev||[]),deal:impDeal||prevDeal||(SPERF.deal||null)};
     SPHIST[md.key]=snap; SPERF=snap; SPCUR=snap; SPMOSEL=null; saveSPERF();
     W=wIdx;PERIOD='week';render();
-    const parts=[]; if(nTask)parts.push(`과제 ${nTask}건`); if(impKpi)parts.push(`KPI ${impKpi.length}행`); if(impRev)parts.push(`매출 ${impRev.length}행`);
+    const parts=[]; if(nTask)parts.push(`과제 ${nTask}건`); if(impDeal)parts.push(`실적 ${impDeal.length}거래처`); if(impKpi)parts.push(`KPI ${impKpi.length}행`); if(impRev)parts.push(`매출 ${impRev.length}행`);
     const cloudMsg=(CLOUD.autoWeekly&&cloudAvailable())?' · 클라우드 자동저장':(CLOUD.autoWeekly?' · ⚠클라우드 미설정(설정에서 연동)':'');
     toast(`${snap.week} 반영 · ${parts.length?parts.join(' / '):'변경 항목 없음(양식 확인)'}${cloudMsg}`);
     if(CLOUD.autoWeekly&&cloudAvailable())setTimeout(cloudSave,300);
@@ -4623,6 +4755,7 @@ function salesTrendChart(weeks,selMonth,D){
   return `<div class="schart2" style="margin-bottom:16px">${cn}${ht}</div>`;
 }
 function viewSales(){
+  if(SALESTAB==='corp')SALESTAB='deal'; // REV 은퇴 · 법인매출은 KPI 달성현황(CORPREV)로 이관
   const weeks=Object.values(SPHIST).sort((a,b)=>(a.wk||0)-(b.wk||0));
   let cur=SPERF;
   if(SPERFVIEW==='month'){const mo=SPMOSEL||SPERF.month||7;const inMo=weeks.filter(w=>(w.month||7)===mo);cur=inMo.length?inMo[inMo.length-1]:SPERF;}
@@ -4638,7 +4771,7 @@ function viewSales(){
   const sc2=(lb,ex,su,sub,acc)=>`<div class="skc"><div class="skc-l">${lb}</div>
     <div class="skc2"><div class="skc2-i"><span class="k">수출</span><span class="v ${acc?'acc':''}">$${fmtMoney(ex)}</span></div><div class="skc2-i"><span class="k">수금</span><span class="v">${su?'$'+fmtMoney(su):'-'}</span></div></div><div class="skc-s">${sub||''}</div></div>`;
   const cnEx=sumC('중국','수출'), cnSuV=sumC('중국','수금'), twEx=sumC('대만','수출'), twSu=sumC('대만','수금'), hkEx=sumC('홍콩','수출'), hkSu=sumC('홍콩','수금');
-  let html=`<div class="sec-h" style="margin:-10px 0 8px"><h2>실적 현황</h2><span class="hint">${esc(cur.week||'')} · 수출·수금 + 중국법인 매출</span><span class="line"></span></div>`;
+  let html=`<div class="sec-h" style="margin:-10px 0 8px"><h2>실적 현황</h2><span class="hint">${esc(cur.week||'')} · 거래처별 수출·수금 KPI</span><span class="line"></span></div>`;
   // 주간/월간 + 선택기 (담당자 업무현황과 동일한 기간바 서식)
   let chips='';
   if(SPERFVIEW==='week'){
@@ -4665,7 +4798,7 @@ function viewSales(){
     +skCard('대만 수출 실적',DS.twExA,DS.twExT,'TBMS·Sunriser')
     +skCard('홍콩 대리점',DS.hkExA,DS.hkExT,'킨월드')
     +'</div>';
-  html+='<div class="pm-tabs" style="margin:16px 0 8px">'+[['deal','거래처별 수출·수금 실적'],['corp','중국 법인 매출 예상'],['hq','법인·본사 매출 관리']].map(([k,l])=>`<button class="${SALESTAB===k?'on':''}" onclick="setSalesTab('${k}')">${l}</button>`).join('')+'</div>';
+  html+='<div class="pm-tabs" style="margin:16px 0 8px">'+[['deal','거래처별 수출·수금 실적'],['hq','법인·본사 매출 관리']].map(([k,l])=>`<button class="${SALESTAB===k?'on':''}" onclick="setSalesTab('${k}')">${l}</button>`).join('')+'</div>';
   // 거래처별 수출·수금 실적 (첨부 표) — 더블클릭 편집
   if(!cur.deal)cur.deal=JSON.parse(JSON.stringify(DEALSEED));
   const D=cur.deal;
