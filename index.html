@@ -326,7 +326,7 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 table.mcal{width:100%;border-collapse:collapse;table-layout:fixed}
 table.mcal th{border:1px solid var(--ln2);background:#eceef1;font-size:12px;font-weight:700;color:#000;padding:6px 4px;text-align:left;padding-left:8px}
 table.mcal th.sun{color:#c0392b}table.mcal th.sat{color:#2f6fb0}
-table.mcal td{border:1px solid var(--ln2);vertical-align:top;height:82px;padding:3px 4px}
+table.mcal td{border:1px solid var(--ln2);vertical-align:top;height:66px;padding:3px 4px}
 table.mcal td.mcal-empty{background:#fafafb}
 table.mcal .md-n{font-size:12.5px;font-weight:700;color:#000;margin-bottom:2px}
 table.mcal td.sun .md-n{color:#c0392b}table.mcal td.sat .md-n{color:#2f6fb0}
@@ -339,6 +339,19 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .md-ev:hover{background:#dce7f2}
 /* 구글식 좌측 달력 + 우측 입력 패널 */
 .cal-wrap{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
+.cal-col{display:flex;flex-direction:column;gap:16px}
+.cal-col .cal-main{width:100%;flex:none}
+.cal-below{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.cal-below .cal-todo,.cal-below .mcal-memo{max-width:none;min-width:0;width:auto;flex:none}
+.cal-below .mcal-memo textarea{min-height:180px}
+.cal-below .cal-todo .ct-list{max-height:none}
+.cal-evtbl{border:1px solid var(--ln)}
+.ptable.calevt{width:100%}
+.ptable.calevt th{font-size:12px;padding:7px 9px}
+.ptable.calevt td{font-size:12.5px;padding:7px 9px;color:#000}
+.calevt-row{cursor:pointer}
+.calevt-row:hover td{background:#f5f7f9}
+@media(max-width:820px){.cal-below{grid-template-columns:1fr}}
 .md-ev.mile{white-space:normal;line-height:1.25;color:#fff;border:1px solid;border-left-width:1px;border-radius:0;padding:2px 5px;font-weight:600;font-size:10.5px}
 .md-ev.mile .me-d{display:block;font-size:9.5px;font-weight:500;opacity:.9}
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
@@ -433,10 +446,11 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.sched td.progtd{white-space:nowrap}
 .ptable.sched td.progtd input{width:46px;text-align:right}
 .ptable.sched td.progtd b{font-weight:700;color:var(--dim);margin-left:2px}
-.milefilt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px}
-.milefilt .fl{font-size:11px;font-weight:700;color:var(--dim);margin-left:6px}
+.milefilt{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 10px}
+.milefilt .fl{font-size:9px;font-weight:700;color:var(--dim);margin-left:5px}
 .milefilt .fl:first-child{margin-left:0}
-.milefilt button{font-size:12px;font-weight:700;color:var(--dim);background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:5px 11px;cursor:pointer}
+.milefilt .per-dd{font-size:10.5px;padding:4px 8px}
+.milefilt button{font-size:10px;font-weight:700;color:var(--dim);background:var(--pn);border:1px solid var(--ln);border-radius:7px;padding:4px 9px;cursor:pointer}
 .milefilt button:hover{border-color:var(--accent);color:var(--accent)}
 .milefilt button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .ptable.sched td.gcell{padding:5px 8px;vertical-align:middle}
@@ -807,6 +821,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-tv{font-size:26px;font-weight:800;color:var(--accentInk);font-variant-numeric:tabular-nums;line-height:1}
 .ov-tu{font-size:12px;font-weight:700;color:var(--dim);margin-left:2px}
 .ov-tl{font-size:12px;color:var(--dim);margin-top:7px;font-weight:600}
+.ov-kpi{display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px;margin-left:5px;background:#f1f5f9}
+.ov-kpi.ov-g{color:#16a34a}.ov-kpi.ov-a{color:#f59e0b}.ov-kpi.ov-r{color:#dc2626}
 .ov-tile.ev .ov-et{font-size:14px;font-weight:800;color:var(--accentInk);line-height:1.3}
 .ov-tile.ev .ov-et.mut{color:var(--faint);font-weight:600}
 .ov-tile.ev .ov-ed{font-size:11.5px;color:var(--dim);font-weight:700;margin-top:3px}
@@ -884,11 +900,19 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-st.prog{background:var(--accentSoft);color:var(--accentInk)}
 .ov-st.start{background:var(--reviewSoft);color:var(--review)}
 .ov-perf .ov-note{max-width:none}
-.ov-tbl tr.ov-sub-row td{background:#eef4ef;font-weight:600}
+.ov-tbl tr.ov-sub-row td{background:#eef4ef;font-weight:400}
+/* 실적 현황: 숫자 맑은 고딕 · 굵게 없음 */
+.ov-perf tbody td{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;font-weight:400}
+.ov-perf tbody td.ov-pc{font-weight:400}
+.ov-perf tbody td b{font-weight:400}
+.ov-tbl tr.ov-tot-row td{background:#eef4ff;font-weight:400}
 .goal-decl{background:#eef4ef;border:1px solid #d9e6dd;border-radius:10px;padding:11px 14px;margin:-2px 0 16px;font-size:13.5px;font-weight:700;color:#1c5138;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.mg-ctrl{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.mg-ctrl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .mg-ctrl .nametabs.inline{margin:0}
-.mg-sep{width:1px;height:20px;background:#dbe3de;margin:0 4px}
+.mg-ctrl .nametabs button{font-size:10px;padding:5px 11px;border-radius:7px}
+.mg-ctrl .qseg-b{font-size:10px;padding:4px 10px}
+.mg-ctrl .mg-lb,.mg-ctrl>span{font-size:11px}
+.mg-sep{width:1px;height:16px;background:#dbe3de;margin:0 3px}
 .goal-decl .gd-tag{font-size:11px;font-weight:800;color:#fff;background:#2e7d52;border-radius:6px;padding:3px 9px}
 
 /* 성과 라인업 (스토리텔링) */
@@ -940,7 +964,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .gs-pcard p{font-size:12.3px;line-height:1.6;color:#cfe2d7}
 .gs-foot{margin-top:16px;font-size:11.5px;color:#6b7c73}
 @media(max-width:1000px){.gs-flow,.gs-cascade,.gs-rhythm,.gs-props{grid-template-columns:1fr}.gs-fl:after{display:none}}
-.ptable.plan .grpcell,.ptable.plan td.unitc,.ptable.plan tbody td.rl{background:#eef0f3!important;color:#000}
+.ptable.plan .grpcell,.ptable.plan td.unitc,.ptable.plan tbody td.rl{background:#fff!important;color:#000}
+.ptable.plan .trtot .grpcell,.ptable.plan .trtot td.unitc,.ptable.plan .trtot td.rl,.ptable.plan .trsub .grpcell,.ptable.plan .trsub td.unitc,.ptable.plan .trsub td.rl{background:#eef0f3!important}
 .ov-pc.ov-g{color:#16a34a}.ov-pc.ov-a{color:#f59e0b}.ov-pc.ov-r{color:#dc2626}
 .ov-pc .ov-g{color:#16a34a}.ov-pc .ov-a{color:#f59e0b}.ov-pc .ov-r{color:#dc2626}
 .ov-foot{font-size:11px;color:var(--faint);margin-top:12px}
@@ -1259,10 +1284,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .mtopbar{display:none}
 .rail-ov{display:none}
 /* 상단 기간·데이터 툴바 */
-.tbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--ln);border-radius:12px;padding:10px 14px;margin-bottom:18px}
+.tbar{display:flex;flex-wrap:nowrap;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--ln);border-radius:12px;padding:10px 14px;margin-bottom:18px;overflow-x:auto}
 .tbar.nobox{background:transparent;border:0;box-shadow:none;padding:0;margin-bottom:6px}
 .tbar.tbar-sp{background:transparent;border:0;box-shadow:none;padding:0;margin:2px 0 14px}
-.tbar-per{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tbar-per{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
 .tbar-per .pl{font-size:11px;font-weight:700;color:var(--dim);margin-left:4px}
 .tbar-per .pl:first-child{margin-left:0}
 .per-dd{font:inherit;font-size:13px;font-weight:700;color:var(--ink);border:1px solid var(--ln);border-radius:8px;padding:6px 12px;background:#fff;cursor:pointer;min-width:96px}
@@ -1282,7 +1307,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .per-sel{font:inherit;font-size:13.5px;font-weight:700;color:var(--ink);border:1px solid var(--ln);border-radius:8px;padding:7px 12px;background:var(--pn);cursor:pointer;min-width:150px}
 .per-sel:focus{outline:none;border-color:var(--accent)}
 .per-year{font-size:13.5px;font-weight:700;color:var(--ink);padding:7px 6px}
-.tbar-data{display:flex;align-items:center;gap:7px;margin-left:auto;flex-wrap:wrap}
+.tbar-data{display:flex;align-items:center;gap:7px;margin-left:auto;flex-wrap:nowrap;white-space:nowrap}
 .tb-b{font:inherit;font-size:9px;font-weight:700;color:var(--ink2);background:var(--sf);border:1px solid var(--ln);border-radius:7px;padding:5px 9px;cursor:pointer;transition:.12s}
 /* 상단 툴바 + 실적현황·성과목표 등 모든 선택 컨트롤 직각 (동일 구조) */
 .tbar,.tbar .per-dd,.tbar-per .wchip,.tbar .per-seg,.tbar .per-seg button,.tbar .tb-b,.tbar .tb-menu,.tbar .tb-menu button,
@@ -1362,7 +1387,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-N</span></p></div>
+      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-Y</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1384,7 +1409,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <div class="tbar-data">
         <button class="tb-b prim" onclick="cloudLoadSheet()">📊 구글시트 불러오기</button>
         <button class="tb-b" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
-        <button class="tb-b" onclick="printOverview()">📄 PDF 저장</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
         <button class="tb-b" onclick="genGooglePPT()">🖼 구글 PPT</button>
@@ -1442,11 +1466,11 @@ function buildWeeks(m){
 }
 let WEEKS=buildWeeks(7);
 const MGRS=[
-  {id:'lee', name:'이유아', title:'팀장', region:'해외영업본부 총괄', color:'#8a8f98', ini:'이', empty:true},
-  {id:'seo', name:'서혜민', title:'차장', region:'중국 (매출·대리상)', color:'#c0392b', ini:'서'},
-  {id:'yu',  name:'유훈종', title:'차장', region:'대만 (Sunriser·딜러십)', color:'#0d9488', ini:'유'},
-  {id:'kim', name:'김유진', title:'대리', region:'중국·홍콩·대만 (수출·수금)', color:'#e08a2a', ini:'김'},
-  {id:'tak', name:'탁종민', title:'차장', region:'중국 (교육·DSO)', color:'#2e7d52', ini:'탁'},
+  {id:'lee', name:'이유아', title:'팀장', region:'팀장 · 영업확대 · PM(임플·레이저)', color:'#8a8f98', ini:'이', empty:true},
+  {id:'seo', name:'서혜민', title:'차장', region:'전략 · 영업확대 · 법인관리', color:'#c0392b', ini:'서'},
+  {id:'yu',  name:'유훈종', title:'차장', region:'영업(대리점) · 법인관리', color:'#0d9488', ini:'유'},
+  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김'},
+  {id:'tak', name:'탁종민', title:'차장', region:'교육 · 마케팅 · PM(디지털)', color:'#2e7d52', ini:'탁'},
   {id:'jang',name:'장민훈', title:'이사', region:'대만법인장', color:'#6b7280', ini:'장', empty:true}
 ];
 // wk: [ {p, note, label?(과제명 변경), due?(주차별 완료예정일 변경)} | null ]
@@ -1630,7 +1654,7 @@ const MENULB={overview:'중화팀 관리 현황판',rr:'담당자 업무현황',
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
 let VALL=false;
-function memberScopeId(){return (VROLE==='member'&&MEMBERID&&!VALL)?MEMBERID:'';}
+function memberScopeId(){return (VROLE==='member'&&MEMBERID&&!VALL&&TAB!=='overview')?MEMBERID:'';}
 function rrIdxOf(id){const m=mgrById(id);if(!m)return '';const i=RRDATA.findIndex(r=>String(r.who||'').includes(m.name));return i<0?'':i;}
 function applyMemberScope(){const s=memberScopeId();if(!s)return;KANMGRSEL=[s];MGSEL=s;RRSEL=rrIdxOf(s);
   const f=document.getElementById('fMgr');if(f&&f.options.length>1)f.value=s;
@@ -1643,7 +1667,7 @@ function setMember(id){MEMBERID=id;try{localStorage.setItem('wr_memberid',id);}c
 function toggleVAll(){VALL=!VALL;if(!VALL){const f=document.getElementById('fMgr');if(f)f.value=MEMBERID;}else{KANMGRSEL=[];MGSEL='';RRSEL='';const f=document.getElementById('fMgr');if(f)f.value='';}render();}
 /* ===== 로그인 · 직원 ID(회사 이메일) + 간단 비밀번호 · 이유아=팀장, 나머지=팀원 ===== */
 const USERS={
-  lee:{name:'이유아',title:'팀장',email:'intl.china17@imegagen.com',pw:'mega17',role:'lead'},
+  lee:{name:'이유아',title:'팀장',email:'intl.china17@imegagen.com',pw:'mega17tm',role:'lead'},
   seo:{name:'서혜민',title:'차장',email:'intl.china19@imegagen.com',pw:'mega19',role:'member'},
   tak:{name:'탁종민',title:'차장',email:'intl.china20@imegagen.com',pw:'mega20',role:'member'},
   yu:{name:'유훈종',title:'차장',email:'intl.china29@imegagen.com',pw:'mega29',role:'member'},
@@ -1700,7 +1724,7 @@ function setSalesTab(t){SALESTAB=t;render();}
 /* 메모 저장 (로컬 파일로 열면 브라우저에 저장, 샌드박스면 세션 메모리) */
 const NOTES=(()=>{try{return JSON.parse(localStorage.getItem('wr_notes')||'{}');}catch(e){return {};}})();
 function saveNoteLS(){try{localStorage.setItem('wr_notes',JSON.stringify(NOTES));}catch(e){}}
-const TODAY=new Date('2026-07-25');
+const TODAY=new Date();
 /* 처음 열면 오늘이 속한 달·최근 주차로 자동 진입 (메뉴 전환해도 유지) */
 MONTH=TODAY.getMonth()+1; YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
 W=Math.max(0,Math.min(WEEKS.length-1,Math.floor((TODAY.getDate()-1)/7)));
@@ -1778,6 +1802,8 @@ function render(){
   const lr=document.getElementById('loginRoot');
   if(!USERS[LOGINUID]){if(lr){lr.innerHTML=loginScreen();lr.style.display='';}return;}
   if(lr){lr.innerHTML='';lr.style.display='none';}
+  // 권한: 팀원(member)은 「중화팀 관리 현황판」만
+  if(VROLE==='member'&&TAB!=='overview')TAB='overview';
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
   // avatars
@@ -1791,7 +1817,8 @@ function render(){
   const cnt={overview:'',rr:rows.length,kanban:rows.length,calendar:MILESTONES.length,calmonth:'',goals:'',perf:rows.length,sales:'',separate:MGRS.filter(m=>m.empty&&!TASKS.some(t=>t.mgr===m.id)).length+PROJECTS.length};
   renderRailRole();
   applyMemberScope();
-  document.getElementById('rnav').innerHTML=MENU.map(([k,l,ic])=>
+  const menuItems=(VROLE==='member')?MENU.filter(([k])=>k==='overview'):MENU;
+  document.getElementById('rnav').innerHTML=menuItems.map(([k,l,ic])=>
     `<button class="${TAB===k?'on':''}" onclick="setTab('${k}')">${l}${cnt[k]!==''?`<span class="cnt">${cnt[k]}</span>`:''}</button>`).join('');
   // period control: 연도 · 월 · 주
   const perbar=document.querySelector('.tbar-per');
@@ -1818,11 +1845,11 @@ function render(){
   const extra=(TAB==='goals'||TAB==='perf'||TAB==='sales'||TAB==='overview')?'':(TAB==='separate')?` · 별도 항목 ${cnt.separate}건`:` · 표시 과제 ${rows.length}건${HIDEDONE?' · 완료 숨김':''}`;
   document.getElementById('asof').innerHTML=(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 수출·수금 KPI + 중국법인 매출 예상'):`${periodLabel()}${extra}`;
   // KPI / goalbar visibility
-  const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='calmonth'&&TAB!=='rr');
+  const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='rr');
   document.getElementById('kpis').style.display=showKPI?'':'none';
   document.getElementById('kpis').className='kpis'+(TAB==='calendar'?' compact cal4':(TAB==='kanban'?' compact':''));
   document.getElementById('goalbar').style.display='none';
-  if(showKPI){ if(TAB==='calendar')renderCalKPI(); else renderKPI(rows); }
+  if(showKPI){ if(TAB==='calendar')renderCalKPI(); else if(TAB==='calmonth')renderCalMonthKPI(); else renderKPI(rows); }
   // view
   const v=document.getElementById('view');
   if(TAB==='overview')v.innerHTML=renderOverview();
@@ -1971,8 +1998,23 @@ function fkBar(rate){const p=rate==null?0:Math.max(0,Math.min(100,Math.round(rat
   const col=rate==null?'#c8cdd4':(p>=90?'#2e7d52':p>=60?'#5ba36f':p>=30?'#d99429':'#c0392b');
   const lbl=rate==null?'<span style="color:var(--faint)">미입력</span>':`${p}%`;
   return `<div class="fk-bar"><div class="fk-bar-t" style="width:${p}%;background:${col}"></div></div><span class="fk-pct" style="color:${col}">${lbl}</span>`;}
-function fkSperfRate(metric){ // 실적현황(SPERF) 연동: 중국 수출액/수금/수량 달성율
-  try{const r=(SPERF.kpi||[]).find(k=>k.country==='중국'&&k.metric===metric);return r?{arate:r.arate,erate:r.erate,actual:r.actual,target:r.target,note:r.note}:null;}catch(e){return null;}}
+function fkKpiRow(metric){try{const r=(SPERF.kpi||[]).find(k=>k.country==='중국'&&k.metric===metric);return r?{arate:r.arate,erate:r.erate,actual:r.actual,target:r.target,note:r.note}:null;}catch(e){return null;}}
+function fkSperfRate(metric){ // 실적현황(DEAL·거래처별) 연동: 중국 수출/수금 달성율
+  try{
+    const D=(typeof ovDealD==='function')?ovDealD():((SPERF&&SPERF.deal)||[]);
+    const cnRows=(D||[]).filter(d=>d&&d.grp==='중국'&&!/소계|합계/.test(d.dealer||''));
+    if(/수출액|수출\(\$\)/.test(metric)||metric==='수출액($)'){
+      if(!cnRows.length)return fkKpiRow(metric);
+      let t=0,a=0;cnRows.forEach(d=>{t+=(+d.exT||0);a+=(+d.exA||0);});
+      return t?{target:t,actual:a,arate:a/t,note:'닝보+북경 수출 합'}:fkKpiRow(metric);
+    }
+    if(/수금/.test(metric)){
+      if(!cnRows.length)return fkKpiRow(metric);
+      let t=0,a=0;cnRows.forEach(d=>{t+=(+d.suT||0);a+=(+d.suA||0);});
+      return t?{target:t,actual:a,arate:a/t,note:'닝보+북경 수금 합'}:fkKpiRow(metric);
+    }
+    return fkKpiRow(metric); // 수량 등은 기존 지표
+  }catch(e){return null;}}
 function fkPctTxt(rate){if(rate==null||isNaN(rate))return '<span style="color:#94a3b8">미입력</span>';const p=Math.round(rate*100);const c=p>=80?'#16a34a':p>=50?'#f59e0b':'#dc2626';return `<b style="color:${c}">${p}%</b>`;}
 function renderFocusKPI(){
   const mlab=(FKMONTH==='h2')?`하반기 종합 (최신 ${fkLatestMonth()}월 누적)`:`${FKMONTH}월 누적`;
@@ -2028,6 +2070,13 @@ const OVROLE={
   yu:'영업(대리점) · 법인관리',
   jang:'대만법인장'
 };
+const OVSUB={
+  lee:'G2중화팀(중국,대만,홍콩)',
+  seo:'중국법인',
+  tak:'중국법인',
+  kim:'중국,대만,홍콩',
+  yu:'대만,홍콩'
+};
 let OVMEET={
   weekly:[
     {dow:'월',type:'본부 회의',desc:'화남·화동본부(이유아 09:30) · 화중본부(서혜민)'},
@@ -2038,14 +2087,15 @@ let OVMEET={
     {wk:'2주',desc:'물동회의 (김유진 14:00)'},
     {wk:'3주',desc:'제품경쟁력회의 (이유아·김유진·탁종민·유훈종, 화 14:00)'},
     {wk:'4주',desc:'디지털회의(탁종민 목) · 마케팅회의(탁종민·유훈종)'},
-    {wk:'말일',desc:'월말 실적점검(이유아) · 법인 마감회의(서혜민)'}
+    {wk:'말일',desc:'월말 실적점검(이유아,서혜민) · 법인 마감회의(이유아,서혜민)'}
   ]
 };
 try{const s=localStorage.getItem('wr_ovmeet_v1');if(s){const o=JSON.parse(s);if(o&&o.weekly)OVMEET=o;}}catch(e){}
+try{const mm=(OVMEET.monthly||[]).find(x=>x.wk==='말일');if(mm&&/실적점검\(이유아\)/.test(mm.desc||'')){mm.desc='월말 실적점검(이유아,서혜민) · 법인 마감회의(이유아,서혜민)';}}catch(e){}
 function saveOVMEET(){try{localStorage.setItem('wr_ovmeet_v1',JSON.stringify(OVMEET));}catch(e){}}
 function ovRows(){const out=[];TASKS.forEach((t,ti)=>{let idx=-1;const wk=t.wk||[];for(let i=wk.length-1;i>=0;i--){if(wk[i]){idx=i;break;}}if(idx<0)return;const c=wk[idx];out.push({t,ti,mgr:t.mgr,country:t.country,label:c.label||t.name,p:(c.p||0),note:c.note||'',due:c.due||t.due,cat:t.cat||''});});return out;}
 function ovSaleRate(metric){try{const r=(SPERF.kpi||[]).find(k=>k.country==='중국'&&k.metric===metric);return r&&r.arate!=null?r.arate:null;}catch(e){return null;}}
-function ovCorpRev(){try{const r=(SPERF.rev||[]).find(x=>x.corp==='전체'&&x.region==='합계');return r?r.expect:null;}catch(e){return null;}}
+function ovCorpRev(){try{const r=(ovRevD()||[]).find(x=>x.corp==='전체'&&x.region==='합계');return r?r.expect:null;}catch(e){return null;}}
 function ovPct(p){return (p==null)?'–':Math.round(p*100)+'%';}
 function ovStatusBadge(p){const n=p||0;if(n>=100)return '<span class="ov-st done">완료</span>';if(n<=20)return '<span class="ov-st start">착수</span>';return '<span class="ov-st prog">진행중</span>';}
 function ovExportSum(country){try{return (SPERF.kpi||[]).filter(k=>k.country===country&&/수출/.test(k.metric)&&!/수량/.test(k.metric)).reduce((s,k)=>s+(k.actual||0),0);}catch(e){return 0;}}
@@ -2061,18 +2111,30 @@ function printOverview(){
     setTimeout(()=>document.body.classList.remove('print-ov'),1500);};
   if(TAB!=='overview'){setTab('overview');setTimeout(go,350);}else go();
 }
+function ovWeekKey(){return 'W'+isoWeekNum(`${YEAR}-${String(MONTH).padStart(2,'0')}-${String(W*7+1).padStart(2,'0')}`);}
+function ovDealD(){const k=ovWeekKey();if(SPHIST[k]&&SPHIST[k].deal&&SPHIST[k].deal.length)return SPHIST[k].deal;return (typeof SPCUR!=='undefined'&&SPCUR&&SPCUR.deal)||(typeof SPERF!=='undefined'&&SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:[]);}
+function ovRevD(){const k=ovWeekKey();if(SPHIST[k]&&SPHIST[k].rev&&SPHIST[k].rev.length)return SPHIST[k].rev;return (typeof SPCUR!=='undefined'&&SPCUR&&SPCUR.rev)||(typeof SPERF!=='undefined'&&SPERF&&SPERF.rev)||[];}
+function ovDealAgg(kind){
+  const D=ovDealD();
+  const pick=d=>{const dl=d.dealer||'';if(/소계|합계/.test(dl))return false;
+    if(kind==='중국')return d.grp==='중국';if(kind==='홍콩')return /홍콩/.test(dl);if(kind==='대만')return /대만/.test(dl);return false;};
+  let exT=0,exA=0;(D||[]).filter(pick).forEach(d=>{exT+=(+d.exT||0);exA+=(+d.exA||0);});
+  return {exA,exT,rate:exT?exA/exT:null};
+}
+function ovWeekEvents(){
+  const startD=W*7+1,endD=startD+6;
+  return MILESTONES.filter(x=>{if(+x.month!==+MONTH)return false;const days=String(x.date||'').match(/\d{1,2}/g)||[];return days.some(d=>+d>=startD&&+d<=endD);});
+}
 function renderOverview(){
   const rows=activeRows();
-  const rev=ovCorpRev(), tw=ovExportSum('대만'), hk=ovExportSum('홍콩');
-  const ev=ovNextEvent();
-  const fmtD=s=>String(s||'').slice(5).replace('-','/');
+  const cn=ovDealAgg('중국'), tw=ovDealAgg('대만'), hk=ovDealAgg('홍콩');
+  const wev=ovWeekEvents();
   let h='<div class="ovw">';
-  h+='<div class="ov-sec">핵심 지표</div>';
+  h+='<div class="ov-sec">핵심 지표 <span class="ov-sub">이번주 행사 · 국가별 수출실적(천\$)·KPI 달성율</span></div>';
   h+='<div class="ov-tiles ov-tiles4">';
-  h+=`<div class="ov-tile"><div class="ov-tv">${rev!=null?rev.toLocaleString('en-US'):'–'}<span class="ov-tu">만RMB</span></div><div class="ov-tl">중국법인 매출</div></div>`;
-  h+=`<div class="ov-tile"><div class="ov-tv">${tw?tw.toLocaleString('en-US'):'–'}<span class="ov-tu">$</span></div><div class="ov-tl">대만 법인/대리점</div></div>`;
-  h+=`<div class="ov-tile"><div class="ov-tv">${hk?hk.toLocaleString('en-US'):'–'}<span class="ov-tu">$</span></div><div class="ov-tl">홍콩 대리점</div></div>`;
-  h+=`<div class="ov-tile ev">${ev.next?`<div class="ov-et">${esc(ev.next.title)}</div><div class="ov-ed">${fmtD(ev.next.date)}${ev.list.length>1?` · 외 ${ev.list.length-1}건`:''}</div>`:'<div class="ov-et mut">예정 행사 없음</div>'}<div class="ov-tl">이번주 주요 행사</div></div>`;
+  const dtile=(agg,label)=>{const v=agg.exA?Math.round(agg.exA/1000).toLocaleString('en-US'):'–';const kp=agg.rate!=null?`<span class="ov-kpi ${agg.rate>=0.8?'ov-g':agg.rate>=0.5?'ov-a':'ov-r'}">KPI ${Math.round(agg.rate*100)}%</span>`:'';return `<div class="ov-tile"><div class="ov-tv">${v}<span class="ov-tu">천\$</span></div><div class="ov-tl">${label} 수출실적 ${kp}</div></div>`;};
+  h+=dtile(cn,'중국')+dtile(tw,'대만')+dtile(hk,'홍콩');
+  h+=`<div class="ov-tile ev">${wev.length?`<div class="ov-et">${esc(wev[0].name)}</div><div class="ov-ed">${esc(wev[0].date||'')}${wev.length>1?` · 외 ${wev.length-1}건`:''}</div>`:'<div class="ov-et mut">이번주 행사 없음</div>'}<div class="ov-tl">이번주 중화팀 행사</div></div>`;
   h+='</div>';
   h+='<div class="ov-sec">담당자별 역할(R&R)과 이번주 수행 <span class="ov-sub">각 항목 클릭 → 상세현황·일정</span></div>';
   h+='<div class="ov-cards">'+MGRS.map(m=>{
@@ -2083,7 +2145,7 @@ function renderOverview(){
     const top=mr.slice().sort((a,b)=>((a.p>=100?1:0)-(b.p>=100?1:0))||b.p-a.p).slice(0,6);
     const routines=ovRoutinesFor(m.name);
     return `<div class="ov-card">
-      <div class="ov-ch"><span class="ov-av" style="background:${m.color}">${esc(m.ini)}</span><div class="ov-cn"><b>${esc(m.name)}</b> <span class="ov-ct">${esc(m.title)}</span><div class="ov-cr">${esc(m.region||'')}</div></div><div class="ov-cp">${mavg==null?'–':mavg+'%'}<span>진행률</span></div></div>
+      <div class="ov-ch"><span class="ov-av" style="background:${m.color}">${esc(m.ini)}</span><div class="ov-cn"><b>${esc(m.name)}</b> <span class="ov-ct">${esc(m.title)}</span><div class="ov-cr">${esc(OVSUB[m.id]||m.region||'')}</div></div><div class="ov-cp">${mavg==null?'–':mavg+'%'}<span>진행률</span></div></div>
       <div class="ov-role">${esc(roleLine)}</div>
       <div class="ov-bar"><div class="ov-bar-t" style="width:${mavg||0}%"></div></div>
       <div class="ov-tk-h">이번주 과제 <b>${mr.length}건</b></div>
@@ -2103,13 +2165,13 @@ function renderOverview(){
   h+='<table class="ov-tbl" style="margin-top:12px"><thead><tr><th style="width:52px">주차</th><th style="text-align:left">매월 반복 회의</th></tr></thead><tbody>';
   OVMEET.monthly.forEach(m=>{h+=`<tr><td><b>${esc(m.wk)}</b></td><td class="rl">${esc(m.desc)}</td></tr>`;});
   h+='</tbody></table></div></div>';
-  h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인 매출 예상 ${rev!=null?rev.toLocaleString('en-US')+'만RMB':'–'}</span></div>`;
+  {const rev=ovCorpRev();h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인 매출 예상 ${rev!=null?rev.toLocaleString('en-US')+'만RMB':'–'}</span></div>`;}
   h+=ovDealTable();
   h+='<div class="ov-foot">※ 데이터: 담당자 업무현황·지시 업무·거래처별 실적·중화팀 R&R/루틴에서 자동 집계 · 매주 갱신</div>';
   return h+'</div>';
 }
 function ovDealTable(){
-  const D=(typeof SPCUR!=='undefined'&&SPCUR&&SPCUR.deal)||(typeof SPERF!=='undefined'&&SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:[]);
+  const D=ovDealD();
   const k=n=>(n==null||n==='')?null:Math.round(n/1000);
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
   const pct=r=>r==null?'—':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
@@ -2122,10 +2184,18 @@ function ovDealTable(){
     const exR=d.exT?d.exA/d.exT:null,suR=d.suT?d.suA/d.suT:null;
     h+=`<tr><td>중국</td><td class="rl">${esc(d.dealer)}</td><td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;});
   if(cn.length){const exR=cnExT?cnExA/cnExT:null,suR=cnSuT?cnSuA/cnSuT:null;
-    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl"><b>소계</b></td><td class="ov-pc"><b>${num(k(cnExT))}</b></td><td class="ov-pc"><b>${num(k(cnExA))}</b></td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc"><b>${num(k(cnSuT))}</b></td><td class="ov-pc"><b>${num(k(cnSuA))}</b></td><td class="ov-pc">${pct(suR)}</td></tr>`;}
-  ov.forEach(d=>{const g=/홍콩/.test(d.dealer)?'홍콩':(/대만/.test(d.dealer)?'대만':d.grp);const nm=d.dealer.replace(/^(홍콩|대만)\s*/,'');
+    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td class="ov-pc">${num(k(cnExT))}</td><td class="ov-pc">${num(k(cnExA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(cnSuT))}</td><td class="ov-pc">${num(k(cnSuA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;}
+  let twExT=0,twExA=0,twSuT=0,twSuA=0,hkExT=0,hkExA=0,hkSuT=0,hkSuA=0;
+  ov.forEach(d=>{const isHk=/홍콩/.test(d.dealer);const g=isHk?'홍콩':(/대만/.test(d.dealer)?'대만':d.grp);const nm=d.dealer.replace(/^(홍콩|대만)\s*/,'');
     const exR=d.exT?d.exA/d.exT:null,suR=(d.suT!=null&&d.suT!==''&&d.suT)?d.suA/d.suT:null;
+    if(isHk){hkExT+=(+d.exT||0);hkExA+=(+d.exA||0);hkSuT+=(+d.suT||0);hkSuA+=(+d.suA||0);}else{twExT+=(+d.exT||0);twExA+=(+d.exA||0);twSuT+=(+d.suT||0);twSuA+=(+d.suA||0);}
     h+=`<tr><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;});
+  // 합계 (중국·대만·홍콩): 목표·실적=합, KPI·수금달성=국가별 평균
+  const TexT=cnExT+twExT+hkExT,TexA=cnExA+twExA+hkExA,TsuT=cnSuT+twSuT+hkSuT,TsuA=cnSuA+twSuA+hkSuA;
+  const exRs=[cnExT?cnExA/cnExT:null,twExT?twExA/twExT:null,hkExT?hkExA/hkExT:null].filter(x=>x!=null);
+  const suRs=[cnSuT?cnSuA/cnSuT:null,twSuT?twSuA/twSuT:null,hkSuT?hkSuA/hkSuT:null].filter(x=>x!=null);
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+  h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td class="ov-pc">${num(k(TexT))}</td><td class="ov-pc">${num(k(TexA))}</td><td class="ov-pc">${pct(avg(exRs))}</td><td class="ov-pc">${num(k(TsuT))}</td><td class="ov-pc">${num(k(TsuA))}</td><td class="ov-pc">${pct(avg(suRs))}</td></tr>`;
   return h+'</tbody></table>';
 }
 let ASSIGN=[];
@@ -2435,6 +2505,24 @@ function renderCalKPI(){
       <div class="val">${upcoming}<small>건</small></div><div class="foot">${nowM}월 이후 예정</div></div>
     <div class="kpi"><div class="lb"><span class="dot" style="background:var(--wait)"></span>종료 일정</div>
       <div class="val">${past}<small>건</small></div><div class="foot">${nowM}월 이전</div></div>`;
+}
+function renderCalMonthKPI(){
+  const today=todayStr();const ym=`${YEAR}-${String(MONTH).padStart(2,'0')}`;
+  const dOf=e=>e.sdate||e.date||'';const endOf=e=>e.edate||e.sdate||e.date||'';
+  const total=CALLIST.length;
+  const inMonth=CALLIST.filter(e=>String(dOf(e)).slice(0,7)===ym).length;
+  const upcoming=CALLIST.filter(e=>{const d=endOf(e);return d&&d>=today;}).length;
+  const past=CALLIST.filter(e=>{const d=endOf(e);return d&&d<today;}).length;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi hero"><div class="ring"></div>
+      <div class="lb">전체 일정</div><div class="val">${total}<small>건</small></div>
+      <div class="foot">등록 일정 전체</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>${MONTH}월 일정</div>
+      <div class="val">${inMonth}<small>건</small></div><div class="foot">선택한 달 기준</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accent)"></span>다가오는 일정</div>
+      <div class="val">${upcoming}<small>건</small></div><div class="foot">오늘 이후 예정</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--wait)"></span>종료 일정</div>
+      <div class="val">${past}<small>건</small></div><div class="foot">오늘 이전</div></div>`;
 }
 function renderRRsummary(rows){
   const html=MGRS.map(m=>{
@@ -2803,15 +2891,33 @@ function monthCalendar(){
     const chips=calEventsFor(date).map(o=>`<div class="md-ev" onclick="event.stopPropagation();calEditModal(${o.idx})" title="${esc(o.e.title)}">${o.e.start?'<b>'+esc(o.e.start)+'</b> ':''}${esc(o.e.title)}</div>`).join('');
     return `<td class="mcal-day ${i===0?'sun':i===6?'sat':''}" onclick="calOpenModal('${date}')"><div class="md-n">${d}</div><div class="md-evs">${chips}</div></td>`;
   });
-  const left='<div class="cal-main"><div class="mcal-top"><div class="mcal-title">'+y+'. '+MCAL_MN[m-1]+'</div>'
+  const cal='<div class="cal-main"><div class="mcal-top"><div class="mcal-title">'+y+'. '+MCAL_MN[m-1]+'</div>'
     +`<div class="mcal-nav"><button class="mile-add" style="margin-right:8px" onclick="seedRoutineMeetings()">＋ 루틴 회의 채우기 (8~12월)</button><button onclick="calMonthStep(-1)">◀ 이전달</button><button onclick="calMonthStep(1)">다음달 ▶</button></div></div>`+grid+'</div>';
   const todo='<div class="cal-todo"><div class="ct-h">할 일 목록</div>'
     +'<div class="ct-add"><input id="ct_new" placeholder="할 일 추가" onkeydown="ctKey(event)"><button onclick="addCalTodo()">추가</button></div>'
     +'<div class="ct-list">'+(CALTODO.length?CALTODO.map(t=>`<div class="ct-li${t.done?' done':''}"><button class="ct-ck" onclick="toggleCalTodo('${t.id}')">${t.done?'✓':''}</button><input class="ct-tx" value="${esc(t.text)}" onchange="editCalTodo('${t.id}',this.value)"><button class="ct-add-btn" title="일정으로 등록" onclick="calTodoToModal('${t.id}')">＋ 일정</button><button class="ct-x" onclick="delCalTodo('${t.id}')">×</button></div>`).join(''):'<div class="ct-empty">할 일이 없습니다.</div>')+'</div></div>';
   const memo=`<div class="mcal-memo"><div class="mm-h">MEMO · 고정 회의일정</div><textarea placeholder="매주 월 09:00 팀장회의 등 고정 일정을 적어두세요" onchange="editCalMemo(this.value)">${esc(CALMEMO)}</textarea></div>`;
-  const right='<div class="cal-side">'+todo+memo+'</div>';
-  return '<div class="cal-wrap">'+left+right+'</div>'+calModalHTML();
+  const below='<div class="cal-below">'+todo+memo+'</div>';
+  return '<div class="cal-col">'+cal+below+calWeekEventsTable()+'</div>'+calModalHTML();
 }
+/* 등록 일정 표 — 현재 선택 주차(그 주)만 */
+function calWeekEventsTable(){
+  const y=YEAR,m=MONTH,pad=n=>String(n).padStart(2,'0');
+  const dim=new Date(y,m,0).getDate();
+  const s=Math.min(W*7+1,dim), e=Math.min(W*7+7,dim);
+  const ws=`${y}-${pad(m)}-${pad(s)}`, we=`${y}-${pad(m)}-${pad(e)}`;
+  const evs=CALLIST.filter(ev=>{const es=ev.sdate||ev.date;if(!es)return false;const ee=ev.edate||es;return es<=we&&ee>=ws;})
+    .sort((a,b)=>String(a.sdate||a.date).localeCompare(String(b.sdate||b.date))||String(a.start||'').localeCompare(String(b.start||'')));
+  let h=`<div class="cal-evtbl"><div class="ct-h">등록 일정 · ${m}월 ${W+1}주차 (${s}일~${e}일) · <b>${evs.length}건</b></div>`;
+  h+='<table class="ptable calevt"><thead><tr><th style="width:120px">일자</th><th style="width:96px">시간</th><th style="text-align:left">일정</th><th style="text-align:left">설명</th><th style="width:40px"></th></tr></thead><tbody>';
+  if(!evs.length){h+='<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:16px">이 주에 등록된 일정이 없습니다. 달력 날짜를 클릭해 등록하세요.</td></tr>';}
+  evs.forEach(ev=>{const idx=CALLIST.indexOf(ev);const sd=ev.sdate||ev.date||'';const ed=ev.edate&&ev.edate!==sd?('~'+String(ev.edate).slice(5)):'';const tm=(ev.start||'')+(ev.end?('~'+ev.end):'');
+    h+=`<tr class="calevt-row" onclick="calEditIdx(${idx})"><td>${esc(String(sd).slice(5))}${esc(ed)}</td><td>${esc(tm||'-')}</td><td class="rl"><b>${esc(ev.title||'')}</b></td><td class="rl" style="white-space:normal;color:#475569">${esc(ev.desc||'')}</td><td style="text-align:center"><button class="mile-del" onclick="event.stopPropagation();calDelIdx(${idx})" title="삭제">🗑</button></td></tr>`;});
+  h+='</tbody></table></div>';
+  return h;
+}
+function calEditIdx(i){if(CALLIST[i])CALMODAL={open:true,idx:i,date:CALLIST[i].sdate||calDefaultDate(),prefill:''};render();}
+function calDelIdx(i){if(CALLIST[i]){CALLIST.splice(i,1);saveCal();render();}}
 function calModalHTML(){
   if(!CALMODAL.open)return '';
   const e=CALMODAL.idx>=0?CALLIST[CALMODAL.idx]:null;
@@ -3731,7 +3837,7 @@ function loadPlan(){try{const s=localStorage.getItem('wr_plan_v1');if(s){const o
 function resetPlan(){localStorage.removeItem('wr_plan_v1');localStorage.removeItem('wr_mgrs_v1');location.reload();}
 function editGoal(i,k,val){GOALS[i][k]=val;savePlan();render();}
 function saveMgrs(){try{localStorage.setItem('wr_mgrs_v1',JSON.stringify(MGRS.map(m=>({id:m.id,name:m.name,title:m.title,region:m.region}))));}catch(e){}}
-function loadMgrs(){try{const s=localStorage.getItem('wr_mgrs_v1');if(s){JSON.parse(s).forEach(o=>{const m=mgrById(o.id);if(m){m.name=o.name;m.title=o.title;m.region=o.region;}});}}catch(e){}}
+function loadMgrs(){try{const s=localStorage.getItem('wr_mgrs_v1');if(s){JSON.parse(s).forEach(o=>{const m=mgrById(o.id);if(m){m.name=o.name;m.title=o.title;}});}}catch(e){}}
 function editMgr(id,k,val){const m=mgrById(id);if(m){m[k]=val;saveMgrs();render();}}
 
 /* ---- 별도 등록 · 별도 관리 ---- */
@@ -3795,14 +3901,18 @@ function syncApplyWeekly(rows){
     const who=mgrByName(svPick(o,['담당자']));
     let p=progOf(svPick(o,['진행율','진행률'])); const status=p!=null?(p>=100?'완료':(p<=0?'대기':'진행중')):'진행중'; if(p==null)p=50;
     const note=String(svPick(o,['진행사항','비고'])||'').trim();
+    const nextW=String(svPick(o,['차주','차주업무'])||'').trim();
     const tIdx=slotOf(o);
     const wk=WEEKS.map((_,k)=>k===tIdx?{p:p,note:note}:null);
     const prio=PRK[String(svPick(o,['우선순위'])||'').trim()]||'중간';
     const stR=toDateStr(svPick(o,['시작일'])); const st0=(stR&&/\d{4}-\d{2}-\d{2}/.test(stR))?stR:`${YEAR}-${String(MONTH).padStart(2,'0')}-01`;
     const nt={mgr:who?who.id:'tak',country:String(svPick(o,['국가'])||'중국').trim()||'중국',name:nm,cat:String(svPick(o,['구분'])||'').trim(),start:st0,due:toDateStr(svPick(o,['완료예정일']))||'상시',priority:prio,status,wk};
     const ex=TASKS.find(t=>t.mgr===nt.mgr && normName(t.name)===normName(nt.name));
-    if(ex){ if(!Array.isArray(ex.wk))ex.wk=[]; ex.wk[tIdx]=nt.wk[tIdx]; if(nt.cat&&!ex.cat)ex.cat=nt.cat; if(nt.due&&(!ex.due||ex.due==='상시'))ex.due=nt.due; if(nt.priority)ex.priority=nt.priority; if(nt.country)ex.country=nt.country; }
-    else TASKS.push(nt);
+    let target;
+    if(ex){ if(!Array.isArray(ex.wk))ex.wk=[]; ex.wk[tIdx]=nt.wk[tIdx]; if(nt.cat&&!ex.cat)ex.cat=nt.cat; if(nt.due&&(!ex.due||ex.due==='상시'))ex.due=nt.due; if(nt.priority)ex.priority=nt.priority; if(nt.country)ex.country=nt.country; target=ex; }
+    else { TASKS.push(nt); target=nt; }
+    // 차주업무 → 다음 주 과제 이월 (다음 주 칸에 계획으로 0% 기입)
+    if(nextW){ const ni=tIdx+1; if(ni<WEEKS.length){ if(!Array.isArray(target.wk))target.wk=[]; const cur=target.wk[ni]; if(!cur)target.wk[ni]={p:0,note:'▶ (전주 차주계획) '+nextW}; else if(!cur.note)cur.note='▶ (전주 차주계획) '+nextW; } }
     n++;
   });
   normalizeTasks(); saveTasks(); return n;
@@ -3945,17 +4055,29 @@ function clearAllData(){
 function setWeek(w){W=w;PERIOD='week';render();}
 function setPeriod(p){PERIOD=p;render();}
 function setMonth(m){MONTH=+m;render();}
-function stepMonth(d){MONTH=Math.min(12,Math.max(1,MONTH+d));render();}
-function stepWeek(d){const mx=WEEKS.length-1;W=Math.min(mx,Math.max(0,W+d));render();}
+function stepMonth(d){MONTH=Math.min(12,Math.max(1,MONTH+d));WEEKS=buildWeeks(MONTH);W=Math.min(W,WEEKS.length-1);render();}
+/* 주차 이동: 그 달의 끝을 넘어가면 다음 달 첫 주(그다음주)로, 첫 주 이전은 전달 마지막 주로 */
+function stepWeek(d){let nw=W+d;
+  if(nw>WEEKS.length-1){ if(MONTH<12){MONTH++;WEEKS=buildWeeks(MONTH);nw=0;} else nw=WEEKS.length-1; }
+  else if(nw<0){ if(MONTH>1){MONTH--;WEEKS=buildWeeks(MONTH);nw=WEEKS.length-1;} else nw=0; }
+  W=nw;PERIOD='week';render();
+}
 function setYear(y){YEAR=+y;render();}
-function setMonthSel(v){if(v==='year'){PERIOD='year';}else{MONTH=+v;if(PERIOD==='year')PERIOD='month';}render();}
+function setMonthSel(v){
+  if(v==='year'){PERIOD='year';render();return;}
+  const m=+v;
+  if(m!==MONTH){ MONTH=m; WEEKS=buildWeeks(MONTH); const rm=TODAY.getMonth()+1;
+    W=(m===rm)?Math.max(0,Math.min(WEEKS.length-1,Math.floor((TODAY.getDate()-1)/7))):0; }
+  if(PERIOD==='year')PERIOD='month'; else if(PERIOD!=='month')PERIOD='week';
+  render();
+}
 function setMonthAll(){PERIOD='month';render();}
 function isoWeekNum(dateStr){const d=new Date(dateStr+'T00:00:00');if(isNaN(d))return '';const t=new Date(d.valueOf());const dn=(d.getDay()+6)%7;t.setDate(t.getDate()-dn+3);const ft=t.valueOf();t.setMonth(0,1);if(t.getDay()!==4){t.setMonth(0,1+((4-t.getDay())+7)%7);}return 1+Math.ceil((ft-t)/604800000);}
 function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementById('dataMenu');if(m)m.classList.toggle('hide');}
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){TAB=t;document.body.classList.remove('rail-open');render();}
+function setTab(t){TAB=(VROLE==='member')?'overview':t;document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -3985,19 +4107,34 @@ function xsHeaderObjs(A){
   return out;
 }
 function svNum(v){const s=String(v==null?'':v).replace(/[^0-9.\-]/g,'');return s===''?null:+s;}
+function spSnapFor(key){let s=SPHIST[key];if(!s){s={week:key,_key:key,wk:+key.slice(1),month:MONTH,kpi:[],rev:[],deal:[]};SPHIST[key]=s;}return s;}
 function applyDealRows(rows){
-  const deal=[];rows.forEach(o=>{const dealer=String(svPick(o,['거래처'])||'').trim();if(!dealer||/^(소계|합계|계)$/.test(dealer))return;
+  const byWk={}; let latest=null,latestN=-1;
+  rows.forEach(o=>{const dealer=String(svPick(o,['거래처'])||'').trim();if(!dealer||/^(소계|합계|계)$/.test(dealer))return;
+    const wm=String(svPick(o,['주차'])||'').match(/(\d{1,2})/);const key=wm?('W'+wm[1]):'_';
     const grp=/홍콩/.test(dealer)?'홍콩':(/대만/.test(dealer)?'대만':'중국');let ship=svNum(svPick(o,['선적']));if(ship!=null&&ship>1)ship/=100;
-    deal.push({dealer,grp,exT:svNum(svPick(o,['수출목표'])),exA:svNum(svPick(o,['수출실적'])),suT:svNum(svPick(o,['수금목표'])),suA:svNum(svPick(o,['수금실적'])),ship});});
-  if(!deal.length)return 0;
-  if(typeof SPERF!=='undefined'&&SPERF)SPERF.deal=deal;if(typeof SPCUR!=='undefined'&&SPCUR)SPCUR.deal=deal;try{saveSPERF();}catch(e){}return deal.length;
+    (byWk[key]=byWk[key]||[]).push({dealer,grp,exT:svNum(svPick(o,['수출목표'])),exA:svNum(svPick(o,['수출실적'])),suT:svNum(svPick(o,['수금목표'])),suA:svNum(svPick(o,['수금실적'])),ship});
+    if(wm&&+wm[1]>latestN){latestN=+wm[1];latest=key;}});
+  let total=0;
+  Object.keys(byWk).forEach(key=>{total+=byWk[key].length;
+    if(key==='_'){if(SPERF)SPERF.deal=byWk[key];if(SPCUR)SPCUR.deal=byWk[key];}
+    else spSnapFor(key).deal=byWk[key];});
+  if(latest&&byWk[latest]){if(SPERF)SPERF.deal=byWk[latest];if(SPCUR)SPCUR.deal=byWk[latest];}
+  try{saveSPERF();saveSPHIST();}catch(e){}return total;
 }
 function applyRevRows(rows){
-  const rev=[];rows.forEach(o=>{const corp=String(svPick(o,['법인'])||'').trim(),region=String(svPick(o,['지역'])||'').trim();if(!corp&&!region)return;
+  const byWk={}; let latest=null,latestN=-1;
+  rows.forEach(o=>{const corp=String(svPick(o,['법인'])||'').trim(),region=String(svPick(o,['지역'])||'').trim();if(!corp&&!region)return;
+    const wm=String(svPick(o,['주차'])||'').match(/(\d{1,2})/);const key=wm?('W'+wm[1]):'_';
     let rate=svNum(svPick(o,['달성']));if(rate!=null&&rate>1)rate/=100;
-    rev.push({corp,region,expect:svNum(svPick(o,['예상'])),rate,note:String(svPick(o,['비고'])||'').trim()});});
-  if(!rev.length)return 0;
-  if(typeof SPERF!=='undefined'&&SPERF)SPERF.rev=rev;if(typeof SPCUR!=='undefined'&&SPCUR)SPCUR.rev=rev;try{saveSPERF();}catch(e){}return rev.length;
+    (byWk[key]=byWk[key]||[]).push({corp,region,expect:svNum(svPick(o,['예상'])),rate,note:String(svPick(o,['비고'])||'').trim()});
+    if(wm&&+wm[1]>latestN){latestN=+wm[1];latest=key;}});
+  let total=0;
+  Object.keys(byWk).forEach(key=>{total+=byWk[key].length;
+    if(key==='_'){if(SPERF)SPERF.rev=byWk[key];if(SPCUR)SPCUR.rev=byWk[key];}
+    else spSnapFor(key).rev=byWk[key];});
+  if(latest&&byWk[latest]){if(SPERF)SPERF.rev=byWk[latest];if(SPCUR)SPCUR.rev=byWk[latest];}
+  try{saveSPERF();saveSPHIST();}catch(e){}return total;
 }
 function applyMarketRows(rows){
   const catMap=s=>{s=String(s||'');if(/BIG/i.test(s))return 'BIG';if(/교육/.test(s))return '교육';if(/KOL/i.test(s))return 'KOL';if(/오프라인/.test(s))return '오프라인';return '오프라인';};
