@@ -2562,6 +2562,8 @@ function renderOverview(){
   h+=dtile(cn,'중국')+dtile(tw,'대만')+dtile(hk,'홍콩');
   h+=`<div class="ov-tile ev">${wev.length?`<div class="ov-et">${esc(wev[0].name)}</div><div class="ov-ed">${esc(wev[0].date||'')}${wev.length>1?` · 외 ${wev.length-1}건`:''}</div>`:'<div class="ov-et mut">이번주 행사 없음</div>'}<div class="ov-tl">이번주 중화팀 행사</div></div>`;
   h+='</div>';
+  {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
+  h+=ovDealTable();
   h+='<div class="ov-sec">담당자별 역할(R&R)과 이번주 수행 <span class="ov-sub">각 항목 클릭 → 상세현황·일정</span></div>';
   h+='<div class="ov-cards">'+MGRS.map(m=>{
     const mr=rows.filter(r=>r.mgr===m.id);
@@ -2591,8 +2593,6 @@ function renderOverview(){
   h+='<table class="ov-tbl" style="margin-top:12px"><thead><tr><th style="width:52px">주차</th><th style="text-align:left">매월 반복 회의</th></tr></thead><tbody>';
   OVMEET.monthly.forEach(m=>{h+=`<tr><td><b>${esc(m.wk)}</b></td><td class="rl">${esc(m.desc)}</td></tr>`;});
   h+='</tbody></table></div></div>';
-  {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">실적 현황 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
-  h+=ovDealTable();
   h+='<div class="ov-foot">※ 데이터: 담당자 업무현황·지시 업무·거래처별 실적·중화팀 R&R/루틴에서 자동 집계 · 매주 갱신</div>';
   return h+'</div>';
 }
@@ -2840,7 +2840,7 @@ function mgrAssignStrip(mid){
 function viewRR(rows){
   const fm=document.getElementById('fMgr').value;
   let html='<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
-  const rrTabs=[['achieve','KPI 달성현황'],['focus','매월 중점추진과제'],['work','업무상세현황'],['kanban','업무진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
+  const rrTabs=[['achieve','KPI 달성현황'],['focus','매월 중점추진과제'],['work','담당자업무'],['kanban','업무진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
     .filter(([k])=>(k!=='table'&&k!=='report')||LOGINUID==='lee');
   if(LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
   html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}${(k==='report'||k==='table')?' tab-dim':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
@@ -3440,22 +3440,57 @@ function mileTable(){
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
-  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><button class="mile-add" onclick="addMile()">＋ 일정 추가</button></div>
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('name','일정명','text-align:left;width:18%')}${th('cat','구분','text-align:left;width:10%')}${th('country','국가','width:7%')}${th('month','월','text-align:center;width:5%')}${th('date','일자','text-align:center;width:9%')}<th style="text-align:left;width:35%">내용 · 개요</th><th style="text-align:left;width:10%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
-  if(!list.length){html+=`<tr><td colspan="9" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
+  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><button class="mile-add" onclick="exportMileXlsx()">⬇ 엑셀 내보내기</button><button class="mile-add" onclick="addMile()" style="margin-left:6px">＋ 일정 추가</button></div>
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}${th('country','국가','text-align:center;width:7%')}${th('cat','구분','text-align:left;width:11%')}${th('name','일정명','text-align:left;width:20%')}<th style="text-align:left;width:40%">내용개요</th><th style="text-align:left;width:11%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
+  if(!list.length){html+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     html+=`<tr>
       <td class="mut">${n+1}</td>
-      <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
-      <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
-      <td><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
       <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" onchange="editMileTbl(${i},'month',this.value)" style="text-align:center"></td>
-      <td style="text-align:center"><textarea class="mile-date" oninput="autogrow(this)" onchange="editMileTbl(${i},'date',this.value)">${esc(x.date)}</textarea></td>
-      <td class="infc"><textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용·개요">${esc(x.info||'')}</textarea></td>
+      <td><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
+      <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
+      <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
+      <td class="infc"><textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||'')}</textarea></td>
       <td class="mile-bigo"><input value="${esc(x.link||'')}" onchange="editLink_mile(${i},this.value)" placeholder="노션 링크 URL">${x.link?`<a class="rep-open" href="${esc(x.link)}" target="_blank" rel="noopener">🔗 열기</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
     </tr>`;});
   return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 노션 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
+}
+/* XLSX(SheetJS) 준비 보장: 헤드 스크립트 로딩 대기 → 실패 시 대체 CDN 주입 */
+let _xlsxAlt=false;
+function ensureXLSX(cb){
+  if(typeof XLSX!=='undefined')return cb();
+  let n=0;const poll=setInterval(()=>{
+    if(typeof XLSX!=='undefined'){clearInterval(poll);cb();}
+    else if(++n>15){clearInterval(poll);
+      if(_xlsxAlt){toast('엑셀 모듈을 불러오지 못했습니다. 인터넷 연결을 확인하세요.');return;}
+      _xlsxAlt=true;toast('엑셀 모듈 불러오는 중...');
+      const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload=()=>{if(typeof XLSX!=='undefined')cb();else toast('엑셀 모듈 로딩 실패');};
+      s.onerror=()=>toast('엑셀 모듈 로딩 실패 · 인터넷 연결 확인');document.head.appendChild(s);
+    }
+  },200);
+}
+/* 중화팀 행사 일정 상세 목록 → 이 표만 엑셀(.xlsx)로 내보내기 (표시 순서·필터·정렬 반영) */
+function exportMileXlsx(){
+  const q=((document.getElementById('fQ')||{}).value||'').trim().toLowerCase();
+  let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
+    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR));
+  const sc=MILESORT.col, dir=MILESORT.dir;
+  if(sc){list.sort((a,b)=>{let va,vb;if(sc==='month'){va=+a.x.month||0;vb=+b.x.month||0;}else if(sc==='cat'){va=MCATLB[a.x.cat]||'';vb=MCATLB[b.x.cat]||'';}else{va=String(a.x[sc]||'');vb=String(b.x[sc]||'');}return (va<vb?-1:va>vb?1:0)*dir;});}
+  else list.sort((a,b)=>(a.x.month-b.x.month)||String(a.x.date).localeCompare(String(b.x.date)));
+  const aoa=[['No','월','국가','구분','일정명','내용개요','비고']];
+  list.forEach((o,n)=>{const x=o.x;aoa.push([n+1, x.month||'', x.country||'중국', (MCATLB[x.cat]||x.cat||''), x.name||'', x.info||'', x.link||'']);});
+  ensureXLSX(()=>{
+    try{
+      const ws=XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols']=[{wch:5},{wch:5},{wch:8},{wch:12},{wch:28},{wch:52},{wch:32}];
+      const wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,'중화팀 행사 일정');
+      XLSX.writeFile(wb,`중화팀_행사_일정목록_${YEAR}.xlsx`);
+      toast(`엑셀로 내보냈습니다 (${list.length}건)`);
+    }catch(e){toast('엑셀 내보내기 오류: '+((e&&e.message)||''));}
+  });
 }
 function addMile(){MILESTONES.unshift({id:'ml'+Date.now(),name:'',cat:'교육',country:MILECTRY||'중국',month:MONTH,date:'',info:'',link:'',fileId:'',fileName:'',fileType:'',thumb:''});saveMile();render();}
 function delMile(i){if(MILESTONES[i]&&MILESTONES[i].fileId)repDelFile(MILESTONES[i].fileId);MILESTONES.splice(i,1);saveMile();render();}
