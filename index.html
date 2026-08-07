@@ -1465,6 +1465,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pm-tabs button.tab-dim{background:#f1f3f5;color:#aab2ba;border-color:#e6e9ec}
 .pm-tabs button.tab-dim:hover{color:var(--accent)}
 .pm-tabs button.tab-dim.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mile-infolink{color:var(--accentInk);text-decoration:none;font-weight:600;cursor:pointer;display:inline-block;line-height:1.4}
+.mile-infolink:hover{text-decoration:underline}
+.mile-infolink .mile-open{color:#94a3b8;font-size:11px;font-weight:700}
 </style>
 </head>
 <body>
@@ -3440,7 +3443,7 @@ function mileTable(){
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
-  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><button class="mile-add" onclick="exportMileXlsx()">⬇ 엑셀 내보내기</button><button class="mile-add" onclick="addMile()" style="margin-left:6px">＋ 일정 추가</button></div>
+  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><a class="mile-add" href="https://app.notion.com/p/3b573e4ce542807fa7d4d5e5e2df670e" target="_blank" rel="noopener" style="text-decoration:none">🌝 노션 마케팅활동</a><button class="mile-add" onclick="loadNotionMkt()" style="margin-left:6px">노션 활동 불러오기</button><button class="mile-add" onclick="exportMileXlsx()" style="margin-left:6px">⬇ 엑셀 내보내기</button><button class="mile-add" onclick="addMile()" style="margin-left:6px">＋ 일정 추가</button></div>
     <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}${th('country','국가','text-align:center;width:7%')}${th('cat','구분','text-align:left;width:11%')}${th('name','일정명','text-align:left;width:20%')}<th style="text-align:left;width:40%">내용개요</th><th style="text-align:left;width:11%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
   if(!list.length){html+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
@@ -3450,11 +3453,58 @@ function mileTable(){
       <td><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
       <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
       <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
-      <td class="infc"><textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||'')}</textarea></td>
+      <td class="infc">${x.link?`<a class="mile-infolink" href="${esc(x.link)}" target="_blank" rel="noopener" title="노션 페이지 열기">${esc(x.info||'(내용 없음)')} <span class="mile-open">↗</span></a>`:`<textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||'')}</textarea>`}</td>
       <td class="mile-bigo"><input value="${esc(x.link||'')}" onchange="editLink_mile(${i},this.value)" placeholder="노션 링크 URL">${x.link?`<a class="rep-open" href="${esc(x.link)}" target="_blank" rel="noopener">🔗 열기</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
     </tr>`;});
   return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 노션 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
+}
+const NOTION_MKT_PAGE='https://app.notion.com/p/3b573e4ce542807fa7d4d5e5e2df670e';
+const NOTION_MKT=[
+ {n:1,name:'대만풀마우스세미나',info:'대만 연구회 활동 · 대구',country:'대만',month:1,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280caa92afd93cb0a7abb'},
+ {n:3,name:'국제살롱',info:'국제살롱 · 베이징(北)',country:'중국',month:1,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542802b8291e45b8ca61bf9'},
+ {n:4,name:'KOL 교육',info:'KOL 교육 · 대구(21명)',country:'중국',month:1,cat:'KOL',url:'https://app.notion.com/p/3b573e4ce5428073b659c4d5d2b5fc88'},
+ {n:5,name:'DSO 방한',info:'DSO 방한 · 아이캉젠(爱康健, 7)',country:'중국',month:3,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce54280a3949fcaddfcdf1663'},
+ {n:6,name:'광저우전시회',info:'대형 전시회 · 광저우(广州)',country:'중국',month:3,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce542806ca8bdc0d347dd77bb'},
+ {n:7,name:'유학살롱',info:'유학살롱 · 말레이시아(178)·완닝(83)',country:'중국',month:4,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce54280098f24c490954f62c8'},
+ {n:9,name:'유학살롱',info:'유학살롱 · 윈난(云南, 229)',country:'중국',month:4,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce542800b81d8c53261b9b763'},
+ {n:10,name:'KOL 교육',info:'KOL 교육 · 온라인',country:'중국',month:4,cat:'KOL',url:'https://app.notion.com/p/3b573e4ce54280b9a025e5caa038f74a'},
+ {n:11,name:'대전시회',info:'대형 전시회 · 청두(成都)',country:'중국',month:4,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce5428093bf0fee75d3438018'},
+ {n:12,name:'CEO살롱',info:'CEO살롱 · 산동(山东, 150)',country:'중국',month:5,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542800a9c07e3d7f3fca2da'},
+ {n:13,name:'Mega School',info:'메가스쿨 · 서울(25)',country:'중국',month:5,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542807c9646ca83bf90150c'},
+ {n:14,name:'DSO 방한',info:'DSO 방한 · 상해 마오쥐(茂菊, 9)',country:'중국',month:5,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce5428080b859e33f021ac02a'},
+ {n:15,name:'서울대교육',info:'서울대학 · 서울(31)',country:'중국',month:5,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542807ba44dc7f7b4ef9d17'},
+ {n:16,name:'DSO 방한',info:'DSO 방한 · 진송(劲松, 12)',country:'중국',month:6,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce54280d78f69dc7791d06622'},
+ {n:18,name:'MegaMind',info:'MegaMind · 토론토(多伦多)',country:'중국',month:6,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce542808a90b7c935f0c8fb43'},
+ {n:19,name:'연회(年会)',info:'연회 · 토론토(122)',country:'중국',month:6,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce5428087bff6f91396d90c30'},
+ {n:20,name:'대전시회',info:'대형 전시회 · 쿤밍(昆明)·전국민영',country:'중국',month:6,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce542802f9897d1bd90aed522'},
+ {n:21,name:'CEO살롱',info:'CEO살롱 · 상해(上海)',country:'중국',month:6,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280d3b6a5f799afdcae3d'},
+ {n:22,name:'국제살롱',info:'국제살롱 · 항저우(50)·마오쥐/중즈',country:'중국',month:6,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280a0b15ed529d3469d21'},
+ {n:23,name:'신품 ARI 런칭',info:'신품 ARI 상시 · 베이징(324)·즈더(植得)',country:'중국',month:6,cat:'신품',url:'https://app.notion.com/p/3b573e4ce54280c29bc9da319e4f00d2'},
+ {n:24,name:'CEO살롱',info:'CEO살롱 · 선전(深圳)/더파이',country:'중국',month:7,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280b29134f898515875ea'},
+ {n:25,name:'DSO 방한',info:'DSO 방한 · 메이야(美呀)·동북',country:'중국',month:7,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce54280d9ac9bfff76ee2416a'},
+ {n:26,name:'TASK',info:'TASK 행사 · 148명/13',country:'중국',month:7,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce542802ebefaee0964239cc1'},
+ {n:28,name:'대전시회',info:'대형 전시회 · 베이징(北京)',country:'중국',month:7,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce542809298e2fa7dcb4ac180'},
+ {n:29,name:'대전시회',info:'대형 전시회 · 전국 임플란트(全国种植)',country:'중국',month:8,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce5428003a1a8ff45fc06c407'},
+ {n:30,name:'서울대학',info:'서울대학 · 서울(30)',country:'중국',month:9,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280179bbcf31892d08130'},
+ {n:31,name:'Early Loading',info:'Early Loading Competition · 상해(上海)',country:'중국',month:9,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce542809ca90fc56b92e72ba3'},
+ {n:32,name:'CEO살롱',info:'CEO살롱 · 즈더(植得)',country:'중국',month:9,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280b69516c1a34ab8d5c4'},
+ {n:33,name:'유학살롱',info:'유학살롱 · 신장(新疆, 255/30)',country:'중국',month:9,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce5428030ad2fdc33f83e1024'},
+ {n:34,name:'KOL 교육',info:'KOL 교육 1건',country:'중국',month:9,cat:'KOL',url:'https://app.notion.com/p/3b573e4ce542804db011d575e0961542'},
+ {n:35,name:'MegaMind 예선',info:'MegaMind 예선전 · 미정',country:'중국',month:9,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce54280b68b7ce402aaccb1b0'},
+ {n:36,name:'DSO 방한',info:'DSO 방한 · 닝(宁)',country:'중국',month:10,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce54280029ecdec7a27be92e5'},
+ {n:37,name:'CEO살롱',info:'CEO살롱 · 항저우(杭)·한국 즈더',country:'중국',month:11,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280b79efac7fb8554f776'},
+ {n:38,name:'대전시회',info:'대형 전시회 · 상해(上海)',country:'중국',month:11,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce54280cab8c2e372a35cec23'},
+ {n:39,name:'DSO 방한',info:'DSO 방한 · 닝(宁)',country:'중국',month:11,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce542808c8fcbe5f0aff8811b'},
+ {n:40,name:'KOL 교육',info:'KOL 교육 1건',country:'중국',month:11,cat:'KOL',url:'https://app.notion.com/p/3b573e4ce54280699961c46a929f9c8b'},
+ {n:41,name:'국제살롱',info:'국제살롱 · 닝(宁), 미정',country:'중국',month:11,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542803b8ee0fddca852db4c'},
+ {n:42,name:'서울대학',info:'서울대학 · 서울(30)',country:'중국',month:12,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542809daa95f01845b964ea'},
+ {n:43,name:'TASK',info:'TASK 행사 · 닝(宁, 100)',country:'중국',month:12,cat:'오프라인',url:'https://app.notion.com/p/3b573e4ce5428045bff8e5576836f870'},
+ {n:44,name:'연회(年会)',info:'연회 · 호주(澳大利亚, 220/80)',country:'중국',month:12,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce5428074a25ad05c12d82ede'}
+];
+function loadNotionMkt(){
+  MILESTONES=NOTION_MKT.map(r=>({id:'nm'+r.n,name:r.name,cat:r.cat,country:r.country,month:r.month,date:'',info:r.info,link:r.url,fileId:'',fileName:'',fileType:'',thumb:''}));
+  saveMile();render();toast('노션 마케팅활동 '+NOTION_MKT.length+'건을 행사 목록에 반영했습니다');
 }
 /* XLSX(SheetJS) 준비 보장: 헤드 스크립트 로딩 대기 → 실패 시 대체 CDN 주입 */
 let _xlsxAlt=false;
