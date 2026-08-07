@@ -1410,6 +1410,61 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .main{padding:16px 14px 60px}
 }
 @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:1fr}.rr{grid-template-columns:1fr}}
+/* R&R 4열(구분·담당·업무R&R·성과지표) 고정폭 */
+.rrtbl4{table-layout:fixed}
+.rrtbl4 th,.rrtbl4 td{vertical-align:top;word-break:break-word}
+.rrtbl4 .rr-cell{width:100%}
+.rrtbl4 .rr-who .rrw-grp{font-size:12px;color:var(--accentInk);font-weight:800}
+.rrtbl4 .rr-who .rrw-nm{font-size:13px;font-weight:800;margin-top:2px}
+/* 중점 추진과제 관리표 */
+.ptasktbl{table-layout:fixed}
+.ptasktbl th,.ptasktbl td{vertical-align:top;word-break:break-word}
+.ptasktbl .rr-cell{width:100%}
+.rgn-chip{display:inline-block;color:#fff;font-weight:800;font-size:11.5px;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.pt-in{width:100%;border:1px solid var(--ln);border-radius:6px;padding:6px 7px;font:inherit;font-size:12.5px;text-align:center;background:#fff}
+.pt-in:focus{outline:none;border-color:var(--accent);background:#eef2f7}
+.pt-bar{height:6px;background:#eef1f3;border-radius:4px;margin-top:5px;overflow:hidden}
+.pt-bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+/* 매월 중점추진과제 월 버튼 (30% 축소) */
+.mf-months{display:flex;flex-wrap:wrap;gap:5px}
+.mf-mbtn{position:relative;background:#fff;border:1px solid var(--ln);border-radius:6px;padding:5px 9px;font:inherit;font-size:11px;font-weight:700;color:var(--ink2);cursor:pointer;line-height:1.2}
+.mf-mbtn:hover{border-color:var(--accent);color:var(--accent)}
+.mf-mbtn.has{border-color:var(--accent);color:var(--accentInk)}
+.mf-mbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mf-mbtn .mf-cnt{display:inline-block;margin-left:4px;background:rgba(0,0,0,.12);border-radius:10px;font-size:9px;font-weight:800;padding:0 5px}
+.mf-mbtn.on .mf-cnt{background:rgba(255,255,255,.28)}
+.mf-mbtn.mf-year{font-weight:800;border-color:var(--accent);color:var(--accentInk);background:#e9f6f4;margin-right:4px}
+.mf-mbtn.mf-year.on{background:var(--accentInk);color:#fff;border-color:var(--accentInk)}
+/* 핵심과제 요약: 중국(좌) · 대만/홍콩(우 상하) · 박스 높이 동일 */
+.mf-sumgrid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px;margin-bottom:14px;align-items:stretch}
+.mf-sumgrid .mf-sumcard{margin:0;height:100%}
+.mf-sumgrid .cn{grid-column:1;grid-row:1 / 3}
+.mf-sumgrid .tw{grid-column:2;grid-row:1}
+.mf-sumgrid .hk{grid-column:2;grid-row:2}
+.mf-flag{font-size:18px;vertical-align:middle;margin-right:2px}
+@media(max-width:820px){.mf-sumgrid{grid-template-columns:1fr}.mf-sumgrid .cn,.mf-sumgrid .tw,.mf-sumgrid .hk{grid-column:1;grid-row:auto}}
+.mf-sumflex{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));grid-auto-rows:1fr;gap:12px;margin-bottom:14px;align-items:stretch}
+.mf-sumflex .mf-sumcard{margin:0;height:100%}
+@media(max-width:820px){.mf-sumflex{grid-template-columns:1fr}}
+/* 담당자 다중선택 드롭다운 — 선택 시 이름을 칸 안에서 세로로 하나씩 쌓기 */
+.mf-owncell{vertical-align:top}
+.mf-owntrig{position:relative;border:1px solid var(--ln);border-radius:6px;padding:5px 16px 5px 5px;background:#fff;cursor:pointer;min-height:30px}
+.mf-owntrig:hover{border-color:var(--accent)}
+.mf-owntrig .mf-cx{position:absolute;right:5px;top:6px;color:#94a3b8;font-size:11px}
+.mf-ownph{color:#94a3b8;font-size:12px}
+.mf-ownchips{display:flex;flex-direction:column;gap:3px}
+.mf-ownchip{display:block;background:#eef4f3;border:1px solid #d5e4e1;border-radius:5px;padding:2px 3px;font-size:11.5px;font-weight:700;color:var(--accentInk);text-align:center;word-break:keep-all;line-height:1.3}
+.mf-ownmenu{margin-top:5px;background:#fff;border:1px solid var(--ln);border-radius:8px;padding:4px;display:flex;flex-direction:column;gap:1px}
+.mf-ownopt{display:flex;align-items:center;gap:7px;font-size:12px;padding:5px 7px;border-radius:6px;cursor:pointer}
+.mf-ownopt:hover{background:var(--sf)}
+.mf-ownopt.on{background:#eef4f3}
+.mf-ownopt .mf-ck{flex:0 0 15px;width:15px;height:15px;border:1.5px solid #c3ccd4;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;background:#fff;line-height:1}
+.mf-ownopt.on .mf-ck{background:var(--accent);border-color:var(--accent)}
+.mf-ownopt .mf-nm{white-space:nowrap;color:var(--ink);font-weight:600}
+/* 옅은 회색 처리 탭 (주요보고·통합) */
+.pm-tabs button.tab-dim{background:#f1f3f5;color:#aab2ba;border-color:#e6e9ec}
+.pm-tabs button.tab-dim:hover{color:var(--accent)}
+.pm-tabs button.tab-dim.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -1871,9 +1926,10 @@ function render(){
       h+=`<span class="pl">월</span><select class="per-dd" onchange="setMonthSel(this.value)"><option value="year" ${PERIOD==='year'?'selected':''}>연간 전체</option>`+
         Array.from({length:12},(_,i)=>i+1).map(m=>`<option value="${m}" ${PERIOD!=='year'&&m===MONTH?'selected':''}>${m}월</option>`).join('')+`</select>`;
       if(PERIOD!=='year'){
-        h+=`<span class="pl">주</span><div class="wks"><button class="wchip${PERIOD==='month'?' on':''}" onclick="setMonthAll()">월 전체</button>`;
-        h+=WEEKS.map(w=>{const wn=isoWeekNum(`${YEAR}-${String(MONTH).padStart(2,'0')}-${String(w.id*7+1).padStart(2,'0')}`);const stt=(w.range==='—')?'-':w.range.split('~')[0];return `<button class="wchip${(PERIOD==='week'&&w.id===W)?' on':''}" onclick="setWeek(${w.id})">W${wn}<small>${stt}</small></button>`;}).join('');
-        h+=`</div>`;
+        h+=`<span class="pl">주</span><select class="per-dd" onchange="selWeekDD(this.value)">`;
+        h+=`<option value="all" ${PERIOD==='month'?'selected':''}>월 전체</option>`;
+        h+=WEEKS.map(w=>{const wn=isoWeekNum(`${YEAR}-${String(MONTH).padStart(2,'0')}-${String(w.id*7+1).padStart(2,'0')}`);const stt=(w.range==='—')?'-':w.range.split('~')[0];return `<option value="${w.id}" ${(PERIOD==='week'&&w.id===W)?'selected':''}>W${wn}${stt!=='-'?' ('+stt+')':''}</option>`;}).join('');
+        h+=`</select>`;
       }
       perbar.innerHTML=h;
     }
@@ -1972,7 +2028,7 @@ function pickThumb_fdoc(i){pickThumbInto(fdList()[i],saveFocusDocs);}
 function clr_fdoc(i){clearFileOf(fdList()[i],saveFocusDocs);}
 function dl_fdoc(i){const d=fdList()[i];dlFile(d.fileId,d.fileName);}
 function editLink_fdoc(i,v){fdList()[i].link=v;saveFocusDocs();render();}
-function renderFocus(){
+function renderQuarterFocus(){
   let h='<div class="focus-row">'
     +`<div class="qcard"><div class="rr-sec-h" style="margin-top:0">🎯 2026년도 중점추진과제</div><textarea class="qc-t qc-fill" style="font-size:14px" oninput="autogrow(this)" onchange="editAnnual(this.value)">${esc(CJANNUAL.focus)}</textarea></div>`
     +`<div class="qcard"><div class="rr-sec-h" style="margin-top:0">📅 주요 미팅일정현황</div><textarea class="qc-t qc-fill" style="font-size:14px" placeholder="" oninput="autogrow(this)" onchange="editAnnualMeet(this.value)">${esc(CJANNUAL.meetings||'')}</textarea></div>`
@@ -1982,6 +2038,270 @@ function renderFocus(){
     return `<div class="qcard"><div class="qc-h"><span class="qc-tag">${esc(q.tag)}</span><b>${esc(q.q)}</b></div>
       <textarea class="qc-t qc-fill" oninput="autogrow(this)" onchange="editQ(${i},'exec',this.value)" placeholder="">${esc(ex)}</textarea></div>`;}).join('')+'</div>';
   return h;
+}
+/* ===== 매월 중점추진과제 (월별 버튼 · 지역별 관리표) ===== */
+let MFMON='8';
+let MFOCUS={};
+try{const s=localStorage.getItem('wr_mfocus_v1');if(s){const o=JSON.parse(s);if(o&&typeof o==='object')MFOCUS=o;}}catch(e){}
+function saveMFocus(){try{localStorage.setItem('wr_mfocus_v1',JSON.stringify(MFOCUS));}catch(e){}}
+function setMFMon(m){MFMON=String(m);MFOWN=null;render();}
+let MFOWN=null;
+function mfOwners(t){return Array.isArray(t.owner)?t.owner:(t.owner?String(t.owner).split(',').map(s=>s.trim()).filter(Boolean):[]);}
+function toggleMFOwnMenu(i){MFOWN=(MFOWN===i?null:i);render();}
+function toggleMFOwner(i,name){const t=(MFOCUS[MFMON]||[])[i];if(!t)return;const arr=mfOwners(t);const k=arr.indexOf(name);if(k>=0)arr.splice(k,1);else arr.push(name);t.owner=arr;saveMFocus();render();}
+function ownerCellMF(t,i){const own=mfOwners(t);
+  const chips=own.length?`<div class="mf-ownchips">${own.map(n=>`<span class="mf-ownchip">${esc(n)}</span>`).join('')}</div>`:'<span class="mf-ownph">담당자</span>';
+  const menu=MFOWN===i?`<div class="mf-ownmenu">${MGRS.map(m=>{const on=own.includes(m.name);return `<div class="mf-ownopt${on?' on':''}" onclick="toggleMFOwner(${i},'${esc(m.name)}')"><span class="mf-ck">${on?'✓':''}</span><span class="mf-nm">${esc(m.name)}</span></div>`;}).join('')}</div>`:'';
+  return `<div class="mf-owntrig" onclick="toggleMFOwnMenu(${i})">${chips}<span class="mf-cx">▾</span></div>${menu}`;}
+function mfRows(){return MFOCUS[MFMON]||[];}
+function editMF(i,f,v){const l=MFOCUS[MFMON];if(l&&l[i]){l[i][f]=v;saveMFocus();}}
+function addMFRow(){(MFOCUS[MFMON]=MFOCUS[MFMON]||[]).push({region:'중국',task:'',goal:'',plan:'',owner:'',due:'',prog:''});saveMFocus();render();}
+function delMFRow(i){const l=MFOCUS[MFMON];if(l&&l[i]){l.splice(i,1);saveMFocus();render();}}
+function copyMFFrom(src){src=String(src);if(MFOCUS[src]&&MFOCUS[src].length){MFOCUS[MFMON]=MFOCUS[src].map(x=>({...x}));saveMFocus();render();toast(src+'월 내용을 '+MFMON+'월로 복사했습니다');}else toast(src+'월에 등록된 내용이 없습니다');}
+const MFSUM={
+ 'Y':[
+   {label:'제품 / 가격 경쟁력 강화',text:'2026년에는 BD·ARi·Value 제품군 확대와 2차 VBP 대응이 핵심입니다. ARi를 6월 출시하고, AO·AR 중심으로 2차 VBP Class A 진입을 준비하며, 시장 가격 변화에 대응할 수 있는 제품 라인업을 구축하는 것이 중요합니다.'},
+   {label:'거래처 확대 및 M/S 확대',text:'중국 시장에서는 BD 진입점 확대, 부진상권 개선, 하부고객 확대, DSO 확대가 핵심입니다. BD 1,500점과 8만대 판매, 하부고객 8,500점, DSO 250점·60만대 판매를 목표로 CRM 기반 관리와 대리상 보강을 병행해야 합니다.'},
+   {label:'브랜드 강화',text:'브랜드 측면에서는 KOL 75명 확보와 TOP 3 브랜드 인지도 구축이 핵심입니다. 교육·세미나, 패키지 프로그램, 한국·동남아·유럽 연계 교육과정을 통해 브랜드 인지도와 충성도를 지속적으로 높여야 합니다.'},
+   {label:'Sales Force 강화',text:'조직 측면에서는 2법인 6본부 13권역 체계 안정화와 핵심 리더 육성이 중요합니다. 본부별 책임경영 체계를 강화하고, 관리자와 2/3급 시장 영업인원을 보강하여 실행력을 높이는 것이 2026년 주요 방향입니다.'}
+ ],
+ '1':[
+   {label:'중국',text:'1월 중국 시장은 본부별·대리상별 계약 추진, BD 진입 및 판매 확대, ARi 런칭 준비, 유통 Coverage 확대, DSO 확대, 2차 VBP 입찰 준비가 핵심입니다. 특히 26년 계약 목표 3.8억 위안을 기준으로 본부별 계약을 추진하고, BD·ARi 중심의 프리미엄 제품 확대 기반을 사전에 구축하는 것이 중요합니다.'},
+   {label:'마케팅 및 행사',text:'1월에는 캐나다 심포지엄 패키지, 말레이시아 세미나 패키지, DSO 방한, 국제샬롱, MegaMind 행사 등이 주요 실행 과제입니다. 단순 행사 운영이 아니라, 패키지 판매 목표와 고객 모집, 행사 후 F/U까지 연결해 매출 성과로 이어지도록 관리해야 합니다.'},
+   {label:'대만',text:'대만 시장은 TBMC 26년 사업계획 협의, Full Mouth 세미나 운영, 임플란트 사업계획 협의가 중심입니다. 1월 단계에서는 대만 법인 및 대리상 운영의 기초 방향을 정리하고, 향후 본격적인 사업 전개를 위한 기반을 마련하는 것이 핵심입니다.'}
+ ],
+ '2':[
+   {label:'중국',text:'2월 중국 시장은 본부별·대리상별 합동 계약 추진, BD 진입 및 판매 확대, 하부고객 확대, DSO 확대, 2차 VBP 입찰 준비, 캐나다 심포지엄·말레이시아 투어 세미나 판매 준비가 핵심입니다. 특히 BD 핵심점 육성, CRM 기반 고객 관리, DSO 신규 진입 추진, VBP 가격 비딩 전략 수립이 주요 실행 방향입니다.'},
+   {label:'대만·홍콩',text:'대만·홍콩은 홍콩 메가젠 후속 이슈 정리, 홍콩 대만구 신규 딜러 육성, 대만 법인 설립 준비가 중심입니다. 기존 대리점 운영 중단에 따른 계약·재고·채권채무·고객 선수금 이슈를 정리하고, 대만 법인 설립을 위한 인허가권 양수, 시장조사, 영업 조직 구성이 필요합니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 TBMS 본사 방문 및 26년 사업계획 논의, 홍콩 Kenworld 계약 체결 협의, 중국 인허가 인증 진도 점검이 핵심입니다. 2월에는 TBMS와 제품 연계 판매 방향을 협의하고, Kenworld와 홍콩 계약 체계를 준비하며, 중국 인허가 진행상황을 지속 점검하는 것이 중요합니다.'}
+ ],
+ '3':[
+   {label:'중국',text:'3월 중국 시장은 본부별·대리상별 합동 계약 추진, BD 진입 및 판매 확대, 하부고객 확대, DSO 확대, Value 시장 경쟁력 강화, 2차 VBP 입찰 준비가 핵심입니다. 특히 BD 핵심점 육성과 CRM 기반 고객 관리, AO 가격 조정 및 의료보험 가격 체계 대응을 통해 중국 시장 내 경쟁력을 강화하는 것이 주요 방향입니다.'},
+   {label:'대만',text:'대만 시장은 대만 법인 설립 추진, TBMS 계약 체결, Sunriser 인허가권 양수 및 영업 현황 파악이 중심입니다. 법인장 및 본사 담당 채용과 함께 사전 영업 기반을 마련하고, 바이오레이즈 및 임플란트 사업 전환 준비가 필요합니다.'},
+   {label:'홍콩',text:'홍콩 시장은 기존 딜러 구조 정리와 Kenworld 신규 계약 추진이 핵심입니다. 기존 딜러의 딜러권 포기 이후 Kenworld 중심으로 신규 영업 구조를 구축하고, 바이오레이즈와 임플란트 판매를 연계하는 방향으로 진행해야 합니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 TBMS 본사 방문 및 26년 계약 체결, 홍콩 Kenworld 계약 체결, 중국 수입 인허가 및 COXO 위탁생산 협의가 핵심입니다. 3월에는 Backorder 이슈 해결, SG2 전환 후 추가 검토, EPIC 판매 목표 설정, 중국 인허가 일정 관리가 주요 과제로 정리됩니다.'}
+ ],
+ '4':[
+   {label:'중국',text:'4월 중국 시장은 본부별·대리상별 합동 계약 추진, 유통 Coverage 확대, BD 진입 확대, 하부고객 확대, DSO 확대, 2차 VBP 입찰 준비, ARi 런칭 준비, 닝보 조직 보강이 핵심입니다. 특히 BD 판매 활성화와 하부고객·DSO 확대를 통해 M/S를 높이고, 6월 VBP와 ARi 런칭을 사전에 준비하는 것이 주요 실행 방향입니다.'},
+   {label:'대만',text:'대만 시장은 대만법인 설립, Sunriser 인허가 양수, 재고 인수, TBMS 계약 협의 및 공급 구조 전환이 중심입니다. 또한 Backorder 물량을 4월 내 공급 완료하여, 대만 법인 출범 전 제품 공급 안정성을 확보하는 것이 중요합니다.'},
+   {label:'홍콩',text:'홍콩 시장은 기존 딜러 구조 정리와 신규 딜러 개발이 핵심입니다. Keenworld B/L 계약 협의를 중심으로 신규 딜러 체계를 구축하고, 본사 승인 및 재고구매 요청을 통해 영업 전환을 준비해야 합니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 TBMS 계약 협의, 홍콩 Keenworld 계약 협의, COXO 중국 위탁생산 및 인허가 준비가 핵심입니다. 4월에는 NDA·MOU 체결, 시료 수량 협의, TFT 구성 등 중국 현지 생산과 인허가를 위한 사전 기반 구축이 주요 과제입니다.'}
+ ],
+ '5':[
+   {label:'중국',text:'중국 시장은 유통 Coverage 확대, M/S 확대, BD 진입 확대, 하부고객 확대, DSO 확대, 2차 VBP 입찰 준비, ARi 런칭 준비, 부진지역 개선이 핵심입니다. 또한 중국 수입산 인허가와 현지 생산 OEM 프로젝트를 병행하여 장기적인 제품 공급 기반을 준비해야 합니다.'},
+   {label:'대만',text:'대만 시장은 대만법인 설립, Sunriser 인허가 양수, 재고 인수, TBMS B/L 계약 체결, 메가젠 제품 공급 프로세스 수립이 중심입니다. 이를 통해 대만 법인의 영업 기반과 B/L 공급 운영 체계를 동시에 정리해야 합니다.'},
+   {label:'홍콩',text:'홍콩 시장은 Kenworld B/L 계약 체결 및 신규 딜러 영업 준비가 핵심입니다. 기존 딜러의 재고와 잔여 선수금을 정리하고, Kenworld 중심의 신규 영업 구조로 전환하는 것이 주요 방향입니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 TBMS 계약 및 공급 프로세스, 홍콩 Kenworld B/L 계약, 중국 수입산 인허가, 중국 현지 생산 OEM 프로젝트가 핵심입니다. 특히 5월에는 계약·공급·인허가·OEM 역할분담을 정리하는 것이 중요합니다.'}
+ ],
+ '6':[
+   {label:'중국',text:'6월 중국 시장은 부진·이슈본부 개선, 유통 Coverage 확대, BD 진입 확대, 하부고객 확대, DSO 확대, 2차 VBP 입찰 준비, 에비던스 런칭 준비가 핵심입니다. 특히 화남·상해·강소·북경 등 부진 지역 개선과 BD 핵심점 육성, DSO 및 대리상 수금 이슈 대응이 주요 실행 방향입니다.'},
+   {label:'대만',text:'대만 시장은 대만법인 설립, 인허가권 양수, 재고 인수, Sunriser 및 TBMS 전환 준비가 중심입니다. 또한 iPlus·Diode 본사 직수출 전환과 BD 신제품 발표회 준비를 통해 대만법인의 본격적인 영업 기반을 마련하는 것이 핵심입니다.'},
+   {label:'홍콩',text:'홍콩 시장은 기존 딜러 거래 종료와 신규 딜러 Kenworld 계약 추진이 핵심입니다. 동시에 B/L 발주 시스템 및 PRM 교육을 진행하여, Kenworld 중심의 신규 영업 운영 체계를 구축하는 방향입니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 TBMS 직수출 전환, 홍콩 Kenworld B/L 발주 시스템 교육, 중국 수입산 인허가, 중국 현지 생산 OEM 프로젝트가 핵심입니다. 특히 중국 OEM 프로젝트는 계약서 검토, 샘플 송부, 통관 이슈 대응을 중심으로 장기 인허가 및 현지 생산 기반을 준비해야 합니다.'}
+ ],
+ '7':[
+   {label:'중국',text:'7월 중국 시장은 Bi-Polar 전략 강화, 2차 VBP 성공 진입, M/S 확대, 하부고객 확대, DSO 진입 및 확대가 핵심입니다. 특히 ARi·BD 진입 확대와 AO·ST 경쟁사 대응, 에비던스 런칭 준비, 국공립 진입 확대가 주요 실행 방향입니다.'},
+   {label:'대만·홍콩',text:'대만·홍콩은 대만 법인 설립과 홍콩 운영 구조 개선이 중심입니다. 대만은 인허가권 이전, 재고 반품, 법인 영업 인프라 구축, BD 런칭 행사 준비가 핵심이며, 홍콩은 임플란트와 B/L Co-sales 연계를 통한 신규 고객 확대가 주요 방향입니다.'},
+   {label:'바이오레이즈',text:'바이오레이즈는 대만 iPlus SG2 변경허가 취득 준비, 홍콩 Keenworld B/L 판매 확대 지원, 중국 수입산 인허가, 중국 현지 생산 OEM 프로젝트가 핵심입니다. 7월에는 특히 홍콩 B/L 판매 확대와 중국 OEM 프로젝트 사전 준비가 주요 과제로 정리됩니다.'}
+ ],
+ '8':[
+   {label:'중국',text:'중국 시장은 2차 VBP 입찰 준비, ARi·BD 진입 확대, 하부고객 확대, DSO 확대 및 대응 강화, 대리상 재고·수금 이슈 관리, 패키지 판매 확대, 에비던스 런칭 준비가 핵심입니다. 또한 바이오레이즈 관련해서는 수입산 인허가 진행과 중국 현지 생산 OEM 프로젝트를 병행 관리하여, 2028년 판매 기반을 사전에 준비해야 합니다.'},
+   {label:'대만',text:'대만 시장은 법인 조직 및 영업 인프라 구축, Sunriser 및 TBMS 대리상 계약 추진, 법인 설립 심포지엄 준비, 신궁병원 세미나 운영이 중심입니다. 추가로 바이오레이즈 iPlus SG2 변경허가 취득 후속 조치를 통해 공급계획, 포장, 라벨링 사양을 확정하는 것이 중요합니다.'},
+   {label:'홍콩',text:'홍콩 시장은 B/L 고객을 활용한 임플란트 신규 고객 개발이 핵심입니다. 이와 함께 바이오레이즈 iPlus SG2 초도 판매 후속 관리를 통해 사용 안정성 확인과 EPIC 판매 가능성을 검토해야 합니다.'}
+ ]
+};
+const MFY_SEED=[
+ {region:'중국',task:'제품 / 가격 경쟁력 강화',goal:'신제품 출시 및 2차 VBP Class A 진입',plan:'BD, ARi, Value 제품군 확대 운영, ST DSO 운영 검토, 2차 VBP 준비 및 적극 대응',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'ARi 출시 준비',goal:'ARi 2026년 6월 출시',plan:'ARi 런칭 계획 수립, 교육·세미나 준비, 주요 고객 대상 사전 영업 진행',owner:'',due:'6월',prog:''},
+ {region:'중국',task:'2차 VBP 진입',goal:'AO, AR 중심 진입, ST 추가 검토',plan:'입찰 가격 전략 수립, Class A 진입 준비, 의료보험 정책 대응',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'BD 진입 및 판매 확대',goal:'BD 1,500점 진입, 8만대 판매',plan:'BD 진입점 확대, BD 핵심점 200점 육성, 교육·세미나 및 성공사례 확산',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'부진상권 및 M/S 확대',goal:'부진상권 M/S 6% 이상 달성',plan:'상해, 광동 등 1급 시장과 2/3급 시장 집중 개선, 대리상 보강 및 영업 활성화',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확보',plan:'하부고객 확대, CRM 기반 고객 관리체계 구축, 성과 평가 기준 마련',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'DSO 250점 진입, 60만대 판매',plan:'S/A급 DSO 적극 진입, DSO 파트너십 강화, 전담 관리체계 운영',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'브랜드 강화',goal:'KOL 75명 확보',plan:'KOL 지속 확대 및 육성, 교육·세미나 운영, 브랜드 인지도 및 충성도 강화',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'TOP 3 브랜드 인지도 구축',goal:'타깃 마케팅 활동 440회 운영',plan:'Package 및 교육코스 다양화, 한국·동남아·유럽 연계 교육 프로그램 운영',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'Sales Force 강화',goal:'본부별 책임경영 체계 강화',plan:'2법인 6본부 13권역 체계 안정화, 일원화 정책 운영, 매출중심 KPI 관리',owner:'',due:'연중',prog:''},
+ {region:'중국',task:'핵심 리더 확보 및 육성',goal:'주재원 7명, 권역장 13명, 총감 7명, 본사 1~2명 확보',plan:'관리자 및 2/3급 시장 영업인원 보강, 부진 지속 인원 교체, 핵심 인재 육성',owner:'',due:'연중',prog:''}
+];
+const MF1_SEED=[
+ {region:'중국',task:'본부별 / 대리상별 합동 계약 추진',goal:'26년 계약 목표 3.8억 위안 달성',plan:'본부별·대리상별 계약 체결 계획 수립 및 계약 추진 현황 관리',owner:'',due:'1월',prog:''},
+ {region:'중국',task:'BD 진입 및 판매 확대',goal:'BD 진입 확대, 2점/월 개발, BD KOL 30명 육성',plan:'교육·세미나 운영, 판촉, BD KOL 육성, 성공사례 확보 및 전파',owner:'',due:'2026년 2월',prog:''},
+ {region:'중국',task:'ARi 런칭 계획 수립',goal:'26년 6월 ARi 런칭 목표',plan:'ARi 런칭 일정 수립, 사전 교육·마케팅 준비, 런칭 행사 기획',owner:'',due:'2026년 6월',prog:''},
+ {region:'중국',task:'유통 Coverage 확대',goal:'부진지역 대리상 및 M/S 확대',plan:'1급 시장 상해·광동, 2/3급 시장 대리상 보강, 하부고객 확대 및 CRM 기반 출하실적 관리',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'기존 고객 S/A급 판매 활성화 및 추가 진입 계획 수립',plan:'S/A급 고객 밀착 지원, 추가 DSO 진입 계획 수립, 주요 DSO F/U 관리',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'1~2월 정책 발표 예상, 가격 비딩 전략 수립',plan:'정책 발표 모니터링, 가격 비딩 전략 수립, AO/AR 중심 입찰 대응 준비',owner:'',due:'2026년 6월',prog:''},
+ {region:'중국',task:'캐나다 심포지엄 패키지 판매',goal:'판매목표 100명, 17M 위안',plan:'캐나다 심포지엄 연계 패키지 판매 기획 및 고객 모집 관리',owner:'',due:'~2026년 5월',prog:''},
+ {region:'중국',task:'말레이시아 세미나 패키지 판매',goal:'판매목표 200명, 14M 위안',plan:'말레이시아 세미나 연계 패키지 판매 기획 및 고객 모집 관리',owner:'',due:'~2026년 2월',prog:''},
+ {region:'중국',task:'1월 주요 업무 운영',goal:'DSO 방한, 상해 장상각, 국제샬롱, MegaMind 등 주요 마케팅 활동 운영',plan:'DSO 방한, 우한 더파이, 상해 장상각, 북경 국제샬롱, MegaMind 행사 운영 및 F/U',owner:'',due:'1월',prog:''},
+ {region:'중국',task:'중점 급여 및 인센티브 정책 운영',goal:'26년 급여 및 인센티브 정책 확정·진행',plan:'성과 중심 보상 정책 검토, 법인 및 본사 협의 후 정책 실행',owner:'',due:'1월',prog:''},
+ {region:'대만',task:'대만 1월 중점 추진 과제',goal:'TBMC 26년 사업계획 협의 및 임플란트 사업계획 협의',plan:'대만 TBMC와 26년 사업계획 논의, Full Mouth 세미나 운영, 임플란트 사업계획 협의',owner:'',due:'1월',prog:''}
+];
+const MF2_SEED=[
+ {region:'중국',task:'본부별 / 대리상별 합동 계약 추진',goal:'26년 계약 목표 3.8억 위안 달성',plan:'본부별·대리상별 계약 추진 현황 관리 및 계약 체결 F/U',owner:'',due:'2월',prog:''},
+ {region:'중국',task:'BD 진입 및 판매 확대',goal:'BD 1,500점 진입, 8만대 판매 목표',plan:'교육·세미나 운영, BD KOL 육성, BD 핵심점 200점 육성, 성공사례 확보 및 전파',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확대',plan:'CRM 활용 기존 고객 실체 출하 실적 관리, 신규 고객 타깃 영업 진행',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'DSO 250점 진입, 60만대 판매 목표',plan:'기존 고객 S/A급 판매 활성화, 밀착 지원, 신규 DSO 추가 진입 추진',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'입찰공고 미정, 사전 정비 단계에서 가격 비딩 전략 수립',plan:'사천·복경 의료보장국 가격 체계 표준화 지침 확인 및 입찰 가격 전략 준비',owner:'',due:'2026년 6월',prog:''},
+ {region:'중국',task:'캐나다 심포지엄 패키지 판매',goal:'판매목표 100명, 17M 위안',plan:'캐나다 심포지엄 연계 패키지 판매 추진 및 고객 모집 관리',owner:'',due:'2월~5월',prog:''},
+ {region:'중국',task:'말레이시아 투어 세미나 운영',goal:'판매목표 200명, 13.5M 위안',plan:'말레이시아 투어 세미나 연계 판매 추진 및 고객 모집 관리',owner:'',due:'2월',prog:''},
+ {region:'중국',task:'2월 주요 업무 운영',goal:'KOL 방한 교육 및 법인 신년 행사 운영',plan:'대구 KOL 방한 교육, 닝보 법인 신년 행사, 전체 영업사원 제품 교육 진행',owner:'',due:'2월',prog:''},
+ {region:'대만·홍콩',task:'홍콩 메가젠 후속 이슈 정리',goal:'대리점 운영 중단 요청에 따른 후속 이슈 확인',plan:'계약 종료, 재고·채권채무, 고객 선수금 등 후속 이슈 확인 및 정리 협의',owner:'',due:'2월',prog:''},
+ {region:'대만·홍콩',task:'홍콩 대만구 신구딜러 육성',goal:'1만불 초도 발주 및 영업 인력 확보',plan:'화남 기반 영업 활성화, 신규 딜러 영업 구조 검토',owner:'',due:'2월',prog:''},
+ {region:'대만·홍콩',task:'메가젠 대만 법인 설립 준비',goal:'대만 법인 설립 추진 및 영업 준비',plan:'인허가권 양수, 시장조사, 전략·목표·조직 수립',owner:'',due:'2월',prog:''},
+ {region:'대만',task:'TBMS 본사 방문 및 26년 사업계획 논의',goal:'TBMS와 26년 사업계획 및 제품 연계 판매 협의',plan:'트레이딩 업무, 덴마크 임플란트, 알플란트 및 디지털 솔루션 제품 연계 판매 협의',owner:'',due:'2월',prog:''},
+ {region:'홍콩',task:'Kenworld 26년 계약 체결 협의',goal:'홍콩 Kenworld 계약 협의 진행',plan:'2월 방문 협의 및 임플란트 연계 판매 협의',owner:'',due:'2월',prog:''},
+ {region:'중국',task:'중국 인허가 인증 진도 점검',goal:'중국 인허가 진행상황 점검',plan:'본사·연구소 협업을 통한 인허가 일정 및 진행 현황 관리',owner:'',due:'지속',prog:''}
+];
+const MF3_SEED=[
+ {region:'중국',task:'본부별 / 대리상별 합동 계약 추진',goal:'26년 계약 목표 3.8억 위안 추진, 2월 기준 3.3억 위안 체결',plan:'본부별·대리상별 계약 체결 현황 관리 및 미체결 대리상 후속 협의 진행',owner:'',due:'3월',prog:''},
+ {region:'중국',task:'중점과제 실행계획 점검 및 실행 관리',goal:'BD 진입 1,500점, 8만대 판매 확대',plan:'교육·세미나, BD/ARi KOL 육성 30명, BD 핵심점 200점 육성 추진',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 목표 관리, 2월 누적 7,290점',plan:'CRM 활용 기존 고객 실체 출하 실적 관리 및 신규 고객 타깃 영업 진행',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'DSO 250점, 60만대 목표 관리, 2월 누적 200점·7만대',plan:'DSO 고객 개발 및 기존 DSO 판매 활성화, 주요 타깃 고객 F/U 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'Value 시장 경쟁력 강화',goal:'AO 수출가 조정 및 관측 강화',plan:'AO 가격 조정, Value 시장 내 경쟁사 가격 대응 및 판매 경쟁력 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'입찰 공고 미정, 사전 정비 단계에서 가격 비딩 전략 준비',plan:'사천·복경 의료보장국 가격 체계 표준화 지침 확인 및 입찰 대응 전략 수립',owner:'',due:'2026년 6월',prog:''},
+ {region:'중국',task:'3월 주요 활동 운영',goal:'캐나다 심포지엄 PKG, 광주 전시회, 말레이시아 투어 세미나, 서울대 교육 운영',plan:'행사별 고객 모집, 판매 목표 관리, 교육 및 세미나 운영 후 F/U 진행',owner:'',due:'3월',prog:''},
+ {region:'중국',task:'복경법인장 교체',goal:'법인 운영 안정화 및 조직 정비',plan:'총경리 정철성 상무, 부총경리 백기홍 부장 체계로 조직 전환 및 업무 안정화',owner:'',due:'2월',prog:''},
+ {region:'대만',task:'대만 법인 설립 추진',goal:'법인장·본사 담당 채용 및 영업전략 수립',plan:'사전 영업 준비, TBMS 미팅, Sunriser 인허가권 양수 및 영업 현황 파악',owner:'',due:'~5월',prog:''},
+ {region:'홍콩',task:'딜러 구조 전환',goal:'기존 딜러 딜러권 포기 및 신규 딜러 발굴',plan:'Kenworld 대리점 계약 체결 추진 및 홍콩 영업 구조 재정비',owner:'',due:'3월',prog:''},
+ {region:'대만',task:'TBMS 본사 방문 및 26년 계약 체결',goal:'바이오레이즈 60대, iPlus 20대, SG2 전환 후 추가 검토, EPIC 30대 목표',plan:'Backorder 이슈 해결, TBMS와 바이오레이즈 공급 및 계약 조건 협의',owner:'',due:'3월',prog:''},
+ {region:'홍콩',task:'Kenworld 26년 계약 체결',goal:'바이오레이즈 iPlus 5대 목표 및 임플란트 판매 제안',plan:'Kenworld와 B/L 계약 체결 추진 및 임플란트 연계 판매 제안',owner:'',due:'3월',prog:''},
+ {region:'중국',task:'중국 인허가 진행',goal:'수입 인허가 및 COXO 위탁생산 인허가 추진',plan:'미국산 수입인증 및 COXO 위탁생산 인허가 일정·비용·완료 예상일 관리',owner:'',due:'지속',prog:''}
+];
+const MF4_SEED=[
+ {region:'중국',task:'본부별 / 대리상별 합동 계약 추진',goal:'계약 목표 3.7억 위안 달성, 3월 기준 3.5억 위안 체결',plan:'부진 상권 및 2·3급 시장 지속 보강, 본부·대리상별 합동 계약 관리',owner:'',due:'4월',prog:''},
+ {region:'중국',task:'유통 Coverage 확대 및 M/S 확대',goal:'BD 진입 1,500점, 8만대 / 하부고객 8,500점 / DSO 250점, 60만대',plan:'BD 진입점 판매 활성화, 하부고객 확대, DSO 확대, 대리상 현업 강화, 패키지 판매 운영',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'BD 진입 확대',goal:'3월 누적 518점, 8,878대 기준 BD 판매 확대',plan:'교육·세미나 진행, 전문 KOL 육성 30명, BD 핵심점 200점 육성, 장려 정책 운영',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'3월 기준 7,414점, 26년 목표 8,500점 달성',plan:'진입고객 실체 출하 확대 및 신규고객 집중 개발',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'3월 누적 206점, 13.6만대 / 26년 목표 250점, 60만대',plan:'기존·미진입 DSO 판매 활성화, S/A급 타깃 DSO 집중 개발, 파트너십 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'대리상 현업 강화',goal:'120명, 21M 위안 / TASK 80명, 5M 위안 패키지 판매 추진',plan:'수금 이슈 관리, 대리상 대응 강화, 행사 연계 패키지 판매 준비',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'6월 말 예정 2차 VBP 가격 비딩 준비',plan:'입찰 가격 전략 수립 및 국공립 진입 확대 준비',owner:'',due:'~6월',prog:''},
+ {region:'중국',task:'ARi 런칭 준비',goal:'6/8 ARi 런칭 행사 준비',plan:'판매전략 수립, 런칭 행사 준비, 고객 초청 계획 수립',owner:'',due:'~6월',prog:''},
+ {region:'중국',task:'2분기 주요 활동 운영',goal:'4~6월 주요 교육·세미나·방한 행사 운영',plan:'DSO 방한, 운남투어, 사전 전시회, CEO사롱, 서울대, MegaSchool, 토론토 심포지엄, 북경 전시회, ARi 런칭 운영',owner:'',due:'4월~',prog:''},
+ {region:'중국',task:'닝보 총경리 교체 및 조직 보강',goal:'조직 안정화 및 2·3급 시장 관리 강화',plan:'닝보 총경리 교체 후 조직 보강, 관리자 체계 정비, 2·3급 시장 관리 강화',owner:'',due:'4월',prog:''},
+ {region:'대만',task:'대만법인 설립',goal:'5월 법인 설립, Sunriser 인허가 양수, 재고 인수 준비',plan:'판매전략 수립, 법인 운영계획 정리, 대만 법인 영업 기반 준비',owner:'',due:'~8월',prog:''},
+ {region:'홍콩',task:'신규 딜러 개발',goal:'기존 딜러 딜러권 포기 후 신규 딜러 개발',plan:'본사 재고구매 요청, 신규 딜러 개발, Kenworld 외 추가 후보 검토',owner:'',due:'~6월',prog:''},
+ {region:'대만',task:'TBMS 계약 협의',goal:'26년도 계약 체결 협의 완료',plan:'계약 체결 후 본사 제품 공급 협의, 미국 → 한국 공급 구조 변경 검토',owner:'',due:'4월',prog:''},
+ {region:'대만',task:'Backorder 물량 공급',goal:'잔여 Backorder 물량 4월 내 공급 완료',plan:'Trunk Fiber 3EA, Aiming Beam 1EA, Tip 125 공급 완료',owner:'',due:'4월',prog:''},
+ {region:'홍콩',task:'Keenworld 계약 협의',goal:'26년도 계약 체결 협의 완료',plan:'Keenworld B/L 계약 협의 및 본사 승인 준비',owner:'',due:'4월',prog:''},
+ {region:'중국',task:'COXO 중국 위탁생산 및 인허가 준비',goal:'중국 위탁생산 및 인허가 준비 체계 구축',plan:'바이오레이즈·COXO 3자 NDA 및 MOU 체결, 인허가·생산 검토 시료 수량 협의, TFT 구성',owner:'',due:'지속',prog:''}
+];
+const MF5_SEED=[
+ {region:'중국',task:'유통 Coverage 확대 및 M/S 확대',goal:'BD 진입 1,500점, 8만대 / 하부고객 8,500점 / DSO 250점, 60만대',plan:'BD 핵심점 육성, 하부고객 개발, DSO 집중 개발, 대리상 수금 이슈 관리, 패키지 판매 준비',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'BD 진입 확대',goal:'4월 누적 576점, 13,152대 기준 BD 판매 확대',plan:'대리상 영업사원 교육, KOL 육성, BD 핵심점 200점 육성, 장려 정책 운영',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'4월 기준 7,479점, 26년 목표 8,500점 달성',plan:'In-active 고객 20% 이하 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대',goal:'4월 누적 209점, 18.8만대 / 26년 목표 250점, 60만대',plan:'S/A급 DSO 집중 개발, 경쟁사 대응, 파트너십 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'대리상 현업 강화',goal:'최근 DSO 수금 지연에 따른 자금난 대응',plan:'매출·수금 이슈 관리 및 대리상 대응 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'패키지 판매 준비',goal:'6월 토론토 120명, 21M 위안 / 7월 TASK 170명, 7.3M 위안 추진',plan:'패키지 판매 정책 정리 및 행사 연계 판매 준비',owner:'',due:'6~7월',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'가격 비딩 및 국공립 진입 확대, 현재 4,000점 중 400점 진입',plan:'입찰 가격 전략 수립, 국공립 사전 영업 확대',owner:'',due:'~6월',prog:''},
+ {region:'중국',task:'ARi 런칭 준비',goal:'6/8 런칭 행사 준비, 200명 참석 목표',plan:'판매전략 수립, 고객 초청, 런칭 행사 준비',owner:'',due:'~6월',prog:''},
+ {region:'중국',task:'5월 주요 활동 운영',goal:'CEO 샤롱, 메가스쿨, 서울대, DSO 방한 운영',plan:'행사별 고객 관리 및 후속 F/U 진행',owner:'',due:'5월',prog:''},
+ {region:'중국',task:'이슈 / 부진 지역 본부 개선',goal:'화동·화남본부 실행력 강화',plan:'화동본부 상해·강소지역 대리상 대응책 수립, 화남본부 경쟁사 Gap 분석 및 타깃 실행과제 명확화',owner:'',due:'5월~',prog:''},
+ {region:'대만',task:'대만법인 설립',goal:'5월 법인 설립, Sunriser 인허가 양수, 재고 인수 준비',plan:'시장조사 및 판매전략 수립, 법인 운영 기반 준비',owner:'',due:'~8월',prog:''},
+ {region:'홍콩',task:'신규 딜러 계약 및 영업 준비',goal:'Kenworld 계약 및 영업 준비',plan:'기존 딜러 재고·잔여 선수금 정리, 신규 딜러 중심 영업 전환',owner:'',due:'~6월',prog:''},
+ {region:'대만',task:'TBMS B/L 계약 체결 및 공급 프로세스 수립',goal:'TBMS B/L 계약 체결 완료 및 본사 승인',plan:'메가젠 제품 공급 운영 프로세스 수립, TBMS 공급업체 등록 및 발주 시스템 교육',owner:'',due:'~5월 말',prog:''},
+ {region:'대만',task:'B/L 제품 공급 대응',goal:'Backorder Pending 잔여 이슈 관리',plan:'Laser Heatsink 3EA 5월 내 대응',owner:'',due:'~5월 말',prog:''},
+ {region:'홍콩',task:'Kenworld B/L 계약 추진',goal:'Kenworld B/L 계약 완료 및 본사 승인',plan:'홍콩 신규 딜러 계약, 임플란트 대리점 협의, 영업 전환 준비',owner:'',due:'~5월 말',prog:''},
+ {region:'중국',task:'중국 인허가 인증 진행',goal:'중국 수입산 인허가 진행',plan:'중화팀 및 연구소 협업을 통한 인허가 진행상황 관리',owner:'',due:'~2028.2',prog:''},
+ {region:'중국',task:'중국 현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 인허가 권리 확보',plan:'OEM 계약서 및 별도 합의서 검토, 인허가 샘플 4대 송부, TF/COXO 주 1회 업무회의 운영',owner:'',due:'~2028.6',prog:''},
+ {region:'중국',task:'OEM 업무 역할 정리',goal:'부서별 역할과 의사결정 체계 명확화',plan:'중화팀, 법무팀, 인허가팀, 품질팀, 각 담당자별 업무 역할 구분 및 공유',owner:'',due:'지속',prog:''}
+];
+const MF6_SEED=[
+ {region:'중국',task:'부진 / 이슈본부 개선',goal:'화남·상해·강소·북경 지역 이슈 개선',plan:'화남 혁신 Task 진행, 운동판 과정 파견, 상해·강소 대리상 및 DSO 대응방안 강구, 북경 활성화 대책 수립',owner:'',due:'~8월',prog:''},
+ {region:'중국',task:'유통 Coverage 확대 및 M/S 확대',goal:'BD 진입 확대 및 핵심점 판매 활성화',plan:'BD 1,500점 / 8만대 목표 관리, KOL 육성 및 교육·세미나 강화, BD 핵심점 200점 육성 및 장려 정책 운영',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확대',plan:'In-active 고객 20% 이하 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 확대 및 대응 강화',goal:'DSO 250점 진입, 60만대 판매',plan:'미진입 S/A급 DSO 추가 개발, 경쟁사 대응 방어·공략, 관측 지원 추가 및 파트너십 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'대리상 현업 및 지원 강화',goal:'대리상 재고·수금·매출 이슈 관리',plan:'영업업체 증가 및 DSO 수금 지연에 따른 자금난 대응, 매출·수금 이슈 관리 및 대응 강화',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'토론토 심포지엄 운영',goal:'6월 토론토 심포지엄 참석 및 판매 성과 관리',plan:'참석자 137명, 패키지 42억원 판매, VIP 고객 관리 및 사후 F/U 진행',owner:'',due:'6월',prog:''},
+ {region:'중국',task:'ARi 신제품 발표회',goal:'북경 ARi 신제품 발표회 성공 운영',plan:'6월 8일 북경 발표회 진행, 250명 참석 예정 기준 고객 초청 및 행사 운영',owner:'',due:'6월',prog:''},
+ {region:'중국',task:'2차 VBP 입찰 준비',goal:'가격 비딩 및 국공립 진입 확대',plan:'현재 4,000점 중 400점 진입 기준으로 사전 영업 및 입찰 전략 준비',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'에비던스 런칭 준비',goal:'4Q 런칭 준비 및 DSO 중심 운영 검토',plan:'염가 대응 제품으로 DSO 중심 운영 검토, 사전 Target 고객 선정',owner:'',due:'~9월',prog:''},
+ {region:'중국',task:'6월 주요 활동 운영',goal:'북경·정주·상해·항주·북경 DSO 방문 등 주요 활동 진행',plan:'북경 전시회, CEO 상해 강의, 국제사랑·항주, 북경 징승 DSO 방한 일정 관리',owner:'',due:'6월',prog:''},
+ {region:'대만',task:'대만 법인 설립',goal:'대만법인 설립 허가 및 영업 기반 확보',plan:'법인 설립 허가, 인허가 양수, 재고 인수, 전략보고, 주재원 파견 준비',owner:'',due:'~8월',prog:''},
+ {region:'대만',task:'Sunriser / TBMS 전환 준비',goal:'인허가권 이전 및 대리상 계약 추진',plan:'8/30 이후 BD 신제품 발표회 행사 준비, 대만법인 영업 개시 준비',owner:'',due:'7~8월',prog:''},
+ {region:'홍콩',task:'신규 딜러 계약 및 영업 준비',goal:'기존 딜러 거래 종료 및 신규 딜러 Kenworld 계약 추진',plan:'신규 딜러 계약, 영업 전환 준비 및 홍콩 시장 운영 구조 재정비',owner:'',due:'~6월',prog:''},
+ {region:'대만',task:'TBMS 메가젠 본사 직수출 전환',goal:'iPlus 및 Diode 본사 직수출 구조 전환',plan:'5월 iPlus 1대, Diode 8대 본사 수출 진행, 6월 WCLIB 교육용 4대 구매 협의',owner:'',due:'~6월',prog:''},
+ {region:'홍콩',task:'Kenworld B/L 발주 시스템 교육',goal:'홍콩 B/L 발주 및 PRM 시스템 운영 교육',plan:'Kenworld 대상 B/L 발주 시스템 교육 진행 및 6월 iPlus 1대 운영',owner:'',due:'~6월',prog:''},
+ {region:'중국',task:'수입산 인허가 진행',goal:'중국 수입산 인허가 진행',plan:'TF 및 중화팀 협업으로 NMPA 인허가 진행 상황 관리',owner:'',due:'~2028.2',prog:''},
+ {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 및 인허가 기반 구축',plan:'OEM 계약서 및 인허가 권리 계약서 검토, 인허가 샘플 4대 송부, 통관 이슈 보류 후 모듈 발송 추진',owner:'',due:'~2028.7',prog:''}
+];
+const MF7_SEED=[
+ {region:'중국',task:'Bi-Polar 전략 강화',goal:'ARi 500점 / BD 1,500점 진입, ARi 8,000대 / BD 80,000대 판매',plan:'ARi 성공 런칭 및 BD 진입점 확대, AO ST 경쟁사 체크 대응, 에비던스 런칭 준비',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'2차 VBP 성공 진입',goal:'AO, AR 중심 2차 VBP 목표 진입',plan:'2차 VBP 가격 비딩 전략 수립, 입찰 참여 및 의료보험 대응, 국공립 진입 확대 영업 진행',owner:'',due:'~9월',prog:''},
+ {region:'중국',task:'M/S 확대',goal:'26년 M/S 8.5%, 부진 상권 M/S 5% 이상, 주력 상권 M/S 15% 확대',plan:'화남·상해·북경·운남·섬서 등 부진 상권 개선, 주력 상권 확대, KOL 교육·세미나 운영 확대',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'하부고객 확대',goal:'26년 하부고객 8,500점 확대, CRM 기반 영업활동 관리 체계 정립',plan:'지역별 핵심점 진입, 3~4선 도시 공략, 부진지역 대리상 보강을 통한 고객 확대',owner:'',due:'지속',prog:''},
+ {region:'중국',task:'DSO 진입 및 확대',goal:'DSO 250점 진입, 판매목표 60만개',plan:'S/A급 및 중소형 이원화 대응, 밀착 지원, 신규 개발, DSO 전담팀 신설 및 경쟁사 대응 강화',owner:'',due:'지속',prog:''},
+ {region:'대만·홍콩',task:'대만 법인 설립',goal:'하부고객 개발 400점, BD 고객 100점 진입',plan:'인허가권 이전, 재고 반품, 법인 영업, BD 런칭 행사 준비, 임플란트·체어·BL 사업 추진',owner:'',due:'9월',prog:''},
+ {region:'대만·홍콩',task:'홍콩 운영 구조 개선',goal:'26년 수출 목표 USD 280K',plan:'임플란트와 B/L Co-sales 연계 프로모션 강화 및 신규 고객 확대',owner:'',due:'지속',prog:''},
+ {region:'대만',task:'iPlus SG2 런칭 지원',goal:'26년 8월 변경허가 취득 예정, iPlus 및 서비스 파츠 공급 물량 확보',plan:'변경허가 후 공급계획 확인, 제품 포장·라벨링 사양 점검',owner:'',due:'~8월',prog:''},
+ {region:'홍콩',task:'Keenworld B/L 판매 확대 지원',goal:'기존 임플란트 거래처 대상 B/L 연계 영업 추진',plan:'B/L 고객 기반 임플란트 및 바이오레이즈 신규 고객 개발',owner:'',due:'~7월',prog:''},
+ {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상',plan:'중화팀·연구소 협업으로 중국 수입산 인허가 진행상황 관리',owner:'',due:'~2028.2',prog:''},
+ {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'2028년 중국 현지 생산 및 판매 기반 구축',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 중국 발송, 현지 공장 방문 및 생산라인 SETUP 준비',owner:'',due:'~2028.7~8',prog:''}
+];
+/* 국기/아이콘: 윈도우에서 🇨🇳🇹🇼🇭🇰가 CN/TW/HK 글자로 뜨는 문제 → 어느 기기든 국기가 보이도록 인라인 SVG 사용 */
+function iconFor(label){
+  const cn='<svg class="mf-flag" viewBox="0 0 30 20" width="20" height="13"><rect width="30" height="20" fill="#de2910"/><text x="4" y="15" font-size="14" fill="#ffde00">★</text></svg>';
+  const tw='<svg class="mf-flag" viewBox="0 0 30 20" width="20" height="13"><rect width="30" height="20" fill="#fe0000"/><rect width="15" height="10" fill="#000095"/><text x="3" y="9" font-size="9" fill="#fff">★</text></svg>';
+  const hk='<svg class="mf-flag" viewBox="0 0 30 20" width="20" height="13"><rect width="30" height="20" fill="#de2910"/><text x="8" y="16" font-size="15" fill="#fff">✿</text></svg>';
+  const laser='<svg class="mf-flag" viewBox="0 0 34 20" width="22" height="13"><rect x="2" y="7.5" width="9" height="5" rx="1" fill="#555"/><rect x="11" y="9" width="20" height="2" fill="#ff2b2b"/><circle cx="31" cy="10" r="2.6" fill="#ff2b2b"/></svg>';
+  if(label==='중국')return cn;
+  if(label==='대만')return tw;
+  if(label==='홍콩')return hk;
+  if(label==='대만·홍콩')return tw+hk;
+  if(label==='바이오레이즈')return laser;
+  const em={'마케팅 및 행사':'📣','마케팅':'📣','행사':'📣','제품 / 가격 경쟁력 강화':'🏷️','거래처 확대 및 M/S 확대':'📈','브랜드 강화':'⭐','Sales Force 강화':'👥'};
+  return `<span class="mf-flag">${em[label]||'📌'}</span>`;
+}
+function renderFocus(){
+  if((!MFOCUS['8']||!MFOCUS['8'].length)&&typeof PTASKS_SEED!=='undefined'){MFOCUS['8']=PTASKS_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['7']||!MFOCUS['7'].length)&&typeof MF7_SEED!=='undefined'){MFOCUS['7']=MF7_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['6']||!MFOCUS['6'].length)&&typeof MF6_SEED!=='undefined'){MFOCUS['6']=MF6_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['5']||!MFOCUS['5'].length)&&typeof MF5_SEED!=='undefined'){MFOCUS['5']=MF5_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['4']||!MFOCUS['4'].length)&&typeof MF4_SEED!=='undefined'){MFOCUS['4']=MF4_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['3']||!MFOCUS['3'].length)&&typeof MF3_SEED!=='undefined'){MFOCUS['3']=MF3_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['2']||!MFOCUS['2'].length)&&typeof MF2_SEED!=='undefined'){MFOCUS['2']=MF2_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['1']||!MFOCUS['1'].length)&&typeof MF1_SEED!=='undefined'){MFOCUS['1']=MF1_SEED.map(x=>({...x}));saveMFocus();}
+  if((!MFOCUS['Y']||!MFOCUS['Y'].length)&&typeof MFY_SEED!=='undefined'){MFOCUS['Y']=MFY_SEED.map(x=>({...x}));saveMFocus();}
+  const rc={'중국':'#c0392b','대만':'#0d9488','홍콩':'#b3781c','대만·홍콩':'#0d9488'};
+  const flags={'중국':'🇨🇳','대만':'🇹🇼','홍콩':'🇭🇰','대만·홍콩':'🇹🇼🇭🇰'};
+  const yHas=(MFOCUS['Y']||[]).length;
+  let h=`<div class="mf-months"><button class="mf-mbtn mf-year${MFMON==='Y'?' on':''}${yHas?' has':''}" onclick="setMFMon('Y')">2026년${yHas?`<span class="mf-cnt">${yHas}</span>`:''}</button>`+Array.from({length:12},(_,k)=>k+1).map(m=>{const has=(MFOCUS[String(m)]||[]).length;return `<button class="mf-mbtn${String(m)===MFMON?' on':''}${has?' has':''}" onclick="setMFMon(${m})">${m}월${has?`<span class="mf-cnt">${has}</span>`:''}</button>`;}).join('')+`</div>`;
+  const mlabel=MFMON==='Y'?'2026년':MFMON+'월';
+  const rows=mfRows();
+  h+=`<div class="ptable-wrap" style="margin-top:16px"><div class="pm-head" style="margin-bottom:10px"><h3 style="font-size:15px">🎯 ${mlabel} 중점 추진과제</h3><span class="unit">지역·핵심과제·목표·대응방안 · 담당자/일정/진행률 직접 입력(자동저장)</span><button class="mile-add" onclick="addMFRow()">＋ 과제 추가</button>${MFMON!=='8'?`<button class="mile-add" onclick="copyMFFrom(8)" style="margin-left:6px">8월 내용 복사</button>`:''}</div>`;
+  if(!rows.length){
+    h+=`<div style="color:var(--faint);padding:26px;text-align:center;font-size:13px">${mlabel} 중점 추진과제가 아직 없습니다. 「＋ 과제 추가」로 등록하거나 「8월 내용 복사」를 사용하세요.</div></div>`;
+    return h;
+  }
+  const csum=(typeof MFSUM!=='undefined')?MFSUM[MFMON]:null;
+  if(csum&&csum.length){
+    const isC=l=>['중국','대만','홍콩','대만·홍콩'].includes(l);
+    const cardC=(c,cls)=>`<div class="qcard mf-sumcard ${cls||''}"><div class="rr-sec-h" style="margin-top:0">${iconFor(c.label)} ${isC(c.label)?'핵심과제':esc(c.label)+' 핵심과제'}</div><div style="font-size:13px;color:#000;font-weight:500;line-height:1.6">${esc(c.text)}</div></div>`;
+    const labels=csum.map(c=>c.label);
+    const isCTH2=labels.length===3&&['중국','대만','홍콩'].every(l=>labels.includes(l));
+    if(isCTH2){const m={'중국':'cn','대만':'tw','홍콩':'hk'};h+=`<div class="mf-sumgrid">${['중국','대만','홍콩'].map(l=>cardC(csum.find(c=>c.label===l),m[l])).join('')}</div>`;}
+    else{h+=`<div class="mf-sumflex">${csum.map(c=>cardC(c,'')).join('')}</div>`;}
+  } else {
+  const distinct=[...new Set(rows.map(r=>r.region).filter(Boolean))];
+  const cardOf=(rg,cls)=>{const items=rows.filter(r=>r.region===rg).map(r=>r.task).filter(Boolean);return `<div class="qcard mf-sumcard ${cls||''}"><div class="rr-sec-h" style="margin-top:0">${iconFor(rg)} 핵심과제</div><div style="font-size:13px;color:#000;font-weight:500;line-height:1.55">${items.length?esc(items.join(' · ')):'<span style="color:#94a3b8">등록된 과제 없음</span>'}</div></div>`;};
+  const isCTH=distinct.length===3&&['중국','대만','홍콩'].every(r=>distinct.includes(r));
+  if(isCTH){const m={'중국':'cn','대만':'tw','홍콩':'hk'};h+=`<div class="mf-sumgrid">${['중국','대만','홍콩'].map(rg=>cardOf(rg,m[rg])).join('')}</div>`;}
+  else{h+=`<div class="mf-sumflex">${distinct.map(rg=>cardOf(rg,'')).join('')}</div>`;}
+  }
+  h+=`<div style="overflow-x:auto"><table class="ptable ptasktbl"><thead><tr><th style="width:7%">지역</th><th style="text-align:left;width:16%">핵심과제</th><th style="text-align:left;width:21%">과제목표</th><th style="text-align:left;width:25%">대응방안</th><th style="width:12%">담당자</th><th style="width:7%">일정</th><th style="width:7%">진행률</th><th style="width:3%"></th></tr></thead><tbody>`;
+  rows.forEach((t,i)=>{
+    const col=rc[t.region]||'#555';
+    const pv=(t.prog||'').toString().replace('%','').trim();const isNum=pv!==''&&!isNaN(+pv);
+    h+=`<tr>
+      <td style="text-align:center"><select class="pt-in" style="padding:5px 4px" onchange="editMF(${i},'region',this.value)">${[...new Set(['중국','대만','홍콩','대만·홍콩',t.region].filter(Boolean))].map(r=>`<option ${t.region===r?'selected':''}>${esc(r)}</option>`).join('')}</select></td>
+      <td class="rl"><textarea class="rr-cell" style="font-weight:700" oninput="autogrow(this)" onchange="editMF(${i},'task',this.value)">${esc(t.task)}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editMF(${i},'goal',this.value)">${esc(t.goal)}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editMF(${i},'plan',this.value)">${esc(t.plan)}</textarea></td>
+      <td class="mf-owncell">${ownerCellMF(t,i)}</td>
+      <td><input class="pt-in" value="${esc(t.due||'')}" placeholder="일정" onchange="editMF(${i},'due',this.value)"></td>
+      <td><input class="pt-in" value="${esc(t.prog||'')}" placeholder="입력" onchange="editMF(${i},'prog',this.value)">${isNum?`<div class="pt-bar"><i style="width:${Math.max(0,Math.min(100,+pv))}%"></i></div>`:''}</td>
+      <td style="text-align:center"><button class="mile-del" onclick="delMFRow(${i})" title="삭제">🗑</button></td>
+    </tr>`;});
+  return h+'</tbody></table></div></div>';
 }
 /* ===== 중점 추진과제 달성율 (핵심지표 + KPI 달성율 + 중국 수출·수금 + 주요 행사일정) ===== */
 let FKMONTH='h2';
@@ -2520,10 +2840,10 @@ function mgrAssignStrip(mid){
 function viewRR(rows){
   const fm=document.getElementById('fMgr').value;
   let html='<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
-  const rrTabs=[['focus','중점추진과제'],['achieve','KPI 달성현황'],['work','업무상세현황'],['kanban','업무진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
-    .filter(([k])=>VROLE!=='member'||(k!=='table'&&k!=='report'));
-  if(VROLE==='member'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
-  html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
+  const rrTabs=[['achieve','KPI 달성현황'],['focus','매월 중점추진과제'],['work','업무상세현황'],['kanban','업무진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
+    .filter(([k])=>(k!=='table'&&k!=='report')||LOGINUID==='lee');
+  if(LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
+  html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}${(k==='report'||k==='table')?' tab-dim':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
   if(RRTAB==='focus')return html+renderFocus();
   if(RRTAB==='achieve')return html+renderFocusKPI();
   if(RRTAB==='assign')return html+renderAssign();
@@ -2995,7 +3315,23 @@ function monthCalendar(){
     +'<div class="ct-list">'+(CALTODO.length?CALTODO.map(t=>`<div class="ct-li${t.done?' done':''}"><button class="ct-ck" onclick="toggleCalTodo('${t.id}')">${t.done?'✓':''}</button><input class="ct-tx" value="${esc(t.text)}" onchange="editCalTodo('${t.id}',this.value)"><button class="ct-add-btn" title="일정으로 등록" onclick="calTodoToModal('${t.id}')">＋ 일정</button><button class="ct-x" onclick="delCalTodo('${t.id}')">×</button></div>`).join(''):'<div class="ct-empty">할 일이 없습니다.</div>')+'</div></div>';
   const memo=`<div class="mcal-memo"><div class="mm-h">MEMO · 고정 회의일정</div><textarea placeholder="매주 월 09:00 팀장회의 등 고정 일정을 적어두세요" onchange="editCalMemo(this.value)">${esc(CALMEMO)}</textarea></div>`;
   const below='<div class="cal-below">'+todo+memo+'</div>';
-  return '<div class="cal-col">'+cal+below+calWeekEventsTable()+'</div>'+calModalHTML();
+  const dups=calMileDups();
+  const dupBanner=dups.length?`<div class="weeknote" style="border-color:#e6b800;background:#fff8e1;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>⚠ 행사와 중복된 일정 ${dups.length}건</b> — 같은 항목이 「중화팀 행사」와 이 「일정」에 모두 있습니다. 행사(중점시장활동·세미나)는 <b>「중화팀 행사」</b>, 팀 내부 회의·루틴은 이 <b>「일정」</b>으로 나눠 관리하세요. <span style="color:#8a6d1a">중복: ${dups.slice(0,6).map(d=>esc(d.title)).join(' · ')}${dups.length>6?' 외':''}</span></div><button class="mile-add" onclick="dedupCalFromMile()">이 일정에서 중복 정리</button></div>`:'';
+  return '<div class="cal-col">'+dupBanner+cal+below+calWeekEventsTable()+'</div>'+calModalHTML();
+}
+/* 행사(MILESTONES)와 일정(CALLIST) 사이 동일 제목 중복 탐지 · 정리 */
+function calMileDups(){
+  const norm=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
+  const mset=new Set(MILESTONES.map(x=>norm(x.name)).filter(Boolean));
+  const out=[];CALLIST.forEach((e,idx)=>{const k=norm(e.title);if(k&&mset.has(k))out.push({title:e.title,idx});});
+  return out;
+}
+function dedupCalFromMile(){
+  const norm=s=>String(s||'').replace(/\s+/g,'').toLowerCase();
+  const mset=new Set(MILESTONES.map(x=>norm(x.name)).filter(Boolean));
+  const before=CALLIST.length;
+  CALLIST=CALLIST.filter(e=>!mset.has(norm(e.title)));
+  saveCal();render();toast((before-CALLIST.length)+'건의 중복 일정을 정리했습니다 (행사 항목은 유지)');
 }
 /* 등록 일정 표 — 현재 선택 주차(그 주)만 */
 function calWeekEventsTable(){
@@ -3065,13 +3401,31 @@ function mileCalendar(){
   return mileFilterBar(miles.length)+'<div class="cal-main" style="flex-basis:100%;width:100%"><div class="mcal-top"><div class="mcal-title">'+y+'. '+MCAL_MN[m-1]+'</div>'
     +`<div class="mcal-nav"><button onclick="calMonthStep(-1)">◀ 이전달</button><button onclick="calMonthStep(1)">다음달 ▶</button></div></div>`+grid+nd+'</div>';
 }
+/* 주간 업무보고 (노션 🐩 주간 업무보고 DB 스냅샷) — 중화팀 행사 일정목록 아래 표 */
+const NOTION_WR_DB='https://app.notion.com/p/8ebd77fcef634ee480ddf5c3c3352f4a?v=5fe9b8eff63f407b9b64d37df0c1c586';
+const WKREPORTS=[
+ {wk:'공통',title:'중화팀 R&R 및 업무일정 관리표',period:'',status:'작성중',sheet:'https://docs.google.com/spreadsheets/d/1_zandklxPh7wzm7oZ3kyHA9PrH7HP57zZX7YGkHT3Zk/edit?gid=0#gid=0',page:'https://app.notion.com/p/3ac73e4ce542801cb10ad1ae50b961fd'},
+ {wk:'W29',title:'중화팀_주간업무보고_7월_W29',period:'07.15~07.21',status:'완료',sheet:'https://docs.google.com/spreadsheets/d/1gP7v-xwqYcFqSBzlg7ErvW94vxR0fLUTyUJuJhVyUnc/edit?gid=710453520#gid=710453520',page:'https://app.notion.com/p/3a873e4ce542814081cdd8d4f28afb63'},
+ {wk:'W30',title:'중화팀_주간업무보고_7월_W30',period:'07.21~07.25',status:'완료',sheet:'https://docs.google.com/spreadsheets/d/1ckxiiiVWf02oNY5HQminq5NNU9OZYatBPYjjZSo_uVU/edit?gid=710453520#gid=710453520',page:'https://app.notion.com/p/3a973e4ce5428076bd5dca966401633b'},
+ {wk:'W31',title:'중화팀_주간업무보고_7월_W31',period:'07.28~08.01',status:'작성중',sheet:'https://docs.google.com/spreadsheets/d/1h-HgDtL7Jenr7qud7nCT32hr_ljNlPAf0rFBUdoWvVU/edit?gid=710453520#gid=710453520',page:'https://app.notion.com/p/3a973e4ce54280af93aed4262d1df475'},
+ {wk:'W32',title:'중화팀_주간업무보고_8월_W32',period:'08.04~08.08',status:'휴가',sheet:'https://docs.google.com/spreadsheets/d/11yaHyxQS0QGahlvZbCF-MeTHACVHyjk9vswAYqRugBk/edit',page:'https://app.notion.com/p/3a973e4ce54280f8888feac2c782fa61'},
+ {wk:'W33',title:'중화팀_주간업무보고_8월_W33',period:'08.11~08.15',status:'예정',sheet:'',page:'https://app.notion.com/p/3ae73e4ce542807bbbf6ccc8d0ad0be7'}
+];
+function wkStatusBadge(s){const m={'완료':['#e3f5ea','#1f9d57'],'작성중':['#fdf6dd','#9a7a10'],'예정':['#fdeede','#b3781c'],'휴가':['#f0f2f4','#8893a0']};const c=m[s]||['#eef','#555'];return `<span class="pill" style="background:${c[0]};color:${c[1]}">${esc(s||'')}</span>`;}
+function wkReportTable(){
+  let h=`<div class="ptable-wrap" style="margin-top:22px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">📄 주간 업무보고 (노션 연동)</h3><span class="unit">노션 「🐩 주간 업무보고」 DB 스냅샷 · 제목·기간·상태·구글시트·노션 링크</span><a class="mile-add" href="${NOTION_WR_DB}" target="_blank" rel="noopener" style="text-decoration:none">노션에서 열기 ↗</a></div>`;
+  h+=`<div style="overflow-x:auto"><table class="ptable" style="width:100%"><thead><tr><th style="width:64px">주차</th><th style="text-align:left">제목</th><th style="width:130px">기간</th><th style="width:78px">상태</th><th style="width:84px">자료</th><th style="width:74px">노션</th></tr></thead><tbody>`;
+  WKREPORTS.forEach(r=>{h+=`<tr><td style="text-align:center"><b>${esc(r.wk)}</b></td><td class="rl">${esc(r.title)}</td><td style="text-align:center">${esc(r.period||'-')}</td><td style="text-align:center">${wkStatusBadge(r.status)}</td><td style="text-align:center">${r.sheet?`<a href="${esc(r.sheet)}" target="_blank" rel="noopener">📊 시트</a>`:'-'}</td><td style="text-align:center"><a href="${esc(r.page)}" target="_blank" rel="noopener">🔗 열기</a></td></tr>`;});
+  h+='</tbody></table></div><div class="dw-hint" style="margin-top:8px">※ 노션 DB 스냅샷(연동 시점 기준)입니다. 최신 내용은 「노션에서 열기」로 확인하세요.</div></div>';
+  return h;
+}
 function viewCalendar(){
   if(CALVIEW==='month'){
     let html='<div class="sec-h"><h2>중화팀 일정</h2><span class="hint">월간 달력 · 팀 일정 관리</span><span class="line"></span></div>';
     return html+monthCalendar();
   }
   let html='<div class="sec-h"><h2>중화팀 행사</h2><span class="hint">2026 중점시장활동 · 행사·세미나 일정</span><span class="line"></span></div>';
-  return html+mileCalendar()+mileTable();
+  return html+mileCalendar()+mileTable()+wkReportTable();
 }
 /* 오른쪽 상세 입력 내용을 표로 정리 · 셀 수정 시 드로어와 동일 데이터(연동) */
 function setMileSort(col){if(MILESORT.col===col)MILESORT.dir*=-1;else{MILESORT.col=col;MILESORT.dir=1;}render();}
@@ -3684,17 +4038,219 @@ function renderRR(){
   let h=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:10px"><h3 style="font-size:15px">업무 R&R · 성과지표</h3><span class="unit">인원 선택 · 셀 클릭해 직접 수정 (자동저장)</span><button class="mile-add" onclick="applyRRFromSheet()">R&R 관리표 반영</button></div>`;
   h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${RRSEL===''?'on':''}" onclick="setRRSel('')">전체</button>`
     +RRDATA.map((r,i)=>`<button class="${RRSEL===i?'on':''}" onclick="setRRSel(${i})">${esc(r.who)}</button>`).join('')+'</div>';
-  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl"><thead><tr><th style="width:120px">구분 · 담당</th><th style="text-align:left">업무 R&R</th><th style="text-align:left">성과지표</th></tr></thead><tbody>`;
+  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:34%;text-align:left">담당</th><th style="width:25%;text-align:left">업무 R&R</th><th style="width:25%;text-align:left">성과지표</th></tr></thead><tbody>`;
   RRDATA.forEach((r,i)=>{
     if(RRSEL!==''&&RRSEL!==i)return;
     h+=`<tr>
-      <td class="rl rr-who"><div class="rrw-grp">${esc(r.grp)}</div><div class="rrw-nm">${esc(r.who)}</div>${r.role?`<div class="rrw-role">${esc(r.role)}</div>`:''}</td>
+      <td class="rl rr-who"><div class="rrw-grp">${esc(r.grp)}</div><div class="rrw-nm">${esc(r.who)}</div></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRR(${i},'role',this.value)">${esc(r.role||'')}</textarea></td>
       <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRR(${i},'work',this.value)">${esc(r.work)}</textarea></td>
       <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRR(${i},'kpi',this.value)">${esc(r.kpi)}</textarea></td>
     </tr>`;});
   return h+'</tbody></table></div></div>';
 }
 function setGoalSub(s){GOALSUB=s;render();}
+/* ===== 중화팀 R&R (원본: ★중화 영업본부__RnR — 본사 인원 R&R) ===== */
+const RRTEAM_SEED=[
+  {grp:'팀장 · PM·영업', who:'이유아 부장', role:'팀 운영 총괄 · 화동·화남 영업 · 임플란트/바이오레이져 PM · 일·주·월간/수시',
+   work:`1. 영업 Infra 구축·KPI 목표달성 (화동·화남)
+   - 매출목표·M/S 확대, 대리상·하부고객·진입점·신규 개발
+   - DSO 진입점·신규개발·판매확대, BD·ARi 진입점·판매확대
+   ≫ 화남 TASK(3개월) 혁신 대책·실행·성과
+2. 임플란트·바이오레이져 PM (중국)
+   - 3C·4P 기반 시장전략, 신제품 런칭·판매확대
+   - 제품경쟁력·라인업·인허가 관리, 경쟁사 동향·실적 분석·대응
+   - 가격·영업·패키지 정책(GP분석)·모니터링·개선
+   - 교육·홍보자료 제작지원, 본사·법인 제품경쟁력 회의(VOC)
+   - 바이오레이져 중국현지생산
+3. 본부장 업무 지원 (Sub 리더)`,
+   kpi:`1. KPI 목표 달성
+   본사수출 2,270만$ / 본사송금 2,370만$
+   법인판매 3.3억RMB / 법인수금 3.3억RMB / 임플란트 115만EA
+2. 부진상권 M/S 개선 (6%↑)
+3. DSO 확대·판매목표 — 진입점 250점·60만대
+4. 하부고객 확대·육성 (8,500점) · 미출하 30%↓
+5. BD 판매 확대 (1,500점, 미출하 30%↓)
+6. 신제품 런칭·경쟁력 강화 — Ari(6월) 성공 런칭, BD/ARi(ARi 8천·BD 72.5천), VOC·바이오레이즈 현지생산`},
+  {grp:'전략·영업 (1명)', who:'서혜민 차장', role:'전략·영업 (화중·화북·절강·화서) · 일·주·월간',
+   work:`1. 영업 Infra 구축·KPI 목표달성 (화중·화북·절강·화서)
+   - 매출목표·M/S 확대, DSO 진입점·신규개발·판매확대, BD·ARi 진입점·판매확대
+2. 전략
+   - 사업계획·전략·중점과제·KPI 수립·정기보고·경영회의 자료
+   - M/S 분석·개선(경쟁사: 오스템·덴티움·네오·디오·스트라우만 外)
+   - 가격·영업·패키지 정책수립·GP분석·모니터링·개선
+   - 경쟁사 동향·실적 분석·대응, CRM 시스템 구축·실행지원·관리
+3. VBP 업무 진행
+4. 법인 관리
+   - 법인 KPI 진도 모니터링·이슈 해결지원·목표달성
+   - 회의체 관리·지시사항 F/UP (본사·법인)`,
+   kpi:`1. 중국 사업전략 수립·KPI 목표 달성
+2. 정기 시장·경쟁사·M/S 분석·보고
+3. 가격·패키지 정책 수립·개선 → 판매목표 달성
+4. 부진상권 M/S 개선 (6%↑)
+5. DSO 확대·판매목표 — 진입점 250점·60만대
+6. 하부고객 확대·육성 (8,500점) · 미출하 30%↓
+7. BD 판매 확대 (1,500점, 미출하 30%↓)
+8. 영업정책·패키지 경쟁력 확보 — 정기 경쟁사 동향 분석·보고
+9. 2차 VBP 적극 대응 (Class A 진입)`},
+  {grp:'마케팅·PM (1명)', who:'탁종민 차장', role:'교육/세미나 · 브랜드·마케팅 · 디지털·장비 PM (중국) · 일·주·월간',
+   work:`1. 교육·세미나 (중국)
+   - 경쟁사 동향분석·차별화전략 수립
+   - 세미나·교육, KOL교육, CEO샤롱·국제사롱·메가마인드·서울대·메가스쿨
+   - 해외연자 섭외·운영(미넥 협업), KOL 확대육성·교육관리
+   - 영업사원 교육관리, TASK·DSO방한 한국활동
+2. 브랜드 전략·마케팅 (중국)
+   - 마케팅 사업계획·진행관리·개선, 경쟁사 동향분석
+   - TASK·DSO방한·전시회·심포지움·중국학술회
+   - 온·오프라인 홍보·번역·제작(B2B/B2C), 광고·판촉·교육지원(핵심점)
+   - KOL 지원물품 송부, KIT Compensation 관리
+3. PM — 디지털·장비 (플라즈마·R2Gate·임플란트·체어)
+   - 3C·4P 전략, 신제품 런칭·판매확대, 제품경쟁력·라인업·인허가
+   - 경쟁사 분석·대응, 가격·정책·GP·개선, 디지털 제품경쟁력 회의(VOC)`,
+   kpi:`1. KPI 목표 달성
+2. 교육·세미나 계획·실행·결과보고
+   - 298회 → 한국 방문행사 8회
+   - 26년 중점: 상담사 30·DSO 100·BD세미나 93회 / 한국·본사 마케팅 13회
+3. KOL 확대·월별 활동관리 (목표 77명) — 전문강사 배양 30명
+4. 중국법인 마케팅 예산수립·관리
+   - 마케팅 377회·법인예산 8.5%·KIT Comp. 100만불 / PKG 17회·1.26억위안
+5. 제품런칭·경쟁력 강화 (R2Gate·플라즈마) — 플라즈마 재런칭(3월)·VOC 관리
+6. KIT Compensation 진척도 관리 (100만불)`},
+  {grp:'영업·PM (1명)', who:'유훈종 차장', role:'대만·홍콩 영업(대리점) · 브랜드·마케팅 · 장비 PM · 일·주·월간',
+   work:`1. 중장기목표·판매전략 수립·영업·실행관리
+   - 홍콩 대리점·대만 대리점/법인 영업·관리(가격·수출·수금·채권)
+   - 3C·4P 전략·판매확대, 사업계획·중점과제·KPI 수립·실행관리
+   - 경쟁사·M/S 분석·개선, 가격·영업·패키지 정책·GP분석·개선
+   - 법인 KPI 모니터링·이슈해결, 회의체·지시 F/UP(본사·법인/대리점)
+2. 홍콩·대만 브랜드전략·마케팅·교육
+   - 경쟁사 분석·대응, 교육·홍보자료
+   - 브랜드·마케팅·교육 계획·실행, 온·오프라인 홍보(B2B/B2C)
+3. PM — 장비 (임플란트·전제품·바이오레이즈) (대만·홍콩)
+   - 3C·4P, 신제품 런칭·판매확대, 제품경쟁력·라인업·인허가
+   - 경쟁사 분석·대응, 가격·정책·GP·개선, VOC 대응·해결`,
+   kpi:`1. 홍콩·대만 사업전략 수립·KPI 목표 달성
+2. 정기 시장·경쟁사·M/S 분석·보고
+3. 가격·패키지 정책 수립·개선 → 판매목표 달성
+4. 영업정책·패키지 경쟁력 확보 — 정기 경쟁사 동향 분석·보고
+5. 마케팅 활동 계획·실행·결과보고
+6. 신제품 런칭·판매목표 달성/경쟁력 강화`},
+  {grp:'수출·법인관리 (1명)', who:'김유진', role:'운영관리(중국·대만·홍콩) · 성과·수익 관리 · 일·주·월간',
+   work:`1. 운영관리 (중국·대만·홍콩)
+   - 생산/수출 진행관리·본사 송금관리, PSI & 채권관리
+2. 성과관리
+   - KPI 수립 & 주간·월간 KPI 실적·진행관리(본사·법인)·경영회의 자료
+   - 사업계획 시뮬레이션, 물류 VOC 대응·해결
+3. 수익관리
+   - 수출·법인 판가·GP 정기 모니터링·개선, 법인 영업이익 관리
+   - 본부 예산·비용관리
+4. 교육·마케팅 활동 지원`,
+   kpi:`1. KPI 목표 달성
+2. 법인재고월령 관리 (2개월)
+3. 비용예산 관리
+4. KPI 정리·적기 보고·목표 달성
+5. 본사·법인 가격·GP 현황 정기 분석·보고
+6. VOC 접수·대응 관리`},
+  {grp:'대만법인장', who:'장민훈 이사', role:'대만법인 사업·영업·마케팅·PM·운영·CS 총괄 · 월·연간/일·주·월간/분기·연간',
+   work:`1. 대만법인 사업계획 수립·실행
+   - 중장기 전략·목표, 연간 사업계획·예산, 시장환경 분석·본사 보고
+   - 본사 전략–법인 실행 정합성, 이전가격 조정 검토
+2. 영업 및 매출 관리
+   - 대리상 매출목표·성과관리, 가격정책, 영업조직 구축·역량
+   - 신규 고객·권역별 M/S, 수주–납품 프로세스, 채권·미수금, 안전재고
+3. 브랜드·마케팅 관리
+   - 마케팅 계획·실행, 3C·4P, KOL 확대
+   - 전시회·세미나·TASK·핸즈온, 환자 마케팅 자료, SNS·디지털·홈페이지
+4. 제품·상품 PM
+   - 유통 아이템 다변화, 제/상품·가격 경쟁력
+   - 대만 TFDA 허가·갱신, 등록서류 관리, 이식형 추적관리(GBR)
+5. 대리상·파트너 관리
+   - 계약 협상·체결·유지, 신규 발굴·채널 다변화
+   - 판매지원(교육·마케팅·임상), 성과 리뷰·역량평가, CRM·파이프라인
+6. 대만법인 운영 관리
+   - 채용·급여·퇴직, 직원 KPI·평가·보상, 노동법 준수, 교육·훈련
+   - ERP 유지, 예산·비용 통제, 월간 손익·자금, 세무·회계, 연간 감사보고서
+7. 고객 서비스·기술 지원
+   - 장비 A/S 체계·운영, 불량·클레임 처리, 고객 만족도 조사
+   - A/S 인력 역량, 품질 이슈 커뮤니케이션`,
+   kpi:`1. KPI 목표
+   - 법인 매출·수금 / 본사 수출·송금 / 임플란트 판매수량
+   - Fixture M/S, 하부고객 확대·M/S, DSO 진입·매출, KOL 확대
+2. 법인 관리 목표
+   - 법인 인력, 연간 P&L·Cash Flow, 장비 설치·A/S, 이전가격
+3. 마케팅 활동 목표
+   - 세미나·교육 건수·전환율, 전시회 건수, SNS 노출·검색량`}
+];
+let RRTEAM=RRTEAM_SEED.map(x=>({...x}));
+try{const s=localStorage.getItem('wr_rrteam_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)RRTEAM=o;}}catch(e){}
+function saveRRTeam(){try{localStorage.setItem('wr_rrteam_v1',JSON.stringify(RRTEAM));}catch(e){}}
+function editRRTeam(i,f,val){if(RRTEAM[i]){RRTEAM[i][f]=val;saveRRTeam();}}
+function resetRRTeam(){RRTEAM=RRTEAM_SEED.map(x=>({...x}));saveRRTeam();render();toast('중화팀 R&R을 원본 기준으로 되돌렸습니다');}
+let RRTEAMSEL='';
+function setRRTeamSel(i){RRTEAMSEL=i;render();}
+function renderTeamRR(){
+  let h=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:6px"><h3 style="font-size:15px">중화팀 R&R · 성과지표</h3><span class="unit">본사 인원 R&R · 셀 클릭해 직접 수정 (자동저장)</span><button class="mile-add" onclick="resetRRTeam()">원본으로 되돌리기</button></div>`;
+  h+=`<div class="weeknote" style="margin:2px 0 12px"><b>본사 Role</b> — ① 중국 시장·경쟁사 조사/분석 ② 사업 전략·중점 추진과제·KPI 목표 수립(w/법인) ③ 법인 영업·마케팅 전략 & 실행 지원 → 목표 달성·개선 ④ 업무 프로세스 개선 &nbsp;·&nbsp; 인원 구성 총 6명(대만법인장 1인 포함)</div>`;
+  h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${RRTEAMSEL===''?'on':''}" onclick="setRRTeamSel('')">전체</button>`
+    +RRTEAM.map((r,i)=>`<button class="${RRTEAMSEL===i?'on':''}" onclick="setRRTeamSel(${i})">${esc(r.who)}</button>`).join('')+'</div>';
+  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:34%;text-align:left">담당</th><th style="width:25%;text-align:left">업무 R&R</th><th style="width:25%;text-align:left">성과지표</th></tr></thead><tbody>`;
+  RRTEAM.forEach((r,i)=>{
+    if(RRTEAMSEL!==''&&RRTEAMSEL!==i)return;
+    h+=`<tr>
+      <td class="rl rr-who"><div class="rrw-grp">${esc(r.grp)}</div><div class="rrw-nm">${esc(r.who)}</div></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRRTeam(${i},'role',this.value)">${esc(r.role||'')}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRRTeam(${i},'work',this.value)">${esc(r.work)}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRRTeam(${i},'kpi',this.value)">${esc(r.kpi)}</textarea></td>
+    </tr>`;});
+  return h+'</tbody></table></div></div>';
+}
+/* ===== 중화팀 중점 추진과제 관리표 (지역·핵심과제·목표·대응방안·담당자·일정·진행률) ===== */
+const PTASKS_SEED=[
+  {region:'중국',task:'2차 VBP 입찰 준비',goal:'AO/AR 중심 입찰 준비 및 100개 업체 참여 대응',plan:'국공립 진입 확대 사전 영업, 제품 비딩 전략 수립, 경쟁사 입찰가 분석 후 진입 가능 입찰가 선정',owner:'',due:'~9월',prog:''},
+  {region:'중국',task:'ARi / BD 진입 확대',goal:'ARi 500점, BD 1,500점 진입 / ARi 8,000대, BD 80,000대 판매',plan:'ARi & BD 진입 확대, KOL 교육·세미나 지속 운영, 핵심점 육성 및 장려 정책 운영',owner:'',due:'지속',prog:''},
+  {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확보',plan:'In-active 고객 20% 이상 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:''},
+  {region:'중국',task:'DSO 확대 및 대응 강화',goal:'DSO 250점 진입, 60만대 판매',plan:'S/A급 중소형 DSO 신규 개발, 경쟁사 대응 방어, 신규 개발 병원과 파트너십 강화',owner:'',due:'지속',prog:''},
+  {region:'중국',task:'대리상 협업 및 지원 강화',goal:'대리상 재고·수금·매출 이슈 관리',plan:'2차 VBP 영향 재고 조정 및 DSO 수금 지연 자금난 대응, 매출·수금 이슈 관리 강화',owner:'',due:'지속',prog:''},
+  {region:'중국',task:'패키지 판매 확대',goal:'9월 패키지 판매 신청 및 매출 확대',plan:'패키지 판매 255봉, 19.8M 위안 추진 및 판매 정책 운영',owner:'',due:'9월',prog:''},
+  {region:'중국',task:'에비던스 런칭 준비',goal:'4Q 런칭 준비 및 중대형 DSO 사전 협의',plan:'중대형 DSO 중심 운영 대리상 사전 협의 진행',owner:'',due:'~9월',prog:''},
+  {region:'대만',task:'법인 조직 및 영업 Infra 구축',goal:'대만 법인 운영 기반 구축',plan:'임플란트·체어사업 본격화, 초도 물량 준비',owner:'',due:'지속',prog:''},
+  {region:'대만',task:'대리상 전환 및 계약 추진',goal:'Sunriser 및 신규 대리상 계약 추진',plan:'TBMS 대리상 계약 추진, 법인 설립 심포지엄 준비',owner:'',due:'지속',prog:''},
+  {region:'대만',task:'신궁병원 세미나 운영',goal:'대만 주요 병원 기반 고객 확대',plan:'신궁병원 세미나 준비 및 운영',owner:'',due:'8/29',prog:''},
+  {region:'홍콩',task:'B/L 고객 활용 신규 고객 개발',goal:'홍콩 임플란트 신규 고객 개발',plan:'B/L 고객 기반으로 임플란트 고객 전환 및 신규 고객 확보',owner:'',due:'8월~',prog:''},
+  {region:'대만',task:'iPlus SG2 변경허가 취득 후속 조치',goal:'26년 8월 변경허가 취득 후 공급계획 및 제품 포장·라벨링 사양 확정',plan:'iPlus 공급 계획 확인, 제품 포장 및 라벨링 사양 점검',owner:'',due:'~8월',prog:''},
+  {region:'홍콩',task:'iPlus SG2 초도 판매 후속 관리',goal:'홍콩 시장 내 초도 판매 가능성 확인',plan:'iPlus SG2 사용 안정성 및 EPIC 판매 가능성 협의',owner:'',due:'~9월',prog:''},
+  {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상, 판매 시작 2028년 6월 예상',plan:'인허가 진행상황 관리, 판매 개시 일정 기준으로 사전 준비',owner:'',due:'~2028.2',prog:''},
+  {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 2028년 판매 준비',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 발송, 현지 공장 방문 통한 제품 해체·교육·생산라인 SETUP 준비',owner:'',due:'~2028.3',prog:''}
+];
+let PTASKS=PTASKS_SEED.map(x=>({...x}));
+try{const s=localStorage.getItem('wr_ptasks_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)PTASKS=o;}}catch(e){}
+function savePTasks(){try{localStorage.setItem('wr_ptasks_v1',JSON.stringify(PTASKS));}catch(e){}}
+function editPTask(i,f,v){if(PTASKS[i]){PTASKS[i][f]=v;savePTasks();}}
+function resetPTasks(){PTASKS=PTASKS_SEED.map(x=>({...x}));savePTasks();render();toast('중점 추진과제를 원본으로 되돌렸습니다');}
+function renderPriorityTasks(){
+  const rc={'중국':'#c0392b','대만':'#0d9488','홍콩':'#b3781c'};
+  const sum=[
+    ['🇨🇳 중국','2차 VBP 입찰·ARi/BD 진입·하부고객·DSO 확대·대리상 이슈·패키지·에비던스 런칭 + 바이오레이즈 인허가·현지 OEM(2028 판매 대비)'],
+    ['🇹🇼 대만','법인·영업 Infra 구축, Sunriser·TBMS 대리상 계약, 법인설립 심포지엄, 신궁병원 세미나 + iPlus SG2 변경허가 후속(공급·포장·라벨링)'],
+    ['🇭🇰 홍콩','B/L 고객 활용 임플란트 신규 개발 + iPlus SG2 초도 판매 후속(사용 안정성·EPIC 판매 가능성 검토)']
+  ];
+  let h=`<div class="ptable-wrap" style="margin-top:28px"><div class="pm-head" style="margin-bottom:10px"><h3 style="font-size:15px">🎯 중화팀 중점 추진과제 관리표</h3><span class="unit">지역·핵심과제·목표·대응방안 · 담당자/일정/진행률 직접 입력(자동저장)</span><button class="mile-add" onclick="resetPTasks()">원본으로 되돌리기</button></div>`;
+  h+='<div class="focus-row" style="margin-bottom:14px">'+sum.map(s=>`<div class="qcard"><div class="rr-sec-h" style="margin-top:0">${s[0]}</div><div style="font-size:13px;color:#000;font-weight:500;line-height:1.55">${esc(s[1])}</div></div>`).join('')+'</div>';
+  h+=`<div style="overflow-x:auto"><table class="ptable ptasktbl"><thead><tr><th style="width:7%">지역</th><th style="text-align:left;width:17%">핵심과제</th><th style="text-align:left;width:22%">과제목표</th><th style="text-align:left;width:30%">대응방안</th><th style="width:9%">담당자</th><th style="width:7%">일정</th><th style="width:8%">진행률</th></tr></thead><tbody>`;
+  PTASKS.forEach((t,i)=>{
+    const col=rc[t.region]||'#555';
+    const pv=(t.prog||'').toString().replace('%','').trim();
+    const isNum=pv!==''&&!isNaN(+pv);
+    h+=`<tr>
+      <td style="text-align:center"><span class="rgn-chip" style="background:${col}">${esc(t.region)}</span></td>
+      <td class="rl"><textarea class="rr-cell" style="font-weight:700" oninput="autogrow(this)" onchange="editPTask(${i},'task',this.value)">${esc(t.task)}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPTask(${i},'goal',this.value)">${esc(t.goal)}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPTask(${i},'plan',this.value)">${esc(t.plan)}</textarea></td>
+      <td><input class="pt-in" value="${esc(t.owner||'')}" placeholder="담당자" onchange="editPTask(${i},'owner',this.value)"></td>
+      <td><input class="pt-in" value="${esc(t.due||'')}" placeholder="일정" onchange="editPTask(${i},'due',this.value)"></td>
+      <td><input class="pt-in" value="${esc(t.prog||'')}" placeholder="입력" onchange="editPTask(${i},'prog',this.value)">${isNum?`<div class="pt-bar"><i style="width:${Math.max(0,Math.min(100,+pv))}%"></i></div>`:''}</td>
+    </tr>`;});
+  return h+'</tbody></table></div></div>';
+}
 /* ===== 담당자 분기 성과목표 (노션 중화팀성과목표(분기) 연동 시드) ===== */
 const MGOALSEED=[
 {mgr:'lee',q:'y',title:'중화팀 총괄 · 성과기획',strategy:'Reset the Fundamentals — 명확한 R&R 부여, 3C4P·스케치페이퍼 기반 성과기획서, 각 분기 시작점 성과기획 선언',result:'26년 목표: 법인 매출 3.3억RMB·수량 115만대 / 본사 수출 2,270만$·115만대',improve:'분기별 성과기획 선언 및 중점추진과제 관리'},
@@ -3755,9 +4311,11 @@ function renderMGoals(){
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  html+='<div class="pm-tabs" style="margin-bottom:16px">'+[['goal','성과목표'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R']].map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';
+  html+='<div class="pm-tabs" style="margin-bottom:16px">'+[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R']].map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';
+  if(GOALSUB==='focusq')return html+renderQuarterFocus();
   if(GOALSUB==='mgoal')return html+renderMGoals();
   if(GOALSUB==='rr')return html+renderRR();
+  if(GOALSUB==='team')return html+renderTeamRR();
   if(GOALSUB==='road')return html+perfRoad();
   return html+goalsMain();
 }
@@ -3823,7 +4381,8 @@ function goalsMain(){
     <div style="overflow-x:auto"><table class="ptable ctgtbl"><thead><tr><th style="text-align:left;width:150px">시장</th><th style="width:120px">목표</th><th style="width:90px">단위</th><th style="text-align:left">세부</th></tr></thead><tbody>
     ${PLAN.cards.map((c,i)=>`<tr><td class="rl">${c.flag} ${esc(c.mk)}</td><td><input value="${esc(c.v)}" onchange="editCard(${i},'v',this.value)" style="text-align:center"></td><td><input value="${esc(c.u)}" onchange="editCard(${i},'u',this.value)" style="text-align:center"></td><td class="rl"><input value="${esc(c.sub)}" onchange="editCard(${i},'sub',this.value)" style="text-align:left"></td></tr>`).join('')}
     </tbody></table></div></div>
-  <div style="margin-top:22px">${perfHalf()}</div>`;
+  <div style="margin-top:22px">${perfHalf()}</div>
+  ${renderPriorityTasks()}`;
 }
 function editMgrName(id,val){const m=mgrById(id);if(!m)return;const parts=val.trim().split(/\s+/);m.title=parts.length>1?parts.pop():m.title;m.name=parts.join(' ')||m.name;saveMgrs();render();}
 let PGROUP='money';
@@ -4097,7 +4656,7 @@ function saveForm(idx){
 }
 function delTask(idx){TASKS.splice(idx,1);saveTasks();closeForm();closeDetail();render();toast('삭제되었습니다');}
 function exportData(){
-  const data={tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,vrole:VROLE,memberid:MEMBERID,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,corpkpi:CORPKPI,ovmeet:OVMEET,fdocs:FOCUSDOCS};
+  const data={tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,vrole:VROLE,memberid:MEMBERID,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,corpkpi:CORPKPI,ovmeet:OVMEET,fdocs:FOCUSDOCS};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='주간업무보고_백업.json';a.click();
   toast('전체 데이터 백업을 내려받았습니다');
@@ -4114,6 +4673,9 @@ function applyBackup(d){
   if(Array.isArray(d.quarters)&&d.quarters.length){QUARTERS=d.quarters;saveQuarters();}
   if(Array.isArray(d.assign)){ASSIGN=d.assign;saveAssign();}
   if(Array.isArray(d.rr)&&d.rr.length){RRDATA=d.rr;saveRR();}
+  if(Array.isArray(d.rrteam)&&d.rrteam.length){RRTEAM=d.rrteam;saveRRTeam();}
+  if(Array.isArray(d.ptasks)&&d.ptasks.length){PTASKS=d.ptasks;savePTasks();}
+  if(d.mfocus&&typeof d.mfocus==='object'){MFOCUS=d.mfocus;saveMFocus();}
   if(d.sales&&d.sales.kpi){SPERF=d.sales;SPCUR=d.sales;saveSPERF();}
   if(Array.isArray(d.cal)){CALLIST=d.cal;saveCal();}
   if(Array.isArray(d.caltodo)){CALTODO=d.caltodo;saveCalTodo();}
@@ -4151,6 +4713,7 @@ function clearAllData(){
 
 /* ============ ACTIONS ============ */
 function setWeek(w){W=w;PERIOD='week';render();}
+function selWeekDD(v){if(v==='all')setMonthAll();else setWeek(+v);}
 function setPeriod(p){PERIOD=p;render();}
 function setMonth(m){MONTH=+m;render();}
 function stepMonth(d){MONTH=Math.min(12,Math.max(1,MONTH+d));WEEKS=buildWeeks(MONTH);W=Math.min(W,WEEKS.length-1);render();}
@@ -4460,7 +5023,7 @@ function cloudAuth(cb,silent){
     callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncBadge('err');}}});
     tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');}
 }
-function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,_ts:Date.now()});}
+function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,_ts:Date.now()});}
 async function driveFind(){const q=encodeURIComponent(`name='${CLOUD.fileName}' and trashed=false`);
   const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`,{headers:{Authorization:'Bearer '+CLOUD.token}});
   const j=await res.json();return (j.files&&j.files[0])?j.files[0].id:null;}
