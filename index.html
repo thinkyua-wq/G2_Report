@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>주간 업무보고 현황판 | Weekly Report</title>
+<title>G2 중화지역보고 | Weekly Report</title>
 <meta name="theme-color" content="#2e7d52">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1145,6 +1145,22 @@ li.mr-li.open .mr-x{display:block}
 .mr-xr>p{margin:2px 0 0;font-size:12px;line-height:1.55;color:var(--ink);white-space:pre-wrap}
 .mr-ed2:hover{outline:1px dashed var(--accent);outline-offset:-2px;cursor:text}
 .mr-hint{font-weight:600;font-size:10px;color:var(--faint)}
+/* 과제진행율 · 대분류 그룹 행 */
+tr.gbig td{background:#f6f8fa;border-top:2px solid #d8dde4}
+.gbig-t .gcar{display:inline-block;width:14px;color:var(--accentInk);font-size:10px;margin-right:4px}
+.gbig-t b{font-size:12.5px}
+.gcnt{font-size:10.5px;color:#8b93a0;font-weight:600;margin-left:7px}
+.gdone{font-size:10px;color:#1e7a43;background:#e7f6ec;border-radius:9px;padding:1px 7px;margin-left:6px;font-weight:700}
+.gbig-p b{font-size:13px;color:var(--accentInk)}
+tr.gsub .gsub-t{padding-left:30px;position:relative}
+tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:11px}
+.gtrack.groll{height:15px;background:#dcE8e1;border:1px solid #9cc7b2}
+.gtrack.groll i{background:linear-gradient(90deg,#4a9e72,#2e7d52)}
+/* 과제진행율 컨트롤 바 20% 축소 */
+.kan-ctrl .pl{font-size:10.5px}
+.kan-ctrl .per-dd{font-size:11px;padding:5px 8px;border-radius:7px}
+.kan-ctrl .kanwk{font-size:11px;padding:5px 10px}
+.kan-ctrl{gap:7px}
 /* 본사실적 · 누적 대시보드 */
 .om-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
 .om-tiles5{grid-template-columns:repeat(5,1fr)}
@@ -1303,6 +1319,30 @@ td.mk-r.mr-g{color:#1e7a43}td.mk-r.mr-a{color:#a86412}td.mk-r.mr-r{color:#b23434
 .pm-tabs button{font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:8px 15px;transition:.12s}
 .pm-tabs button:hover{border-color:var(--accent2)}
 .pm-tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 월간업무현황 화면 — 밝은 파란색 통일 (주간업무현황=녹색과 구분) */
+body.vw-mreport .ov-sec{border-left-color:#4f7ec9;color:#33619e}
+body.vw-mreport .rnav button.on{background:#4f7ec9}
+body.vw-mreport .tb-b.prim{background:#4f7ec9;border-color:#4f7ec9}
+body.vw-mreport .tb-b:hover{border-color:#4f7ec9;color:#33619e}
+body.vw-mreport .mile-add{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
+body.vw-mreport .mf-mbtn.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
+body.vw-mreport .kanwk.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
+body.vw-mreport .per-dd:focus{border-color:#4f7ec9}
+body.vw-mreport .pm-tabs button.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
+body.vw-mreport .omc-b span{background:#e9f0fa;color:#33619e}
+body.vw-mreport .ov-tk-h3{color:#4f7ec9}
+body.vw-mreport .mr-x{border-left-color:#4f7ec9}
+body.vw-mreport .ov-bar-t{background:linear-gradient(90deg,#6f9ad9,#4f7ec9)}
+/* 거래처별 실적 요약 표: 헤더·소계·합계도 파란 계열 */
+body.vw-mreport .ov-tbl thead th{background:#4f7ec9}
+body.vw-mreport .ov-tbl tr.ov-sub-row td{background:#eaf1fb}
+body.vw-mreport .ov-tbl tr.ov-tot-row td{background:#dfeafa}
+/* 담당자 카드 역할 배지 */
+body.vw-mreport .ov-role{background:#e9f0fa;color:#33619e}
+/* 중점추진과제 표 헤더 등 강조 요소 */
+body.vw-mreport .mr-ph{background:#e9f0fa;border-left-color:#4f7ec9}
+body.vw-mreport .ov-kpi{color:#33619e}
+
 .pm-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
 .pm-ctl select{font-size:12.5px;padding:8px 12px;border:1px solid var(--ln);border-radius:8px;background:var(--pn);color:var(--ink);font-weight:600;cursor:pointer}
 .scards{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:18px}
@@ -1669,7 +1709,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="mtopbar">
   <button class="mt-burger" onclick="toggleRail()" aria-label="메뉴 열기">☰</button>
   <div class="mt-logo">주</div>
-  <span class="mt-t">주간 업무보고</span>
+  <span class="mt-t">G2 중화지역보고</span>
   <span class="mt-cur" id="mtCur"></span>
 </div>
 <div class="rail-ov" onclick="toggleRail(false)"></div>
@@ -1678,7 +1718,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo">주</div>
-      <div style="min-width:0"><h1>주간 업무보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-AF</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.03-AF</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1757,7 +1797,7 @@ function isoWeekMonday(year,wk){
 function buildWeeks(m){
   const out=[]; let idx=0; const p2=n=>String(n).padStart(2,'0');
   for(let wk=1;wk<=53;wk++){
-    if(wk<29||wk===32)continue; // W29 이전·W32 제외
+    if(wk<29)continue; // W29 이전 제외
     const mon=isoWeekMonday(2026,wk); const fri=new Date(mon); fri.setUTCDate(mon.getUTCDate()+4);
     if(fri.getUTCFullYear()===2026 && fri.getUTCMonth()+1===m){
       out.push({id:idx, iso:wk, name:'W'+wk,
@@ -1845,6 +1885,9 @@ try{const s=localStorage.getItem('wr_mreport26_v2');if(s){const o=JSON.parse(s);
 let MREPORTS={'7':MREPORT26};
 try{const s=localStorage.getItem('wr_mreports_v3');if(s){const o=JSON.parse(s);if(o&&typeof o==='object'&&!Array.isArray(o))MREPORTS=Object.assign({'7':MREPORT26},o);}}catch(e){}
 function mrData(){return MREPORTS[String(MONTH)]||[];}
+/* ═ 주간원본 시트(W29·W30·W31) 주차별 과제 데이터 · 주간업무현황 중화팀과제 연동 ═ */
+const WKREPORT={"29":[{"m":"lee","g":"교육/세미나","c":"중국","t":"심천 CEO Salon 개최(7/14, 86명)","k":"행사 참석 인원·하부고객 전환 수(86명 기준)","due":"07-14","pri":"상","p":"100","note":"화남본부 혁신·대리상 미팅 진행","nx":""},{"m":"lee","g":"영업","c":"중국","t":"주요 대리상 미팅(이루·치지메이·더룬·시푸)","k":"AO 수주량(SET)·대금조건 개선 여부","due":"07-16","pri":"중","p":"100","note":"AO 40SET·세미나 8~12월·KPI 90%·대금조건(25→15일) 재논의","nx":""},{"m":"lee","g":"영업","c":"중국","t":"화남지역 하반기 대리상 운영방향 수립","k":"교육세미나 전환율(30%)·KOL 확보 수","due":"07-24","pri":"중","p":"60","note":"교육세미나 중심 개발(전환율 30%), KOL 5명·강사 활용","nx":""},{"m":"lee","g":"영업","c":"중국","t":"화남 조직 영업현황 보고(7/13)","k":"조직개편 지시 반영 완료율","due":"07-13","pri":"중","p":"100","note":"부사장 조직지시(DSO1·광주2·광시1) 반영","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"ZBLC Kit 프로모션 특가 공급 지원","k":"선제작 세트 소진율·정산 단가 준수","due":"09-30","pri":"중","p":"50","note":"본사 30세트 선제작, Ningbo 경유 정산(€357/Set)","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"B/L 현지 생산 전환 착수","k":"부품 선적·출장 일정 준수율","due":"07-31","pri":"중","p":"50","note":"부품 분할 발송, 7월 내 선적 목표, 8/10-13 출장","nx":""},{"m":"lee","g":"팀업무","c":"중국","t":"주간보고 취합 및 주요업무 대시보드화","k":"주간보고 제출률·대시보드 업데이트 정례화","due":"07-24","pri":"중","p":"100","note":"주요업무현황 대시보드화 검토 및 발송","nx":""},{"m":"jang","g":"법인관리","c":"중국","t":"대만법인 설립 진행/업무","k":"설립 인허가 단계별 완료율","due":"상시","pri":"중","p":"50","note":"일인 사업장(노보·건보 미진행), Business IC Card 발급 완료","nx":""},{"m":"jang","g":"법인관리","c":"중국","t":"6월 재무제표 작성·보고","k":"결산·보고 기한 준수","due":"07-17","pri":"중","p":"100","note":"지출실적 NT$1,610,134, 기말현금 NT$9,389,866","nx":""},{"m":"jang","g":"법인관리","c":"중국","t":"인허가 양수·양도 TFDA 신고 완료","k":"신고 완료·승인 여부","due":"07-15","pri":"중","p":"100","note":"7/13~14 서류·보완 확보, 신고비 NT$105,000 납부","nx":""},{"m":"jang","g":"법인관리","c":"대만","t":"수입허가(輸入授權) 수권 이양","k":"서류·온라인 신청 완료율","due":"07-17","pri":"중","p":"60","note":"7/17 서류 완료·썬라이저 전달, 온라인 신청 진행","nx":""},{"m":"jang","g":"법인관리","c":"대만","t":"Sunriser 재고 검수·반품물량 확정","k":"반품 확정 수량·교환 처리율","due":"07-17","pri":"중","p":"100","note":"반품 5,225개/$176,592, Kit 130개 교환","nx":""},{"m":"jang","g":"법인관리","c":"대만","t":"법인 운영 전략 수립·보고","k":"사업계획·운영안 보고 완료","due":"07-17","pri":"중","p":"100","note":"대리상 운영안·26~28 사업계획·체어 계획 초안","nx":""},{"m":"jang","g":"법인관리","c":"대만","t":"대만 BD 런칭 세미나 일정 확정","k":"일정·연자 확정 여부","due":"07-17","pri":"중","p":"100","note":"10/25 확정(Mandarin Oriental Taipei), TBMS 연자 2명 접수","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"물동·선적 관리(7월분)","k":"선적 목표 대비 출고율(%)","due":"07-31","pri":"중","p":"60","note":"북경 27만$ 선적 완료, 닝보 미출고 62만$ 4주차 선적 진행","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"마케팅 출고 F/U","k":"출고 요청 대비 완료율(%)","due":"07-22","pri":"중","p":"60","note":"RS 중판·Ari AXA 7/22 핸드캐리, 메가마인드 경품 수주등록 완료","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"VOC 처리(박스 파손·Failed FX 교환)","k":"VOC 접수 대비 처리 완료율(%)","due":"상시","pri":"중","p":"60","note":"닝보 FX 파손 33건 신규출고, Failed FX 2분기 3,684 교환접수, 중문 설명서 동봉 협의","nx":""},{"m":"seo","g":"영업","c":"중국","t":"중국 법인 7월 실적 예상 관리(닝보·북경)","k":"월 매출 목표 대비 달성율(%)","due":"07-31","pri":"중","p":"60","note":"닝보 1,979만RMB(98%), 북경 429만RMB(100%)","nx":""},{"m":"seo","g":"전략","c":"중국","t":"2차 VBP 대응","k":"VBP 대응 프로세스·판매량 제출 이행","due":"상시","pri":"중","p":"40","note":"프로세스 정리, 1차 판매량 162,275대 제출, BD·ARi 참여, 시뮬레이션 지속","nx":""},{"m":"seo","g":"영업","c":"중국","t":"중국 출장(화중본부 호북·호남)","k":"출장 목표(수금·협력모델) 달성","due":"07-17","pri":"중","p":"100","note":"홍지에 수금·VBP, 九州通 협력모델, 국공립 ARi 반응 우수, DSO 관심 높음","nx":""},{"m":"seo","g":"교육/세미나","c":"중국","t":"미르·정주즈더 9월 교류회 방안 수립","k":"교류회 기획안 확정 여부","due":"상시","pri":"중","p":"40","note":"교류회 주제·중장기 목표·프로그램 초안 수립","nx":""},{"m":"tak","g":"교육/세미나","c":"중국","t":"7월 메가스쿨 교육·세미나 운영","k":"교육 횟수·인원·전환율","due":"07-31","pri":"중","p":"60","note":"메가스쿨 진행, 경쟁사 교육동향 분석, 교육효과 분석·성과관리","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"마케팅 활동(TASK·메이야·DSO)","k":"행사 횟수·참여인원·실적 연계","due":"상시","pri":"중","p":"60","note":"TASK 준비·실행, 메이야 방한, 동북DSO 준비, DSO 방문·실적연계 F/U","nx":""},{"m":"tak","g":"제품PM","c":"중국","t":"디지털 PM","k":"디지털 실적(R2) 목표 대비 달성","due":"상시","pri":"중","p":"60","note":"디지털 실적관리·요청사항 처리·교육 진행","nx":""},{"m":"yu","g":"전략","c":"대만","t":"Sunriser 대리상 정책·딜러십 논의","k":"대만법인 목표(매출·수량) 대비 계획 수립","due":"상시","pri":"중","p":"40","note":"27년 대만법인 목표(매출 3.6M$/수량 34K), 공급가·판가 초안, 360개 거래처 보호","nx":""},{"m":"yu","g":"영업","c":"대만","t":"Sunriser 재고 반품 최종 협의","k":"반품 확정·교환 처리율","due":"07-31","pri":"중","p":"60","note":"본사 반품 5,228개/$176K(엔진 16대 제외), Kit 130개 입고 후 순차 교환","nx":""},{"m":"yu","g":"영업","c":"대만","t":"대만 영업 정책 보고","k":"정책안·전략 보고 완료","due":"상시","pri":"중","p":"60","note":"임플 딜러 공급가·하부고객 패키지 정책, 체어 사업전략 2차 보고→최종안 예정","nx":""},{"m":"yu","g":"전략","c":"홍콩","t":"홍콩 KPI 목표 수립·정리","k":"월 KPI 목표 설정 완료 여부","due":"07-31","pri":"중","p":"10","note":"월 목표(KPI) 부재 → 킨월드(홍콩)와 협의해 월 목표 설정","nx":""},{"m":"yu","g":"전략","c":"대만","t":"대만 KPI 목표 수립·정리","k":"월 KPI 목표 설정 완료 여부","due":"07-31","pri":"중","p":"10","note":"월 목표(KPI) 부재 → 장민훈(대만)과 협의해 월 목표 설정","nx":""}],"30":[{"m":"lee","g":"팀업무","c":"중국","t":"G2 지역 대시보드 검토","k":"대시보드 담당자 배정·업데이트 정례화","due":"07-27","pri":"상","p":"50","note":"G2 대시보드상 각 업무담당자 협의요청(정차장 반영)","nx":""},{"m":"lee","g":"마케팅","c":"중국","t":"TASK 진행","k":"행사 참여인원 목표 대비 실적(162명)","due":"07-22","pri":"중","p":"100","note":"TASK 본사방문 행사 진행, 총 162명(법인직원 7명 포함)","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"COXO 현지생산 프로젝트","k":"인허가·생산 마일스톤 일정 준수율","due":"07-30","pri":"중","p":"10","note":"인허가용 Waterlase iPlus 2대 차주 발송, MDX300 OS 변경건 추후 발송. 완료시점 28년2월→28년7월. 7/20 COXO미팅 인허가 데모출고방식 협의·출장일정 8/10-13","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"가오펑 AXA 생산","k":"검수 프로세스 통과·납품 일정 준수","due":"07-30","pri":"중","p":"80","note":"검수 프로세스: 검사기준서 작성→가오펑 출하검사·본사 검증→연구소 승인 후 닝보 납품 확정. 환봉 치수 이슈 개선방안 공유, 2급 인허가 판매가능 여부 닝보 확인 후 발주","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"에비던스 중국판매 준비","k":"가격·정책 확정·판매목표(2만EA) 대비 준비율","due":"10-01","pri":"중","p":"30","note":"가격·정책: 소비자가 120~130RMB, 법인 마진 35%, OEM 최소생산 30,000EA. 닝보법인 수입·출하 직접수행, Credit 90 Days. 목표 2026년 2만EA·2027년 20만EA. 10월 운영시작","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"제품경쟁력 회의","k":"인허가 로드맵 일정 준수","due":"월1회","pri":"중","p":"진행중","note":"7/23 인허가: ST Deep Thread(26.08)·BD Cuff(26.12)·Surgical Drill(27.06)·AR/AO Short(28.01)·Biolase(28.06)·Evidence BLT II(26.08). Biolase MDX300 SG2 직접인증 검토","nx":""},{"m":"lee","g":"영업","c":"중국","t":"화남지역 영업 지원","k":"출장·대응 미팅 지원 이행","due":"상시","pri":"중","p":"진행중","note":"7/12-17 화남지역 출장업무보고, 7/22 화남 CRM 문의사항 대응미팅 지원","nx":""},{"m":"lee","g":"영업","c":"중국","t":"화동지역 영업 지원","k":"요청 대응 처리율","due":"상시","pri":"중","p":"진행중","note":"마오쥐 20명 의사 방한요청→불가","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"DSO 메이야 방한 진행","k":"방한 인원·교육 완료·실적 연계","due":"07-20","pri":"중","p":"100","note":"7/18-21 메이야DSO 10명(대리상2·법인1) 생산라인·연구소·미르치과 투어. 법인 R2Lite 온라인 교육 실시","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"TASK 진행","k":"행사 참여인원(162명)·전환","due":"07-22","pri":"중","p":"100","note":"7/19-23 TASK 본사방문 행사 진행, 총 162명(법인7)","nx":""},{"m":"tak","g":"마케팅","c":"대만","t":"동북 DSO 방한 준비","k":"방한 준비 완료율·참여 인원","due":"07-29","pri":"중","p":"50","note":"7/27-29 동북DSO 9명(법인1)","nx":""},{"m":"tak","g":"교육/세미나","c":"대만","t":"서울대 교육행사 준비","k":"교육생 모집(38명)·준비 진행율","due":"09-03","pri":"중","p":"20","note":"9/1-4 교육생 38명(최대) 준비","nx":""},{"m":"tak","g":"제품PM","c":"대만","t":"디지털 PM","k":"디지털 실적 취합·회의 이행","due":"07-30","pri":"중","p":"진행중","note":"7/24 디지털 실적 취합, 7/30 회의 진행","nx":""},{"m":"seo","g":"마케팅","c":"대만","t":"TASK 진행","k":"행사 참여인원(162명)","due":"07-22","pri":"중","p":"100","note":"TASK 본사방문 행사 진행, 총 162명(법인직원 7명 포함)","nx":""},{"m":"seo","g":"영업","c":"중국","t":"중국 법인 7월 실적 예상 관리(닝보·북경)","k":"월 매출 목표 대비 달성율(%)","due":"07-31","pri":"중","p":"80","note":"닝보 1,904만RMB(95%), 북경 366만RMB(85%)","nx":""},{"m":"seo","g":"전략","c":"중국","t":"2차 VBP 대응","k":"VBP 정책 대응·수요조사 이행","due":"상시","pri":"중","p":"50","note":"2차 VBP 제품 선정 의사결정 논의, 1차 VBP 판매량 제출, 2차 VBP 정책 대응(수요조사 사전영업·경쟁사 예측)","nx":""},{"m":"seo","g":"전략","c":"중국","t":"6월 M/S 결과 분석 대응책 강구","k":"M/S 분석 시사점·대응책 도출","due":"상시","pri":"중","p":"50","note":"6월 M/S 결과 분석 시사점 도출→DSO 공략 키포인트→영업/마케팅 아이디어 도출 논의","nx":""},{"m":"seo","g":"교육/세미나","c":"중국","t":"미르·정주즈더 9월 교류회 방안 수립","k":"교류회 기획안 확정","due":"07-24","pri":"중","p":"100","note":"교류회 주제·중장기 목표·프로그램 등 기본 방안 확정","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"물동·선적 관리(7월분)","k":"선적 목표 대비 출고율(%)","due":"07-31","pri":"중","p":"44","note":"Ari FX 560ea 우선 출고 F/U(7/24 패킹·7/27 선적), 차주 닝보 재고 확인 후 8월 물량 수주","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"수금 관리","k":"수금 목표 대비 달성율(120%)","due":"07-31","pri":"중","p":"63","note":"닝보 65만$·북경 10만$ 추가 수금 예정 > 7월 예상 205만$(달성율 120%)","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"마케팅 출고 F/U","k":"출고 요청 대비 완료율","due":"07-22","pri":"중","p":"100","note":"Ari kit 중판180ea/Ari AXA 264ea/KIT 2set/에비던스 FX 12개 핸드캐리 완료","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"2026 메가마인드 고객 경품 출고","k":"경품 입고·출고 처리율","due":"07-31","pri":"중","p":"70","note":"BD Full KIT 1개(일부 7/28 입고예정), Plasma Active 1개(입고완료·우회통관 예정)","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"VOC 처리(박스 파손·Failed FX 교환)","k":"VOC 접수 대비 처리 완료율","due":"상시","pri":"중","p":"60","note":"닝보 Failed FX 2분기 1차 회신(3,380건 교환가능), 전년도 발생건(228개) 처리 협의필요, 라벨지 교환 17건 처리, 대만 Ti-brush 불량 1건 정보요청","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"물동·선적 관리(TBMS 장비)","k":"장비 수주·출고 완료율","due":"07-31","pri":"중","p":"50","note":"TBMS 7월 장비 수주·출고 F/U(MDX 6대 추가 수주 당월 출고 가능 확인)","nx":""},{"m":"kim","g":"법인관리","c":"대만","t":"홍콩·대만 KPI 목표 수립·정리","k":"KPI 목표 설정 완료 여부","due":"07-31","pri":"중","p":"50","note":"킨월드(홍콩) 하반기 KPI 55,000$ 목표 확인 완료, 대만 법인 KPI 확인 진행중","nx":""},{"m":"kim","g":"마케팅","c":"중국","t":"중국 마케팅 행사 지원","k":"행사 지원 건수·이행률","due":"07-27","pri":"중","p":"60","note":"7/20 메이야 DSO·7/22 TASK 행사 지원 완료, 7/27 동북 DSO 방문 지원 예정","nx":""},{"m":"yu","g":"영업","c":"대만","t":"Sunriser 대리상 정책·딜러십 논의","k":"정책·계약 체결 진행율","due":"08-31","pri":"중","p":"30","note":"대만 영업정책·재고 반품 확정 후 법인/딜러 계약 체결(8월)","nx":""},{"m":"yu","g":"영업","c":"대만","t":"Sunriser 재고 반품 최종 협의","k":"반품 대금 송금·계약 체결","due":"07-31","pri":"중","p":"75","note":"본사 반품(U$96K) 대금 송금 / 현지 폐기(U$79K) 별도 계약 체결(7/27)","nx":""},{"m":"yu","g":"영업","c":"대만","t":"대만 영업 정책 보고","k":"정책 수익성 검토·제출","due":"07-31","pri":"중","p":"60","note":"법인 수출가·딜러 공급가 수익성 검토·제출 예정(7/24)","nx":""},{"m":"yu","g":"영업","c":"대만","t":"잠재 KOL 발굴·육성 방안","k":"KOL 전환 목표(3명) 대비 진행","due":"상시","pri":"중","p":"0","note":"경쟁사(스트라우만) 핵심 유저 자사 KOL 3명 전환 추진","nx":""}],"31":[{"m":"lee","g":"팀업무","c":"중국","t":"중화팀 주간업무보고","k":"주간보고 제출률·회의 정례화","due":"07-31","pri":"중","p":"100","note":"중화팀 주간업무보고 체계 수립 및 취합 운영방안 수립. 매주 금요일 오후 5~6시 팀업무회의, 오전 구글 주간보고 요약 / 일요일 PPT 제출","nx":"주간보고 제출·회의 운영 정례화, 팀별 주요과제·진척도 점검"},{"m":"lee","g":"마케팅","c":"중국","t":"세미나 고객관리 운영기준 웹사이트","k":"F/U 보드·고객관리 기준 구축 완료율","due":"08-07","pri":"중","p":"70","note":"CEO Salon 고객 F/U 현황보드 및 세미나 고객관리 기준 구축. 화남/화동 참석 고객 F/U 정리, 활용안 내부 공유, 하부고객 확대 기준 화남 협의 중","nx":"현장 의견 반영해 F/U 보드·고객관리 기준 확정·운영"},{"m":"lee","g":"제품PM","c":"중국","t":"Evidence DSO 진입 프로젝트","k":"공급가·판매가 정책 확정·초도 일정","due":"08-14","pri":"중","p":"20","note":"에비던스 가격정책(안): FCA·Fail 교환없음·Credit 90D. 일정(8월 NMPA·9월 수입대리인·10월 출하). 단가·MOQ 연계(135→120위안), One-shot 공급 원칙","nx":"공급가·판매가 정책 확정, DSO 대상업체·초도 일정 보고"},{"m":"lee","g":"제품PM","c":"중국","t":"바이오레이즈 중국생산 프로젝트","k":"생산라인 후보지·GMP 인증 준비율","due":"08-10","pri":"중","p":"30","note":"현황 점검·중국 출장 준비. 메가젠 COXO 출장(8/10-13, 품질3·중화1). 생산라인 후보지·제조단계·GMP 인증 지원사항·치공구/테스트장비 실물 확인·부품 검수","nx":"메가젠 COXO 출장(8/10-13)"},{"m":"lee","g":"제품PM","c":"중국","t":"화남본부 혁신프로젝트","k":"방문 프로그램·시사용 지점 확대","due":"08-14","pri":"중","p":"100","note":"마오쥐 한국방문 요청: BD·ARi 사용 확대 위해 본사 초청. 9월 최대 23명, 본사 2박3일 체류·교육비(약 1천만원). 27개 중 5개 지점 BD·ARi 시사용","nx":""},{"m":"lee","g":"제품PM","c":"중국","t":"가오펑 AXA 생산프로젝트","k":"검수 통과·정식 생산 진행율","due":"09-30","pri":"중","p":"80","note":"기준 충족·정식 생산 진행. 생산 후 샘플 본사 검수→합격 후 잔여 발송. Ti Base 환봉은 2등급 리스크로 샘플 취소→루이타이커 진행 F/U","nx":""},{"m":"lee","g":"영업","c":"중국","t":"화남본부 혁신프로젝트(영업)","k":"목표고객 개발 진도율(271개 기준)","due":"12-31","pri":"중","p":"100","note":"화남본부 MS 재고방안 협의. 총 271개 목표고객 인별·지역별 진도관리(22개 개발·8.12%). 미진입 10대 DSO 목표 설정, 하반기 교육계획 수립","nx":"271개 목표고객·미진입 10대 DSO별 주간 진도관리 시행"},{"m":"tak","g":"마케팅","c":"중국","t":"동북 DSO 방한 행사 진행","k":"방한 결과·판매확대 기반 마련","due":"07-29","pri":"상","p":"100","note":"동북 DSO 방한 행사 진행. 방한 결과보고 작성: ARi·BD 판매확대 기반 마련, 추가 사용량 확보 기대","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"A/L Loading 외국심사위원 강의 주제 법인 전달","k":"강의 주제 확정·법인 전달","due":"07-28","pri":"중","p":"100","note":"Prof. Marcus(Ari&BDC)·Prof. Makary(BDC) 강의 주제 확정·전달","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"미넥-닝보 회의(27년 상해심포지엄 주제방향)","k":"심포지엄 주제방향 협의 완료","due":"07-30","pri":"중","p":"100","note":"2027 호주 China Symposium 주제 방향 협의. 중국 임상 트렌드(AI·임플란트 실패 대응), 연자·모더레이터 추천 협의","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"경영회의 자료 작성","k":"자료 작성 완료·기한 준수","due":"07-31","pri":"상","p":"100","note":"교육세미나·마케팅활동 경영회의 자료 작성","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"교육/마케팅활동 업무·성과지표·관리방향 정리","k":"성과지표·관리방향 정리율","due":"07-31","pri":"상","p":"50","note":"교육/마케팅활동 업무 및 성과지표, 관리방향 정리","nx":"마케팅활동 진행현황 분석"},{"m":"tak","g":"제품PM","c":"중국","t":"7월 디지털솔루션 본사&법인 컨센서스 미팅","k":"R2 실적 목표 대비 달성(점·사용량)","due":"07-30","pri":"상","p":"100","note":"7월 실적: R2 Lite 14점 / R2 Gate 12점(목표 19점, 63%) / 사용량 171회. 누적: R2 Lite 467점 / R2 Gate 190점(목표 350점, 54%)","nx":""},{"m":"tak","g":"마케팅","c":"중국","t":"시드니연회 주제 방향 확정(w미넥)","k":"주제방향 확정·연자 추천","due":"07-31","pri":"중","p":"20","note":"중점아이템: ARi·BD(BDC). 주제방향: Full Mouth Solution, Early Loading","nx":"미넥 해외 연자 추천"},{"m":"tak","g":"교육/세미나","c":"중국","t":"대시보드 엑셀지표 작성","k":"지표(비용율·전환율·달성율) 작성율","due":"07-30","pri":"상","p":"50","note":"교육/세미나(비용율·전환율·달성율), MKT(패키지매출비율), Event(횟수·인원·비용)","nx":"대시보드 고도화"},{"m":"seo","g":"영업","c":"중국","t":"중국 법인 실적 관리(닝보·북경)","k":"월 매출 목표 대비 달성율(%)","due":"07-31","pri":"상","p":"100","note":"닝보 1,530만RMB(76%), 북경 305만RMB(71%)","nx":"8월 매출 예상 및 3개월 이동 계획 수립"},{"m":"seo","g":"전략","c":"중국","t":"2차 VBP 대응","k":"본부별 목표 할당·비딩 전략 수립","due":"12-31","pri":"상","p":"20","note":"사전 영업 관리: 본부별 타겟·목표 수집. 제품 비딩: ARi 관심도 증대→AO/AR 물량 확보. 가격 비딩: 경쟁사 입찰가 조사 중","nx":"본부별 목표 할당·영업 진행 관리, 경쟁사 입찰가 파악→시뮬레이션"},{"m":"seo","g":"전략","c":"중국","t":"중화영업본부 대시보드 보완 기획","k":"P&L/PSI/마케팅 지표 기획 완료율","due":"07-30","pri":"중","p":"90","note":"P&L / BS·Cash Flow / PSI(재고) / 마케팅 지표 기획","nx":"대시보드 최종 점검 후 보완"},{"m":"seo","g":"전략","c":"중국","t":"8월 경영회의 자료 준비","k":"자료 구성·과제·실적 업데이트","due":"08-01","pri":"상","p":"100","note":"대시보드 활용 장표 구성 추가, 중점 추진 과제 및 실적 업데이트","nx":"8월 법인 영업회의 자료 준비"},{"m":"seo","g":"영업","c":"중국","t":"화북본부 AO 패키지 기획 및 점검","k":"패키지 기획·마진 시뮬레이션","due":"08-07","pri":"중","p":"80","note":"河北德泉·吉林鑫盛达 AO 패키지 기획안 분석, 마진 시뮬레이션 진행 후 정상무·박부장 검토 요청","nx":"최종 의사결정 후 세부 실행 계획 점검"},{"m":"kim","g":"법인관리","c":"중국","t":"닝보 2분기 Failed FX 교환 처리","k":"교환 기안·출고 처리율","due":"08-14","pri":"상","p":"70","note":"Failed FX 4,582EA 기안 상신 완료, 득결 대기","nx":"무상 수주 등록 및 출고 진행"},{"m":"kim","g":"법인관리","c":"중국","t":"R2 one2 Guide Kit 수출가 등록","k":"수출가 등록·법인 안내 완료","due":"07-29","pri":"상","p":"100","note":"R2 One2 Guide Kit 수출가 등록 및 법인 안내 진행","nx":""},{"m":"kim","g":"법인관리","c":"중국","t":"Evidence 닝보법인 수출 지원","k":"서류 전달 완료율","due":"07-31","pri":"상","p":"80","note":"필요 서류 샘플 송부, Evidence 서류 전달 대기(7/31 완료 예상)","nx":"Evidence 준비 서류 전달 F/U"},{"m":"kim","g":"법인관리","c":"대만","t":"대만 Sunriser 수주 문의 대응","k":"재고 파악·공유 완료율","due":"07-31","pri":"하","p":"60","note":"PRM 제품 등록 및 R2ICE Zirconia Block 재고 파악·공유","nx":"재고 현황 공유 및 단종 이후 수주 형명 확인"},{"m":"kim","g":"법인관리","c":"대만","t":"대만 법인 거래처 계정 생성","k":"ERP·PRM 계정 생성 완료","due":"07-31","pri":"중","p":"70","note":"ERP 거래처 계정(968532) 생성 완료, PRM 계정 요청","nx":"PRM 계정 생성 정보 법인 안내"},{"m":"kim","g":"마케팅","c":"중국","t":"2026 메가마인드 경품 출고","k":"경품 입고·우회통관 출고율","due":"08-07","pri":"상","p":"60","note":"BD Full Kit 입고 완료·출고 요청, 플라즈마 우회 통관 업체 확인 필요","nx":"우회 통관 업체 확인 후 우회 출고 진행"},{"m":"kim","g":"마케팅","c":"중국","t":"동북 DSO 9명 본사 방문 대응·통역","k":"방문 대응·통역 완료","due":"07-27","pri":"중","p":"100","note":"9명 DSO 고객 본사 생산 투어 및 연구소 투어 대응","nx":""},{"m":"yu","g":"영업","c":"대만","t":"대만법인 가격정책 보고","k":"가격정책·수출가 설정 완료","due":"07-29","pri":"상","p":"100","note":"기본정책·인센티브 운영안 기반으로 본사 수출가·딜러 공급가·하부고객 패키지 정책 수립","nx":"대만법인 ERP·PRM 계정 생성·수출가 설정, 초도 안전재고 수립"},{"m":"yu","g":"영업","c":"대만","t":"대만법인 체어 사업전략 보고","k":"사업전략·운영체계 수립","due":"07-29","pri":"상","p":"100","note":"3C·4P 전략 기반 딜러십 구축·운영 체계 마련, 서비스 운영 전략 수립","nx":"마케팅 교육자료·홍보물 제작, 대만향 N2 라벨/설명서 준비, 쇼룸 전시 구축"},{"m":"yu","g":"영업","c":"대만","t":"TBMS 판매 활성화 논의","k":"Trade-In 정책·수익성 시뮬레이션","due":"08-10","pri":"중","p":"20","note":"WCLI 개최 효과와 Trade-In 프로모션 연계, MD/C100 고객 대상 Trade-In 정책 논의(출시 10년 이상)","nx":"구형 장비 처리 방안 검토 및 판매·폐기 수익성 시뮬레이션"},{"m":"yu","g":"마케팅","c":"대만","t":"대만법인 마케팅 활동 준비","k":"교육·세미나·전시 계획 수립율","due":"08-10","pri":"중","p":"60","note":"교육·세미나·브랜딩·전시회 일정·진행현황 정리, 향후 마케팅 활동 계획·실행 방향 수립","nx":"교육·세미나·KOL 선정 계획, 홍보자료 제작·인쇄 일정 관리 체계 추가"},{"m":"yu","g":"영업","c":"홍콩","t":"마케팅 지원 홍보자료 준비","k":"홍보자료 리스트·제작 진행율","due":"08-10","pri":"하","p":"20","note":"프리미엄 임플란트군 홍보자료 준비 중","nx":"홍보자료 리스트 작성"},{"m":"yu","g":"영업","c":"홍콩","t":"딜러/핵심 유저 대상 교육 진행","k":"교육·핸즈온 준비·참석 확정","due":"08-12","pri":"하","p":"50","note":"중국 광동 방문 임플란트 교육 및 핸즈온 코스 준비 중(8/12~14)","nx":"참석 인원 및 참가 일정 확정"}]};
+function wkData(){const iso=(WEEKS[W]&&WEEKS[W].iso)||0;return (typeof WKREPORT!=='undefined'&&WKREPORT[String(iso)])||[];}
 function saveMReport(){try{localStorage.setItem('wr_mreports_v3',JSON.stringify(MREPORTS));}catch(e){}}
 /* ===== 市场本部 重点KPI (summary 시트 · 8월/1~8월 누적) ===== */
 const MKTKPI=[{"corp":"중국법인 (합계)","rows":[{"cat":"고객관리","name":"终端客户","unit":"名","b":7256.0,"g":8500.0,"mt":102.0,"ma":12.0,"md":-90.0,"mr":0.1176,"ct":7975.0,"ca":7847.0,"cd":-128.0,"cr":0.9839},{"cat":"고객관리","name":"DSO","unit":"名","b":196.0,"g":250.0,"mt":4.0,"ma":0.0,"md":-4.0,"mr":0.0,"ct":238.0,"ca":232.0,"cd":-6.0,"cr":0.9748},{"cat":"고객관리","name":"BD","unit":"名","b":394.0,"g":1500.0,"mt":94.0,"ma":3.0,"md":-91.0,"mr":0.0319,"ct":1515.0,"ca":749.0,"cd":-766.0,"cr":0.4944},{"cat":"고객관리","name":"ARI","unit":"名","b":null,"g":500.0,"mt":65.0,"ma":2.0,"md":-63.0,"mr":0.0308,"ct":123.0,"ca":43.0,"cd":-80.0,"cr":0.3496},{"cat":"KOL","name":"KOL (人数累计)","unit":"名","b":53.0,"g":80.0,"mt":2.0,"ma":0.0,"md":-2.0,"mr":0.0,"ct":7.0,"ca":3.0,"cd":-4.0,"cr":0.4286},{"cat":"seminar活动","name":"常规培训（初中高沙龙）","unit":"次","b":209.0,"g":177.0,"mt":17.0,"ma":4.0,"md":-13.0,"mr":0.2353,"ct":107.0,"ca":104.0,"cd":-3.0,"cr":0.972},{"cat":"seminar活动","name":"网课","unit":"次","b":50.0,"g":23.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":13.0,"ca":16.0,"cd":3.0,"cr":1.2308},{"cat":"seminar活动","name":"精品班","unit":"次","b":9.0,"g":6.0,"mt":0.0,"ma":1.0,"md":1.0,"mr":null,"ct":3.0,"ca":3.0,"cd":0.0,"cr":1.0},{"cat":"seminar活动","name":"零基础班","unit":"次","b":3.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":1.0,"cd":-1.0,"cr":0.5},{"cat":"seminar活动","name":"咨询师","unit":"次","b":12.0,"g":11.0,"mt":1.0,"ma":0.0,"md":-1.0,"mr":0.0,"ct":6.0,"ca":5.0,"cd":-1.0,"cr":0.8333},{"cat":"seminar活动","name":"DSO培训","unit":"次","b":22.0,"g":40.0,"mt":3.0,"ma":0.0,"md":-3.0,"mr":0.0,"ct":19.0,"ca":14.0,"cd":-5.0,"cr":0.7368},{"cat":"seminar活动","name":"医学会讲课","unit":"次","b":4.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":3.0,"cd":1.0,"cr":1.5},{"cat":"seminar活动","name":"KOL活动","unit":"次","b":3.0,"g":4.0,"mt":1.0,"ma":0.0,"md":-1.0,"mr":0.0,"ct":3.0,"ca":2.0,"cd":-1.0,"cr":0.6667},{"cat":"seminar活动","name":"ARI培训","unit":"次","b":null,"g":null,"mt":7.0,"ma":4.0,"md":-3.0,"mr":0.5714,"ct":55.0,"ca":26.0,"cd":-29.0,"cr":0.4727},{"cat":"品牌活动","name":"CEO 沙龙","unit":"次","b":7.0,"g":6.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":3.0,"ca":3.0,"cd":0.0,"cr":1.0},{"cat":"品牌活动","name":"国际沙龙","unit":"次","b":6.0,"g":3.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":1.0,"ca":1.0,"cd":0.0,"cr":1.0},{"cat":"品牌活动","name":"首尔大学","unit":"次","b":3.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":1.0,"cd":-1.0,"cr":0.5},{"cat":"品牌活动","name":"MEGA School","unit":"次","b":2.0,"g":3.0,"mt":0.0,"ma":1.0,"md":1.0,"mr":null,"ct":1.0,"ca":2.0,"cd":1.0,"cr":2.0},{"cat":"品牌活动","name":"MEGAMIND大赛","unit":"次","b":1.0,"g":2.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":1.0,"ca":2.0,"cd":1.0,"cr":2.0},{"cat":"品牌活动","name":"MEGAMIND大赛 (인원)","unit":"名","b":90.0,"g":110.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"即刻负重&早期负重大赛","unit":"次","b":1.0,"g":1.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":0.0,"cd":-2.0,"cr":0.0},{"cat":"品牌活动","name":"即刻负重&早期负重大赛 (인원)","unit":"名","b":143.0,"g":130.0,"mt":130.0,"ma":129.0,"md":-1.0,"mr":0.9923,"ct":130.0,"ca":129.0,"cd":-1.0,"cr":0.9923},{"cat":"营销活动","name":"DSO访韩","unit":"次","b":9.0,"g":9.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":10.0,"ca":8.0,"cd":-2.0,"cr":0.8},{"cat":"营销活动","name":"大展会","unit":"次","b":8.0,"g":8.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":8.0,"ca":5.0,"cd":-3.0,"cr":0.625},{"cat":"营销活动","name":"学术会/地方小展会","unit":"次","b":56.0,"g":53.0,"mt":5.0,"ma":3.0,"md":-2.0,"mr":0.6,"ct":53.0,"ca":25.0,"cd":-28.0,"cr":0.4717}]},{"corp":"닝보 (宁波)","rows":[{"cat":"고객관리","name":"终端客户","unit":"名","b":5991.0,"g":7000.0,"mt":82.0,"ma":10.0,"md":-72.0,"mr":0.122,"ct":6561.0,"ca":6448.0,"cd":-113.0,"cr":0.9828},{"cat":"고객관리","name":"DSO","unit":"名","b":147.0,"g":193.0,"mt":3.0,"ma":0.0,"md":-3.0,"mr":0.0,"ct":178.0,"ca":174.0,"cd":-4.0,"cr":0.9775},{"cat":"고객관리","name":"BD","unit":"名","b":245.0,"g":1210.0,"mt":81.0,"ma":2.0,"md":-79.0,"mr":0.0247,"ct":1292.0,"ca":465.0,"cd":-827.0,"cr":0.3599},{"cat":"고객관리","name":"ARI","unit":"名","b":null,"g":404.0,"mt":59.0,"ma":2.0,"md":-57.0,"mr":0.0339,"ct":110.0,"ca":19.0,"cd":-91.0,"cr":0.1727},{"cat":"KOL","name":"KOL (人数累计)","unit":"名","b":43.0,"g":64.0,"mt":2.0,"ma":0.0,"md":-2.0,"mr":0.0,"ct":7.0,"ca":3.0,"cd":-4.0,"cr":0.4286},{"cat":"seminar活动","name":"常规培训（初中高沙龙）","unit":"次","b":141.0,"g":127.0,"mt":11.0,"ma":4.0,"md":-7.0,"mr":0.3636,"ct":77.0,"ca":80.0,"cd":3.0,"cr":1.039},{"cat":"seminar活动","name":"网课","unit":"次","b":48.0,"g":21.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":13.0,"ca":16.0,"cd":3.0,"cr":1.2308},{"cat":"seminar活动","name":"精品班","unit":"次","b":9.0,"g":6.0,"mt":0.0,"ma":1.0,"md":1.0,"mr":null,"ct":3.0,"ca":3.0,"cd":0.0,"cr":1.0},{"cat":"seminar活动","name":"零基础班","unit":"次","b":3.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":1.0,"cd":-1.0,"cr":0.5},{"cat":"seminar活动","name":"咨询师","unit":"次","b":10.0,"g":10.0,"mt":1.0,"ma":0.0,"md":-1.0,"mr":0.0,"ct":6.0,"ca":5.0,"cd":-1.0,"cr":0.8333},{"cat":"seminar活动","name":"DSO培训","unit":"次","b":22.0,"g":35.0,"mt":3.0,"ma":0.0,"md":-3.0,"mr":0.0,"ct":19.0,"ca":14.0,"cd":-5.0,"cr":0.7368},{"cat":"seminar活动","name":"医学会讲课","unit":"次","b":4.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":3.0,"cd":1.0,"cr":1.5},{"cat":"seminar活动","name":"KOL活动","unit":"次","b":3.0,"g":4.0,"mt":1.0,"ma":0.0,"md":-1.0,"mr":0.0,"ct":3.0,"ca":2.0,"cd":-1.0,"cr":0.6667},{"cat":"seminar活动","name":"ARI培训","unit":"次","b":null,"g":50.0,"mt":7.0,"ma":4.0,"md":-3.0,"mr":0.5714,"ct":55.0,"ca":26.0,"cd":-29.0,"cr":0.4727},{"cat":"品牌活动","name":"CEO 沙龙","unit":"次","b":5.0,"g":5.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":3.0,"ca":3.0,"cd":0.0,"cr":1.0},{"cat":"品牌活动","name":"国际沙龙","unit":"次","b":4.0,"g":2.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":1.0,"ca":1.0,"cd":0.0,"cr":1.0},{"cat":"品牌活动","name":"首尔大学","unit":"次","b":3.0,"g":4.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":1.0,"cd":-1.0,"cr":0.5},{"cat":"品牌活动","name":"MEGA School","unit":"次","b":2.0,"g":3.0,"mt":0.0,"ma":1.0,"md":1.0,"mr":null,"ct":1.0,"ca":2.0,"cd":1.0,"cr":2.0},{"cat":"品牌活动","name":"MEGAMIND大赛","unit":"次","b":1.0,"g":2.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":1.0,"ca":2.0,"cd":1.0,"cr":2.0},{"cat":"品牌活动","name":"MEGAMIND大赛 (인원)","unit":"名","b":73.0,"g":80.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"即刻负重&早期负重大赛","unit":"次","b":1.0,"g":1.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"即刻负重&早期负重大赛 (인원)","unit":"名","b":123.0,"g":130.0,"mt":100.0,"ma":114.0,"md":14.0,"mr":1.14,"ct":100.0,"ca":114.0,"cd":14.0,"cr":1.14},{"cat":"营销活动","name":"DSO访韩","unit":"次","b":7.0,"g":7.0,"mt":null,"ma":0.0,"md":null,"mr":null,"ct":7.0,"ca":6.0,"cd":-1.0,"cr":0.8571},{"cat":"营销活动","name":"大展会","unit":"次","b":6.0,"g":6.0,"mt":null,"ma":null,"md":null,"mr":null,"ct":6.0,"ca":3.0,"cd":-3.0,"cr":0.5},{"cat":"营销活动","name":"学术会/地方小展会","unit":"次","b":53.0,"g":50.0,"mt":4.0,"ma":2.0,"md":-2.0,"mr":0.5,"ct":50.0,"ca":25.0,"cd":-25.0,"cr":0.5}]},{"corp":"북경 (北京)","rows":[{"cat":"고객관리","name":"终端客户","unit":"名","b":1265.0,"g":1500.0,"mt":20.0,"ma":2.0,"md":-18.0,"mr":0.1,"ct":1414.0,"ca":1399.0,"cd":-15.0,"cr":0.9894},{"cat":"고객관리","name":"DSO","unit":"名","b":49.0,"g":57.0,"mt":1.0,"ma":0.0,"md":-1.0,"mr":0.0,"ct":60.0,"ca":58.0,"cd":-2.0,"cr":0.9667},{"cat":"고객관리","name":"BD","unit":"名","b":149.0,"g":290.0,"mt":13.0,"ma":1.0,"md":-12.0,"mr":0.0769,"ct":223.0,"ca":284.0,"cd":61.0,"cr":1.2735},{"cat":"고객관리","name":"ARI","unit":"名","b":null,"g":96.0,"mt":6.0,"ma":0.0,"md":-6.0,"mr":0.0,"ct":13.0,"ca":24.0,"cd":11.0,"cr":1.8462},{"cat":"KOL","name":"KOL (人数累计)","unit":"名","b":10.0,"g":16.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"常规培训（初中高沙龙）","unit":"次","b":68.0,"g":50.0,"mt":6.0,"ma":0.0,"md":-6.0,"mr":0.0,"ct":30.0,"ca":24.0,"cd":-6.0,"cr":0.8},{"cat":"seminar活动","name":"网课","unit":"次","b":2.0,"g":2.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"精品班","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"零基础班","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"咨询师","unit":"次","b":2.0,"g":1.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"DSO培训","unit":"次","b":null,"g":5.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"医学会讲课","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"KOL活动","unit":"次","b":0.0,"g":0.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"seminar活动","name":"ARI培训","unit":"次","b":null,"g":0.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"CEO 沙龙","unit":"次","b":2.0,"g":1.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"国际沙龙","unit":"次","b":2.0,"g":1.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"首尔大学","unit":"次","b":0.0,"g":0.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":null,"ca":null,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"MEGA School","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":null,"ca":null,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"MEGAMIND大赛","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":0.0,"cr":null},{"cat":"品牌活动","name":"MEGAMIND大赛 (인원)","unit":"名","b":17.0,"g":30.0,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":0.0,"ca":0.0,"cd":null,"cr":null},{"cat":"品牌活动","name":"即刻负重&早期负重大赛","unit":"次","b":null,"g":null,"mt":0.0,"ma":0.0,"md":0.0,"mr":null,"ct":2.0,"ca":0.0,"cd":-2.0,"cr":0.0},{"cat":"品牌活动","name":"即刻负重&早期负重大赛 (인원)","unit":"名","b":20.0,"g":30.0,"mt":30.0,"ma":15.0,"md":-15.0,"mr":0.5,"ct":30.0,"ca":15.0,"cd":-15.0,"cr":0.5},{"cat":"营销活动","name":"DSO访韩","unit":"次","b":2.0,"g":2.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":3.0,"ca":2.0,"cd":-1.0,"cr":0.6667},{"cat":"营销活动","name":"大展会","unit":"次","b":2.0,"g":2.0,"mt":2.0,"ma":1.0,"md":-1.0,"mr":0.5,"ct":2.0,"ca":2.0,"cd":null,"cr":1.0},{"cat":"营销活动","name":"学术会/地方小展会","unit":"次","b":3.0,"g":3.0,"mt":1.0,"ma":1.0,"md":0.0,"mr":1.0,"ct":3.0,"ca":0.0,"cd":null,"cr":0.0}]}];
@@ -2021,12 +2064,12 @@ let SUNIT='month', SMKT='', SY=2026, SI=7, SMATK='newc';  // 담당자별 실적
 let YEAR=2026;  // 상단 기간: 연도
 let PMET='법인매출', PBUMON='전체', PMON=6;
 const MENU=[
-  ['mreport','G2중화 월간성과/실행현황','📊'],
+  ['mreport','월간업무현황','📊'],
   ['rr','주간업무현황','👤'],
   ['calendar','중화팀 행사','📅'],['calmonth','중화팀 일정','🗓'],
   ['goals','중화팀 성과목표','🎯']
 ];
-const MENULB={overview:'중화팀 관리 현황판',mreport:'G2중화 월간성과/실행현황',rr:'주간업무현황',kanban:'업무진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정',goals:'중화팀 성과목표',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
+const MENULB={overview:'중화팀 관리 현황판',mreport:'월간업무현황',rr:'주간업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정',goals:'중화팀 성과목표',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
@@ -2071,7 +2114,7 @@ function logout(){LOGINUID='';try{localStorage.removeItem('wr_login');}catch(e){
 function loginScreen(){
   return `<div class="login-ov"><div class="login-box">
     <div class="login-logo">주</div>
-    <h2>중화팀 주간 업무보고</h2><p class="login-sub">G2 中华팀 · 해외영업본부</p>
+    <h2>G2 중화지역보고</h2><p class="login-sub">G2 中华팀 · 해외영업본부</p>
     <input id="lg_id" placeholder="ID (회사 이메일)" autocomplete="username">
     <input id="lg_pw" type="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     <div id="lg_err" class="login-err"></div>
@@ -2102,13 +2145,20 @@ function setSalesTab(t){SALESTAB=t;render();}
 /* 메모 저장 (로컬 파일로 열면 브라우저에 저장, 샌드박스면 세션 메모리) */
 const NOTES=(()=>{try{return JSON.parse(localStorage.getItem('wr_notes')||'{}');}catch(e){return {};}})();
 function saveNoteLS(){try{localStorage.setItem('wr_notes',JSON.stringify(NOTES));}catch(e){}}
+let MEND='';
+let EOMSEL=false;
 const TODAY=new Date();
-/* 처음 열면 오늘이 속한 달·최근 주차로 자동 진입 (메뉴 전환해도 유지) */
+/* ══ 기간 기본값 규칙 ══
+   · G2중화 월간성과/실행현황을 열면 → 해당일 기준 "전달" (월 단위)
+   · 주간업무현황을 열면 → 해당일 기준 "전주" (주 단위) */
+function gotoPrevMonthDefault(){let pm=(TODAY.getMonth()+1)-1;MONTH=Math.max(7,Math.min(12,pm<1?1:pm));YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;W=Math.max(0,WEEKS.length-1);try{MFMON=String(MONTH);}catch(e){}}
+function gotoPrevWeekDefault(){
+  const tIso=+isoWeekNum(todayStr())||0;let tw=tIso-1;if(tw<29)tw=29;
+  for(let m=7;m<=12;m++){const ws=buildWeeks(m);const idx=ws.findIndex(x=>x.iso===tw);
+    if(idx>=0){MONTH=m;WEEKS=ws;W=idx;PERIOD='week';MEND='';EOMSEL=false;try{MFMON=String(m);}catch(e){}return;}}
+}
 MONTH=TODAY.getMonth()+1; YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
-/* 열면: 매월 단위 기준(월 전체) 표시 · 이달 첫 주면 지난달(완료된 달)로 이동 */
-{ let ti=todayWeekIdx();
-  if(ti<=0 && MONTH>1){ MONTH=MONTH-1; WEEKS=buildWeeks(MONTH); }
-  PERIOD='month'; W=Math.max(0,WEEKS.length-1); }
+gotoPrevMonthDefault(); /* 첫 화면 = G2 월간성과 → 전달 기준 */
 KANMONTHS=[MONTH]; /* 업무진행율: 기본 해당월 기준 */
 const st=p=>p>=100?'done':p>=80?'review':p>=40?'prog':'wait';
 const stLabel={wait:'대기',prog:'진행중',review:'마무리',done:'완료'};
@@ -2174,7 +2224,6 @@ function sortRows(a,b){
 }
 
 /* ============ RENDER ============ */
-let EOMSEL=false;
 function periodLabel(){
   if(PERIOD==='week')return `${WEEKS[W].name} (${WEEKS[W].range}) · as-of ${WEEKS[W].asof}`;
   if(PERIOD==='month')return EOMSEL?`${YEAR}년 ${MONTH}월 말일 기준 · 월말보고`:`${YEAR}년 ${MONTH}월 현황 · 이 달에 진행 중인 일정`;
@@ -2187,6 +2236,7 @@ function render(){
   if(lr){lr.innerHTML='';lr.style.display='none';}
   // 권한: 팀원(member)은 「중화팀 관리 현황판」만
   if(VROLE==='member'&&!MEMBER_TABS.includes(TAB))TAB='mreport';
+  document.body.classList.toggle('vw-mreport',TAB==='mreport');
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
   // avatars
@@ -2226,7 +2276,7 @@ function render(){
   document.getElementById('viewTitle').textContent=MENULB[TAB];
   {const mc=document.getElementById('mtCur');if(mc)mc.textContent=MENULB[TAB];}
   const extra=(TAB==='goals'||TAB==='perf'||TAB==='sales'||TAB==='overview'||TAB==='mreport')?'':(TAB==='separate')?` · 별도 항목 ${cnt.separate}건`:` · 표시 과제 ${rows.length}건${HIDEDONE?' · 완료 숨김':''}`;
-  document.getElementById('asof').innerHTML=(TAB==='mreport')?(`G2중화 월간성과/실행현황 · <a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener" style="color:#26c6b8;text-decoration:none">구글시트 열기 ↗</a> · 중화팀과제: 항목 클릭 → 상세 · 더블클릭 → 수정·자동저장`):(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
+  document.getElementById('asof').innerHTML=(TAB==='mreport')?(`월간업무현황 · <a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener" style="color:#26c6b8;text-decoration:none">구글시트 열기 ↗</a> · 중화팀과제: 항목 클릭 → 상세 · 더블클릭 → 수정·자동저장`):(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
   // KPI / goalbar visibility
   const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='mreport'&&TAB!=='rr');
   document.getElementById('kpis').style.display=showKPI?'':'none';
@@ -3057,7 +3107,6 @@ function saveMonthEnd(){try{localStorage.setItem('wr_monthend_v1',JSON.stringify
 if(!MONTHEND['7']||!MONTHEND['7'].length){MONTHEND['7']=MONTHEND_SEED_7.map(x=>({...x}));saveMonthEnd();}
 /* 8월 월말보고: 7월과 같은 양식(담당자·R&R·중점과제·KPI기준)으로 두되 결과·계획·달성률은 비워 시작 */
 if(!MONTHEND['8']){MONTHEND['8']=MONTHEND_SEED_7.map(x=>({owner:x.owner,rnr:x.rnr,task:x.task,kpi:x.kpi,rate:'',res:'',plan:''}));saveMonthEnd();}
-let MEND='';
 function meMonths(){return Object.keys(MONTHEND).filter(k=>MONTHEND[k]&&MONTHEND[k].length).sort((a,b)=>(+a)-(+b));}
 function selMonthEnd(v){MEND=v||'';if(MEND)TAB='overview';render();}
 function renderMonthEnd(m){
@@ -3140,39 +3189,59 @@ function ovScopeAggFrom(D,scope){
 function ovScopeAgg(scope){return ovScopeAggFrom(ovDealD(),scope);}
 /* ===== 주간업무현황 · 본사실적 (주간 관리) ===== */
 function rrSalesWeeks(){
-  const ws=Object.keys(SPHIST).filter(k=>/^W\d+$/.test(k)&&SPHIST[k].deal&&SPHIST[k].deal.length).map(k=>+k.slice(1)).filter(w=>w>=29&&w!==32).sort((a,b)=>a-b);
+  const monthIso=WEEKS.map(w=>w.iso).filter(Boolean); // 선택한 달의 주차만
+  const ws=Object.keys(SPHIST).filter(k=>/^W\d+$/.test(k)&&SPHIST[k].deal&&SPHIST[k].deal.length).map(k=>+k.slice(1)).filter(w=>monthIso.includes(w));
   const cur=(WEEKS[W]&&WEEKS[W].iso)||0;
   if(cur&&!ws.includes(cur)&&ovDealD().length)ws.push(cur);
-  return ws.sort((a,b)=>a-b);
+  return [...new Set(ws)].sort((a,b)=>a-b);
 }
 function rrWeekChart(label,scope){
-  const ws=rrSalesWeeks();
-  const pts=ws.map(wk=>{const D=(SPHIST['W'+wk]&&SPHIST['W'+wk].deal&&SPHIST['W'+wk].deal.length)?SPHIST['W'+wk].deal:ovDealD();const g=ovScopeAggFrom(D,scope);return {wk,t:Math.round(g.exT/1000),a:Math.round(g.exA/1000)};});
-  if(!pts.length)return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 추세</div><div class="mut" style="padding:20px 0">주차별 실적 데이터 없음</div></div>`;
-  const t=pts[pts.length-1].t;
-  const W2=460,H=250,L=54,R=18,TP=16,B=36,M=pts.length;
-  const maxV=Math.max(t,...pts.map(p=>p.a),1)*1.12;
+  // x축 = 그 달의 전체 주차 (데이터 없는 미래 주차도 자리 표시 · 12월까지 동일)
+  const allW=WEEKS.map(w=>w.iso).filter(Boolean);
+  if(!allW.length)return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황</div><div class="mut" style="padding:20px 0">주차 없음</div></div>`;
+  const dataW=rrSalesWeeks();
+  const cur=(WEEKS[W]&&WEEKS[W].iso)||0;
+  const pts=allW.map(wk=>{
+    let a=null,t=null;
+    if(dataW.includes(wk)){
+      const D=(SPHIST['W'+wk]&&SPHIST['W'+wk].deal&&SPHIST['W'+wk].deal.length)?SPHIST['W'+wk].deal:((wk===cur)?ovDealD():null);
+      if(D){const g=ovScopeAggFrom(D,scope);a=Math.round(g.exA/1000);t=Math.round(g.exT/1000);}
+    }
+    return {wk,a,t};
+  });
+  const withData=pts.filter(p=>p.a!=null);
+  const t=withData.length?withData[withData.length-1].t:Math.round(ovScopeAggFrom(ovDealD(),scope).exT/1000);
+  const W2=460,H=250,L=54,R=18,TP=16,B=36,M=allW.length;
+  const maxV=Math.max(t||1,...withData.map(p=>p.a),1)*1.12;
   const X=i=>L+(W2-L-R)*(M===1?0.5:i/(M-1));
   const Y=v=>TP+(H-TP-B)*(1-v/maxV);
   const step=Math.max(1,Math.round(maxV/3/50)*50);
   let grid='',yl='';
   for(let v=0;v<=maxV;v+=step){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#e5e9ee"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10.5" fill="#8b93a0">${v.toLocaleString('en-US')}</text>`;}
-  const pl=pts.map((p,i)=>`${X(i).toFixed(1)},${Y(p.a).toFixed(1)}`).join(' ');
+  const lp=[];pts.forEach((p,i)=>{if(p.a!=null)lp.push(`${X(i).toFixed(1)},${Y(p.a).toFixed(1)}`);});
   let dots='',xl='';
-  pts.forEach((p,i)=>{const lastP=(i===M-1);
-    dots+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(p.a).toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#3d7a55" stroke-width="${lastP?2.6:2}"/>`;
-    dots+=`<text x="${X(i).toFixed(1)}" y="${Y(p.a)-11}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c5e42">${p.a.toLocaleString('en-US')}</text>`;
-    xl+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="10.5" fill="${lastP?'#22262b':'#8b93a0'}" font-weight="${lastP?'800':'600'}">W${p.wk}</text>`;});
-  const last=pts[pts.length-1];const rate=t?Math.round(last.a/t*100):0;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 추세 <span>목표(회색 점선) · 주차별 실적(초록)</span></div>
+  let lastIdx=-1;pts.forEach((p,i)=>{if(p.a!=null)lastIdx=i;});
+  pts.forEach((p,i)=>{
+    const isCur=(p.wk===cur);
+    xl+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="10.5" fill="${isCur?'#22262b':'#8b93a0'}" font-weight="${isCur?'800':'600'}">W${p.wk}</text>`;
+    if(p.a!=null){
+      const lastP=(i===lastIdx);
+      dots+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(p.a).toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#3d7a55" stroke-width="${lastP?2.6:2}"/>`;
+      dots+=`<text x="${X(i).toFixed(1)}" y="${Y(p.a)-11}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c5e42">${p.a.toLocaleString('en-US')}</text>`;
+    } else {
+      dots+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(0).toFixed(1)}" r="3" fill="#eef1f4" stroke="#cfd5dc" stroke-width="1.5"/>`;
+    }
+  });
+  const last=withData.length?withData[withData.length-1]:null;
+  const rate=(last&&t)?Math.round(last.a/t*100):null;
+  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황 <span>목표(회색 점선) · 주차별 실적(초록)</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">
       ${grid}${yl}
-      <line x1="${L}" y1="${Y(t)}" x2="${W2-R}" y2="${Y(t)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/>
-      <text x="${W2-R}" y="${Y(t)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">목표 ${t.toLocaleString('en-US')}</text>
-      <polyline points="${pl}" fill="none" stroke="#3d7a55" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      ${t?`<line x1="${L}" y1="${Y(t)}" x2="${W2-R}" y2="${Y(t)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${Y(t)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">목표 ${t.toLocaleString('en-US')}</text>`:''}
+      ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#3d7a55" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''}
       ${dots}${xl}
     </svg>
-    <div class="omc-b"><span>W${last.wk} 실적 ${last.a.toLocaleString('en-US')} · 목표 ${t.toLocaleString('en-US')} · ${rate}%</span></div></div>`;
+    <div class="omc-b"><span>${last?`W${last.wk} 실적 ${last.a.toLocaleString('en-US')} · 목표 ${(t||0).toLocaleString('en-US')} · ${rate}%`:'실적 입력 대기'}</span></div></div>`;
 }
 function renderRRSales(){
   const wk=ovWeekKey();
@@ -3214,7 +3283,7 @@ function ovCumChart(label,agg){
   let dots='';ap.forEach((p,i)=>{const lastP=(i===M-1);dots+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#3d7a55" stroke-width="${lastP?2.6:2}"/>`;});
   let xl='';for(let i=1;i<=M;i++){xl+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="10.5" fill="${i===M?'#22262b':'#8b93a0'}" font-weight="${i===M?'800':'600'}">${i}월</text>`;}
   const rate=t?Math.round(a/t*100):0;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 누적 수출 추세 <span>목표(회색) · 실적(초록)</span></div>
+  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 누적 수출 현황 <span>목표(회색) · 실적(초록)</span></div>
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
       ${grid}${yl}
       <polyline points="${pl(tp)}" fill="none" stroke="#b6bdc7" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>
@@ -3288,8 +3357,43 @@ function mrSave(el){
   arr[i][f]=v; saveMReport();
   if(f==='r'||f==='g')render(); // rate badge color / gubun grouping needs rebuild
 }
+function renderTeamWeekCards(wk){
+  const iso=(WEEKS[W]&&WEEKS[W].iso)||'';
+  const nIso=iso?iso+1:'';
+  let h=`<div class="ov-sec">중화팀과제 <span class="ov-sub">이번주(W${iso}) 과제 + 다음주(W${nIso}) 계획 + ${MONTH}월 중점추진과제 · 항목 클릭 → 상세</span></div>`;
+  h+='<div class="ov-cards">'+MGRS.map(m=>{
+    const items=wk.map((r,i)=>({r,i})).filter(x=>x.r.m===m.id);
+    if(!items.length)return '';
+    const ps=items.map(x=>{const v=parseInt(x.r.p);return isNaN(v)?null:v;}).filter(v=>v!=null);
+    const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+    const rd=RRDATA.find(x2=>(x2.who||'').startsWith(m.name));
+    const roleLine=OVROLE[m.id]||((rd&&rd.role)?rd.role:(m.region||''));
+    const routines=ovRoutinesFor(m.name);
+    const mfCur=mfTasksForOwner(m.name,MONTH);
+    const pct=x=>{const v=parseInt(x.r.p);const txt=isNaN(v)?String(x.r.p||''):(v+'%');if(!txt)return '';const c=isNaN(v)?'':(v>=90?'mr-tg':v>=70?'mr-ta':'mr-tr');return ` <b class="${c}">(${esc(txt)})</b>`;};
+    // 이번주: 과제 + 진행율 · 상세=KPI·진행사항
+    const tidx=x=>{const norm=y=>String(y||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();const tn=norm(x.r.t);let f=TASKS.findIndex(t2=>t2.mgr===x.r.m&&norm(t2.name)===tn);if(f<0)f=TASKS.findIndex(t2=>t2.mgr===x.r.m&&(norm(t2.name).includes(tn)||tn.includes(norm(t2.name))));return f;};
+    const li1=x=>{const ti=tidx(x);return `<li class="mr-li" onclick="mrToggle(this)" title="클릭 → 상세">${esc(x.r.t)}${pct(x)}<div class="mr-x" onclick="event.stopPropagation()">${ti>=0?`<div class="mr-xr" style="margin-bottom:2px"><a href="javascript:void(0)" onclick="openDetail(${ti})" style="font-size:11px;font-weight:800;color:var(--accentInk);text-decoration:none">↗ 과제상세 열기 (일정·진행율 수정)</a></div>`:''}${x.r.k?`<div class="mr-xr"><span>KPI관리기준</span><p>${esc(x.r.k)}</p></div>`:''}${x.r.note?`<div class="mr-xr"><span>진행사항</span><p>${esc(x.r.note)}</p></div>`:''}<div class="mr-xr"><span>구분 · 국가 · 완료예정 · 우선순위</span><p>${esc(x.r.g||'—')} · ${esc(x.r.c||'—')} · ${esc(x.r.due||'—')} · ${esc(x.r.pri||'—')}</p></div></div></li>`;};
+    // 다음주: 차주업무가 있는 과제 · 상세=차주 계획
+    const nextItems=items.filter(x=>String(x.r.nx||'').trim());
+    const li2=x=>`<li class="mr-li" onclick="mrToggle(this)" title="클릭 → 다음주 계획">${esc(x.r.t)}<div class="mr-x" onclick="event.stopPropagation()"><div class="mr-xr"><span>다음주 계획 (W${nIso})</span><p>${esc(x.r.nx)}</p></div></div></li>`;
+    return `<div class="ov-card">
+      <div class="ov-ch"><span class="ov-av" style="background:${m.color}">${esc(m.ini)}</span><div class="ov-cn"><b>${esc(m.name)}</b> <span class="ov-ct">${esc(m.title)}</span><div class="ov-cr">${esc(OVSUB[m.id]||m.region||'')}</div></div><div class="ov-cp">${avg==null?'–':avg+'%'}<span>진행률</span></div></div>
+      <div class="ov-role">${esc(roleLine)}</div>
+      <div class="ov-bar"><div class="ov-bar-t" style="width:${avg||0}%"></div></div>
+      <div class="ov-tk-h">이번주 과제 · W${iso} <b>${items.length}건</b> <span class="mr-hint">클릭 → 상세</span></div>
+      <ul class="ov-tk">${items.map(li1).join('')}</ul>
+      <div class="ov-tk-h ov-tk-h2">다음주 과제 · W${nIso} <b>${nextItems.length}건</b></div>
+      <ul class="ov-tk ov-tk-next">${nextItems.length?nextItems.map(li2).join(''):'<li class="mut">다음주 계획 없음</li>'}</ul>
+      <div class="ov-tk-h ov-tk-h3" onclick="setRRTab('focus');setMFMon(${MONTH})" style="cursor:pointer" title="매월 중점추진과제로 이동">${MONTH}월 중점추진과제 <b>${mfCur.length}건</b></div>
+      <ul class="ov-tk ov-tk-mf">${mfCur.length?mfCur.slice(0,6).map(t=>`<li>${esc(t)}</li>`).join(''):'<li class="mut">배정된 중점과제 없음</li>'}</ul>
+      ${routines.length?`<div class="ov-rt">${routines.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
+    </div>`;}).join('')+'</div>';
+  return h;
+}
 function renderTeamMonthCards(isMR){
   let h='';
+  if(!isMR){const wkd=wkData(); if(wkd.length) return renderTeamWeekCards(wkd);} // 주간업무현황: 해당 주차 주간보고 연동
 
     const m1=MONTH, m2=(MONTH<12?MONTH+1:12);
     h+=`<div class="ov-sec">중화팀과제 <span class="ov-sub">${m1}월 과제 + ${m2}월 과제 + ${m2}월 중점추진과제 · 항목 클릭 → 상세${(TAB==='mreport')?' · 상세 더블클릭 → 수정':''}</span></div>`;
@@ -3364,29 +3468,35 @@ function ovDealTable(){
   const D=ovDealD();
   const k=n=>(n==null||n==='')?null:Math.round(n/1000);
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
-  const pct=r=>r==null?'—':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
-  const num=n=>n==null?'—':n.toLocaleString('en-US');
-  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:44px">구분</th><th style="text-align:left;width:96px">거래처</th><th style="width:40px">단위</th><th>수출목표</th><th>수출실적</th><th>KPI</th><th>수금목표</th><th>수금실적</th><th>수금달성</th></tr></thead><tbody>';
-  let cnExT=0,cnExA=0,cnSuT=0,cnSuA=0;
-  const cn=(D||[]).filter(d=>d.grp==='중국');
-  const ov=(D||[]).filter(d=>d.grp!=='중국');
-  cn.forEach(d=>{cnExT+=(+d.exT||0);cnExA+=(+d.exA||0);cnSuT+=(+d.suT||0);cnSuA+=(+d.suA||0);
-    const exR=d.exT?d.exA/d.exT:null,suR=d.suT?d.suA/d.suT:null;
-    h+=`<tr><td>중국</td><td class="rl">${esc(d.dealer)}</td><td>천$</td><td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;});
-  if(cn.length){const exR=cnExT?cnExA/cnExT:null,suR=cnSuT?cnSuA/cnSuT:null;
-    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(cnExT))}</td><td class="ov-pc">${num(k(cnExA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(cnSuT))}</td><td class="ov-pc">${num(k(cnSuA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;}
-  let twExT=0,twExA=0,twSuT=0,twSuA=0,hkExT=0,hkExA=0,hkSuT=0,hkSuA=0;
+  const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
+  const num=n=>n==null?'\u2014':n.toLocaleString('en-US');
+  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:36px">단위</th>'
+    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적</th><th>달성율</th><th>누적달성율</th>'
+    +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적</th><th>달성율</th><th>누적달성율</th></tr></thead><tbody>';
+  const mrate=(a,tm)=>(tm!=null&&tm>0&&a!=null)?a/tm:null; // 달성율 = 실적 ÷ 당월목표
+  const row=(cls,g,nm,d)=>{
+    const exR=(d.exT?d.exA/d.exT:null), suR=(d.suT?d.suA/d.suT:null);
+    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td>천$</td>`
+      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(mrate(d.exA,d.exTm))}</td><td class="ov-pc">${pct(exR)}</td>`
+      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(mrate(d.suA,d.suTm))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;
+  };
+  const acc=()=>({exT:0,exTm:null,exA:0,suT:0,suTm:null,suA:0});
+  const add=(s2,d)=>{s2.exT+=(+d.exT||0);s2.exA+=(+d.exA||0);s2.suT+=(+d.suT||0);s2.suA+=(+d.suA||0);
+    if(d.exTm!=null&&d.exTm!=='')s2.exTm=(s2.exTm||0)+(+d.exTm||0);
+    if(d.suTm!=null&&d.suTm!=='')s2.suTm=(s2.suTm||0)+(+d.suTm||0);};
+  const cn=(D||[]).filter(d=>d.grp==='중국'), ov=(D||[]).filter(d=>d.grp!=='중국');
+  const sCN=acc(), sTW=acc(), sHK=acc();
+  cn.forEach(d=>{add(sCN,d);h+=row('','중국',d.dealer,d);});
+  if(cn.length)h+=row('ov-sub-row','중국','소계',sCN);
   ov.forEach(d=>{const isHk=/홍콩/.test(d.dealer);const g=isHk?'홍콩':(/대만/.test(d.dealer)?'대만':d.grp);const nm=d.dealer.replace(/^(홍콩|대만)\s*/,'');
-    const exR=d.exT?d.exA/d.exT:null,suR=(d.suT!=null&&d.suT!==''&&d.suT)?d.suA/d.suT:null;
-    if(isHk){hkExT+=(+d.exT||0);hkExA+=(+d.exA||0);hkSuT+=(+d.suT||0);hkSuA+=(+d.suA||0);}else{twExT+=(+d.exT||0);twExA+=(+d.exA||0);twSuT+=(+d.suT||0);twSuA+=(+d.suA||0);}
-    h+=`<tr><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td>천$</td><td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(exR)}</td><td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;});
-  // 합계 (중국·대만·홍콩): 목표·실적=합, KPI·수금달성=국가별 평균
-  const TexT=cnExT+twExT+hkExT,TexA=cnExA+twExA+hkExA,TsuT=cnSuT+twSuT+hkSuT,TsuA=cnSuA+twSuA+hkSuA;
-  const exRs=[cnExT?cnExA/cnExT:null,twExT?twExA/twExT:null,hkExT?hkExA/hkExT:null].filter(x=>x!=null);
-  const suRs=[cnSuT?cnSuA/cnSuT:null,twSuT?twSuA/twSuT:null,hkSuT?hkSuA/hkSuT:null].filter(x=>x!=null);
-  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
-  h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(TexT))}</td><td class="ov-pc">${num(k(TexA))}</td><td class="ov-pc">${pct(avg(exRs))}</td><td class="ov-pc">${num(k(TsuT))}</td><td class="ov-pc">${num(k(TsuA))}</td><td class="ov-pc">${pct(avg(suRs))}</td></tr>`;
-  return h+'</tbody></table>';
+    add(isHk?sHK:sTW,d);h+=row('',g,nm,d);});
+  // 합계: 목표·실적=합 · 달성율은 합 기준
+  const tot=acc();[sCN,sTW,sHK].forEach(x=>{tot.exT+=x.exT;tot.exA+=x.exA;tot.suT+=x.suT;tot.suA+=x.suA;
+    if(x.exTm!=null)tot.exTm=(tot.exTm||0)+x.exTm; if(x.suTm!=null)tot.suTm=(tot.suTm||0)+x.suTm;});
+  h+=row('ov-tot-row','합계','중국·대만·홍콩',tot);
+  h+='</tbody></table>';
+  h+='<div class="ov-foot">※ 달성율 = 수출·수금 실적 ÷ 당월 목표 · 누적달성율 = 실적 ÷ 전체 목표 · 당월 목표는 구글시트 「수출 목표(당월)·수금 목표(당월)」 열 입력 시 자동 반영</div>';
+  return h;
 }
 let ASSIGN=[];
 try{const s=localStorage.getItem('wr_assign_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o))ASSIGN=o;}}catch(e){}
@@ -3649,9 +3759,20 @@ function mgrAssignStrip(mid){
   return `<div class="pmile astrip"><span class="pl">지시</span>${items.slice(0,4).map(o=>`<span class="pmc" style="border-left-color:#c0392b" title="${esc(o.a.from||'')} 지시">${esc(o.a.task||'(내용)')}${o.a.due?` <b>${esc(fmtDue(o.a.due))}</b>`:''}</span>`).join('')}${items.length>4?`<span class="pmc more">+${items.length-4}</span>`:''}</div>`;
 }
 function viewRR(rows){
+  // 이번주 과제(주간보고) 순서와 과제상세 매칭 정렬
+  try{const wkArr=(typeof wkData==='function')?wkData():[];
+    if(wkArr.length&&Array.isArray(rows)){
+      const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
+      const ord={};wkArr.forEach((r,i)=>{ord[r.m+'|'+norm(r.t)]=i;});
+      const oi=t=>{const tn=norm(t.name||(t.t&&t.t.name));const mg=t.mgr||(t.t&&t.t.mgr);const k=mg+'|'+tn;
+        if(k in ord)return ord[k];
+        for(const kk in ord){if(!kk.startsWith(mg+'|'))continue;const nn=kk.slice(kk.indexOf('|')+1);if(nn.includes(tn)||tn.includes(nn))return ord[kk];}
+        return 9999;};
+      rows.sort((a,b)=>oi(a)-oi(b));
+    }}catch(e){}
   const fm=document.getElementById('fMgr').value;
   let html='<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
-  const rrTabs=[['wsales','본사실적'],['focus','매월 중점추진과제'],['tcards','중화팀과제'],['work','담당자업무'],['kanban','업무진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
+  const rrTabs=[['wsales','본사실적'],['focus','매월 중점추진과제'],['tcards','중화팀과제'],['work','과제상세'],['kanban','과제진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
     .filter(([k])=>(k!=='table'&&k!=='report')||LOGINUID==='lee');
   if(LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
   html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}${(k==='report'||k==='table')?' tab-dim':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
@@ -3792,10 +3913,10 @@ function toggleKanWeek(){KANWEEK=!KANWEEK;render();}
 function setKanMonthOne(v){KANMONTHS=v?[+v]:[];render();}
 function setKanMgrOne(v){KANMGRSEL=v?[v]:[];render();}
 function viewKanban(rows){
-  let html='<div class="sec-h"><h2>업무진행율</h2><span class="hint">보기·월·팀원 선택 · 주차별 보기</span><span class="line"></span></div>';
+  let html='<div class="sec-h"><h2>과제진행율</h2><span class="hint">보기·월·팀원 선택 · 주차별 보기</span><span class="line"></span></div>';
   html+='<div class="kan-ctrl">';
   html+=`<span class="pl">보기</span><select class="per-dd" onchange="setKanSub(this.value)"><option value="sched" ${KANSUB==='sched'?'selected':''}>담당자별 업무일정</option><option value="board" ${KANSUB==='board'?'selected':''}>진행률 칸반 보드</option></select>`;
-  html+=`<span class="pl">월</span><select class="per-dd" onchange="setKanMonthOne(this.value)"><option value="">전체</option>`+Array.from({length:12},(_,i)=>i+1).map(m=>`<option value="${m}" ${(KANMONTHS.length===1&&KANMONTHS[0]===m)?'selected':''}>${m}월</option>`).join('')+`</select>`;
+  html+=`<span class="pl">월</span><select class="per-dd" onchange="setKanMonthOne(this.value)"><option value="">전체</option>`+[7,8,9,10,11,12].map(m=>`<option value="${m}" ${(KANMONTHS.length===1&&KANMONTHS[0]===m)?'selected':''}>${m}월</option>`).join('')+`</select>`;
   html+=`<span class="pl">팀원</span><select class="per-dd" onchange="setKanMgrOne(this.value)"><option value="">전체</option>`+MGRS.map(m=>`<option value="${m.id}" ${(KANMGRSEL.length===1&&KANMGRSEL[0]===m.id)?'selected':''}>${esc(m.name)}</option>`).join('')+`</select>`;
   if(KANSUB==='sched')html+=`<span class="pl">상세</span><select class="per-dd" onchange="setKanView(this.value)"><option value="gantt" ${KANVIEW==='gantt'?'selected':''}>간트 일정</option><option value="list" ${KANVIEW==='list'?'selected':''}>상세 목록</option></select>`;
   html+=`<button class="kanwk ${KANWEEK?'on':''}" onclick="toggleKanWeek()">${KANWEEK?'✓ ':''}주차별 보기</button>`;
@@ -4511,9 +4632,68 @@ function schedFilterList(m){
   flt.sort((a,b)=>{const ca=cix(a.t.cat),cb=cix(b.t.cat);if(ca!==cb)return ca-cb;const da=isDate(a.t.due)?a.t.due:'9999',db=isDate(b.t.due)?b.t.due:'9999';return da<db?-1:da>db?1:0;});
   return flt;
 }
+/* ═ 대분류(=월보고 중점추진과제) 자동 매핑 · t.big 지정 시 우선 ═ */
+let GOPEN={};
+function toggleGBig(k){GOPEN[k]=!GOPEN[k];render();}
+function bigOf(t){
+  if(t.big)return t.big;
+  const n=(t.name||'');
+  const has=(...ks)=>ks.some(k=>n.includes(k));
+  switch(t.mgr){
+    case 'lee':
+      if(has('세미나','CEO Salon','Salon'))return '화남·화동 세미나 기반 고객개발 확대';
+      if(has('마오쥐','방문 프로그램'))return '화동 마오쥐 한국 방문 일정협의';
+      if(has('대리상','CRM','화남','화동','조직 영업'))return '화남·화동 영업 및 CRM 관리 강화';
+      if(has('ZBLC'))return 'ZBLC Kit 중국 공급 지원';
+      if(has('가오펑','AXA'))return '가오펑 AXA 생산체계 확정';
+      if(has('바이오레이즈','B/L','COXO','OEM','중국생산','현지 생산','현지생산'))return '바이오레이즈 OEM 프로젝트';
+      if(has('에비던스','Evidence'))return 'Evidence BLTⅡ 중국 출시 준비';
+      if(has('인허가','제품경쟁력'))return '주요 제품 인허가 일정 관리';
+      if(has('대시보드','주간보고','주간업무'))return 'G2 대시보드 및 주간보고 체계화';
+      if(has('TASK','ARi'))return '화남·화동 세미나 기반 고객개발 확대';
+      return '기타';
+    case 'seo':
+      if(has('실적'))return '법인 KPI 진도 및 이슈관리';
+      if(has('VBP'))return 'VBP 정책·동향 분석 및 전략 수립';
+      if(has('M/S'))return '지역별 M/S 목표 달성';
+      if(has('DSO'))return 'DSO 진입 및 판매 확대';
+      if(has('패키지'))return '하부고객 진입 및 판매 확대';
+      if(has('경영회의','회의','대시보드','보고'))return '전략 실행 정기보고';
+      if(has('출장'))return '지역별 M/S 목표 달성';
+      if(has('교류회','TASK'))return '기타 (세미나·교류)';
+      return '기타';
+    case 'tak':
+      if(has('메가스쿨','서울대'))return '국제사롱·해외연자 교육 운영';
+      if(has('방한','TASK','DSO','메이야'))return 'TASK·DSO 방한행사 운영';
+      if(has('디지털','R2'))return '디지털 제품 실적·VOC 관리';
+      if(has('KIT','Compensation'))return 'KIT Compensation 비용관리';
+      if(has('심포지엄','시드니','연회','강의','미넥'))return '기타 (학술·심포지엄)';
+      if(has('교육'))return '국제사롱·해외연자 교육 운영';
+      if(has('마케팅','경영회의','지표','대시보드'))return '마케팅활동 계획 및 결과보고';
+      return '기타';
+    case 'kim':
+      if(has('Failed'))return 'Failed FX 교환';
+      if(has('VOC'))return '제품/상품 VOC 대응 및 해결';
+      if(has('경품','마케팅 출고','MKT','메가마인드','행사 지원','마케팅 행사'))return 'MKT 물품 발송';
+      if(has('방한','통역','방문 대응','방문'))return '방한 고객 대응';
+      if(has('수출가','Guide Kit','GP'))return '본사 수출가 GP 분석';
+      if(has('에비던스','Evidence'))return 'Evidence FX 닝보 법인 공급';
+      if(has('대만')&&has('계정','수주'))return '대만 법인 수출 준비';
+      return '운영관리 및 성과·수익 관리';
+    case 'yu':
+      if(has('홍콩','핸즈온'))return '홍콩향 영업 채널 재구조화';
+      if(has('체어','장비','Trade','TBMS'))return '장비 비즈니스 기반 구축';
+      if(has('KOL','마케팅','홍보'))return 'BD/BDC 중심 포트폴리오 전환';
+      if(has('KPI'))return '지역별 영업 성과 모니터링';
+      if(has('Sunriser','대리상','딜러','가격정책','영업 정책','영업정책'))return '대만향 영업정책 표준화';
+      return '기타';
+    case 'jang': return '대만법인 운영';
+  }
+  return '기타';
+}
 function schedGantt(){
   const nowM=TODAY.getMonth()+1;
-  const minM=KANMONTHS.length?Math.min(...KANMONTHS):1, maxM=KANMONTHS.length?Math.max(...KANMONTHS):12;
+  const minM=KANMONTHS.length?Math.max(7,Math.min(...KANMONTHS)):7, maxM=KANMONTHS.length?Math.max(...KANMONTHS):12; // 1~6월 미표시
   const nMon=maxM-minM+1, showWeeks=nMon<=4;
   const wS=(minM-1)/12, wE=maxM/12, wSpan=(wE-wS)||1;
   const divs=showWeeks?nMon*4:nMon;
@@ -4532,23 +4712,54 @@ function schedGantt(){
   MGRS.forEach(m=>{
     if(KANMGRSEL.length&&!KANMGRSEL.includes(m.id))return;
     const flt=schedFilterList(m); if(!flt.length)return; anyRow=true;
-    flt.forEach((o,i)=>{
-      const t=o.t,ti=o.ti;let label=t.name;for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k]&&t.wk[k].label){label=t.wk[k].label;break;}}
-      const cur=curP(t),s=st(cur);
-      const sfr=yearFrac(t.start), efr=yearFrac(t.due);
-      const risk=(cur<100&&isDate(t.due)&&new Date(t.due)<TODAY);
-      let bar;
-      if(sfr!=null&&efr!=null&&efr>=sfr&&efr>=wS&&sfr<=wE){
-        const L=clamp(mapF(sfr)), R=clamp(mapF(efr)), Wd=Math.max(1.5,R-L);
-        const fill=risk?'background:linear-gradient(90deg,#f4708a,#e5484d)':'';
-        bar=`<div class="gtrack" style="left:${L.toFixed(2)}%;width:${Wd.toFixed(2)}%"><i style="width:${cur}%;${fill}"></i></div>`;
-      } else bar=`<div class="gna">${esc(isDate(t.due)?'':(t.due||'미정'))||'상시·미정'}</div>`;
-      html+=`<tr>${i===0?`<td class="rl mgrcell" rowspan="${flt.length}"><span class="av" style="width:24px;height:24px;font-size:10px;background:${m.color}">${m.ini}</span> ${m.name} ${m.title}</td>`:''}
-        <td class="rl schtask" style="cursor:pointer" onclick="openDetail(${ti})" title="클릭 시 상세·일정 수정">${esc(label)}</td>
-        <td><span class="chip ${ccls[t.country]} tag-cn">${t.country}</span></td>
-        <td class="gcell"><div class="gantt" style="${gbg}">${bar}${tfIn?`<div class="gtoday" style="left:${clamp(mapF(tfRaw)).toFixed(2)}%"></div>`:''}</div></td>
-        <td><span class="chip st ${s}">${stLabel[s]}</span>${risk?' <span class="chip" style="background:var(--riskSoft);color:var(--risk)">지연</span>':''}</td>
-        <td class="progtd"><input type="number" min="0" max="100" value="${cur}" onchange="editTaskField(${ti},'prog',this.value)"><b>%</b></td></tr>`;
+    // ═ 대분류 그룹핑 (협의 규칙: 행 = 대분류 · ▼ 클릭 시 핵심과제 하위로) ═
+    const groups=[]; const gmap={};
+    flt.forEach(o=>{const b=bigOf(o.t);if(!gmap[b]){gmap[b]={big:b,items:[]};groups.push(gmap[b]);}gmap[b].items.push(o);});
+    const rowsOf=g=>1+((GOPEN[m.id+'|'+g.big])?g.items.filter(o=>curP(o.t)<100).length:0);
+    const totalRows=groups.reduce((a,g)=>a+rowsOf(g),0);
+    let first=true;
+    groups.forEach(g=>{
+      const key=m.id+'|'+g.big, open=!!GOPEN[key];
+      const doneN=g.items.filter(o=>curP(o.t)>=100).length;
+      const ps=g.items.map(o=>curP(o.t));
+      const avg=ps.length?Math.round(ps.reduce((a,b2)=>a+b2,0)/ps.length):0;
+      const sAvg=st(avg);
+      const anyRisk=g.items.some(o=>{const cur=curP(o.t);return cur<100&&isDate(o.t.due)&&new Date(o.t.due)<TODAY;});
+      // 대분류 일정 바 = 하위 기간 합산 범위
+      const sf=g.items.map(o=>yearFrac(o.t.start)).filter(v=>v!=null), ef=g.items.map(o=>yearFrac(o.t.due)).filter(v=>v!=null);
+      let gbar;
+      if(sf.length&&ef.length){
+        const s0=Math.min(...sf), e0=Math.max(...ef);
+        if(e0>=s0&&e0>=wS&&s0<=wE){const L=clamp(mapF(s0)),R=clamp(mapF(e0)),Wd=Math.max(1.5,R-L);
+          gbar=`<div class="gtrack groll" style="left:${L.toFixed(2)}%;width:${Wd.toFixed(2)}%"><i style="width:${avg}%"></i></div>`;}
+        else gbar='<div class="gna">상시·미정</div>';
+      } else gbar='<div class="gna">상시·미정</div>';
+      const ctry=[...new Set(g.items.map(o=>o.t.country))];
+      html+=`<tr class="gbig">${first?`<td class="rl mgrcell" rowspan="${totalRows}"><span class="av" style="width:24px;height:24px;font-size:10px;background:${m.color}">${m.ini}</span> ${m.name} ${m.title}</td>`:''}
+        <td class="rl schtask gbig-t" style="cursor:pointer" onclick="toggleGBig(this.dataset.k)" data-k="${esc(key)}"><span class="gcar">${open?'▼':'▶'}</span><b>${esc(g.big)}</b><span class="gcnt">핵심과제 ${g.items.length}건</span>${doneN?`<span class="gdone">완료 ${doneN}건${open?'':' 접힘'}</span>`:''}</td>
+        <td><span class="chip ${ccls[ctry[0]]||''} tag-cn">${esc(ctry[0]||'중국')}</span>${ctry.length>1?`<span class="gcnt">외</span>`:''}</td>
+        <td class="gcell"><div class="gantt" style="${gbg}">${gbar}${tfIn?`<div class="gtoday" style="left:${clamp(mapF(tfRaw)).toFixed(2)}%"></div>`:''}</div></td>
+        <td><span class="chip st ${sAvg}">${stLabel[sAvg]}</span>${anyRisk?' <span class="chip" style="background:var(--riskSoft);color:var(--risk)">지연</span>':''}</td>
+        <td class="progtd gbig-p"><b>${avg}%</b></td></tr>`;
+      first=false;
+      if(open)g.items.filter(o=>curP(o.t)<100).forEach(o=>{
+        const t=o.t,ti=o.ti;let label=t.name;for(let k=WEEKS.length-1;k>=0;k--){if(t.wk[k]&&t.wk[k].label){label=t.wk[k].label;break;}}
+        const cur=curP(t),s2=st(cur);
+        const sfr=yearFrac(t.start), efr=yearFrac(t.due);
+        const risk=(cur<100&&isDate(t.due)&&new Date(t.due)<TODAY);
+        let bar;
+        if(sfr!=null&&efr!=null&&efr>=sfr&&efr>=wS&&sfr<=wE){
+          const L=clamp(mapF(sfr)), R=clamp(mapF(efr)), Wd=Math.max(1.5,R-L);
+          const fill=risk?'background:linear-gradient(90deg,#f4708a,#e5484d)':'';
+          bar=`<div class="gtrack" style="left:${L.toFixed(2)}%;width:${Wd.toFixed(2)}%"><i style="width:${cur}%;${fill}"></i></div>`;
+        } else bar=`<div class="gna">${esc(isDate(t.due)?'':(t.due||'미정'))||'상시·미정'}</div>`;
+        html+=`<tr class="gsub">
+          <td class="rl schtask gsub-t" style="cursor:pointer" onclick="openDetail(${ti})" title="클릭 시 상세·일정 수정">${esc(label)}</td>
+          <td><span class="chip ${ccls[t.country]} tag-cn">${t.country}</span></td>
+          <td class="gcell"><div class="gantt" style="${gbg}">${bar}${tfIn?`<div class="gtoday" style="left:${clamp(mapF(tfRaw)).toFixed(2)}%"></div>`:''}</div></td>
+          <td><span class="chip st ${s2}">${stLabel[s2]}</span>${risk?' <span class="chip" style="background:var(--riskSoft);color:var(--risk)">지연</span>':''}</td>
+          <td class="progtd"><input type="number" min="0" max="100" value="${cur}" onchange="editTaskField(${ti},'prog',this.value)"><b>%</b></td></tr>`;
+      });
     });
   });
   if(!anyRow)html+=`<tr><td colspan="6" style="text-align:center;color:var(--faint);padding:26px;font-size:12.5px">선택 조건에 해당하는 업무가 없습니다. 상단 <b>월</b>·<b>팀원</b>을 전체로 두면 모두 표시됩니다.</td></tr>`;
@@ -5426,7 +5637,7 @@ function perfBlock(metKey){
     <div class="scard"><div class="l">전년도 누적실적</div><div class="v">${fmtN(prevCum)}<small>${mt.unit}</small></div><div class="sub">2025 1~${sel}월</div></div>
     <div class="scard"><div class="l">성장율</div><div class="v ${grw<0?'red':'green'}">${grw>0?'+':''}${grw}<small>%</small></div><div class="sub">전년 누적 比</div></div>
   </div>
-  <div class="chartbox"><h4>월별 KPI · 실적 · 달성율 추세 <span class="lg">(1~${sel}월 · ${mt.kind})</span></h4>${chartSVG(S,sel,mt)}</div>
+  <div class="chartbox"><h4>월별 KPI · 실적 · 달성율 현황 <span class="lg">(1~${sel}월 · ${mt.kind})</span></h4>${chartSVG(S,sel,mt)}</div>
   ${perfTable(S,sel,mt)}
   </div>`;
 }
@@ -5746,8 +5957,8 @@ function setMonthSel(v){
   EOMSEL=false;MEND='';
   if(v==='year'){PERIOD='year';render();return;}
   const m=+v;
-  if(m!==MONTH){ MONTH=m; WEEKS=buildWeeks(MONTH); const rm=TODAY.getMonth()+1;
-    W=(m===rm)?todayWeekIdx():0;
+  if(m!==MONTH){ MONTH=m; WEEKS=buildWeeks(MONTH);
+    W=0; // 월 변경 시 가장 앞 주차 선택
     if(typeof MFMON!=='undefined')MFMON=String(m); }  // 매월 중점추진과제도 선택 월에 연동
   if(PERIOD==='year')PERIOD='month'; else if(PERIOD!=='month')PERIOD='week';
   render();
@@ -5758,7 +5969,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;document.body.classList.remove('rail-open');render();}
+function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport')gotoPrevMonthDefault();else if(TAB==='rr')gotoPrevWeekDefault();document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -6256,7 +6467,7 @@ function cloudStartup(){
   localStorage.setItem=function(k,v){_set(k,v);
     try{if(SYNCON&&SYNC_READY&&typeof k==='string'&&k.indexOf('wr_')===0&&k!=='wr_gcid'&&k!=='wr_autosync'&&k!=='wr_login'&&k!=='wr_vrole'&&k!=='wr_memberid')scheduleSync();}catch(e){}};
 })();
-window.addEventListener('load',()=>setTimeout(cloudStartup,600));
+window.addEventListener('load',()=>{try{MFMON=String(MONTH);}catch(e){} setTimeout(cloudStartup,600);});
 
 /* ============ 설정 · PWA ============ */
 function installPWA(){if(window.__pwa){window.__pwa.prompt();window.__pwa=null;}else toast('설치는 웹 호스팅(https) 후 브라우저 주소창의 설치 아이콘으로 가능합니다');}
@@ -6520,6 +6731,30 @@ function dedupTasks(){
   if(out.length!==TASKS.length){TASKS=out;saveTasks();}
 }
 loadTasks();
+/* 주차 재편(W27·W28 삭제) 마이그레이션: 7월 wk 배열 5칸(W27~31) → 3칸(W29~31) — W29·W30·W31 데이터 위치 복원 */
+TASKS.forEach(t=>{if(Array.isArray(t.wk)&&t.wk.length===5)t.wk=t.wk.slice(2);});
+/* 주간원본(W29·W30·W31) → 과제상세 병합: 같은 과제는 해당 주차 칸 채움 · 없으면 과제 추가 */
+(function(){
+  if(typeof WKREPORT==='undefined')return;
+  const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
+  const pnum=p=>{const v=parseInt(p);return isNaN(v)?60:v;};
+  [['29',0],['30',1],['31',2]].forEach(([wkk,idx])=>{
+    (WKREPORT[wkk]||[]).forEach(r=>{
+      let t=TASKS.find(x=>x.mgr===r.m&&(norm(x.name)===norm(r.t)||norm(x.name).includes(norm(r.t))||norm(r.t).includes(norm(x.name))));
+      if(!t){
+        t={mgr:r.m,country:(r.c||'중국'),name:r.t,start:'2026-07-01',
+           due:(/^\d\d-\d\d$/.test(r.due||'')?('2026-'+r.due):(r.due||'상시')),
+           priority:'중간',status:'진행중',wk:[null,null,null]};
+        TASKS.push(t);
+      }
+      if(!Array.isArray(t.wk))t.wk=[null,null,null];
+      while(t.wk.length<3)t.wk.push(null);
+      if(!t.wk[idx])t.wk[idx]={p:pnum(r.p),note:r.note||''};
+      const lastP=pnum(r.p);
+      if(idx===2){t.status=lastP>=100?'완료':(lastP<=0?'예정':'진행중');}
+    });
+  });
+})();
 normalizeTasks();
 dedupTasks();
 /* 오늘 일자 기준 주차로 자동 진입 · 오늘 주에 데이터 없으면 가장 최근 데이터 주로 폴백 */
@@ -6540,6 +6775,31 @@ loadMile();
 loadProj();
 normalizeProjects();
 loadSPERF();
+/* ═ W29·W30·W31 주간원본 구글시트 연동 (거래처별 수출·수금 스냅샷 · 저장값 있으면 유지) ═ */
+(function(){
+  const put=(iso,deal)=>{const k='W'+iso;const ex=SPHIST[k];
+    if(ex&&ex.deal&&ex.deal.length&&ex._src!=='wkseed')return; // 사용자가 저장한 주차는 보존
+    SPHIST[k]=Object.assign({},ex||{},{week:'7월 W'+iso,_key:k,wk:iso,month:7,kpi:(ex&&ex.kpi)||[],rev:(ex&&ex.rev)||[],deal,_src:'wkseed'});};
+  put(29,[
+    {dealer:'닝보',grp:'중국',exT:1304525,exA:539389,ship:0.46,suT:1304525,suA:1100867},
+    {dealer:'북경',grp:'중국',exT:286195,exA:90311,ship:0.33,suT:402605,suA:200000},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:4000,ship:1.0,suT:40644,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:68346,ship:0.8,suT:null,suA:null},
+    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:22480,ship:1.0,suT:null,suA:null}]);
+  put(30,[
+    {dealer:'닝보',grp:'중국',exT:1304525,exA:539389,ship:0.46,suT:1304525,suA:1100867},
+    {dealer:'북경',grp:'중국',exT:286195,exA:90311,ship:0.33,suT:402605,suA:200000},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:4000,ship:1.0,suT:40644,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:68346,ship:0.8,suT:null,suA:null},
+    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:22480,ship:1.0,suT:null,suA:null}]);
+  put(31,[
+    {dealer:'닝보',grp:'중국',exT:1304525,exA:1149596,ship:1.0,suT:1304525,suA:1751135},
+    {dealer:'북경',grp:'중국',exT:286195,exA:267946,ship:1.0,suT:402605,suA:300085},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:11309,ship:1.0,suT:40944,suA:40944},
+    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:362797,ship:1.0,suT:null,suA:null},
+    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:47323,ship:1.0,suT:null,suA:42690}]);
+  try{saveSPHIST();}catch(e){}
+})();
 render();
 </script>
 </body>
