@@ -354,11 +354,12 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 @media(max-width:820px){.cal-below{grid-template-columns:1fr}}
 .md-ev.mile{white-space:normal;line-height:1.25;color:#fff;border:1px solid;border-left-width:1px;border-radius:0;padding:2px 5px;font-weight:600;font-size:10.5px}
 .md-ev.mile .me-d{display:block;font-size:9.5px;font-weight:500;opacity:.9}
+.md-ev.mile .me-info{display:block;font-size:9.5px;font-weight:500;opacity:.95;margin-top:1px}
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
 /* 중화팀 행사 상세표: 1pt 작게 · 줄바꿈 방지 · 동일 크기 */
 .ptable.miletbl td,.ptable.miletbl th{white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
-.ptable.miletbl input,.ptable.miletbl select{font-size:12.6px;color:#000}
-.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{font-size:12.6px;color:#000;white-space:pre-wrap}
+.ptable.miletbl input,.ptable.miletbl select{font-size:13.5px;color:#000}
+.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{font-size:13.5px;color:#000;white-space:pre-wrap}
 .ptable.miletbl td{background:#fff}
 .ptable.miletbl td.gcol{background:#fff}
 .ptable.miletbl td.gcol select{background:transparent}
@@ -561,6 +562,17 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .fixtbl tr.fx-done td{background:#f2f8f4}
 .fx-ck{border:1px solid var(--ln);background:#fff;font:inherit;font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer;color:#9aa0a6;white-space:nowrap;min-width:34px}
 .fx-ck.on{background:var(--tl);color:#fff;border-color:var(--tl)}
+.fx-sort{user-select:none;transition:background .12s}
+.fx-sort:hover{background:#eef4f3}
+.fx-sort.on{color:var(--tl)}
+.fx-ar{font-size:9px;color:var(--tl)}
+/* 주간 업무보고(노션 연동) 표: 글자 15% 축소 */
+.ptable.wkrep,.ptable.wkrep td,.ptable.wkrep th,.ptable.wkrep a{font-size:11.5px}
+/* 루틴업무 표: 왼쪽 정렬 · 한 칸 들여쓰기 */
+.fixtbl td{text-align:left}
+.fixtbl td input,.fixtbl td select{text-align:left;padding-left:8px}
+.fixtbl td.mut{text-align:center;padding-left:0}
+.fixtbl td .fx-ck{margin-left:0}
 /* 담당자별 업무일정 · 월별 달성현황 진도바 */
 .schprog{border:1px solid var(--ln);padding:10px 12px;margin-bottom:14px;background:#fff}
 .schprog-h{font-size:13px;font-weight:800;color:#000;margin-bottom:8px}
@@ -855,6 +867,27 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-sub{font-size:11.5px;font-weight:600;color:var(--dim);border:0;padding:0}
 .ov-tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .ov-tiles.ov-tiles4{grid-template-columns:repeat(4,1fr)}
+.ov-tiles.ov-tiles3{grid-template-columns:repeat(3,1fr)}
+/* 당월 주요 행사 타일(컴팩트) */
+.ovev-tile{text-align:left;padding:11px 12px;justify-content:flex-start}
+.ovev-hd{font-size:11px;font-weight:800;color:var(--accentInk);margin-bottom:6px}
+.ovev-hd b{color:var(--dim);font-weight:800}
+.ovev-list{display:flex;flex-direction:column;gap:4px;max-height:74px;overflow-y:auto}
+.ovev-r{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px}
+.ovev-r:hover .ovev-nm{color:var(--accentInk)}
+.ovev-date{font-size:10.5px;font-weight:800;color:var(--accentInk);background:#eef4f3;border:1px solid #dbe8e5;border-radius:4px;padding:1px 6px;white-space:nowrap;min-width:40px;text-align:center;font-variant-numeric:tabular-nums}
+.ovev-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:var(--ink)}
+.ovev-empty{font-size:11.5px;color:var(--faint);font-weight:600}
+.ov-evcard{background:#fff;border:1px solid var(--ln);border-radius:12px;margin-top:12px;overflow:hidden}
+.ov-evhead{font-size:12.5px;font-weight:800;color:var(--accentInk);padding:10px 14px;border-bottom:1px solid var(--ln2)}
+.ov-evbody{max-height:172px;overflow-y:auto}
+.ov-evrow{display:flex;align-items:center;gap:12px;padding:7px 14px;border-bottom:1px solid var(--ln2);cursor:pointer}
+.ov-evrow:last-child{border-bottom:0}
+.ov-evrow:hover{background:var(--sf)}
+.ov-evdbox{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ln);border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:700;color:#334155;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:120px;justify-content:space-between}
+.ov-evcal{color:#9aa3af;font-size:12px}
+.ov-evname{flex:1;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
+.ov-evown{color:var(--dim);font-weight:700;font-size:12px;white-space:nowrap}
 .ov-tile{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:16px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center}
 .ov-tv{font-size:26px;font-weight:800;color:var(--accentInk);font-variant-numeric:tabular-nums;line-height:1}
 .ov-tu{font-size:12px;font-weight:700;color:var(--dim);margin-left:2px}
@@ -937,6 +970,30 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .me-tbl td{font-size:12px;color:var(--ink2);padding:7px 9px;vertical-align:top;line-height:1.5}
 .me-tbl tr.me-nu td{border-top:2px solid var(--accent2)}
 .me-tbl td.rl{white-space:pre-line}
+.km-corp{border:1px solid var(--ln);border-radius:12px;overflow:hidden;background:#fff}
+.km-corp .ck-h{margin:0}
+.km-wrap{padding:14px 16px}
+.km-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.km-h b{font-size:15px;color:#1e293b}
+.km-h>div span{display:block;font-size:11px;color:var(--dim);font-weight:600;margin-top:2px}
+.km-chip{font-size:10.5px;font-weight:700;color:#64748b;background:#eef2f7;border-radius:20px;padding:3px 10px;white-space:nowrap}
+.km-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:820px}
+.km-tbl th{background:#eef2f5;color:#475569;font-size:11.5px;font-weight:700;padding:9px 6px;text-align:center;white-space:nowrap}
+.km-tbl th:first-child,.km-tbl td:first-child{text-align:left;padding-left:12px}
+.km-tbl th.km-cur,.km-tbl td.km-cur{background:#eaf5ee}
+.km-tbl td{padding:8px 6px;text-align:center;border-top:1px solid var(--ln2)}
+.km-lb{font-weight:800;color:#1e293b;font-size:13px}
+.km-v{font-size:14px;font-weight:800;color:#0f172a;line-height:1.15}
+.km-d{font-size:10.5px;color:#94a3b8;font-weight:600;margin-top:1px}
+.km-tg{font-weight:700;color:#334155}
+.km-bar{height:8px;border-radius:5px;background:#eef2f7;overflow:hidden;min-width:64px}
+.km-bar i{display:block;height:100%;border-radius:5px}
+.km-foot{margin-top:11px;font-size:11px;color:var(--dim);font-weight:600}
+.km-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc4c3e;margin-right:6px;vertical-align:middle}
+.km-empty{color:#cbd5e1;font-weight:600}
+.corp-plbl{font-size:14px;font-weight:800;color:#1e293b;padding:11px 14px 6px}
+.corp-plbl b{font-weight:800}
+.corp-plbl span{font-size:11px;font-weight:600;color:var(--dim);margin-left:6px}
 .ov-half-r{background:#fff;border:1px solid var(--ln);border-radius:8px;padding:10px 12px}
 .ov-svg{width:100%;height:auto;display:block}
 .ov-chart-t{font-size:11.5px;font-weight:700;color:var(--ink2);margin-bottom:6px}
@@ -1191,25 +1248,39 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable input:focus{outline:none;background:var(--accentSoft)}
 .ptable input:disabled{color:var(--faint)}
 /* 일정 상세 목록: 네모칸(테두리·입력박스) 제거 · 전부 동일 크기 */
-.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",sans-serif;border-radius:0}
-.ptable.miletbl td,.ptable.miletbl th{border-left:none}
-.ptable.miletbl th{background:#e2e8f0;text-align:left;color:#334155;font-size:12.6px;font-weight:700;padding:7px 7px;border-bottom:1px solid #cbd5e1}
+.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",sans-serif;border-radius:0;letter-spacing:-0.1em}
+.ptable.miletbl td,.ptable.miletbl th{border-left:none;vertical-align:middle}
+.ptable.miletbl th{background:#e2e8f0;text-align:left;color:#334155;font-size:11.5px;font-weight:700;padding:7px 7px;border-bottom:1px solid #cbd5e1;white-space:nowrap}
+/* 월 셀: 월 번호만 */
+.miletbl .mile-mnum{text-align:center!important;font-weight:700}
+/* 일자(월-일) 셀 */
+.miletbl td.mile-day{white-space:normal}
+.miletbl td.mile-day input{text-align:center;color:#0f766e;font-weight:700}
+.miletbl td.mile-attn input{text-align:center}
+.miletbl td.mile-own{white-space:normal}
+.miletbl td.mile-own .mf-owntrig{min-height:22px}
 .ptable.miletbl th.sortable{cursor:pointer;user-select:none}
 .ptable.miletbl th.sortable:hover{background:#e2e4ee}
-.ptable.miletbl td{font-size:12.6px;font-weight:400;color:#000;padding:5px 6px;vertical-align:middle;text-align:left}
+.ptable.miletbl td{font-size:11.5px;font-weight:400;color:#000;padding:5px 6px;vertical-align:middle;text-align:left}
 .ptable.miletbl tbody tr:not(:last-child) td{border-bottom:1px solid var(--ln2)}
-.ptable.miletbl td.mut{color:#000;text-align:center;font-size:12.6px;font-weight:400}
-.ptable.miletbl input,.ptable.miletbl select{border:0;background:transparent;font:inherit;font-size:12.6px;font-weight:400;color:#000;padding:2px 3px;text-align:left;min-width:0;width:100%;box-sizing:border-box;border-radius:0;vertical-align:middle}
-.ptable.miletbl td.infc textarea{width:100%;box-sizing:border-box;border:0;background:transparent;padding:2px 3px;font-size:12.6px;color:#000;vertical-align:middle}
+.ptable.miletbl td.mut{color:#000;text-align:center;font-size:11.5px;font-weight:400}
+.ptable.miletbl input,.ptable.miletbl select{border:0;background:transparent;font:inherit;font-size:11.5px;font-weight:400;color:#000;padding:2px 3px;text-align:left;min-width:0;width:100%;box-sizing:border-box;border-radius:0;vertical-align:middle}
+.ptable.miletbl td.infc textarea{width:100%;box-sizing:border-box;border:0;background:transparent;padding:2px 3px;font-size:11.5px;color:#000;vertical-align:middle}
 .ptable.miletbl td.infc textarea:focus{outline:none;border-bottom:1px solid var(--accent)}
 .ptable.miletbl td.nmc input{font-weight:400}
 .ptable.miletbl input:focus,.ptable.miletbl select:focus{outline:none;background:transparent;border-bottom:1px solid var(--accent)}
-.mile-bigo input{border:0;background:transparent;font:inherit;font-size:12.6px;color:#000;width:100%;box-sizing:border-box;padding:2px 3px}
-.mile-date{border:0;background:transparent;resize:none;overflow:hidden;font:inherit;font-size:12.6px;color:#000;text-align:center;width:100%;min-height:22px;line-height:1.35;box-sizing:border-box;white-space:pre-wrap;padding:2px 3px}
+.mile-bigo input{border:0;background:transparent;font:inherit;font-size:10.7px;color:#000;width:100%;box-sizing:border-box;padding:2px 3px}
+.bigo-edit{border:0;background:transparent;cursor:pointer;color:#94a3b8;font-size:11px;padding:0 3px;margin-left:2px}
+.bigo-edit:hover{color:var(--accent)}
+.bigo-add{font-size:10px;color:#b6bfc9}
+.miletbl td.mile-bigo{white-space:nowrap;text-align:center}
+.mile-date{border:0;background:transparent;resize:none;overflow:hidden;font:inherit;font-size:10.7px;color:#000;text-align:center;width:100%;min-height:22px;line-height:1.35;box-sizing:border-box;white-space:pre-wrap;padding:2px 3px}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none!important;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .mile-add{background:var(--accent);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:6px 13px;border:0;border-radius:0;cursor:pointer}
 .mile-add:hover{background:var(--accentInk)}
+/* 일정 상세 목록 상단 버튼: 크기 축소 · 한 줄 유지 */
+.mile-add.mini{font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;line-height:1.2}
 .mile-del{border:0;background:transparent;color:var(--risk);font-size:14px;cursor:pointer;padding:2px 6px;line-height:1}
 .mile-del:hover{color:#b1301f}
 /* 주요일정·업무진행율 KPI 카드 컴팩트(하단 여백 축소) */
@@ -1501,6 +1572,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .mf-ownopt .mf-ck{flex:0 0 15px;width:15px;height:15px;border:1.5px solid #c3ccd4;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;background:#fff;line-height:1}
 .mf-ownopt.on .mf-ck{background:var(--accent);border-color:var(--accent)}
 .mf-ownopt .mf-nm{white-space:nowrap;color:var(--ink);font-weight:600}
+/* 일정 상세 목록 담당자 드롭다운: 굵기 제거 · 글자 15% 축소 */
+.miletbl .mile-own .mf-ownchip{font-weight:400;font-size:10px}
+.miletbl .mile-own .mf-ownph{font-size:10px}
+.miletbl .mile-own .mf-ownopt{font-size:10px}
+.miletbl .mile-own .mf-ownopt .mf-nm{font-weight:400}
 /* 옅은 회색 처리 탭 (주요보고·통합) */
 .pm-tabs button.tab-dim{background:#f1f3f5;color:#aab2ba;border-color:#e6e9ec}
 .pm-tabs button.tab-dim:hover{color:var(--accent)}
@@ -1760,6 +1836,8 @@ let MILESTONES=[
   {name:'서울대학',cat:'교육',month:12,date:'12/2~3',info:'서울대학 · 서울(30)'},
   {name:'연회(年会)',cat:'BIG',month:12,date:'미정',info:'연회 · 호주(澳大利亚, 220/80)'}
 ];
+/* 기본 일정(날짜 포함) 원본 스냅샷 — 노션 불러오기로 날짜가 지워졌을 때 복원용 */
+const MILE_SEED=MILESTONES.map((x,i)=>({id:'ms'+i,name:x.name,cat:x.cat,country:x.country||'중국',month:x.month,date:x.date||'',info:x.info||''}));
 
 /* ===== 성과 관리 데이터 (법인/본사 × 본부 × 월별) ===== */
 const BUMON=['중국','홍콩·임플','홍콩·바이오','대만·임플','대만·바이오'];
@@ -2624,6 +2702,25 @@ function ovWeekEvents(){
   const startD=W*7+1,endD=startD+6;
   return MILESTONES.filter(x=>{if(+x.month!==+MONTH)return false;const days=String(x.date||'').match(/\d{1,2}/g)||[];return days.some(d=>+d>=startD&&+d<=endD);});
 }
+/* 당월 주요 행사 타일 — 중화팀 행사(MILESTONES)에서만 · 컴팩트(D-day·행사명) · 담당자 자동배정 안 함 */
+function ovMonthEventsCard(){
+  const list=MILESTONES.map((x,i)=>({x,i}))
+    .filter(o=>+o.x.month===+MONTH&&(!MILECTRY||(o.x.country||'중국')===MILECTRY))
+    .map(o=>{const days=mileParseDays(o.x,MONTH);const day=days.length?Math.min(...days):null;return {x:o.x,i:o.i,day};})
+    .sort((a,b)=>(a.day||99)-(b.day||99));
+  const mm=String(MONTH).padStart(2,'0');
+  const rows=list.map(o=>{
+    const days=mileParseDays(o.x,MONTH);let dstr;
+    if(days.length){const lo=Math.min(...days),hi=Math.max(...days);dstr=`${YEAR}-${mm}-${String(lo).padStart(2,'0')}`+(hi!==lo?`~${String(hi).padStart(2,'0')}`:'');}
+    else dstr=esc(o.x.date||'미정');
+    const own=(Array.isArray(o.x.owners)&&o.x.owners.length)?o.x.owners.join(', '):'';
+    return `<div class="ov-evrow" onclick="openMile(${o.i})">
+      <span class="ov-evdbox">${dstr}<span class="ov-evcal">🗓</span></span>
+      <span class="ov-evname">${esc(o.x.name)}</span>
+      ${own?`<span class="ov-evown">${esc(own)}</span>`:''}</div>`;}).join('');
+  return `<div class="ov-evcard"><div class="ov-evhead">🗓 ${MONTH}월 주요 행사 <span class="ov-sub">중화팀 행사 · ${list.length}건</span></div>
+    <div class="ov-evbody">${list.length?rows:`<div class="ovev-empty" style="padding:12px 14px">${MONTH}월 등록된 행사 없음</div>`}</div></div>`;
+}
 let OVTAB='main';
 function setOVtab(t){OVTAB=t;render();}
 /* 특정 주차 인덱스의 담당자 과제 목록 (이번주/다음주) */
@@ -2720,6 +2817,40 @@ function corpTrendCard(corp){
   const legend=`<div class="ct-leg"><span><i style="background:${cfg.s[0].color}"></i>${cfg.s[0].name}</span><span><i style="background:${cfg.s[1].color}"></i>${cfg.s[1].name}</span><span><i class="dash" style="background:${cfg.tColor}"></i>목표</span><span><i class="ln" style="background:${cfg.lColor}"></i>${isCN?'달성률':'누적 달성률'}</span></div>`;
   return `<div class="ct-card"><div class="ct-top"><div class="ct-t">${esc(cfg.title)}</div><span class="ct-sample">1~6월: 레이아웃 샘플</span></div>${legend}<svg viewBox="0 0 ${W} ${H}" class="ct-svg">${s}</svg><div class="ct-note"><span class="ct-dot"></span><b>${isCN?`7월 Gap ${gap.toLocaleString('en-US')}`:`남은 목표 ${gap.toLocaleString('en-US')}`}</b> · 목표 대비 ${rate}% · ${cfg.s[0].name} 비중 ${b1}% · ${cfg.s[1].name} 비중 ${100-b1}%</div></div>`;
 }
+const CN_KSAMPLE={'M/S':[5.9,6.2,6.5,6.8,7.0,7.3],'하부고객':[3800,4350,4900,5420,5880,6310],'DSO':[126,143,158,171,183,196],'BD':[610,720,830,925,1020,1105],'ARi':[110,145,180,218,260,305],'진입점':[8,10,12,14,16,18],'판매개수':[12000,17500,22000,27000,31500,36000]};
+const TW_KSAMPLE={'M/S':[2.2,2.3,2.4,2.5,2.6,2.7],'하부고객':[180,215,245,272,295,310],'DSO':[12,18,24,29,33,36],'BD':[90,110,130,148,162,172],'ARi':[20,28,35,42,48,52],'진입점':[2,3,5,6,7,8],'판매개수':[500,850,1150,1500,1800,1980]};
+/* KPI 월별 실적 및 누적 추세 테이블 (1~6월 미입력 · 7월 실적만 실제) */
+function corpKpiMonthlyTable(corp){
+  const kpis=ckKpiForCorp(corp.id);
+  const fmt=n=>(n==null||isNaN(+n))?'-':(+n).toLocaleString('en-US');
+  let h='<div class="km-wrap"><div class="km-h"><div><b>KPI 월별 실적 및 누적 추세</b><span>7월 = KPI 달성현황 실적 · 1~6월은 실제 월별 실적 확보 시 입력 · M/S는 월말 기준</span></div><span class="km-chip">1~6월 미입력</span></div>';
+  h+='<div style="overflow-x:auto"><table class="km-tbl"><thead><tr><th>항목</th>'+[1,2,3,4,5,6,7].map(m=>`<th class="${m===7?'km-cur':''}">${m}월</th>`).join('')+'<th>목표</th><th>달성률</th><th>목표 진행</th></tr></thead><tbody>';
+  kpis.forEach(k=>{
+    const isMS=k.지표==='M/S';
+    const july=(k.실적===''||k.실적==null||isNaN(+k.실적))?null:+k.실적;
+    const tgt=+k.목표||0; const rate=(tgt&&july!=null)?july/tgt:null;
+    let cells='';
+    for(let i=0;i<7;i++){
+      if(i<6){cells+='<td><div class="km-v km-empty">–</div></td>';}
+      else{cells+=`<td class="km-cur"><div class="km-v">${july==null?'–':(isMS?july.toFixed(1):fmt(july))}</div></td>`;}
+    }
+    const tgtTxt=isMS?tgt+'%':fmt(tgt);
+    const p=rate==null?null:Math.round(rate*100);const sc=p==null?'#94a3b8':(p>=90?'#16a34a':p>=70?'#f59e0b':'#dc2626');
+    h+=`<tr><td class="km-lb">${esc(k.지표)}</td>${cells}<td class="km-tg">${tgtTxt}</td><td class="km-rt" style="color:${sc};font-weight:800">${p==null?'-':p+'%'}</td><td><div class="km-bar"><i style="width:${p==null?0:Math.min(100,p)}%;background:${sc}"></i></div></td></tr>`;});
+  h+='</tbody></table></div>';
+  h+='<div class="km-foot"><span class="km-dot"></span>7월은 KPI 달성현황 실적과 연동 · 1~6월 실제 월별 실적은 확보 시 입력 · 진입점/판매개수 우선관리</div></div>';
+  return h;
+}
+/* 법인 주요 행사일정 카드 (편집 가능) */
+function corpEventsCard(c){
+  const evs=ckEventsForCorp(c.id);
+  let h=`<div class="ck-col"><div class="corp-plbl">${c.flag} <b>${esc(c.name)}</b></div><div class="ck-sec"><span class="ck-no">·</span>주요 행사일정 · 하반기<button class="mile-add" style="margin-left:auto" onclick="addCKevent('${c.id}')">＋ 추가</button></div><div class="ck-pad"><table class="ck-evt"><tbody>`;
+  if(!evs.length)h+=`<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:14px">등록된 일정이 없습니다.</td></tr>`;
+  evs.forEach(({e,i})=>{const dd=ckDday(e.date);const ddH=(dd!=null&&dd>=0)?`<span class="ck-dd ${c.cls}">D-${dd}</span>`:(dd!=null&&dd<0?`<span class="ck-dd done">완료</span>`:'');
+    h+=`<tr><td class="ck-dt"><input type="date" value="${esc(e.date||'')}" onchange="editCKevent(${i},'date',this.value)">${ddH}</td><td class="ck-etitle"><input value="${esc(e.title||'')}" onchange="editCKevent(${i},'title',this.value)" placeholder="행사·일정"></td><td class="ck-eown"><input value="${esc(e.owner||'')}" onchange="editCKevent(${i},'owner',this.value)" placeholder="담당"></td><td style="width:30px"><button class="mile-del" onclick="delCKevent(${i})" title="삭제">🗑</button></td></tr>`;});
+  h+='</tbody></table></div></div>';
+  return h;
+}
 function ovCorpKpiTable(corpId){
   const c=CK_CORPS.find(x=>x.id===corpId)||CK_CORPS[0];
   let h=`<div class="ck-cols ck-single"><div class="ck-col"><div class="ck-h ${c.cls}"><span class="ck-flag">${c.flag}</span><span class="ck-name">${esc(c.name)}</span><span class="ck-unit">${esc(c.unit)} · ${esc(c.sub)}</span></div>`;
@@ -2804,7 +2935,16 @@ function renderOverview(){
   if(!OVTABS.some(([k])=>k===OVTAB))OVTAB='main';
   h+='<div class="pm-tabs" style="margin-top:14px">'+OVTABS.map(([k,l])=>`<button class="${OVTAB===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   h+='<div class="ov-tabc">';
-  if(OVTAB==='corp'){ h+=`<div class="ov-corp2">${ovCorpKpiTable('중국')}${ovCorpKpiTable('대만')}</div>`;
+  if(OVTAB==='corp'){
+    const CN=CK_CORPS[0], TW=CK_CORPS[1];
+    const hdr=c=>`<div class="corp-plbl">${c.flag} <b>${esc(c.name)}</b> <span>${esc(c.unit)} · ${esc(c.sub)}</span></div>`;
+    h+='<div class="ov-sec">법인매출 · 월별 추세 <span class="ov-sub">중국 · 대만</span></div>';
+    h+=`<div class="ov-corp2"><div class="ck-col">${hdr(CN)}<div class="ck-pad">${corpTrendCard(CN)}</div></div><div class="ck-col">${hdr(TW)}<div class="ck-pad">${corpTrendCard(TW)}</div></div></div>`;
+    h+='<div class="ov-sec" style="margin-top:18px">KPI 달성율 · 월별 실적 및 누적 추세 <span class="ov-sub">중국 · 대만 (달성현황 탭에서 실적 입력 시 7월값 자동 반영)</span></div>';
+    h+=`<div class="km-corp">${hdr(CN)}${corpKpiMonthlyTable(CN)}</div>`;
+    h+=`<div class="km-corp" style="margin-top:14px">${hdr(TW)}${corpKpiMonthlyTable(TW)}</div>`;
+    h+='<div class="ov-sec" style="margin-top:18px">주요 행사일정 · 하반기 <span class="ov-sub">중국 · 대만</span></div>';
+    h+=`<div class="ov-corp2">${corpEventsCard(CN)}${corpEventsCard(TW)}</div>`;
   } else {
     {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 <span class="ov-sub">거래처별 수출·수금 (단위 천불 USD) · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
     h+=`<div class="ov-half"><div class="ov-half-l">${ovDealTable()}</div><div class="ov-half-r">${ovDealChart()}</div></div>`;
@@ -3027,9 +3167,40 @@ const FIXEDSEED=[
 {id:'fx10',mgr:'yu',name:'반품·재고 관리',cycle:'매주',dow:'',note:'Sunriser 반품·Kit 교환'},
 {id:'fx11',mgr:'jang',name:'대만법인 재무·인허가',cycle:'월례',dow:'',note:'재무제표·TFDA·수권 이양'}
 ];
+/* 정례회의(중화팀 R&R 관리표 원본) → 루틴업무 시드 : 담당자 · 회의명 · 주기 · 요일 · 시간 · 내용(회의 목적) */
+const MEETSEED=[
+{mgr:'lee',name:'법인 월간회의',cycle:'월례',dow:'',time:'매월말 17:00-18:00',note:'월간 KPI 달성 현황·국가별 실적 분석, 차월 계획 수립'},
+{mgr:'lee',name:'법인 마감회의',cycle:'월례',dow:'',time:'매월말 17:00-18:00',note:'당월 실적 마감 리뷰·이슈 체크'},
+{mgr:'lee',name:'중국법인 주간회의-북경',cycle:'매주',dow:'금',time:'09:30-11:00',note:'북경법인 주간 실적·주요 이슈·차주 계획 점검'},
+{mgr:'lee',name:'중국법인 주간회의-닝보',cycle:'매주',dow:'금',time:'11:00-13:00',note:'닝보법인 주간 실적·대리상 운영·프로젝트 진행 점검'},
+{mgr:'lee',name:'본부회의(화남/화동)',cycle:'매주',dow:'월',time:'09:30-12:30',note:'지역별 실적·대리상 운영·채권·주요 이슈 점검'},
+{mgr:'lee',name:'제품 경쟁력 회의',cycle:'월례',dow:'화',time:'3주차 14:00-17:00',note:'제품 경쟁력·인허가·중국 CS·개선사항 협의'},
+{mgr:'lee',name:'중화팀 주간회의',cycle:'매주',dow:'금',time:'17:00-18:00',note:'팀 업무 진행 현황·주요 과제·차주 계획 공유'},
+{mgr:'seo',name:'법인 월간회의',cycle:'월례',dow:'',time:'매월말 09:30-13:30',note:'전월 실적 리뷰·당월 예상 논의'},
+{mgr:'seo',name:'법인 마감회의',cycle:'월례',dow:'',time:'매월말 17:00-18:00',note:'당월 실적 마감 리뷰·이슈 체크'},
+{mgr:'seo',name:'중국법인 주간회의-북경',cycle:'매주',dow:'금',time:'09:30-11:00',note:'주간실적 검토·주요 이슈·의사결정 지원'},
+{mgr:'seo',name:'중국법인 주간회의-닝보',cycle:'매주',dow:'금',time:'11:00-13:00',note:'주간실적 검토·주요 이슈·의사결정 지원'},
+{mgr:'seo',name:'본부회의(화중)',cycle:'매주',dow:'월',time:'09:30-11:00',note:'본부 실적·이슈사항 점검'},
+{mgr:'seo',name:'제품 경쟁력 회의',cycle:'월례',dow:'화',time:'3주차 14:00-17:00',note:'제품 경쟁력·인허가·중국 CS·개선사항 협의'},
+{mgr:'seo',name:'중화팀 주간회의',cycle:'매주',dow:'금',time:'17:00-18:00',note:'팀 업무 진행 현황·주요 과제·차주 계획 공유'},
+{mgr:'kim',name:'물동회의',cycle:'월례',dow:'화',time:'2주차 14:00-16:00',note:'당월 생산·선적 현황·이슈 공유 (미선적 생산·선적 예정일 확인)'},
+{mgr:'kim',name:'제품 경쟁력 회의',cycle:'월례',dow:'화',time:'3주차 14:00-17:00',note:'제품 경쟁력·인허가·중국 CS·개선사항 협의'},
+{mgr:'kim',name:'중화팀 주간회의',cycle:'매주',dow:'금',time:'17:00-18:00',note:'팀 업무 진행 현황·주요 과제·차주 계획 공유'},
+{mgr:'tak',name:'디지털 회의',cycle:'월례',dow:'목',time:'4주차 14:00-15:00',note:'디지털솔루션 본사·법인 컨센서스 (실적 집계·이슈 정리)'},
+{mgr:'tak',name:'제품 경쟁력 회의',cycle:'월례',dow:'화',time:'3주차 14:00-17:00',note:'법인 제품 이슈 공유·임플란트 장비 개선안 제안'},
+{mgr:'tak',name:'마케팅회의',cycle:'월례',dow:'수',time:'4주차 11:00-12:00',note:'G2·G3 마케팅 이슈 공유·본사 지원'},
+{mgr:'tak',name:'중화팀 주간회의',cycle:'매주',dow:'금',time:'17:00-18:00',note:'팀 업무 진행 현황·주요 과제·차주 계획 공유'},
+{mgr:'yu',name:'제품 경쟁력 회의',cycle:'월례',dow:'화',time:'3주차 14:00-17:00',note:'제품 경쟁력·인허가·중국 CS·개선사항 협의'},
+{mgr:'yu',name:'마케팅회의',cycle:'월례',dow:'금',time:'4주차 11:00-12:00',note:'G2·G3 마케팅 이슈 공유·본사 지원'},
+{mgr:'yu',name:'중화팀 주간회의',cycle:'매주',dow:'금',time:'17:00-18:00',note:'팀 업무 진행 현황·주요 과제·차주 계획 공유'}
+];
 let FIXEDWORK=[];try{const s=localStorage.getItem('wr_fixed_v1');if(s)FIXEDWORK=JSON.parse(s)||[];}catch(e){}
-/* 루틴업무: 기본 시드 제거 · 빈 표로 시작 (예시 시드가 남아 있으면 비움) */
-if(FIXEDWORK.length&&FIXEDWORK.every(w=>/^fx([1-9]|10|11)$/.test(w.id||''))){FIXEDWORK=[];try{localStorage.setItem('wr_fixed_v1','[]');}catch(e){}}
+/* 루틴업무: 정례회의(R&R 관리표 원본)로 1회 시드. 기존 예시 시드(fx1~11)만 있으면 정례회의로 교체 */
+if(!localStorage.getItem('wr_fixed_seed_v3')){try{
+  const isAuto=!FIXEDWORK.length||FIXEDWORK.every(w=>/^(fx([1-9]|1[01])|mt\d+)$/.test(w.id||''));
+  if(isAuto){FIXEDWORK=MEETSEED.map((x,i)=>({id:'mt'+i,...x}));localStorage.setItem('wr_fixed_v1',JSON.stringify(FIXEDWORK));}
+  localStorage.setItem('wr_fixed_seed_v3','1');
+}catch(e){}}
 let FIXEDLOG={};try{const s=localStorage.getItem('wr_fixedlog_v1');if(s)FIXEDLOG=JSON.parse(s)||{};}catch(e){}
 function saveFixed(){try{localStorage.setItem('wr_fixed_v1',JSON.stringify(FIXEDWORK));}catch(e){}}
 function saveFixedLog(){try{localStorage.setItem('wr_fixedlog_v1',JSON.stringify(FIXEDLOG));}catch(e){}}
@@ -3037,22 +3208,16 @@ function fixWeekKey(){return `${YEAR}-${String(MONTH).padStart(2,'0')}-W${W+1}`;
 function fixLog(id){const k=fixWeekKey();return (FIXEDLOG[k]&&FIXEDLOG[k][id])||{};}
 function toggleFixDone(id){const k=fixWeekKey();FIXEDLOG[k]=FIXEDLOG[k]||{};FIXEDLOG[k][id]=FIXEDLOG[k][id]||{};FIXEDLOG[k][id].done=!FIXEDLOG[k][id].done;saveFixedLog();render();}
 function editFixMemo(id,v){const k=fixWeekKey();FIXEDLOG[k]=FIXEDLOG[k]||{};FIXEDLOG[k][id]=FIXEDLOG[k][id]||{};FIXEDLOG[k][id].memo=v;saveFixedLog();}
-function addFixed(){FIXEDWORK.push({id:'fx'+Date.now(),mgr:(MGRS[1]||MGRS[0]).id,name:'',cycle:'매주',dow:'',note:''});saveFixed();render();}
-/* 중화팀 R&R 및 업무일정 관리표 → 루틴업무 담당자별 자동 채우기 */
+function addFixed(){FIXEDWORK.push({id:'fx'+Date.now(),mgr:(MGRS[1]||MGRS[0]).id,name:'',cycle:'매주',dow:'',time:'',note:''});saveFixed();render();}
+/* 중화팀 R&R 및 업무일정 관리표(회의 일정) → 루틴업무 담당자별 자동 채우기 */
 function applyRoutineFixed(){
-  const D=[
-    ['lee','본부회의(화남/화동)','매주','월','09:30-12:30'],['lee','중국법인 주간회의-북경','매주','금','09:30-11:00'],['lee','중국법인 주간회의-닝보','매주','금','11:00-13:00'],['lee','제품 경쟁력 회의','월례','화','매월 3주차 14:00-17:00'],['lee','중화팀 주간회의','매주','금','17:00-18:00'],['lee','법인 월간회의','월례','','매월말 17:00-18:00'],['lee','법인 마감회의','월례','','매월말 17:00-18:00'],
-    ['seo','본부회의(화중)','매주','월','09:30-12:30'],['seo','중국법인 주간회의-북경','매주','금','09:30-11:00'],['seo','중국법인 주간회의-닝보','매주','금','11:00-13:00'],['seo','제품 경쟁력 회의','월례','화','매월 3주차 14:00-17:00'],['seo','중화팀 주간회의','매주','금','17:00-18:00'],['seo','법인 월간회의','월례','','매월말 17:00-18:00'],['seo','법인 마감회의','월례','','매월말 17:00-18:00'],
-    ['kim','물동회의','월례','화','매월 2주차 14:00-16:00'],['kim','제품 경쟁력 회의','월례','화','매월 3주차 14:00-17:00'],['kim','중화팀 주간회의','매주','금','17:00-18:00'],
-    ['tak','디지털 회의','월례','목','매월 4주차 14:00-15:00'],['tak','제품 경쟁력 회의','월례','화','매월 3주차 14:00-17:00'],['tak','마케팅회의(G2·G3)','월례','수','매월 4주차 11:00-12:00'],['tak','중화팀 주간회의','매주','금','17:00-18:00'],
-    ['yu','제품 경쟁력 회의','월례','화','매월 3주차 14:00-17:00'],['yu','마케팅회의(대만·홍콩)','월례','금','매월 4주차 11:00-12:00'],['yu','중화팀 주간회의','매주','금','17:00-18:00']
-  ];
-  FIXEDWORK=D.map((r,i)=>({id:'fx_rr'+i,mgr:r[0],name:r[1],cycle:r[2],dow:r[3],note:r[4]}));
-  saveFixed();render();toast('루틴업무를 R&R 관리표 기준으로 채웠습니다');
+  FIXEDWORK=MEETSEED.map((x,i)=>({id:'mt'+i,...x}));
+  saveFixed();render();toast('루틴업무를 R&R 관리표(정례회의) 기준으로 채웠습니다');
 }
 function editFixed(id,f,v){const x=FIXEDWORK.find(w=>w.id===id);if(x){x[f]=v;saveFixed();if(f==='mgr')render();}}
 function delFixed(id){FIXEDWORK=FIXEDWORK.filter(w=>w.id!==id);saveFixed();render();}
 function renderFixed(){
+  const fxTh=(col,label,w)=>{const on=FIXSORT.col===col;const ar=on?(FIXSORT.dir>0?' ▲':' ▼'):'';return `<th class="fx-sort${on?' on':''}" style="text-align:left;width:${w}px;cursor:pointer" onclick="setFixSort('${col}')">${label}<span class="fx-ar">${ar}</span></th>`;};
   const wl=(PERIOD==='week'&&WEEKS[W])?`${WEEKS[W].name} (${WEEKS[W].range})`:`${MONTH}월`;
   const mgrOpt=(sel)=>MGRS.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
   const cycOpt=(sel)=>['매주','격주','월례','수시'].map(c=>`<option ${sel===c?'selected':''}>${c}</option>`).join('');
@@ -3060,10 +3225,19 @@ function renderFixed(){
   const doneN=FIXEDWORK.filter(w=>fixLog(w.id).done).length;
   let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:6px"><h3 style="font-size:14px">🔁 루틴업무 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${FIXEDWORK.length}건 · 이번 주 수행 ${doneN}건</span></h3><span class="unit">정례회의·반복되는 기본업무 · <b>진행율·KPI에는 미포함</b> · 주차별 수행만 체크</span><button class="mile-add" style="margin-right:6px" onclick="applyRoutineFixed()">R&R 관리표 반영</button><button class="reset" onclick="addFixed()">＋ 루틴업무 추가</button></div>
     <div class="fx-note">기준 주차: <b>${esc(wl)}</b> — 상단 기간바에서 주차를 바꾸면 그 주의 수행 기록이 표시됩니다. 과제(프로젝트)와 달리 매주 반복되는 루틴업무라 진행율에는 더하지 않고, "그 주에 무엇을 했는지"만 남깁니다.</div>
-    <div style="overflow-x:auto"><table class="ptable rept fixtbl"><thead><tr><th style="width:30px">No</th><th style="text-align:left;width:118px">담당자</th><th style="text-align:left;width:210px">루틴업무</th><th style="text-align:left;width:70px">주기</th><th style="text-align:left;width:56px">요일</th><th style="text-align:left;width:88px">이번 주 수행</th><th style="text-align:left">수행 내용 (주차 메모)</th><th style="width:32px"></th></tr></thead><tbody>`;
+    <div style="overflow-x:auto"><table class="ptable rept fixtbl"><thead><tr><th style="width:30px">No</th>${fxTh('mgr','담당자',122)}${fxTh('name','루틴업무',210)}${fxTh('cycle','주기',74)}${fxTh('dow','요일',90)}<th style="text-align:center;width:80px">이번 주 수행</th><th style="text-align:left;width:130px">시간</th><th style="text-align:left">내용</th><th style="width:32px"></th></tr></thead><tbody>`;
   const order={lee:0,seo:1,yu:2,kim:3,tak:4,jang:5};
-  const list=FIXEDWORK.map((w,i)=>({w,i})).sort((a,b)=>(order[a.w.mgr]??9)-(order[b.w.mgr]??9));
-  if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:18px">등록된 루틴업무가 없습니다. 「＋ 루틴업무 추가」로 등록하세요.</td></tr>`;
+  const cycOrd={'매주':0,'격주':1,'월례':2,'수시':3};
+  const dowOrd={'일':0,'월':1,'화':2,'수':3,'목':4,'금':5,'토':6,'':9};
+  const cmp=(a,b)=>{const wa=a.w,wb=b.w;let d=0;
+    if(FIXSORT.col==='mgr')d=(order[wa.mgr]??9)-(order[wb.mgr]??9);
+    else if(FIXSORT.col==='name')d=(wa.name||'').localeCompare(wb.name||'','ko');
+    else if(FIXSORT.col==='cycle')d=(cycOrd[wa.cycle]??9)-(cycOrd[wb.cycle]??9);
+    else if(FIXSORT.col==='dow')d=(dowOrd[wa.dow]??9)-(dowOrd[wb.dow]??9);
+    if(d===0)d=(order[wa.mgr]??9)-(order[wb.mgr]??9);
+    return d*FIXSORT.dir;};
+  const list=FIXEDWORK.map((w,i)=>({w,i})).sort(cmp);
+  if(!list.length)h+=`<tr><td colspan="9" style="text-align:center;color:var(--faint);padding:18px">등록된 루틴업무가 없습니다. 「＋ 루틴업무 추가」로 등록하세요.</td></tr>`;
   list.forEach((o,n)=>{const w=o.w;const lg=fixLog(w.id);
     h+=`<tr class="${lg.done?'fx-done':''}">
       <td class="mut">${n+1}</td>
@@ -3071,13 +3245,16 @@ function renderFixed(){
       <td class="rl"><input value="${esc(w.name||'')}" onchange="editFixed('${w.id}','name',this.value)" placeholder=""></td>
       <td><select onchange="editFixed('${w.id}','cycle',this.value)">${cycOpt(w.cycle)}</select></td>
       <td><select onchange="editFixed('${w.id}','dow',this.value)">${dowOpt(w.dow)}</select></td>
-      <td><button class="fx-ck ${lg.done?'on':''}" onclick="toggleFixDone('${w.id}')">${lg.done?'✓ 수행':'□'}</button></td>
-      <td class="rl"><input value="${esc(lg.memo||'')}" onchange="editFixMemo('${w.id}',this.value)" placeholder=""></td>
+      <td style="text-align:center"><button class="fx-ck ${lg.done?'on':''}" onclick="toggleFixDone('${w.id}')">${lg.done?'✓ 수행':'□'}</button></td>
+      <td class="rl"><input value="${esc(w.time||'')}" onchange="editFixed('${w.id}','time',this.value)" placeholder="시간"></td>
+      <td class="rl"><input value="${esc(w.note||'')}" onchange="editFixed('${w.id}','note',this.value)" placeholder="수행 내용"></td>
       <td style="text-align:center"><button class="mile-del" onclick="delFixed('${w.id}')" title="삭제">🗑</button></td>
     </tr>`;});
   return h+'</tbody></table></div></div>';
 }
 let RRTAB='work';
+let FIXSORT={col:'mgr',dir:1};
+function setFixSort(col){if(FIXSORT.col===col){FIXSORT.dir=-FIXSORT.dir;}else{FIXSORT.col=col;FIXSORT.dir=1;}render();}
 function setRRTab(t){RRTAB=t;render();}
 function mgrAssignStrip(mid){
   const items=ASSIGN.map((a,i)=>({a,i})).filter(o=>o.a.mgr===mid&&!o.a.done);
@@ -3093,8 +3270,8 @@ function viewRR(rows){
   html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}${(k==='report'||k==='table')?' tab-dim':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
   if(RRTAB==='focus')return html+renderFocus();
   if(RRTAB==='achieve')return html+renderFocusKPI();
-  if(RRTAB==='assign')return html+`<div class="assign-2col">${renderAssign()}${renderRoutineMeetings()}</div>`;
-  if(RRTAB==='fixed')return html+renderFixed();
+  if(RRTAB==='assign')return html+renderAssign();
+  if(RRTAB==='fixed')return html+renderRoutineMeetings()+renderFixed();
   if(RRTAB==='table')return html+renderCombined(rows);
   if(RRTAB==='kanban')return html+viewKanban(rows);
   if(RRTAB==='report')return html+renderReports();
@@ -3153,22 +3330,24 @@ function calMiles(){
 }
 function renderCalKPI(){
   const miles=calMiles();
-  const nowM=TODAY.getMonth()+1;
   const total=miles.length;
-  const monthN=miles.filter(x=>x.month===MONTH).length;
-  const upcoming=miles.filter(x=>x.month>=nowM).length;
-  const past=miles.filter(x=>x.month<nowM).length;
+  const mm=miles.filter(x=>x.month===MONTH);
+  const monthN=mm.length;
+  const numOf=s=>{const m=String(s||'').replace(/,/g,'').match(/\d+(\.\d+)?/);return m?parseFloat(m[0]):0;};
+  const sum=k=>mm.reduce((a,x)=>a+numOf(x[k]),0);
+  const attnSum=sum('attn'), costSum=sum('cost'), newSum=sum('newcust');
+  const nf=n=>(typeof fmt==='function')?fmt(n):n.toLocaleString();
   const fstat=`${MILECTRY||'전체 국가'} · ${MILEMGR?((mgrById(MILEMGR)||{}).name||'')+' 담당':'전체 담당자'}`;
   document.getElementById('kpis').innerHTML=`
     <div class="kpi hero"><div class="ring"></div>
-      <div class="lb">전체 일정 <span style="font-size:9px;color:rgba(255,255,255,.7)">필터 반영</span></div><div class="val">${total}<small>건</small></div>
+      <div class="lb">${MONTH}월 일정 <span style="font-size:9px;color:rgba(255,255,255,.7)">전체 ${total}건 중</span></div><div class="val">${monthN}<small>건</small></div>
       <div class="foot">${esc(fstat)}</div></div>
-    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>${MONTH}월 일정</div>
-      <div class="val">${monthN}<small>건</small></div><div class="foot">선택한 달 기준</div></div>
-    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accent)"></span>다가오는 일정</div>
-      <div class="val">${upcoming}<small>건</small></div><div class="foot">${nowM}월 이후 예정</div></div>
-    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--wait)"></span>종료 일정</div>
-      <div class="val">${past}<small>건</small></div><div class="foot">${nowM}월 이전</div></div>`;
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>참가인원</div>
+      <div class="val">${nf(attnSum)}<small>명</small></div><div class="foot">${MONTH}월 합계</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accent)"></span>비용</div>
+      <div class="val">${nf(costSum)}</div><div class="foot">${MONTH}월 합계</div></div>
+    <div class="kpi"><div class="lb"><span class="dot" style="background:var(--wait)"></span>신규고객</div>
+      <div class="val">${nf(newSum)}<small>명</small></div><div class="foot">${MONTH}월 합계</div></div>`;
 }
 function renderCalMonthKPI(){
   const today=todayStr();const ym=`${YEAR}-${String(MONTH).padStart(2,'0')}`;
@@ -3620,7 +3799,7 @@ function calModalHTML(){
 function mileParseDays(x,M){
   if((+x.month)!==M)return [];
   const cleaned=String(x.date||'').replace(/\d+\s*\//g,'');
-  const days=new Set();const re=/(\d+)\s*~\s*(\d+)|(\d+)/g;let mm;
+  const days=new Set();const re=/(\d+)\s*[~\-]\s*(\d+)|(\d+)/g;let mm;
   while((mm=re.exec(cleaned))){if(mm[1]&&mm[2]){for(let d=+mm[1];d<=+mm[2]&&d<=31;d++)days.add(d);}else if(mm[3])days.add(+mm[3]);}
   return [...days].filter(d=>d>=1&&d<=31);
 }
@@ -3640,7 +3819,7 @@ function mileCalendar(){
   const miles=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))&&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR));
   const dayMap={};miles.forEach(o=>mileParseDays(o.x,m).forEach(d=>{(dayMap[d]=dayMap[d]||[]).push(o);}));
   const grid=calGrid(y,m,(d,date,i)=>{
-    const chips=(dayMap[d]||[]).map(o=>{const col=MCAT[o.x.cat]||'#666';return `<div class="md-ev mile" style="background:${col};border-color:${col}" onclick="openMile(${o.i})" title="${esc(o.x.info||o.x.name)}">${esc(o.x.name)}${o.x.date?`<span class="me-d">${esc(o.x.date)}</span>`:''}</div>`;}).join('');
+    const chips=(dayMap[d]||[]).map(o=>{const col=MCAT[o.x.cat]||'#666';return `<div class="md-ev mile" style="background:${col};border-color:${col}" onclick="openMile(${o.i})" title="${esc(o.x.name)}${o.x.info?' · '+esc(o.x.info):''}">${esc(o.x.name)}${o.x.info?`<span class="me-info">${esc(o.x.info)}</span>`:''}${o.x.date?`<span class="me-d">${esc(o.x.date)}</span>`:''}</div>`;}).join('');
     return `<td class="mcal-day ${i===0?'sun':i===6?'sat':''}"><div class="md-n">${d}</div><div class="md-evs">${chips}</div></td>`;
   });
   const noday=miles.filter(o=>(+o.x.month)===m&&!mileParseDays(o.x,m).length);
@@ -3661,7 +3840,7 @@ const WKREPORTS=[
 function wkStatusBadge(s){const m={'완료':['#e3f5ea','#1f9d57'],'작성중':['#fdf6dd','#9a7a10'],'예정':['#fdeede','#b3781c'],'휴가':['#f0f2f4','#8893a0']};const c=m[s]||['#eef','#555'];return `<span class="pill" style="background:${c[0]};color:${c[1]}">${esc(s||'')}</span>`;}
 function wkReportTable(){
   let h=`<div class="ptable-wrap" style="margin-top:22px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">📄 주간 업무보고 (노션 연동)</h3><span class="unit">노션 「🐩 주간 업무보고」 DB 스냅샷 · 제목·기간·상태·구글시트·노션 링크</span><a class="mile-add" href="${NOTION_WR_DB}" target="_blank" rel="noopener" style="text-decoration:none">노션에서 열기 ↗</a></div>`;
-  h+=`<div style="overflow-x:auto"><table class="ptable" style="width:100%"><thead><tr><th style="width:64px">주차</th><th style="text-align:left">제목</th><th style="width:130px">기간</th><th style="width:78px">상태</th><th style="width:84px">자료</th><th style="width:74px">노션</th></tr></thead><tbody>`;
+  h+=`<div style="overflow-x:auto"><table class="ptable wkrep" style="width:100%"><thead><tr><th style="width:64px">주차</th><th style="text-align:left">제목</th><th style="width:130px">기간</th><th style="width:78px">상태</th><th style="width:84px">자료</th><th style="width:74px">노션</th></tr></thead><tbody>`;
   WKREPORTS.forEach(r=>{h+=`<tr><td style="text-align:center"><b>${esc(r.wk)}</b></td><td class="rl">${esc(r.title)}</td><td style="text-align:center">${esc(r.period||'-')}</td><td style="text-align:center">${wkStatusBadge(r.status)}</td><td style="text-align:center">${r.sheet?`<a href="${esc(r.sheet)}" target="_blank" rel="noopener">📊 시트</a>`:'-'}</td><td style="text-align:center"><a href="${esc(r.page)}" target="_blank" rel="noopener">🔗 열기</a></td></tr>`;});
   h+='</tbody></table></div><div class="dw-hint" style="margin-top:8px">※ 노션 DB 스냅샷(연동 시점 기준)입니다. 최신 내용은 「노션에서 열기」로 확인하세요.</div></div>';
   return h;
@@ -3669,13 +3848,26 @@ function wkReportTable(){
 function viewCalendar(){
   if(CALVIEW==='month'){
     let html='<div class="sec-h"><h2>중화팀 일정</h2><span class="hint">월간 달력 · 팀 일정 관리</span><span class="line"></span></div>';
-    return html+monthCalendar();
+    return html+monthCalendar()+wkReportTable();
   }
   let html='<div class="sec-h"><h2>중화팀 행사</h2><span class="hint">2026 중점시장활동 · 행사·세미나 일정</span><span class="line"></span></div>';
-  return html+mileCalendar()+mileTable()+wkReportTable();
+  return html+mileCalendar()+mileTable();
 }
 /* 오른쪽 상세 입력 내용을 표로 정리 · 셀 수정 시 드로어와 동일 데이터(연동) */
 function setMileSort(col){if(MILESORT.col===col)MILESORT.dir*=-1;else{MILESORT.col=col;MILESORT.dir=1;}render();}
+let MILEOWN=null;
+let MILEBIGO=null;
+function toggleBigoEdit(i){MILEBIGO=(MILEBIGO===i?null:i);render();}
+function mileOwners(x){return Array.isArray(x.owners)?x.owners:(x.owners?String(x.owners).split(',').map(s=>s.trim()).filter(Boolean):[]);}
+function toggleMileOwnMenu(i){MILEOWN=(MILEOWN===i?null:i);render();}
+function toggleMileOwner(i,name){const x=MILESTONES[i];if(!x)return;const arr=mileOwners(x);const k=arr.indexOf(name);if(k>=0)arr.splice(k,1);else arr.push(name);x.owners=arr;saveMile();render();}
+function mileOwnerOpts(){return MGRS.filter(m=>m.id!=='jang').map(m=>({name:m.name,label:m.name+' '+m.title})).concat([{name:'중국법인',label:'중국법인'}]);}
+function ownerCellMile(x,i){const own=mileOwners(x);const OPT=mileOwnerOpts();
+  const chips=own.length?`<div class="mf-ownchips">${own.map(n=>`<span class="mf-ownchip">${esc(n)}</span>`).join('')}</div>`:'<span class="mf-ownph">담당자</span>';
+  const menu=MILEOWN===i?`<div class="mf-ownmenu">${OPT.map(o=>{const on=own.includes(o.name);return `<div class="mf-ownopt${on?' on':''}" onclick="toggleMileOwner(${i},'${esc(o.name)}')"><span class="mf-ck">${on?'✓':''}</span><span class="mf-nm">${esc(o.label)}</span></div>`;}).join('')}</div>`:'';
+  return `<div class="mf-owntrig" onclick="toggleMileOwnMenu(${i})">${chips}<span class="mf-cx">▾</span></div>${menu}`;}
+function editMileDate(i,f,v){const x=MILESTONES[i];if(!x)return;x[f]=v;if(f==='date'&&v){const m=+v.slice(5,7);if(m>=1&&m<=12)x.month=m;}saveMile();render();}
+function mileMD(s,e){const md=d=>{if(!d||d.length<10)return '';return (+d.slice(5,7))+'/'+(+d.slice(8,10));};const a=md(s),b=md(e);if(a&&b)return a===b?a:a+'~'+b;return a||b||'–';}
 function mileTable(){
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
   let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
@@ -3687,23 +3879,28 @@ function mileTable(){
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
-  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><a class="mile-add" href="https://app.notion.com/p/3b573e4ce542807fa7d4d5e5e2df670e" target="_blank" rel="noopener" style="text-decoration:none">🌝 노션 마케팅활동</a><button class="mile-add" onclick="loadNotionMkt()" style="margin-left:6px">노션 활동 불러오기</button><button class="mile-add" onclick="exportMileXlsx()" style="margin-left:6px">⬇ 엑셀 내보내기</button><button class="mile-add" onclick="addMile()" style="margin-left:6px">＋ 일정 추가</button></div>
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}${th('country','국가','text-align:center;width:7%')}${th('cat','구분','text-align:left;width:11%')}${th('name','일정명','text-align:left;width:20%')}<th style="text-align:left;width:40%">내용개요</th><th style="text-align:left;width:11%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
-  if(!list.length){html+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
+  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><a class="mile-add mini" href="https://app.notion.com/p/G2-3a873e4ce54281ec9214f00fbfc6ae9b" target="_blank" rel="noopener" style="text-decoration:none">🌝 노션 마케팅활동</a><button class="mile-add mini" onclick="loadNotionMkt()" style="margin-left:5px">노션 활동 불러오기</button><button class="mile-add mini" onclick="restoreMileSeed()" style="margin-left:5px;background:#b45309">↺ 기본 일정 복원</button><button class="mile-add mini" onclick="exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button><button class="mile-add mini" onclick="exportMileJson()" style="margin-left:5px;background:#5b3fa8">📤 노션 반영용 내보내기</button><button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 일정 추가</button></div>
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:6%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:8%')}${th('cat','구분','text-align:left;width:10%')}${th('name','일정명','text-align:left;width:13%')}<th style="text-align:left;width:16%">내용개요</th><th style="text-align:center;width:6%">참가<br>인원</th><th style="text-align:center;width:7%">비용</th><th style="text-align:center;width:6%">신규<br>고객</th><th style="text-align:left;width:9%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
+  if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     html+=`<tr>
       <td class="mut">${n+1}</td>
-      <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" onchange="editMileTbl(${i},'month',this.value)" style="text-align:center"></td>
-      <td><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
+      <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" onchange="editMileTbl(${i},'month',this.value)" class="mile-mnum"></td>
+      <td class="mile-day"><input value="${esc((x.date||'').replace(/\d+\s*\/\s*/g,'').replace(/~/g,'-'))}" onchange="editMileTbl(${i},'date',this.value)" placeholder="일자"></td>
+      <td style="text-align:center"><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
       <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
       <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
       <td class="infc">${x.link?`<a class="mile-infolink" href="${esc(x.link)}" target="_blank" rel="noopener" title="노션 페이지 열기">${esc(x.info||'(내용 없음)')} <span class="mile-open">↗</span></a>`:`<textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||'')}</textarea>`}</td>
-      <td class="mile-bigo"><input value="${esc(x.link||'')}" onchange="editLink_mile(${i},this.value)" placeholder="노션 링크 URL">${x.link?`<a class="rep-open" href="${esc(x.link)}" target="_blank" rel="noopener">🔗 열기</a>`:''}</td>
+      <td class="mile-attn"><input value="${esc(x.attn||'')}" onchange="editMileTbl(${i},'attn',this.value)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(x.cost||'')}" onchange="editMileTbl(${i},'cost',this.value)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(x.newcust||'')}" onchange="editMileTbl(${i},'newcust',this.value)" placeholder="-"></td>
+      <td class="mile-own">${ownerCellMile(x,i)}</td>
+      <td class="mile-bigo">${x.link?`<a class="rep-open" href="${esc(x.link)}" target="_blank" rel="noopener">🔗 열기</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
     </tr>`;});
   return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 노션 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
 }
-const NOTION_MKT_PAGE='https://app.notion.com/p/3b573e4ce542807fa7d4d5e5e2df670e';
+const NOTION_MKT_PAGE='https://app.notion.com/p/G2-3a873e4ce54281ec9214f00fbfc6ae9b';
 const NOTION_MKT=[
  {n:1,name:'대만풀마우스세미나',info:'대만 연구회 활동 · 대구',country:'대만',month:1,cat:'교육',url:'https://app.notion.com/p/3b573e4ce54280caa92afd93cb0a7abb'},
  {n:3,name:'국제살롱',info:'국제살롱 · 베이징(北)',country:'중국',month:1,cat:'교육',url:'https://app.notion.com/p/3b573e4ce542802b8291e45b8ca61bf9'},
@@ -3747,8 +3944,21 @@ const NOTION_MKT=[
  {n:44,name:'연회(年会)',info:'연회 · 호주(澳大利亚, 220/80)',country:'중국',month:12,cat:'BIG',url:'https://app.notion.com/p/3b573e4ce5428074a25ad05c12d82ede'}
 ];
 function loadNotionMkt(){
-  MILESTONES=NOTION_MKT.map(r=>({id:'nm'+r.n,name:r.name,cat:r.cat,country:r.country,month:r.month,date:'',info:r.info,link:r.url,fileId:'',fileName:'',fileType:'',thumb:''}));
-  saveMile();render();toast('노션 마케팅활동 '+NOTION_MKT.length+'건을 행사 목록에 반영했습니다');
+  let added=0,updated=0;
+  NOTION_MKT.forEach(r=>{
+    const ex=MILESTONES.find(x=>(x.name||'').trim()===(r.name||'').trim()&&(+x.month)===(+r.month)&&(x.country||'중국')===(r.country||'중국'));
+    if(ex){if(!ex.link)ex.link=r.url;if(!ex.info)ex.info=r.info;if(!ex.cat)ex.cat=r.cat;updated++;}
+    else{MILESTONES.push({id:'nm'+r.n,name:r.name,cat:r.cat,country:r.country,month:r.month,date:'',dateEnd:'',info:r.info,link:r.url,attn:'',cost:'',newcust:'',owners:[],fileId:'',fileName:'',fileType:'',thumb:''});added++;}
+  });
+  saveMile();render();toast(`노션 마케팅활동 반영 · 신규 ${added}건 · 갱신 ${updated}건 · 기존 일정·날짜 유지`);
+}
+/* 노션 불러오기로 날짜가 지워진 경우: 기본 일정(날짜 포함)으로 복원 — 비고·참가인원 등 입력값은 유지 */
+function restoreMileSeed(){
+  const cur={};MILESTONES.forEach(x=>{cur[(x.name||'').trim()+'|'+x.month]=x;});
+  MILESTONES=MILE_SEED.map((s,idx)=>{const c=cur[(s.name||'').trim()+'|'+s.month]||{};
+    return {id:'ms'+idx,name:s.name,cat:s.cat,country:s.country||'중국',month:s.month,date:s.date||'',dateEnd:'',info:s.info||'',
+      link:c.link||'',attn:c.attn||'',cost:c.cost||'',newcust:c.newcust||'',owners:c.owners||[],fileId:'',fileName:'',fileType:'',thumb:''};});
+  saveMile();render();toast('기본 일정(날짜 포함)으로 복원했습니다 · 비고/참가인원 등 입력값 유지');
 }
 /* XLSX(SheetJS) 준비 보장: 헤드 스크립트 로딩 대기 → 실패 시 대체 CDN 주입 */
 let _xlsxAlt=false;
@@ -3785,6 +3995,21 @@ function exportMileXlsx(){
       toast(`엑셀로 내보냈습니다 (${list.length}건)`);
     }catch(e){toast('엑셀 내보내기 오류: '+((e&&e.message)||''));}
   });
+}
+/* 노션 반영용 내보내기 — 이 파일을 채팅에 첨부해 "노션 반영" 요청하면 마케팅 DB에 반영됨 */
+function exportMileJson(){
+  const data=MILESTONES.map(x=>({
+    month:x.month||'', date:x.date||'', name:x.name||'', info:x.info||'',
+    country:x.country||'중국', cat:x.cat||'', link:x.link||'',
+    attn:x.attn||'', cost:x.cost||'', newcust:x.newcust||'',
+    owners:Array.isArray(x.owners)?x.owners:[], notionId:x.notionId||''
+  }));
+  const payload={type:'chunghwa-milestones', ver:1, year:YEAR, exportedFrom:'dashboard', count:data.length, items:data};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`중화팀_일정_노션반영용_${YEAR}.json`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast(`노션 반영용 파일 내보냄 (${data.length}건) · 채팅에 첨부해 "노션 반영해줘" 라고 하세요`);
 }
 function addMile(){MILESTONES.unshift({id:'ml'+Date.now(),name:'',cat:'교육',country:MILECTRY||'중국',month:MONTH,date:'',info:'',link:'',fileId:'',fileName:'',fileType:'',thumb:''});saveMile();render();}
 function delMile(i){if(MILESTONES[i]&&MILESTONES[i].fileId)repDelFile(MILESTONES[i].fileId);MILESTONES.splice(i,1);saveMile();render();}
@@ -4368,7 +4593,7 @@ function renderRR(){
   let h=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:10px"><h3 style="font-size:15px">업무 R&R · 성과지표</h3><span class="unit">인원 선택 · 셀 클릭해 직접 수정 (자동저장)</span><button class="mile-add" onclick="applyRRFromSheet()">R&R 관리표 반영</button></div>`;
   h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${RRSEL===''?'on':''}" onclick="setRRSel('')">전체</button>`
     +RRDATA.map((r,i)=>`<button class="${RRSEL===i?'on':''}" onclick="setRRSel(${i})">${esc(r.who)}</button>`).join('')+'</div>';
-  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:34%;text-align:left">담당</th><th style="width:25%;text-align:left">업무 R&R</th><th style="width:25%;text-align:left">성과지표</th></tr></thead><tbody>`;
+  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:16%;text-align:left">담당</th><th style="width:34%;text-align:left">업무 R&R</th><th style="width:34%;text-align:left">성과지표</th></tr></thead><tbody>`;
   RRDATA.forEach((r,i)=>{
     if(RRSEL!==''&&RRSEL!==i)return;
     h+=`<tr>
@@ -4522,7 +4747,7 @@ function renderTeamRR(){
   h+=`<div class="weeknote" style="margin:2px 0 12px"><b>본사 Role</b> — ① 중국 시장·경쟁사 조사/분석 ② 사업 전략·중점 추진과제·KPI 목표 수립(w/법인) ③ 법인 영업·마케팅 전략 & 실행 지원 → 목표 달성·개선 ④ 업무 프로세스 개선 &nbsp;·&nbsp; 인원 구성 총 6명(대만법인장 1인 포함)</div>`;
   h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${RRTEAMSEL===''?'on':''}" onclick="setRRTeamSel('')">전체</button>`
     +RRTEAM.map((r,i)=>`<button class="${RRTEAMSEL===i?'on':''}" onclick="setRRTeamSel(${i})">${esc(r.who)}</button>`).join('')+'</div>';
-  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:34%;text-align:left">담당</th><th style="width:25%;text-align:left">업무 R&R</th><th style="width:25%;text-align:left">성과지표</th></tr></thead><tbody>`;
+  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl rrtbl4"><thead><tr><th style="width:16%">구분</th><th style="width:16%;text-align:left">담당</th><th style="width:34%;text-align:left">업무 R&R</th><th style="width:34%;text-align:left">성과지표</th></tr></thead><tbody>`;
   RRTEAM.forEach((r,i)=>{
     if(RRTEAMSEL!==''&&RRTEAMSEL!==i)return;
     h+=`<tr>
@@ -4531,6 +4756,79 @@ function renderTeamRR(){
       <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRRTeam(${i},'work',this.value)">${esc(r.work)}</textarea></td>
       <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editRRTeam(${i},'kpi',this.value)">${esc(r.kpi)}</textarea></td>
     </tr>`;});
+  return h+'</tbody></table></div></div>';
+}
+/* ===== 담당자 R&R (원본: 중화 영업본부 R&R 관리표 — 인원별 업무리스트) ===== */
+const PRR_SEED=[
+ {mgr:'lee',dept:'팀운영',proj:'중화팀 운영 총괄',area:'중국·대만·홍콩',period:'26.1~26.12',goal:'중화팀 KPI 달성 및 조직 운영 효율화',work:'KPI 달성 관리, 팀 R&R·일정 관리, 팀원 업무 점검, 주요 이슈 조정'},
+ {mgr:'lee',dept:'영업',proj:'화동·화남 영업 기반 강화',area:'중국 화동·화남',period:'26.6~26.12',goal:'매출 확대·시장점유율 향상 및 신규 고객 개발',work:'대리상·하부고객·신규 진입점 개발, DSO 확대, BD·ARi 판매 확대'},
+ {mgr:'lee',dept:'제품 PM',proj:'제품 경쟁력 강화',area:'중국',period:'26.1~26.12',goal:'중국 시장 맞춤형 제품전략 및 경쟁력 강화',work:'경쟁제품·가격·고객 VOC 분석, 제품 개선사항 정리, 제품경쟁력 회의 운영'},
+ {mgr:'lee',dept:'제품 PM',proj:'BD·ARi 제품 전략 및 시장 런칭',area:'중국',period:'26.1~26.12',goal:'ARi 성공적 런칭 및 BD 판매 확대',work:'ARi 신제품 전략보고서 작성, 런칭 계획 수립, 교육자료·판매전략 운영, BD·ARi 진입 확대·성과 관리'},
+ {mgr:'lee',dept:'제품 PM',proj:'Evidence 중국 DSO 진입',area:'중국',period:'26.7~26.12',goal:'Evidence 중국 DSO 판매 기반 구축',work:'가격정책·수출입·제품 운영·고객 및 주문 프로세스 협의'},
+ {mgr:'lee',dept:'지원',proj:'본부장 업무 지원',area:'중국·대만·홍콩',period:'26.1~26.12',goal:'일정 조정',work:'본부장 일정 보고'},
+ {mgr:'lee',dept:'제품 PM',proj:'바이오레이즈 중국 생산 전환 프로젝트',area:'중국',period:'26.1~26.12',goal:'중국 현지 생산체계 구축 및 제품 공급 안정화',work:'본사·중국 생산업체 역할·일정 조율, 부품 공급방식 협의, 통관 프로세스 점검, 현지 조립·생산 준비, 교육·검수·품질관리, 출시 일정·이슈 관리 (COXO·바이오레이즈·연구소·물류·인허가 협업)'},
+ {mgr:'lee',dept:'영업',proj:'세미나 기반 하부고객 개발·구매전환 프로세스 구축',area:'중국',period:'26.7~26.12',goal:'세미나 참석 고객 체계적 후속관리 및 신규 구매 전환 확대',work:'초청→세미나→담당자 지정→방문→구매 제안→첫 구매 단계별 관리체계 구축, 진행률·F/U 관리, 신규 CRM 등록, 미진행 고객 점검·본부별 리뷰'},
+ {mgr:'seo',dept:'사업전략·KPI',proj:'시장 분석 및 대응 방안 수립',area:'중국',period:'26.1~26.12',goal:'3C 분석·STP/4P 전략 업데이트',work:'경쟁사 동향·실적 분석 및 가격 경쟁력 강화 방안 수립'},
+ {mgr:'seo',dept:'사업전략·KPI',proj:'전략실행 정기 보고',area:'중국',period:'26.1~26.12',goal:'정기보고(일일/주간/월간)',work:'Daily Report·주간/월간회의·M/S·기업공개자료 보고'},
+ {mgr:'seo',dept:'사업전략·KPI',proj:'회의체 운영',area:'중국',period:'26.1~26.12',goal:'주간/월간 회의 진행',work:'법인 주간회의·영업본부 주간회의·법인 월간회의'},
+ {mgr:'seo',dept:'사업전략·KPI',proj:'KPI 관리',area:'중국',period:'26.1~26.12',goal:'실적·DSO·전략제품·하부고객',work:'법인 실적 현황 점검 및 대응 방안 수립'},
+ {mgr:'seo',dept:'영업 M/S 확대',proj:'지역별 M/S 목표 달성',area:'중국',period:'26.1~26.12',goal:'중국 전체 8.5% 달성 / 부진 지역 6%↑ 개선',work:'절강·화중·화서·화북본부 전담 관리'},
+ {mgr:'seo',dept:'영업 M/S 확대',proj:'DSO 진입 및 판매 확대',area:'중국',period:'26.1~26.12',goal:'250점 진입(S,A급 60점)·60만대 판매',work:'기존 핵심 고객 대응 / 타겟 대상 신규 진입'},
+ {mgr:'seo',dept:'영업 M/S 확대',proj:'하부고객 진입 및 판매 확대',area:'중국',period:'26.1~26.12',goal:'8,500점 확보 / 미출하 고객 20%↓',work:'CRM 기반 관리 강화 / 신규 발굴'},
+ {mgr:'seo',dept:'전략 제품',proj:'BD·ARi 진입 및 판매 확대',area:'중국',period:'26.1~26.12',goal:'BD 1,500점·8만대 / ARi 500점·8천대',work:'기존 고객 판촉 강화 / 신규 타겟 선정·영업 관리'},
+ {mgr:'seo',dept:'진행 프로젝트',proj:'2차 VBP 대응',area:'중국',period:'26.7~26.12',goal:'甲급 진입',work:'제품·가격 입찰 전략 수립 및 국공립 영업 관리'},
+ {mgr:'kim',dept:'법인 운영 관리',proj:'생산/수출/수금 진행 관리',area:'중국/대만/홍콩',period:'26.6~26.12',goal:'수출·수금 KPI 달성 및 재고 월령 관리',work:'수출입관리·수금 관리·물동 및 재고 관리'},
+ {mgr:'kim',dept:'법인 운영 관리',proj:'법인 VOC 및 Failed FX 교환 처리',area:'중국/대만/홍콩',period:'26.6~26.12',goal:'VOC 대응 및 Failed FX 교환 처리',work:'라벨·박스 파손 등 품질 이슈 대응, 분기별 Failed FX 교환 처리'},
+ {mgr:'kim',dept:'법인 운영 관리',proj:'대만 법인 수출 준비',area:'대만',period:'26.6~26.12',goal:'법인 수주 등록 및 수출 준비',work:'ERP·PRM 거래처 계정 생성'},
+ {mgr:'kim',dept:'법인 운영 관리',proj:'법인 마케팅 물품 지원',area:'중국',period:'26.6~26.12',goal:'마케팅 용품 수주 및 출고 진행',work:'무상 수주 등록·출고(핸드캐리·FEDEX 통관·우회 등)'},
+ {mgr:'kim',dept:'법인 수익 관리',proj:'제품 수출가 책정',area:'중국/대만/홍콩',period:'26.6~26.12',goal:'신제품 수출가 책정',work:'제품 수출가 확인 및 등록'},
+ {mgr:'kim',dept:'성과 관리',proj:'월간 KPI 지표 관리',area:'중국',period:'26.6~26.12',goal:'월간 KPI 지표 관리',work:'월간 KPI 프로그램 업데이트 및 경영 회의 자료 추가'},
+ {mgr:'kim',dept:'마케팅 지원',proj:'DSO 방문 활동 지원',area:'중국',period:'26.7~26.12',goal:'생산 공장·연구소 소개 지원',work:'연구소 소개 통역 진행 및 고객 대응'},
+ {mgr:'kim',dept:'진행 프로젝트',proj:'Evidence 닝보 법인 수출',area:'중국',period:'26.7~26.12',goal:'닝보 법인 공급 계약',work:'공급 계약 서류 및 수출입 프로세스 지원'},
+ {mgr:'kim',dept:'진행 프로젝트',proj:'ZBLC kit 닝보 법인 수출',area:'중국',period:'26.7~26.9',goal:'ZBLC kit 닝보 법인 수출',work:'품목 형명·단가 확인 완료, 수요 발생 시 수주 등록 진행'},
+ {mgr:'kim',dept:'진행 프로젝트',proj:'TBMS 파츠 입고 확인',area:'대만',period:'26.7~26.8',goal:'TBMS 수주 파츠·장비 재고 확보',work:'미재고 품목 입고일 확인 및 2-3개월 예상 오더량 파악(w/구매팀·TBMS)'},
+ {mgr:'tak',dept:'교육',proj:'교육 및 세미나 준비·운영',area:'중국',period:'26.1~26.12',goal:'교육·세미나 활동을 통한 고객 개발 및 판매 전환',work:'교육활동·경쟁사 동향 분석, KOL교육 계획관리·개선, 교육 효과 분석, 국제샤롱·해외세미나·서울대·메가스쿨 계획, 해외연자 섭외(미넥 협업)'},
+ {mgr:'tak',dept:'마케팅',proj:'브랜드 및 마케팅 활동 관리',area:'중국',period:'26.1~26.12',goal:'브랜드 인지도 및 마케팅 성과 향상',work:'DSO 방문 효용성 F/U, 마케팅활동 계획·결과 보고, TASK·DSO 방한행사 준비, KIT Compensation 비용 관리'},
+ {mgr:'tak',dept:'PM',proj:'제품 관리 및 본사–법인 커뮤니케이션 운영',area:'중국',period:'26.1~26.12',goal:'PM 업무 수행 및 제품 런칭 관리',work:'실적마감, 컨센서스 회의 진행, 법인 디지털 교육 진행, 플라즈마 재런칭 전략 보완 작성'},
+ {mgr:'yu',dept:'사업전략·KPI',proj:'시장 분석 및 전략 수립',area:'대만',period:'26.3~26.12',goal:'3C 분석·STP/4P 전략 업데이트',work:'경쟁사 동향·실적 분석 및 가격 경쟁력 강화 방안 수립'},
+ {mgr:'yu',dept:'사업전략·KPI',proj:'법인 실적 KPI 관리',area:'대만',period:'26.3~26.12',goal:'실적·교육/마케팅·시스템별 출고 비중',work:'KPI 달성 관리, 실적 현황 점검, 대응 방안 수립'},
+ {mgr:'yu',dept:'영업 인프라',proj:'대만법인 설립 지원',area:'대만',period:'26.3~26.12',goal:'대만법인 설립 및 영업 기반 마련',work:'인허가 양도양수, 법인/대리점 관리 체계 정립, 거래처 관리체계 도입'},
+ {mgr:'yu',dept:'영업 관리',proj:'홍콩 대리상 영업',area:'홍콩',period:'26.3~26.12',goal:'임플란트 & B/L Co-Sales',work:'딜러 실적 현황 및 영업 활성화 방안 수립'},
+ {mgr:'yu',dept:'운영 관리',proj:'회의체 운영',area:'대만·홍콩',period:'26.3~26.12',goal:'법인/딜러 PSI 관리 및 이슈 대응',work:'법인 주간회의 / 딜러 월간회의'},
+ {mgr:'yu',dept:'마케팅',proj:'브랜드 및 마케팅 활동 관리',area:'대만·홍콩',period:'26.3~26.12',goal:'브랜드 인지도 및 마케팅 성과 향상',work:'마케팅 사업계획 수립, 법인/딜러 대상 영업 교육, 브랜드 홍보자료 배포'},
+ {mgr:'yu',dept:'제품 PM',proj:'BD·ARi 제품 전략 및 시장 런칭',area:'대만·홍콩',period:'26.3~26.12',goal:'프리미엄 임플란트 성공적 런칭',work:'제품 런칭 계획 수립·판매전략 운영, BD·ARi 진입 확대 및 판매 성과 관리'},
+ {mgr:'yu',dept:'전략 제품',proj:'B/L 시장점유율 확대',area:'대만·홍콩',period:'26.3~26.12',goal:'대만 250만불·홍콩 18만불 수출 실적 달성',work:'신규 거래처 발굴, 현지 세미나·학술행사 지원, 백오더 처리'}
+];
+let PRR=[];try{const s=localStorage.getItem('wr_prr_v1');if(s)PRR=JSON.parse(s)||[];}catch(e){}
+if(!PRR.length){PRR=PRR_SEED.map(x=>({...x}));try{localStorage.setItem('wr_prr_v1',JSON.stringify(PRR));}catch(e){}}
+let PRRSEL='';
+function savePRR(){try{localStorage.setItem('wr_prr_v1',JSON.stringify(PRR));}catch(e){}}
+function setPRRSel(v){PRRSEL=v;render();}
+function editPRR(i,f,v){if(PRR[i]){PRR[i][f]=v;savePRR();}}
+function addPRRRow(){PRR.push({mgr:PRRSEL||'lee',dept:'',proj:'',area:'',period:'',goal:'',work:''});savePRR();render();}
+function delPRRRow(i){PRR.splice(i,1);savePRR();render();}
+function resetPRR(){PRR=PRR_SEED.map(x=>({...x}));savePRR();render();toast('담당자 R&R을 원본(관리표) 기준으로 되돌렸습니다');}
+function renderPersonRR(){
+  const nm=id=>{const m=MGRS.find(x=>x.id===id);return m?m.name:id;};
+  const mgrOpt=(sel)=>MGRS.filter(m=>m.id!=='jang').map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)}</option>`).join('');
+  let h=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:6px"><h3 style="font-size:15px">담당자 R&R · 업무리스트</h3><span class="unit">인원별 업무·프로젝트 · 담당영역·기간·목표·주요 업무 · 셀 클릭해 직접 수정(자동저장)</span><button class="mile-add" onclick="addPRRRow()">＋ 업무 추가</button><button class="mile-add" style="margin-left:6px" onclick="resetPRR()">원본으로 되돌리기</button></div>`;
+  h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${PRRSEL===''?'on':''}" onclick="setPRRSel('')">전체</button>`
+    +MGRS.filter(m=>m.id!=='jang').map(m=>`<button class="${PRRSEL===m.id?'on':''}" onclick="setPRRSel('${m.id}')">${esc(m.name)}</button>`).join('')+'</div>';
+  h+=`<div style="overflow-x:auto"><table class="ptable rrtbl prrtbl"><thead><tr><th style="width:8%">담당자</th><th style="width:9%;text-align:left">업무 구분</th><th style="width:16%;text-align:left">업무·프로젝트</th><th style="width:8%;text-align:left">담당영역</th><th style="width:8%;text-align:center">기간</th><th style="width:22%;text-align:left">목표</th><th style="text-align:left">주요 업무</th><th style="width:30px"></th></tr></thead><tbody>`;
+  let shown=0;
+  PRR.forEach((r,i)=>{
+    if(PRRSEL!==''&&PRRSEL!==r.mgr)return;shown++;
+    h+=`<tr>
+      <td><select onchange="editPRR(${i},'mgr',this.value)">${mgrOpt(r.mgr)}</select></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'dept',this.value)">${esc(r.dept||'')}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'proj',this.value)">${esc(r.proj||'')}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'area',this.value)">${esc(r.area||'')}</textarea></td>
+      <td style="text-align:center"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'period',this.value)" style="text-align:center">${esc(r.period||'')}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'goal',this.value)">${esc(r.goal||'')}</textarea></td>
+      <td class="rl"><textarea class="rr-cell" oninput="autogrow(this)" onchange="editPRR(${i},'work',this.value)">${esc(r.work||'')}</textarea></td>
+      <td style="text-align:center"><button class="mile-del" onclick="delPRRRow(${i})" title="삭제">🗑</button></td>
+    </tr>`;});
+  if(!shown)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">등록된 업무가 없습니다.</td></tr>`;
   return h+'</tbody></table></div></div>';
 }
 /* ===== 중화팀 중점 추진과제 관리표 (지역·핵심과제·목표·대응방안·담당자·일정·진행률) ===== */
@@ -4641,11 +4939,12 @@ function renderMGoals(){
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  html+='<div class="pm-tabs" style="margin-bottom:16px">'+[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R']].map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';
+  html+='<div class="pm-tabs" style="margin-bottom:16px">'+[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R']].map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
   if(GOALSUB==='mgoal')return html+renderMGoals();
   if(GOALSUB==='rr')return html+renderRR();
   if(GOALSUB==='team')return html+renderTeamRR();
+  if(GOALSUB==='prr')return html+renderPersonRR();
   if(GOALSUB==='road')return html+perfRoad();
   return html+goalsMain();
 }
