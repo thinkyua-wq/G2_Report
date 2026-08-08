@@ -2094,7 +2094,7 @@ const MENULB={overview:'중화팀 관리 현황판',mreport:'월간업무현황'
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
 let VALL=false;
-const MEMBER_TABS=['mreport','calendar','calmonth']; // 팀원 열람 허용: 관리 현황판·행사·일정
+const MEMBER_TABS=['mreport','calendar']; // 팀원 열람 허용: 월간업무현황·중화팀 행사 (이유아 외 전원)
 function memberScopeId(){return (VROLE==='member'&&MEMBERID&&!VALL&&TAB!=='overview')?MEMBERID:'';}
 function rrIdxOf(id){const m=mgrById(id);if(!m)return '';const i=RRDATA.findIndex(r=>String(r.who||'').includes(m.name));return i<0?'':i;}
 function applyMemberScope(){const s=memberScopeId();if(!s)return;KANMGRSEL=[s];MGSEL=s;RRSEL=rrIdxOf(s);
@@ -2171,7 +2171,7 @@ const TODAY=new Date();
 /* ══ 기간 기본값 규칙 ══
    · G2중화 월간성과/실행현황을 열면 → 해당일 기준 "전달" (월 단위)
    · 주간업무현황을 열면 → 해당일 기준 "전주" (주 단위) */
-function gotoPrevMonthDefault(){let pm=(TODAY.getMonth()+1)-1;MONTH=Math.max(7,Math.min(12,pm<1?1:pm));YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;W=Math.max(0,WEEKS.length-1);try{MFMON=String(MONTH);}catch(e){}}
+function gotoPrevMonthDefault(){let pm=(TODAY.getMonth()+1)-1;MONTH=Math.max(7,Math.min(12,pm<1?1:pm));YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;W=Math.max(0,WEEKS.length-1);try{MFMON=String(Math.min(12,MONTH+1));}catch(e){}}
 function gotoPrevWeekDefault(){
   const tIso=+isoWeekNum(todayStr())||0;let tw=tIso-1;if(tw<29)tw=29;
   for(let m=7;m<=12;m++){const ws=buildWeeks(m);const idx=ws.findIndex(x=>x.iso===tw);
@@ -3378,6 +3378,36 @@ function mrSave(el){
   if(f==='r'||f==='g')render(); // rate badge color / gubun grouping needs rebuild
 }
 /* ═ 월간업무현황 · 거래처실적 (MDEAL · 1~12월 누적) ═ */
+function mrFocusTiles(extra){ // 중점추진과제 KPI (표시 월 = MFMON)
+  const fm=+(typeof MFMON!=='undefined'?MFMON:Math.min(12,MONTH+1))||Math.min(12,MONTH+1);
+  const list=(MFOCUS[String(fm)]||[]);
+  const withOwn=list.filter(t=>mfOwners(t).length).length;
+  const ps=list.map(t=>{const m2=String(t.prog||'').match(/(\d+)/);return m2?Math.min(100,+m2[1]):null;}).filter(v=>v!=null);
+  const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+  const done=ps.filter(v=>v>=100).length;
+  const tile=(lb,v,sub,pill)=>`<div class="om-tile"><div class="om-tl">${lb} ${pill||''}</div><div class="om-tv">${v}</div><div class="om-ts">${sub}</div></div>`;
+  let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
+  h+=tile(fm+'월 중점추진과제',list.length+'<span class="om-tu">건</span>','매월 중점추진과제 기준');
+  h+=tile('담당자 배정',withOwn+'<span class="om-tu">/'+list.length+'건</span>',list.length?('배정률 '+Math.round(withOwn/list.length*100)+'%'):'—',omPill(list.length?withOwn/list.length:null));
+  h+=tile('평균 진행률',(avg==null?'—':avg+'<span class="om-tu">%</span>'),'진행률 입력 '+ps.length+'건 기준',omPill(avg==null?null:avg/100));
+  h+=tile('완료 과제',done+'<span class="om-tu">건</span>','진행률 100% 기준');
+  return h+(extra||'')+'</div>';
+}
+function mrTeamTiles(extra){ // 중화팀과제(월보고) KPI (표시 월 = MONTH)
+  const rows=(typeof mrData==='function')?mrData():[];
+  const ps=rows.map(x=>{const m2=String(x.r||'').match(/(\d+)\s*%/);return m2?Math.min(100,+m2[1]):null;}).filter(v=>v!=null);
+  const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+  const done=ps.filter(v=>v>=100).length;
+  const warn=ps.filter(v=>v<50).length;
+  const nextN=rows.filter(x=>String(x.a||'').trim()).length;
+  const tile=(lb,v,sub,pill)=>`<div class="om-tile"><div class="om-tl">${lb} ${pill||''}</div><div class="om-tv">${v}</div><div class="om-ts">${sub}</div></div>`;
+  let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
+  h+=tile(MONTH+'월 보고 과제',rows.length+'<span class="om-tu">건</span>','담당자 '+[...new Set(rows.map(x=>x.m))].length+'명 · 월말보고 기준');
+  h+=tile('평균 달성률',(avg==null?'—':avg+'<span class="om-tu">%</span>'),'달성률 % 입력 '+ps.length+'건 기준',omPill(avg==null?null:avg/100));
+  h+=tile('완료 / 주의',done+'<span class="om-tu">건</span> · <b style="color:#b23434">'+warn+'</b><span class="om-tu">건</span>','완료=100% · 주의=50% 미만');
+  h+=tile('익월 실행계획',nextN+'<span class="om-tu">건</span>',Math.min(12,MONTH+1)+'월 계획 보유 과제');
+  return h+(extra||'')+'</div>';
+}
 function mrMonthTiles(extra){
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH);
   const k=v=>Math.round((v||0)/1000),n=v=>k(v).toLocaleString('en-US');
@@ -3460,7 +3490,7 @@ function mrDealTable(){
 function renderTeamWeekCards(wk){
   const iso=(WEEKS[W]&&WEEKS[W].iso)||'';
   const nIso=iso?iso+1:'';
-  let h=`<div class="ov-sec">중화팀과제 <span class="ov-sub">이번주(W${iso}) 과제 + 다음주(W${nIso}) 계획 + ${MONTH}월 중점추진과제 · 항목 클릭 → 상세</span></div>`;
+  let h=`<div class="ov-sec">중화팀과제 </div>`;
   h+='<div class="ov-cards">'+MGRS.map(m=>{
     const items=wk.map((r,i)=>({r,i})).filter(x=>x.r.m===m.id);
     if(!items.length)return '';
@@ -3496,7 +3526,7 @@ function renderTeamMonthCards(isMR){
   if(!isMR){const wkd=wkData(); if(wkd.length) return renderTeamWeekCards(wkd);} // 주간업무현황: 해당 주차 주간보고 연동
 
     const m1=MONTH, m2=(MONTH<12?MONTH+1:12);
-    h+=`<div class="ov-sec">중화팀과제 <span class="ov-sub">${m1}월 과제 + ${m2}월 과제 + ${m2}월 중점추진과제 · 항목 클릭 → 상세${(TAB==='mreport')?' · 상세 더블클릭 → 수정':''}</span></div>`;
+    h+=`<div class="ov-sec">중화팀과제 </div>`;
     h+='<div class="ov-cards">'+MGRS.map(m=>{
       const t1=ovMgrMonthTasks(m.id,m1), t2=ovMgrMonthTasks(m.id,m2);
       const mfNext=mfTasksForOwner(m.name,m2);
@@ -3539,14 +3569,19 @@ function renderOverview(){
   const cn=ovDealAgg('중국'), tw=ovDealAgg('대만'), hk=ovDealAgg('홍콩');
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
-  h+=`<div class="ov-sec">핵심 지표 <span class="ov-sub">누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사</span></div>`;
-  const evTile=`<div class="ov-tile ev">${wev.length?`<div class="ov-et">${esc(wev[0].name)}</div><div class="ov-ed">${esc(wev[0].date||'')}${wev.length>1?` · 외 ${wev.length-1}건`:''}</div>`:`<div class="ov-et mut">${periodWord()} 행사 없음</div>`}<div class="ov-tl">${periodWord()} 중화팀 행사</div></div>`;
-  h+=(TAB==='mreport')?mrMonthTiles(evTile):ovMainTiles(evTile);
   const isMR=(TAB==='mreport');
   const OVTABS=[['main','본사실적'],['focus','중점추진과제'],['month','중화팀과제']];
   let CT=isMR?MRTAB:OVTAB;
   if(CT==='report')CT='month';
   if(!OVTABS.some(([k])=>k===CT))CT='main';
+  const secSub=(isMR&&CT==='focus')?`${Math.min(12,MONTH+1)}월 중점추진과제 KPI · ${periodWord()} 행사`:(isMR&&CT==='month')?`${MONTH}월 중화팀과제 KPI · ${periodWord()} 행사`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`;
+  h+=`<div class="ov-sec">핵심 지표 <span class="ov-sub">${secSub}</span></div>`;
+  const evTile=`<div class="ov-tile ev">${wev.length?`<div class="ov-et">${esc(wev[0].name)}</div><div class="ov-ed">${esc(wev[0].date||'')}${wev.length>1?` · 외 ${wev.length-1}건`:''}</div>`:`<div class="ov-et mut">${periodWord()} 행사 없음</div>`}<div class="ov-tl">${periodWord()} 중화팀 행사</div></div>`;
+  if(isMR){
+    if(CT==='focus')h+=mrFocusTiles(evTile);
+    else if(CT==='month')h+=mrTeamTiles(evTile);
+    else h+=mrMonthTiles(evTile);
+  } else h+=ovMainTiles(evTile);
   if(isMR)MRTAB=CT; else OVTAB=CT;
   h+='<div class="pm-tabs" style="margin-top:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   h+='<div class="ov-tabc">';
@@ -4496,8 +4531,8 @@ function mileTable(){
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
-  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">전체 일정 목록(월 무관) · 헤더 클릭 정렬 · 비고(노션 링크) · 자동저장 · ${list.length}건</span><a class="mile-add mini" href="https://app.notion.com/p/G2-3a873e4ce54281ec9214f00fbfc6ae9b" target="_blank" rel="noopener" style="text-decoration:none">🌝 노션 마케팅활동</a><button class="mile-add mini" onclick="loadNotionMkt()" style="margin-left:5px">노션 활동 불러오기</button><button class="mile-add mini" onclick="restoreMileSeed()" style="margin-left:5px;background:#b45309">↺ 기본 일정 복원</button><button class="mile-add mini" onclick="exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button><button class="mile-add mini" onclick="exportMileJson()" style="margin-left:5px;background:#5b3fa8">📤 노션 반영용 내보내기</button><button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 일정 추가</button></div>
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:6%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:8%')}${th('cat','구분','text-align:left;width:10%')}${th('name','일정명','text-align:left;width:13%')}<th style="text-align:left;width:16%">내용개요</th><th style="text-align:center;width:6%">참가<br>인원</th><th style="text-align:center;width:7%">비용</th><th style="text-align:center;width:6%">신규<br>고객</th><th style="text-align:left;width:9%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
+  let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">${list.length}건</span><button class="mile-add mini" onclick="exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button><button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 일정 추가</button></div>
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:6%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:8%')}${th('cat','구분','text-align:left;width:10%')}<th style="text-align:left;width:26%">내용개요</th><th style="text-align:center;width:6%">참가<br>인원</th><th style="text-align:center;width:6%">신규<br>고객</th><th style="text-align:center;width:6%">비용</th><th style="text-align:center;width:7%">PKG</th><th style="text-align:left;width:9%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
   if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     html+=`<tr>
@@ -4506,16 +4541,16 @@ function mileTable(){
       <td class="mile-day"><input value="${esc((x.date||'').replace(/\d+\s*\/\s*/g,'').replace(/~/g,'-'))}" onchange="editMileTbl(${i},'date',this.value)" placeholder="일자"></td>
       <td style="text-align:center"><select onchange="editMileTbl(${i},'country',this.value)">${ctryOpts(x.country)}</select></td>
       <td><select onchange="editMileTbl(${i},'cat',this.value)">${catOpts(x.cat)}</select></td>
-      <td class="nmc"><input value="${esc(x.name)}" onchange="editMileTbl(${i},'name',this.value)"></td>
-      <td class="infc">${x.link?`<a class="mile-infolink" href="${esc(x.link)}" target="_blank" rel="noopener" title="노션 페이지 열기">${esc(x.info||'(내용 없음)')} <span class="mile-open">↗</span></a>`:`<textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||'')}</textarea>`}</td>
+      <td class="infc">${x.link?`<a class="mile-infolink" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.info||x.name||'(내용 없음)')} <span class="mile-open">↗</span></a>`:`<textarea class="rep-sum" oninput="autogrow(this)" onchange="editMileTbl(${i},'info',this.value)" placeholder="내용개요">${esc(x.info||x.name||'')}</textarea>`}</td>
       <td class="mile-attn"><input value="${esc(x.attn||'')}" onchange="editMileTbl(${i},'attn',this.value)" placeholder="-"></td>
-      <td class="mile-attn"><input value="${esc(x.cost||'')}" onchange="editMileTbl(${i},'cost',this.value)" placeholder="-"></td>
       <td class="mile-attn"><input value="${esc(x.newcust||'')}" onchange="editMileTbl(${i},'newcust',this.value)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(x.cost||'')}" onchange="editMileTbl(${i},'cost',this.value)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(x.pkg||'')}" onchange="editMileTbl(${i},'pkg',this.value)" placeholder="-"></td>
       <td class="mile-own">${ownerCellMile(x,i)}</td>
       <td class="mile-bigo">${x.link?`<a class="rep-open" href="${esc(x.link)}" target="_blank" rel="noopener">🔗 열기</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
     </tr>`;});
-  return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 노션 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
+  return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
 }
 const NOTION_MKT_PAGE='https://app.notion.com/p/G2-3a873e4ce54281ec9214f00fbfc6ae9b';
 const NOTION_MKT=[
@@ -6066,7 +6101,7 @@ function setMonthSel(v){
   const m=+v;
   if(m!==MONTH){ MONTH=m; WEEKS=buildWeeks(MONTH);
     W=0; // 월 변경 시 가장 앞 주차 선택
-    if(typeof MFMON!=='undefined')MFMON=String(m); }  // 매월 중점추진과제도 선택 월에 연동
+    if(typeof MFMON!=='undefined')MFMON=String(TAB==='mreport'?Math.min(12,m+1):m); }  // 중점추진과제: 월간화면=+1개월, 주간화면=해당월
   if(PERIOD==='year')PERIOD='month'; else if(PERIOD!=='month')PERIOD='week';
   render();
 }
@@ -6553,39 +6588,40 @@ async function buildDeckBase64(){
   const total=rows.length, avg=total?Math.round(rows.reduce((s,r)=>s+r.p,0)/total):0, done=rows.filter(r=>r.p>=100).length;
   const wkName=(WEEKS[W]&&WEEKS[W].name)||'';
   let s=P.addSlide(); s.background={color:G};
-  s.addText('중화팀 주간 업무보고',{x:0.6,y:2.4,w:12,h:1,fontFace:F,fontSize:44,bold:true,color:'FFFFFF'});
-  s.addText(pptWLabel(),{x:0.6,y:3.4,w:12,h:0.6,fontFace:F,fontSize:22,color:'D8ECE0'});
-  s.addText('G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.6,y:6.6,w:12,h:0.4,fontFace:F,fontSize:14,color:'CFE3D8'});
+  s.addText('중화팀 주간 업무보고',{x:0.6,y:2.4,w:12,h:1,fontFace:F,fontSize:53,bold:true,color:'FFFFFF'});
+  s.addText(pptWLabel(),{x:0.6,y:3.4,w:12,h:0.6,fontFace:F,fontSize:26,color:'D8ECE0'});
+  s.addText('G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.6,y:6.6,w:12,h:0.4,fontFace:F,fontSize:17,color:'CFE3D8'});
   s.addShape(P.ShapeType.ellipse,{x:10.7,y:0.7,w:1.9,h:1.9,fill:{color:DG},line:{color:'6FAE8C',width:1}});
-  s.addText(wkName,{x:10.7,y:1.35,w:1.9,h:0.6,fontFace:F,fontSize:22,bold:true,color:'FFFFFF',align:'center'});
+  s.addText(wkName,{x:10.7,y:1.35,w:1.9,h:0.6,fontFace:F,fontSize:26,bold:true,color:'FFFFFF',align:'center'});
   s=P.addSlide(); s.background={color:'FFFFFF'};
-  s.addText('주간 개요',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
-  s.addText(pptWLabel(),{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+  s.addText('주간 개요',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:34,bold:true,color:DG});
+  s.addText(pptWLabel(),{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
   [['총 과제',total+'건'],['담당자',people.length+'명'],['평균 진행률',avg+'%'],['완료',done+'건']].forEach((st,i)=>{const x=0.55+i*3.05;
     s.addShape(P.ShapeType.roundRect,{x,y:1.7,w:2.75,h:1.5,rectRadius:0.1,fill:{color:LT},line:{color:LN,width:1}});
-    s.addText(st[1],{x,y:1.9,w:2.75,h:0.8,fontFace:F,fontSize:38,bold:true,color:G,align:'center'});
-    s.addText(st[0],{x,y:2.75,w:2.75,h:0.35,fontFace:F,fontSize:13,color:MUT,align:'center'});});
-  people.forEach(m=>{const list=byM[m.id],per=6;
+    s.addText(st[1],{x,y:1.9,w:2.75,h:0.8,fontFace:F,fontSize:46,bold:true,color:G,align:'center'});
+    s.addText(st[0],{x,y:2.75,w:2.75,h:0.35,fontFace:F,fontSize:16,color:MUT,align:'center'});});
+  people.forEach(m=>{const list=byM[m.id],per=12; // 인원당 최대한 1장 (12건 초과 시에만 분할)
     for(let i=0;i<list.length;i+=per){const ch=list.slice(i,i+per);
       const sl=P.addSlide(); sl.background={color:'FFFFFF'};
       const avgP=Math.round(list.reduce((a,r)=>a+r.p,0)/list.length), cnt=Math.ceil(list.length/per), idx=Math.floor(i/per)+1;
-      sl.addText(`${m.name} ${m.title}`+(cnt>1?`  (${idx}/${cnt})`:''),{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:26,bold:true,color:DG});
-      sl.addText(`과제 ${list.length}건 · 평균 진행률 ${avgP}%`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+      sl.addText(`${m.name} ${m.title}`+(cnt>1?`  (${idx}/${cnt})`:''),{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:31,bold:true,color:DG});
+      sl.addText(`과제 ${list.length}건 · 평균 진행률 ${avgP}%`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
       const th=['R&R','국가','핵심과제','완료예정일','진행률','진행사항 (비고)'];
-      const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:11}}))];
+      const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:13}}))];
       ch.forEach(r=>{tr.push([
         {text:r.cat||'',options:{align:'center',color:INK,valign:'middle'}},
         {text:r.country||'',options:{align:'center',color:INK,valign:'middle'}},
         {text:r.label||'',options:{align:'left',color:INK,bold:true,valign:'middle'}},
-        {text:(r.due&&isDate(r.due))?r.due:(r.due||'상시'),options:{align:'center',color:MUT,fontSize:9,valign:'middle'}},
+        {text:(r.due&&isDate(r.due))?r.due:(r.due||'상시'),options:{align:'center',color:MUT,fontSize:11,valign:'middle'}},
         {text:r.p+'%',options:{align:'center',color:pptPC(r.p),bold:true,valign:'middle'}},
-        {text:r.note||'',options:{align:'left',color:'333333',fontSize:9,valign:'middle'}}]);});
-      sl.addTable(tr,{x:0.55,y:1.55,w:12.23,colW:[1.0,0.65,2.7,1.05,0.85,6.0],rowH:0.3,fontFace:F,fontSize:10,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+        {text:r.note||'',options:{align:'left',color:'333333',fontSize:11,valign:'middle'}}]);});
+      const rowH=Math.max(0.3,Math.min(0.52,5.5/(ch.length+1)));
+      sl.addTable(tr,{x:0.55,y:1.55,w:12.23,colW:[1.0,0.65,2.7,1.05,0.85,6.0],rowH,fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
     }});
   const D=(SPCUR&&SPCUR.deal)||(SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:null);
   if(D&&D.length){const sl=P.addSlide(); sl.background={color:'FFFFFF'};
-    sl.addText('실적 현황 · 거래처별 수출·수금',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
-    sl.addText('단위: 천불(USD)',{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:13,color:MUT});
+    sl.addText('실적 현황 · 거래처별 수출·수금',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:34,bold:true,color:DG});
+    sl.addText('단위: 천불(USD)',{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
     const kU=v=>v==null?'—':Math.round(v/1000).toLocaleString();
     const hd=['구분','거래처','수출 목표','수출 실적','KPI','선적','수금 목표','수금 실적'];
     const dt=[hd.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center'}}))];
@@ -6598,7 +6634,7 @@ async function buildDeckBase64(){
       {text:d.ship!=null?Math.round(d.ship*100)+'%':'—',options:{align:'center',color:INK}},
       {text:kU(d.suT),options:{align:'right',color:INK}},
       {text:kU(d.suA),options:{align:'right',color:INK}}]);});
-    sl.addTable(dt,{x:0.55,y:1.6,w:12.23,colW:[1.4,2.8,1.6,1.6,1.0,1.0,1.6,1.63],rowH:0.5,fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+    sl.addTable(dt,{x:0.55,y:1.6,w:12.23,colW:[1.4,2.8,1.6,1.6,1.0,1.0,1.6,1.63],rowH:0.5,fontFace:F,fontSize:14,valign:'middle',border:{type:'solid',color:LN,pt:1}});
   }
   return await P.write({outputType:'base64'});
 }
@@ -6659,7 +6695,7 @@ function cloudStartup(){
   localStorage.setItem=function(k,v){_set(k,v);
     try{if(SYNCON&&SYNC_READY&&typeof k==='string'&&k.indexOf('wr_')===0&&k!=='wr_gcid'&&k!=='wr_autosync'&&k!=='wr_login'&&k!=='wr_vrole'&&k!=='wr_memberid')scheduleSync();}catch(e){}};
 })();
-window.addEventListener('load',()=>{try{MFMON=String(MONTH);}catch(e){} setTimeout(cloudStartup,600);});
+window.addEventListener('load',()=>{try{MFMON=String(TAB==='mreport'?Math.min(12,MONTH+1):MONTH);}catch(e){} setTimeout(cloudStartup,600);});
 
 /* ============ 설정 · PWA ============ */
 function installPWA(){if(window.__pwa){window.__pwa.prompt();window.__pwa=null;}else toast('설치는 웹 호스팅(https) 후 브라우저 주소창의 설치 아이콘으로 가능합니다');}
@@ -6968,6 +7004,20 @@ normalizePlan();
 (function(){try{const c=(PLAN.cards||[]).find(x=>/중국/.test(x.mk));if(c&&!/법인매출/.test(c.sub||'')){c.sub=((c.sub||'').trim())+' · 법인매출 3.3억RMB · 본사수출 2,270만USD · 수량 115만개';savePlan();}}catch(e){}})();
 loadMgrs();
 loadMile();
+/* 마케팅 행사목표(7/30 보고) 반영 — 등록인원(신규고객)·판매목표(PKG 만위안) · 1회 병합 */
+(function(){try{if(localStorage.getItem('wr_milemkt_v1')==='1')return;}catch(e){}
+  const F=(nm,mo)=>MILESTONES.find(x=>+x.month===mo&&((x.name||'')+(x.info||'')).includes(nm));
+  const setv=(x,o)=>{if(!x)return;Object.keys(o).forEach(k2=>{if(x[k2]==null||x[k2]==='')x[k2]=o[k2];});};
+  setv(F('서울대학',9),{attn:'30',newcust:'37',pkg:'191'});
+  {const t=F('유학살롱',9)||F('신장',9);if(t){t.name='신장투어세미나';t.date='9/8';setv(t,{attn:'285',newcust:'341',pkg:'2,645'});}}
+  {const t=F('Early Loading',9)||F('Accelerated',10);if(t){t.name='Accelerated Loading Comp.';t.month=10;t.date='10/23';setv(t,{attn:'50',newcust:'108'});}}
+  {const t=F('대전시회',11)||F('DenTech',10);if(t){t.name='상해 DenTech 전시회';t.month=10;t.date='10/22~25';}}
+  if(!F('즈더 방한',10))MILESTONES.push({name:'즈더 방한',cat:'교육',country:'중국',month:10,date:'10/23~24',info:'즈더(植得) 방한 · CEO사롱'});
+  {const t=F('TASK',12)||F('TASK',11);if(t){t.month=11;t.date='11/9';setv(t,{attn:'100',newcust:'0',pkg:'0'});}}
+  setv(F('연회',12),{attn:'300',newcust:'300',pkg:'4,110'});
+  setv(F('서울대학',12),{attn:'30',newcust:'30',pkg:'155'});
+  try{saveMile();localStorage.setItem('wr_milemkt_v1','1');}catch(e){}
+})();
 loadProj();
 normalizeProjects();
 loadSPERF();
