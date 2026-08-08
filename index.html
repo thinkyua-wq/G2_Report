@@ -4500,7 +4500,7 @@ function wkReportTable(){
 function viewCalendar(){
   if(CALVIEW==='month'){
     let html='<div class="sec-h"><h2>중화팀 일정</h2><span class="hint">월간 달력 · 팀 일정 관리</span><span class="line"></span></div>';
-    return html+monthCalendar()+wkReportTable();
+    return html+monthCalendar();
   }
   let html='<div class="sec-h"><h2>중화팀 행사</h2><span class="hint">2026 중점시장활동 · 행사·세미나 일정</span><span class="line"></span></div>';
   return html+mileCalendar()+mileTable();
