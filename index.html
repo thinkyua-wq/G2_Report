@@ -2172,6 +2172,10 @@ const TODAY=new Date();
    · G2중화 월간성과/실행현황을 열면 → 해당일 기준 "전달" (월 단위)
    · 주간업무현황을 열면 → 해당일 기준 "전주" (주 단위) */
 function gotoPrevMonthDefault(){let pm=(TODAY.getMonth()+1)-1;MONTH=Math.max(7,Math.min(12,pm<1?1:pm));YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;W=Math.max(0,WEEKS.length-1);try{MFMON=String(Math.min(12,MONTH+1));}catch(e){}}
+function gotoTodayDefault(){ // 중화팀 행사·일정: 당일이 속한 달·주로
+  MONTH=TODAY.getMonth()+1;YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;
+  W=Math.max(0,todayWeekIdx());try{MFMON=String(MONTH);}catch(e){}
+}
 function gotoPrevWeekDefault(){
   const tIso=+isoWeekNum(todayStr())||0;let tw=tIso-1;if(tw<29)tw=29;
   for(let m=7;m<=12;m++){const ws=buildWeeks(m);const idx=ws.findIndex(x=>x.iso===tw);
@@ -6111,7 +6115,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport')gotoPrevMonthDefault();else if(TAB==='rr')gotoPrevWeekDefault();document.body.classList.remove('rail-open');render();}
+function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport')gotoPrevMonthDefault();else if(TAB==='rr')gotoPrevWeekDefault();else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
