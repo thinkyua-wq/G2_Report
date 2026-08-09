@@ -1714,6 +1714,23 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .tb-b.prim{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tb-b.prim:hover{background:var(--accentInk);color:#fff}
 .tb-dd{position:relative}
+/* 읽기 전용(팀원·공용) — 데이터 변경 UI 숨김 */
+body.vw-ro .tbar-data > button.tb-b[onclick*="impXlsx"],
+body.vw-ro .tbar-data > button.tb-b[onclick="cloudSave()"],
+body.vw-ro .tbar-data > button.tb-b[onclick="cloudLoad()"],
+body.vw-ro .tb-dd{display:none!important}
+body.vw-ro .mile-add,body.vw-ro .mile-del,body.vw-ro .mf-add,body.vw-ro .ck-add,
+body.vw-ro button[onclick*="addMile"],body.vw-ro button[onclick*="delMile"],
+body.vw-ro button[onclick*="clearAllData"],body.vw-ro button[onclick*="perfClear"],
+body.vw-ro button[onclick*="과제 추가"]{display:none!important}
+body.vw-ro .ptable input,body.vw-ro .ptable select,body.vw-ro .ptable textarea,
+body.vw-ro .mf-owntrig,body.vw-ro [contenteditable="true"]{pointer-events:none!important;background:transparent!important;border-color:transparent!important}
+body.vw-ro .mr-ed2,body.vw-ro .mr-li{cursor:default}
+body.vw-ro .ro-badge{display:inline-flex}
+.lb-ro{display:none}
+body.vw-ro .lb-ro{display:inline}
+body.vw-ro .lb-full{display:none}
+.ro-badge{display:none;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:#8a6d1a;background:#fdf6e3;border:1px solid #ecdcae;border-radius:9px;padding:3px 9px;margin-left:6px}
 .tb-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--bg);border:1px solid var(--ln);border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.16);padding:6px;min-width:170px;z-index:50;display:flex;flex-direction:column;gap:2px}
 .tb-menu button{text-align:left;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);background:transparent;border:none;border-radius:7px;padding:9px 11px;cursor:pointer}
 .tb-menu button:hover{background:var(--sf);color:var(--accent)}
@@ -1817,7 +1834,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.09-M30</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.09-M33</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1837,11 +1854,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div class="tbar">
       <div class="tbar-per" id="perbar"></div>
       <div class="tbar-data">
-        <button class="tb-b prim" onclick="cloudLoadSheet()">📊 구글시트 불러오기</button>
+        <button class="tb-b prim" onclick="cloudLoadSheet()">📊 <span class="lb-full">구글시트 불러오기</span><span class="lb-ro">시트 새로고침</span></button>
         <button class="tb-b" onclick="document.getElementById('impXlsx').click()">엑셀 불러오기</button>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <button class="tb-b" onclick="cloudLoad()">☁ 불러오기</button>
         <button class="tb-b" onclick="genGooglePPT()">🖼 구글 PPT</button>
+        <span class="ro-badge">🔒 읽기 전용</span>
         <span id="syncBadge" style="display:none;align-items:center;font-size:11px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
         <div class="tb-dd">
           <button class="tb-b" onclick="toggleDataMenu(event)">데이터 ▾</button>
@@ -2196,6 +2214,8 @@ let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
 let VALL=false;
 const MEMBER_TABS=['mreport','calendar','calmonth']; // 열람 허용: 월간업무현황·중화팀 행사·중화팀 일정 (이유아 외 전원 + 공용 「중화팀」 계정)
+function RO(){return VROLE==='member';}   /* 팀원·공용 계정 = 읽기 전용 */
+function roBlock(){if(RO()){try{toast('읽기 전용 계정입니다 · 수정·저장은 팀장 계정에서만 가능합니다');}catch(e){}return true;}return false;}
 function memberScopeId(){return (VROLE==='member'&&MEMBERID&&!VALL&&TAB!=='overview')?MEMBERID:'';}
 function rrIdxOf(id){const m=mgrById(id);if(!m)return '';const i=RRDATA.findIndex(r=>String(r.who||'').includes(m.name));return i<0?'':i;}
 function applyMemberScope(){const s=memberScopeId();if(!s)return;KANMGRSEL=[s];MGSEL=s;RRSEL=rrIdxOf(s);
@@ -2208,32 +2228,70 @@ function setVRole(r){VROLE=r;try{localStorage.setItem('wr_vrole',r);}catch(e){}
 function setMember(id){MEMBERID=id;try{localStorage.setItem('wr_memberid',id);}catch(e){}render();}
 function toggleVAll(){VALL=!VALL;if(!VALL){const f=document.getElementById('fMgr');if(f)f.value=MEMBERID;}else{KANMGRSEL=[];MGSEL='';RRSEL='';const f=document.getElementById('fMgr');if(f)f.value='';}render();}
 /* ===== 로그인 · 직원 ID(회사 이메일) + 간단 비밀번호 · 이유아=팀장, 나머지=팀원 ===== */
+/* 동기 SHA-256 (비밀번호 평문 미노출용) */
+function sha256hex(str){
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const b=[];for(let i=0;i<str.length;i++){let c=str.charCodeAt(i);
+    if(c<128)b.push(c); else if(c<2048){b.push(192|(c>>6),128|(c&63));}
+    else if(c<55296||c>=57344){b.push(224|(c>>12),128|((c>>6)&63),128|(c&63));}
+    else{i++;c=65536+(((c&1023)<<10)|(str.charCodeAt(i)&1023));b.push(240|(c>>18),128|((c>>12)&63),128|((c>>6)&63),128|(c&63));}}
+  const L=b.length*8;b.push(0x80);while(b.length%64!==56)b.push(0);
+  for(let i=7;i>=0;i--)b.push((L/Math.pow(2,i*8))&255);
+  const R=(x,n)=>(x>>>n)|(x<<(32-n));
+  for(let p=0;p<b.length;p+=64){const w=new Array(64);
+    for(let t=0;t<16;t++)w[t]=(b[p+t*4]<<24)|(b[p+t*4+1]<<16)|(b[p+t*4+2]<<8)|b[p+t*4+3];
+    for(let t=16;t<64;t++){const s0=R(w[t-15],7)^R(w[t-15],18)^(w[t-15]>>>3),s1=R(w[t-2],17)^R(w[t-2],19)^(w[t-2]>>>10);w[t]=(w[t-16]+s0+w[t-7]+s1)|0;}
+    let [a,bb,c,d,e,f,g,h]=H;
+    for(let t=0;t<64;t++){const S1=R(e,6)^R(e,11)^R(e,25),ch=(e&f)^(~e&g),t1=(h+S1+ch+K[t]+w[t])|0,
+      S0=R(a,2)^R(a,13)^R(a,22),mj=(a&bb)^(a&c)^(bb&c),t2=(S0+mj)|0;
+      h=g;g=f;f=e;e=(d+t1)|0;d=c;c=bb;bb=a;a=(t1+t2)|0;}
+    H=[(H[0]+a)|0,(H[1]+bb)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];}
+  return H.map(x=>('00000000'+(x>>>0).toString(16)).slice(-8)).join('');
+}
+function pwHash(local,pw){return sha256hex('G2CH|'+local+'|'+pw);}
 const USERS={
-  lee:{name:'이유아',title:'팀장',email:'intl.china17@imegagen.com',pw:'mega17tm',role:'lead'},
-  seo:{name:'서혜민',title:'차장',email:'intl.china19@imegagen.com',pw:'mega19',role:'member'},
-  tak:{name:'탁종민',title:'차장',email:'intl.china20@imegagen.com',pw:'mega20',role:'member'},
-  yu:{name:'유훈종',title:'차장',email:'intl.china29@imegagen.com',pw:'mega29',role:'member'},
-  jang:{name:'장민훈',title:'이사',email:'intl.china30@imegagen.com',pw:'mega30',role:'member'},
-  kim:{name:'김유진',title:'대리',email:'intl.china32@imegagen.com',pw:'mega32',role:'member'},
-  team:{name:'중화팀',title:'공용',email:'intl.china17@imegagen.com',pw:'g2china2026',role:'member'}
+  lee:{name:'이유아',title:'팀장',email:'intl.china17@imegagen.com',h:'8f3360db49b5b0a4ad04f87ad99a399f7787379da002a993258355ddd1b7fdd7',role:'lead'},
+  seo:{name:'서혜민',title:'차장',email:'intl.china19@imegagen.com',h:'cbe627e89ba957258bc36af5b689e817aa738d8261e05f5e6cbe1a2a9329c7f0',role:'member'},
+  tak:{name:'탁종민',title:'차장',email:'intl.china20@imegagen.com',h:'5729247795e781976649b60b8fb73f3d66fd57a247b8e5e2180bf6d897945686',role:'member'},
+  yu:{name:'유훈종',title:'차장',email:'intl.china29@imegagen.com',h:'e4ada410ead952b3ff7c63cf7cc076c59bd57dbb40411c365b44b43ac234bc5b',role:'member'},
+  jang:{name:'장민훈',title:'이사',email:'intl.china30@imegagen.com',h:'56e6f4effc9897a11a5690a4fe4831c5201e20826e9149157bb36a0383da6844',role:'member'},
+  kim:{name:'김유진',title:'대리',email:'intl.china32@imegagen.com',h:'3037cce71c81bc4a3fdda608f69e68aee7fe2353e0d628b796ecb5b8b82e7ea1',role:'member'},
+  team:{name:'중화팀',title:'공용',email:'intl.china17@imegagen.com',h:'60cab0e7bbc42b264e446d5ead183a78042e94f7b5915ce97b26f98b15ed04ae',role:'member'}
 };
-let LOGINUID=''; try{LOGINUID=localStorage.getItem('wr_login')||'';}catch(e){}
+
+const LOGIN_TTL=10*60*60*1000;  /* 10시간 뒤 자동 로그아웃 */
+let LOGINUID=''; try{LOGINUID=localStorage.getItem('wr_login')||'';
+  const t=+(localStorage.getItem('wr_login_ts')||0);
+  if(LOGINUID&&(!t||Date.now()-t>LOGIN_TTL)){LOGINUID='';localStorage.removeItem('wr_login');localStorage.removeItem('wr_login_ts');}
+}catch(e){}
+function loginExpired(){try{const t=+(localStorage.getItem('wr_login_ts')||0);return !t||Date.now()-t>LOGIN_TTL;}catch(e){return false;}}
+setInterval(()=>{if(LOGINUID&&loginExpired()){try{toast('10시간이 지나 자동 로그아웃되었습니다');}catch(e){}logout();}},60000);
 if(USERS[LOGINUID]){VROLE=USERS[LOGINUID].role;if(VROLE==='member'){MEMBERID=(LOGINUID==='team')?'':LOGINUID;if(LOGINUID==='team')VALL=true;}}
 function doLogin(){
   const id=(document.getElementById('lg_id').value||'').trim().toLowerCase();
   const pw=(document.getElementById('lg_pw').value||'').trim();
   let uid='';
   for(const k in USERS){const u=USERS[k];const local=u.email.split('@')[0].toLowerCase();
-    if((id===u.email.toLowerCase()||id===local)&&pw===u.pw){uid=k;break;}}
+    if((id===u.email.toLowerCase()||id===local)&&pwHash(local,pw)===u.h){uid=k;break;}}
   if(!uid){const e=document.getElementById('lg_err');if(e)e.textContent='ID 또는 비밀번호가 올바르지 않습니다.';return;}
-  LOGINUID=uid;try{localStorage.setItem('wr_login',uid);}catch(e){}
+  LOGINUID=uid;try{localStorage.setItem('wr_login',uid);localStorage.setItem('wr_login_ts',String(Date.now()));}catch(e){}
   const u=USERS[uid];VROLE=u.role;try{localStorage.setItem('wr_vrole',VROLE);}catch(e){}
   if(u.role==='member'){ if(uid==='team'){MEMBERID='';VALL=true;try{localStorage.removeItem('wr_memberid');}catch(e){}}
     else{MEMBERID=uid;VALL=false;try{localStorage.setItem('wr_memberid',uid);}catch(e){}} }
   else{const f=document.getElementById('fMgr');if(f)f.value='';KANMGRSEL=[];MGSEL='';RRSEL='';}
   render();
+  try{if(RO())setTimeout(()=>roAutoSheet(true),600);}catch(e){}
 }
-function logout(){LOGINUID='';try{localStorage.removeItem('wr_login');}catch(e){}render();}
+let _roPull=0;
+function roAutoSheet(force){   /* 팀원·공용 계정: 구글시트에서 읽어오기만 (쓰기 없음) */
+  if(!RO())return;
+  if(!force&&Date.now()-_roPull<30*60*1000)return;
+  if(typeof cloudAvailable!=='function'||!cloudAvailable())return;
+  _roPull=Date.now();
+  try{cloudAuth(()=>{doMasterPull('month',true);setTimeout(()=>doMasterPull('week',true),1500);},true);}catch(e){}
+}
+function logout(){LOGINUID='';try{localStorage.removeItem('wr_login');localStorage.removeItem('wr_login_ts');}catch(e){}render();}
 function loginScreen(){
   return `<div class="login-ov"><div class="login-box">
     <div class="login-logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
@@ -2364,6 +2422,7 @@ function render(){
   // 권한: 팀원(member)은 「중화팀 관리 현황판」만
   if(VROLE==='member'&&!MEMBER_TABS.includes(TAB))TAB='mreport';
   document.body.classList.toggle('vw-mreport',TAB==='mreport');
+  document.body.classList.toggle('vw-ro',RO());
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
   // avatars
@@ -2513,7 +2572,7 @@ function saveMFocus(){try{localStorage.setItem('wr_mfocus_v1',JSON.stringify(MFO
 function setMFMon(m){MFMON=String(m);MFOWN=null;render();}
 let MFOWN=null;
 function mfOwners(t){return Array.isArray(t.owner)?t.owner:(t.owner?String(t.owner).split(',').map(s=>s.trim()).filter(Boolean):[]);}
-function toggleMFOwnMenu(i){MFOWN=(MFOWN===i?null:i);render();}
+function toggleMFOwnMenu(i){if(RO())return;MFOWN=(MFOWN===i?null:i);render();}
 function toggleMFOwner(i,name){const t=(MFOCUS[MFMON]||[])[i];if(!t)return;const arr=mfOwners(t).slice();const k=arr.indexOf(name);if(k>=0)arr.splice(k,1);else arr.push(name);t.owner=arr;saveMFocus();render();}
 /* 특정 담당자에게 배정된 그 달 중점추진과제 목록 (다음달 업무 연동) */
 function mfTasksForOwner(name,monthKey){const list=MFOCUS[String(monthKey)]||[];return list.filter(t=>mfOwners(t).includes(name)).map(t=>t.task).filter(Boolean);}
@@ -3519,7 +3578,7 @@ function mreportTablesHTML(){
   return h;
 }
 function mrToggle(el){el.classList.toggle('open');}
-function mrEdit(el){el.setAttribute('contenteditable','true');el.classList.add('mr-editing');const rng=document.createRange();rng.selectNodeContents(el);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(rng);el.focus();}
+function mrEdit(el){if(RO())return;el.setAttribute('contenteditable','true');el.classList.add('mr-editing');const rng=document.createRange();rng.selectNodeContents(el);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(rng);el.focus();}
 function mrKey(e,el){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();el.blur();} if(e.key==='Escape'){el.removeAttribute('contenteditable');el.classList.remove('mr-editing');render();} }
 function mrSave(el){
   el.removeAttribute('contenteditable');el.classList.remove('mr-editing');
@@ -4874,7 +4933,7 @@ let MILEOWN=null;
 let MILEBIGO=null;
 function toggleBigoEdit(i){MILEBIGO=(MILEBIGO===i?null:i);render();}
 function mileOwners(x){return Array.isArray(x.owners)?x.owners:(x.owners?String(x.owners).split(',').map(s=>s.trim()).filter(Boolean):[]);}
-function toggleMileOwnMenu(i){MILEOWN=(MILEOWN===i?null:i);render();}
+function toggleMileOwnMenu(i){if(RO())return;MILEOWN=(MILEOWN===i?null:i);render();}
 function toggleMileOwner(i,name){const x=MILESTONES[i];if(!x)return;const arr=mileOwners(x);const k=arr.indexOf(name);if(k>=0)arr.splice(k,1);else arr.push(name);x.owners=arr;saveMile();render();}
 function mileOwnerOpts(){return MGRS.filter(m=>m.id!=='jang').map(m=>({name:m.name,label:m.name+' '+m.title})).concat([{name:'중국법인',label:'중국법인'}]);}
 function ownerCellMile(x,i){const own=mileOwners(x);const OPT=mileOwnerOpts();
@@ -5031,8 +5090,8 @@ function exportMileJson(){
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast(`노션 반영용 파일 내보냄 (${data.length}건) · 채팅에 첨부해 "노션 반영해줘" 라고 하세요`);
 }
-function addMile(){MILESTONES.unshift({id:'ml'+Date.now(),name:'',cat:'교육',country:MILECTRY||'중국',month:MONTH,date:'',info:'',link:'',fileId:'',fileName:'',fileType:'',thumb:''});saveMile();render();}
-function delMile(i){if(MILESTONES[i]&&MILESTONES[i].fileId)repDelFile(MILESTONES[i].fileId);MILESTONES.splice(i,1);saveMile();render();}
+function addMile(){if(roBlock())return;MILESTONES.unshift({id:'ml'+Date.now(),name:'',cat:'교육',country:MILECTRY||'중국',month:MONTH,date:'',info:'',link:'',fileId:'',fileName:'',fileType:'',thumb:''});saveMile();render();}
+function delMile(i){if(roBlock())return;if(MILESTONES[i]&&MILESTONES[i].fileId)repDelFile(MILESTONES[i].fileId);MILESTONES.splice(i,1);saveMile();render();}
 function pickFile_mile(i){pickFileInto(MILESTONES[i],saveMile);}
 function pickThumb_mile(i){pickThumbInto(MILESTONES[i],saveMile);}
 function clr_mile(i){clearFileOf(MILESTONES[i],saveMile);}
@@ -5040,6 +5099,7 @@ function dl_mile(i){dlFile(MILESTONES[i].fileId,MILESTONES[i].fileName);}
 function editLink_mile(i,v){MILESTONES[i].link=v;saveMile();render();}
 function mileSaved(el){try{if(!el||!el.classList)return;el.classList.add('cell-ok');clearTimeout(el._okT);el._okT=setTimeout(()=>el.classList.remove('cell-ok'),900);}catch(e){}}
 function editMileTbl(i,k,val,re,el){
+  if(roBlock())return;
   if(!MILESTONES[i])return;
   MILESTONES[i][k]=(k==='month')?(Math.max(1,Math.min(12,+val||1))):val;
   saveMile();
@@ -6281,7 +6341,7 @@ function pastePerf(){
 function resetPerf(){PERFDATA=buildDefaultPerf();savePerf();render();toast('기본값으로 다시 채웠습니다');}
 function perfBackup(){try{const data={type:'megagen-perf-backup',ts:new Date().toISOString(),perf:PERFDATA,sperf:SPERF,sphist:SPHIST};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='실적현황_백업.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('실적 데이터를 백업했습니다');}catch(e){toast('백업 중 오류가 발생했습니다');}}
 function perfRestore(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);let n=0;if(d.perf&&typeof d.perf==='object'){PERFDATA=d.perf;savePerf();n++;}if(d.sperf&&d.sperf.kpi){SPERF=d.sperf;SPCUR=SPERF;localStorage.setItem('wr_sperf_v1',JSON.stringify(SPERF));n++;}if(d.sphist&&typeof d.sphist==='object'){SPHIST=d.sphist;saveSPHIST();n++;}if(!n){toast('실적 백업 파일이 아닙니다');return;}render();toast('실적 데이터를 복원했습니다');}catch(err){toast('복원 파일을 읽을 수 없습니다');}};r.readAsText(f);input.value='';}
-function perfClear(){if(!confirm('실적현황 데이터를 삭제하고 0으로 초기화할까요?\n\n· 법인·본사 매출/수량, 주차별 실적이 모두 지워집니다.\n· 되돌릴 수 없으니, 필요하면 먼저 「실적 백업」으로 저장하세요.'))return;for(const met in PERFDATA){for(const bu in PERFDATA[met]){const c=PERFDATA[met][bu];if(c&&c.act)c.act=c.act.map(()=>0);}}savePerf();if(SPERF){if(SPERF.act)SPERF.act=SPERF.act.map(()=>0);if(SPERF.rev)for(const k in SPERF.rev){if(Array.isArray(SPERF.rev[k]))SPERF.rev[k]=SPERF.rev[k].map(()=>0);}saveSPcur();}SPHIST={};saveSPHIST();render();toast('실적 데이터를 삭제했습니다(0으로 초기화)');}
+function perfClear(){if(roBlock())return;if(!confirm('실적현황 데이터를 삭제하고 0으로 초기화할까요?\n\n· 법인·본사 매출/수량, 주차별 실적이 모두 지워집니다.\n· 되돌릴 수 없으니, 필요하면 먼저 「실적 백업」으로 저장하세요.'))return;for(const met in PERFDATA){for(const bu in PERFDATA[met]){const c=PERFDATA[met][bu];if(c&&c.act)c.act=c.act.map(()=>0);}}savePerf();if(SPERF){if(SPERF.act)SPERF.act=SPERF.act.map(()=>0);if(SPERF.rev)for(const k in SPERF.rev){if(Array.isArray(SPERF.rev[k]))SPERF.rev[k]=SPERF.rev[k].map(()=>0);}saveSPcur();}SPHIST={};saveSPHIST();render();toast('실적 데이터를 삭제했습니다(0으로 초기화)');}
 function savePlan(){try{localStorage.setItem('wr_plan_v1',JSON.stringify({plan:PLAN,road:ROADMAP,goals:GOALS}));}catch(e){}}
 function loadPlan(){try{const s=localStorage.getItem('wr_plan_v1');if(s){const o=JSON.parse(s);if(o&&o.plan)PLAN=o.plan;if(o&&o.road)ROADMAP=o.road;if(o&&o.goals)GOALS=o.goals;}}catch(e){}}
 function resetPlan(){localStorage.removeItem('wr_plan_v1');localStorage.removeItem('wr_mgrs_v1');location.reload();}
@@ -6487,14 +6547,14 @@ function applyBackup(d){
   if(d.fdocs&&typeof d.fdocs==='object'){FOCUSDOCS=d.fdocs;saveFocusDocs();}
   render();
 }
-function importData(input){
+function importData(input){if(roBlock())return;
   const f=input.files[0];if(!f)return;const r=new FileReader();
   r.onload=e=>{try{applyBackup(JSON.parse(e.target.result));toast('전체 데이터를 복원했습니다');}
     catch(err){toast('파일을 읽을 수 없습니다');}input.value='';};
   r.readAsText(f);
 }
 function restoreDefaults(){try{localStorage.removeItem('wr_tasks_v1');}catch(e){}location.reload();}
-function clearAllData(){
+function clearAllData(){if(roBlock())return;
   if(!confirm('전체 데이터를 삭제하고 기본값으로 초기화할까요?\n\n· 과제·실적·목표·일정·주요보고·루틴업무 등 모든 입력이 지워집니다.\n· 되돌릴 수 없으니, 필요하면 먼저 「백업(JSON)」으로 저장하세요.\n· 로그인 계정은 유지됩니다.'))return;
   try{const keep=localStorage.getItem('wr_login');
     Object.keys(localStorage).filter(k=>k.indexOf('wr_')===0).forEach(k=>localStorage.removeItem(k));
@@ -6869,7 +6929,7 @@ async function doCloudSave(silent){
     else{if(!silent)toast('저장에 실패했습니다');setSyncBadge('err');}}
   catch(e){if(!silent)toast('저장 중 오류가 발생했습니다');setSyncBadge('err');}
 }
-function cloudSave(){cloudAuth(()=>doCloudSave(false));}
+function cloudSave(){if(roBlock())return;cloudAuth(()=>doCloudSave(false));}
 async function doCloudLoad(silent){
   try{const id=await driveFind();if(!id){if(!silent)toast('드라이브에 저장된 파일이 없습니다');return;}
     const res=await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`,{headers:{Authorization:'Bearer '+CLOUD.token}});
