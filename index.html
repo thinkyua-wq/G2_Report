@@ -39,6 +39,16 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .top{max-width:1360px;margin:0 auto;padding:12px 24px 0;display:flex;flex-direction:column;gap:10px}
 .top-r1{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
+.omc-x{cursor:pointer}
+.omc-x:hover{fill:#2e7d52 !important;font-weight:800 !important}
+.omc-mcs{display:flex;gap:3px;flex-wrap:wrap;margin:2px 0 4px}
+.omc-mc{font-size:10px;font-weight:700;color:#7a828d;background:#f4f6f8;border:1px solid #e5e9ee;border-radius:6px;padding:2px 6px;cursor:pointer;line-height:1.4}
+.omc-mc:hover{border-color:#2e7d52;color:#2e7d52}
+.omc-mc.on{background:#2e7d52;border-color:#2e7d52;color:#fff}
+.omc-all{margin-left:8px;font-size:10.5px;font-weight:700;color:#2e7d52;background:#e7f4ec;border:1px solid #cfe6d9;border-radius:9px;padding:2px 8px;cursor:pointer}
+.omc-all:hover{background:#d9edE3}
+.brand-ic{color:#fff}
+.brand-ic svg{display:block}
 .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#4fa878);
   display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none;box-shadow:0 2px 8px rgba(91,79,214,.35)}
 .brand h1{font-size:15.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
@@ -357,15 +367,23 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .md-ev.mile .me-info{display:block;font-size:9.5px;font-weight:500;opacity:.95;margin-top:1px}
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
 /* 중화팀 행사 상세표: 1pt 작게 · 줄바꿈 방지 · 동일 크기 */
-.ptable.miletbl td,.ptable.miletbl th{white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
-.ptable.miletbl input,.ptable.miletbl select{font-size:13.5px;color:#000}
-.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{font-size:13.5px;color:#000;white-space:pre-wrap}
-.ptable.miletbl td{background:#fff}
-.ptable.miletbl td.gcol{background:#fff}
-.ptable.miletbl td.gcol select{background:transparent}
+/* 중화팀 행사 상세표 = 반기실적(.ptable.plan) 표와 동일 서식 */
+.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;letter-spacing:normal;font-size:13.5px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
+.ptable.miletbl th,.ptable.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle;color:#000}
+.ptable.miletbl thead th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.5px;padding:6px 4px;white-space:nowrap}
+.ptable.miletbl th.sortable{cursor:pointer}
+.ptable.miletbl th.sorted{font-weight:800;color:#2e7d52}
+.ptable.miletbl td{background:#fff;font-size:12.5px;padding:6px 5px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.ptable.miletbl td.gcol,.ptable.miletbl td.gcol select{background:#fff}
+.ptable.miletbl input,.ptable.miletbl select,.ptable.miletbl textarea{border:1px solid transparent;background:transparent;font:inherit;font-size:12.5px;font-weight:400;color:#000;text-align:center;padding:3px 4px;width:100%;box-sizing:border-box;border-radius:0}
+.ptable.miletbl textarea,.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{text-align:left;resize:none;overflow:hidden;min-height:30px;line-height:1.45;white-space:pre-wrap}
+.ptable.miletbl input:hover,.ptable.miletbl select:hover,.ptable.miletbl textarea:hover{border-color:var(--ln)}
+.ptable.miletbl input:focus,.ptable.miletbl select:focus,.ptable.miletbl textarea:focus{outline:none;border-color:var(--accent)}
+.ptable.miletbl td.mut{color:#000;font-size:12.5px}
+.ptable.miletbl td.mile-day input{color:#000;font-weight:400;font-size:12.5px}
+.ptable.miletbl .mile-own select,.ptable.miletbl .mile-own input{border:1px solid transparent;background:transparent}
 .ptable.miletbl td.nmc input{white-space:normal}
-.ptable.miletbl th.sorted{font-weight:400;color:#2e7d52}
-.ptable.miletbl td.infc textarea{resize:none;overflow:hidden;min-height:32px}
+.ptable.miletbl .mile-infolink{font-size:12.5px;color:#000}
 .mile-noday{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mile-noday .pl{font-size:11px;font-weight:800;color:var(--dim)}
 .mile-noday .md-ev{white-space:normal}
@@ -1174,16 +1192,78 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .om-tt{font-size:9.5px;color:var(--faint);font-weight:600}
 .gp-p{color:#1e7a43}.gp-m{color:#b23434}
 .om-stat{display:flex;gap:4px;margin-top:6px}
+.tmrow{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+.tmhd{display:flex;align-items:center;gap:11px;padding:12px 18px 10px}
+.tmav{width:32px;height:32px;border-radius:50%;color:#fff;font-weight:800;font-size:13.5px;display:grid;place-items:center;flex:none}
+.tmn b{font-size:15px;font-weight:800}.tmn .tmt{font-size:11.5px;color:var(--dim);font-weight:700;margin-left:5px}
+.tmn .tmrg{font-size:11px;color:var(--faint);font-weight:600;margin-top:1px}
+.tmchips{display:flex;gap:6px;margin-left:18px;flex-wrap:wrap}
+.tmchips span{font-size:10.5px;font-weight:700;color:#3f6b52;background:#eaf4ee;border:1px solid #d5e8dd;border-radius:9px;padding:3px 9px}
+.tmavg{margin-left:auto;text-align:right}
+.tmavg b{font-size:22px;font-weight:900;color:#1e6f5c;display:block;line-height:1}
+.tmavg span{font-size:10px;color:var(--faint);font-weight:600}
+.tmbar{height:4px;background:#eef1f4;margin:0 18px 12px;border-radius:3px;overflow:hidden}
+.tmbar i{display:block;height:100%;background:linear-gradient(90deg,#5aa87c,#2e7d52)}
+.tmcols{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #eef1f4}
+.tmcol{padding:11px 16px 12px;border-right:1px solid #eef1f4}
+.tmcol:last-child{border-right:none}
+.tmcol.c2{background:#fbfcfb}.tmcol.c3{background:#f7faf8}
+.tmch{font-size:12px;font-weight:800;color:#2e7d52;margin-bottom:8px;display:flex;align-items:baseline;gap:6px}
+.tmch b{color:var(--ink)}
+.tmcol.c3 .tmch{color:#1e6f5c;cursor:pointer}
+.tmchs{margin-left:auto;font-size:10px;color:#b0b7c0;font-weight:600}
+.tmul{list-style:none}
+.tmul li{padding:5px 0;border-bottom:1px dashed #eef1f4}
+.tmul li:last-child{border-bottom:none}
+.tmtt{font-size:12px;font-weight:600;line-height:1.4}
+.tmul li.hi .tmtt{color:#1e6f5c;font-weight:800}
+.tmsub{font-size:10.8px;color:var(--dim);line-height:1.45;margin-top:2px}
+.tmrt{font-size:10.5px;font-weight:800;margin-left:3px}
+.tmrt.g{color:#1e7a43}.tmrt.a{color:#a86412}.tmrt.r{color:#b23434}.tmrt.n{color:#98a0ab}
+.tmmore{margin-top:7px;font-size:10.8px;font-weight:700;color:#2e7d52;background:#eef6f1;border:1px solid #d9ebe1;border-radius:8px;padding:4px 10px;cursor:pointer}
+.tmmore:hover{background:#e2f0e8}
+@media(max-width:1100px){.tmcols{grid-template-columns:1fr}.tmcol{border-right:none;border-bottom:1px solid #eef1f4}}
+.mf-sumbar{display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin-bottom:12px;flex-wrap:wrap}
+.mfsb-i{display:flex;align-items:baseline;gap:7px}
+.mfsb-l{font-size:11.5px;color:var(--dim);font-weight:700}
+.mfsb-i b{font-size:19px;font-weight:900;color:var(--ink)}
+.mfsb-s{font-size:10.8px;color:var(--faint);font-weight:600}
+.mo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-bottom:14px}
+.mo-tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px 10px;display:flex;flex-direction:column;gap:6px}
+.mo-hd{display:flex;align-items:center;gap:7px}
+.mo-av{width:22px;height:22px;border-radius:50%;color:#fff;font-weight:800;font-size:11px;display:grid;place-items:center;flex:none}
+.mo-nm{font-size:12.5px;font-weight:800;color:var(--ink)}
+.mo-cnt{font-size:10.5px;color:var(--faint);font-weight:700}
+.mo-pv{margin-left:auto;font-size:15px;font-weight:900;color:#1e6f5c}
+.mo-bar{height:5px;background:#eef1f4;border-radius:4px;overflow:hidden}
+.mo-bar i{display:block;height:100%;border-radius:4px;background:#2e7d52}
+.mk-li li{list-style:none;margin-bottom:5px}
+.mk-li{padding-left:0}
+.mk-t{font-size:11.2px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mk-m{display:flex;align-items:center;gap:5px;margin-top:2px}
+.mk-d{font-size:9.8px;color:var(--faint);font-weight:600;white-space:nowrap;min-width:44px}
+.mk-b{flex:1;height:4px;background:#eef1f4;border-radius:3px;overflow:hidden}
+.mk-b i{display:block;height:100%;border-radius:3px}
+.mk-p{font-size:9.8px;font-weight:800;color:#1e6f5c;min-width:26px;text-align:right}
+.mo-li{font-size:10.8px;color:var(--ink2);line-height:1.5;margin:0;padding-left:12px}
+.mo-li li{list-style:disc;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mo-mut{font-size:10.8px;color:var(--faint)}
+.mp-rows{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.mp-r{display:grid;grid-template-columns:46px 1fr 34px;align-items:center;gap:6px;font-size:10.8px}
+.mp-r b{font-weight:700;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-b{height:6px;background:#eef1f4;border-radius:4px;overflow:hidden}
+.mp-b i{display:block;height:100%;border-radius:4px}
+.mp-v{text-align:right;font-weight:800;color:#1e6f5c}
 .mfs{flex:1;text-align:center;font-size:10.5px;font-weight:700;padding:5px 2px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:.12s}
 .mfs b{display:block;font-size:16px;font-weight:900;line-height:1.15}
 .mfs.ok{background:#e7f6ec;color:#1e7a43}.mfs.warn{background:#fef3e0;color:#a86412}.mfs.late{background:#fde8e8;color:#b23434}
 .mfs.on{border-color:currentColor;box-shadow:0 0 0 2px rgba(0,0,0,.05)}
 .om-need .om-tv{color:#b23434}
 .om-tile.ev2 .om-ev1{font-size:15px;font-weight:800;color:var(--ink);margin-top:5px}
-.om-tile.ev2 .om-ev1 b,.om-tile.ev2 .om-ev2 b{color:#33619e}
+.om-tile.ev2 .om-ev1 b,.om-tile.ev2 .om-ev2 b{color:#1e7a43}
 .om-tile.ev2 .om-ev2{font-size:11.5px;color:var(--dim);margin-top:3px;font-weight:600}
 .om-tile.ev2 .om-ev3{font-size:11px;color:var(--faint);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mfw-3{color:#b23434}.mfw-2{color:#33619e}.mfw-1{color:#5b6570}
+.mfw-3{color:#b23434}.mfw-2{color:#1e6f5c}.mfw-1{color:#5b6570}
 @media(max-width:1400px){.om-tiles6{grid-template-columns:repeat(3,1fr)}}
 .om-tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 16px 12px}
 .om-tl{font-size:12px;color:var(--dim);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -1340,29 +1420,7 @@ td.mk-r.mr-g{color:#1e7a43}td.mk-r.mr-a{color:#a86412}td.mk-r.mr-r{color:#b23434
 .pm-tabs button{font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:8px 15px;transition:.12s}
 .pm-tabs button:hover{border-color:var(--accent2)}
 .pm-tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-/* 월간업무현황 화면 — 밝은 파란색 통일 (주간업무현황=녹색과 구분) */
-body.vw-mreport .ov-sec{border-left-color:#4f7ec9;color:#33619e}
-body.vw-mreport .rnav button.on{background:#4f7ec9}
-body.vw-mreport .tb-b.prim{background:#4f7ec9;border-color:#4f7ec9}
-body.vw-mreport .tb-b:hover{border-color:#4f7ec9;color:#33619e}
-body.vw-mreport .mile-add{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
-body.vw-mreport .mf-mbtn.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
-body.vw-mreport .kanwk.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
-body.vw-mreport .per-dd:focus{border-color:#4f7ec9}
-body.vw-mreport .pm-tabs button.on{background:#4f7ec9;border-color:#4f7ec9;color:#fff}
-body.vw-mreport .omc-b span{background:#e9f0fa;color:#33619e}
-body.vw-mreport .ov-tk-h3{color:#4f7ec9}
-body.vw-mreport .mr-x{border-left-color:#4f7ec9}
-body.vw-mreport .ov-bar-t{background:linear-gradient(90deg,#6f9ad9,#4f7ec9)}
-/* 거래처별 실적 요약 표: 헤더·소계·합계도 파란 계열 */
-body.vw-mreport .ov-tbl thead th{background:#4f7ec9}
-body.vw-mreport .ov-tbl tr.ov-sub-row td{background:#eaf1fb}
-body.vw-mreport .ov-tbl tr.ov-tot-row td{background:#dfeafa}
-/* 담당자 카드 역할 배지 */
-body.vw-mreport .ov-role{background:#e9f0fa;color:#33619e}
-/* 중점추진과제 표 헤더 등 강조 요소 */
-body.vw-mreport .mr-ph{background:#e9f0fa;border-left-color:#4f7ec9}
-body.vw-mreport .ov-kpi{color:#33619e}
+/* 월간업무현황 = 기본 초록 테마 사용 (파란색 오버라이드 제거) */
 
 .pm-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
 .pm-ctl select{font-size:12.5px;padding:8px 12px;border:1px solid var(--ln);border-radius:8px;background:var(--pn);color:var(--ink);font-weight:600;cursor:pointer}
@@ -1388,8 +1446,6 @@ body.vw-mreport .ov-kpi{color:#33619e}
 .ptable input:focus{outline:none;background:var(--accentSoft)}
 .ptable input:disabled{color:var(--faint)}
 /* 일정 상세 목록: 네모칸(테두리·입력박스) 제거 · 전부 동일 크기 */
-.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",sans-serif;border-radius:0;letter-spacing:-0.1em}
-.ptable.miletbl td,.ptable.miletbl th{border-left:none;vertical-align:middle}
 .ptable.miletbl th{background:#e2e8f0;text-align:left;color:#334155;font-size:11.5px;font-weight:700;padding:7px 7px;border-bottom:1px solid #cbd5e1;white-space:nowrap}
 /* 월 셀: 월 번호만 */
 .miletbl .mile-mnum{text-align:center!important;font-weight:700}
@@ -1729,7 +1785,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <body>
 <div class="mtopbar">
   <button class="mt-burger" onclick="toggleRail()" aria-label="메뉴 열기">☰</button>
-  <div class="mt-logo">주</div>
+  <div class="mt-logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
   <span class="mt-t">G2 중화지역보고</span>
   <span class="mt-cur" id="mtCur"></span>
 </div>
@@ -1738,8 +1794,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div class="shell">
   <aside class="rail">
     <div class="rail-brand">
-      <div class="logo">주</div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.08-M1</span></p></div>
+      <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.09-M21</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -1912,14 +1968,16 @@ try{const s0=localStorage.getItem('wr_wkreport_v1');if(s0){const o=JSON.parse(s0
 function saveWKREPORT(){try{localStorage.setItem('wr_wkreport_v1',JSON.stringify(WKREPORT));}catch(e){}}
 function wkData(){const iso=(WEEKS[W]&&WEEKS[W].iso)||0;return (typeof WKREPORT!=='undefined'&&WKREPORT[String(iso)])||[];}
 /* ═ 월간 거래처실적 (마스터 「거래처실적_월간」 탭 · 보고월별 누적) ═ */
-let MDEAL={'7':[
- {dealer:'닝보',grp:'중국',exT:1304525,exTm:null,exA:539389,suT:1304525,suTm:null,suA:1100867},
- {dealer:'북경',grp:'중국',exT:286195,exTm:null,exA:90311,suT:402605,suTm:null,suA:200000},
- {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exTm:null,exA:4000,suT:40644,suTm:null,suA:0},
- {dealer:'대만 TBMS',grp:'해외',exT:220000,exTm:null,exA:68346,suT:null,suTm:null,suA:null},
- {dealer:'대만 Sunriser',grp:'해외',exT:25000,exTm:null,exA:22480,suT:null,suTm:null,suA:null}]};
-try{const s1=localStorage.getItem('wr_mdeal_v1');if(s1){const o=JSON.parse(s1);if(o&&typeof o==='object'&&!Array.isArray(o))MDEAL=Object.assign({},MDEAL,o);}}catch(e){}
-function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v1',JSON.stringify(MDEAL));}catch(e){}}
+let MDEAL={
+ '1':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1211345,exA:705710,suT:18636056,suTm:1211345,suA:705710},{dealer:'북경',grp:'중국',exT:4088480,exTm:265750,exA:285472,suT:5032559,suTm:301953,suA:230000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:35000,exA:47357,suT:280000,suTm:30000,suA:34987}],
+ '2':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:745440,exA:778492,suT:18636056,suTm:745440,suA:778492},{dealer:'북경',grp:'중국',exT:4088480,exTm:163540,exA:125190,suT:5032559,suTm:251628,suA:100000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:20000,exA:14520,suT:280000,suTm:35000,suA:26537}],
+ '3':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1770425,exA:1613055,suT:18636056,suTm:1770425,suA:1602530},{dealer:'북경',grp:'중국',exT:4088480,exTm:388405,exA:305419,suT:5032559,suTm:402605,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:430000,exA:559696,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:36000,exA:22296,suT:280000,suTm:20000,suA:14520}],
+ '4':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1599190,suT:18636056,suTm:1677245,suA:1374511},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:257459,suT:5032559,suTm:402605,suA:310000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:5000,exA:5378,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:59853,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:43000,exA:54321,suT:280000,suTm:36000,suA:22926}],
+ '5':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1445076,suT:18636056,suTm:1677245,suA:1107568},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:289086,suT:5032559,suTm:452930,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:220842,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:38000,exA:33415,suT:280000,suTm:43000,suA:54321}],
+ '6':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1703635,suT:18636056,suTm:1677245,suA:1175482},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:251058,suT:5032559,suTm:452930,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:55000,exA:40944,suT:110000,suTm:5000,suA:5378},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:321150,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:28000,exA:42690,suT:280000,suTm:38000,suA:33415}],
+ '7':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},{dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:110000,suTm:0,suA:40944},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362797,suT:1370000,suTm:150000,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}]};
+try{const s1=localStorage.getItem('wr_mdeal_v2');if(s1){const o=JSON.parse(s1);if(o&&typeof o==='object'&&!Array.isArray(o))MDEAL=Object.assign({},MDEAL,o);}}catch(e){}
+function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v2',JSON.stringify(MDEAL));}catch(e){}}
 function mdealRows(m){return MDEAL[String(m)]||[];}
 function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 합산 · 목표=최근 달 전체목표)
   let cumA=0,cumSu=0,T=0,S=0,any=false,months=[];
@@ -2154,7 +2212,7 @@ function doLogin(){
 function logout(){LOGINUID='';try{localStorage.removeItem('wr_login');}catch(e){}render();}
 function loginScreen(){
   return `<div class="login-ov"><div class="login-box">
-    <div class="login-logo">주</div>
+    <div class="login-logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
     <h2>G2 중화지역보고</h2><p class="login-sub">G2 中华팀 · 해외영업본부</p>
     <input id="lg_id" placeholder="ID (회사 이메일)" autocomplete="username">
     <input id="lg_pw" type="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
@@ -2321,7 +2379,7 @@ function render(){
   document.getElementById('viewTitle').textContent=MENULB[TAB];
   {const mc=document.getElementById('mtCur');if(mc)mc.textContent=MENULB[TAB];}
   const extra=(TAB==='goals'||TAB==='perf'||TAB==='sales'||TAB==='overview'||TAB==='mreport')?'':(TAB==='separate')?` · 별도 항목 ${cnt.separate}건`:` · 표시 과제 ${rows.length}건${HIDEDONE?' · 완료 숨김':''}`;
-  document.getElementById('asof').innerHTML=(TAB==='mreport')?(`월간업무현황 · <a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener" style="color:#4f7ec9;text-decoration:none">마스터파일 열기 ↗</a> · [구글시트 불러오기] = 월간 데이터만 반영(월말보고·거래처실적_월간)`):(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
+  document.getElementById('asof').innerHTML=(TAB==='mreport')?(`월간업무현황 · <a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">마스터파일 열기 ↗</a> · [구글시트 불러오기] = 월간 데이터만 반영(월말보고·거래처실적_월간)`):(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
   // KPI / goalbar visibility
   const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='mreport'&&TAB!=='rr');
   document.getElementById('kpis').style.display=showKPI?'':'none';
@@ -3261,11 +3319,11 @@ function mkKpiTable(){
 }
 /* ===== 본사실적 · 월별 누적 수출·수금 (개선안) ===== */
 function ovScopeAggFrom(D,scope){
-  const s={exT:0,exA:0,suT:0,suA:0};
+  const s={exT:0,exTm:0,exA:0,suT:0,suTm:0,suA:0};
   (D||[]).forEach(d=>{const dl=d.dealer||'';if(/소계|합계/.test(dl))return;
     const isCn=d.grp==='중국', isTw=/대만/.test(dl), isHk=/홍콩/.test(dl);
     if(scope==='중국'&&!isCn)return; if(scope==='대만'&&!isTw)return; if(scope==='홍콩'&&!isHk)return;
-    s.exT+=(+d.exT||0);s.exA+=(+d.exA||0);s.suT+=(+d.suT||0);s.suA+=(+d.suA||0);});
+    s.exT+=(+d.exT||0);s.exTm+=(+d.exTm||0);s.exA+=(+d.exA||0);s.suT+=(+d.suT||0);s.suTm+=(+d.suTm||0);s.suA+=(+d.suA||0);});
   return s;
 }
 function ovScopeAgg(scope){return ovScopeAggFrom(ovDealD(),scope);}
@@ -3278,7 +3336,6 @@ function rrSalesWeeks(){
   return [...new Set(ws)].sort((a,b)=>a-b);
 }
 function rrWeekChart(label,scope){
-  // x축 = 그 달의 전체 주차 (데이터 없는 미래 주차도 자리 표시 · 12월까지 동일)
   const allW=WEEKS.map(w=>w.iso).filter(Boolean);
   if(!allW.length)return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황</div><div class="mut" style="padding:20px 0">주차 없음</div></div>`;
   const dataW=rrSalesWeeks();
@@ -3287,43 +3344,53 @@ function rrWeekChart(label,scope){
     let a=null,t=null;
     if(dataW.includes(wk)){
       const D=(SPHIST['W'+wk]&&SPHIST['W'+wk].deal&&SPHIST['W'+wk].deal.length)?SPHIST['W'+wk].deal:((wk===cur)?ovDealD():null);
-      if(D){const g=ovScopeAggFrom(D,scope);a=Math.round(g.exA/1000);t=Math.round(g.exT/1000);}
+      if(D){const g=ovScopeAggFrom(D,scope);a=Math.round(g.exA/1000);t=Math.round((g.exTm||g.exT)/1000);}
     }
-    return {wk,a,t};
+    return {wk,a,t,inc:null};
   });
+  // 주간 증분(전주 대비) 산출 — a는 당월 누적 실적
+  let prev=0;pts.forEach(p=>{if(p.a!=null){p.inc=Math.max(0,p.a-prev);prev=p.a;}});
   const withData=pts.filter(p=>p.a!=null);
-  const t=withData.length?withData[withData.length-1].t:Math.round(ovScopeAggFrom(ovDealD(),scope).exT/1000);
-  const W2=460,H=250,L=54,R=18,TP=16,B=36,M=allW.length;
-  const maxV=Math.max(t||1,...withData.map(p=>p.a),1)*1.12;
-  const X=i=>L+(W2-L-R)*(M===1?0.5:i/(M-1));
-  const Y=v=>TP+(H-TP-B)*(1-v/maxV);
-  const step=Math.max(1,Math.round(maxV/3/50)*50);
+  const t=withData.length?withData[withData.length-1].t:(function(){const g=ovScopeAggFrom(ovDealD(),scope);return Math.round((g.exTm||g.exT)/1000);})();
+  const selIdx=Math.max(0,Math.min(allW.length-1,+W||0));   // 상단 「주」 선택값과 연동
+  const SEL=allW[selIdx], lim=selIdx;
+  const view=pts.slice(0,lim+1);
+  const W2=460,H=272,L=54,R=44,TP=20,B=38,M=view.length;
+  const base=H-B;
+  const maxV=Math.max(t||1,...view.filter(p=>p.a!=null).map(p=>p.a),1)*1.12;
+  const band=(W2-L-R)/Math.max(1,M), bw=Math.max(5,Math.min(18,band*0.22));
+  const X=i=>L+band*i+band/2;
+  const Y=v=>TP+(base-TP)*(1-v/maxV);
+  const step=niceStep(maxV,3);
   let grid='',yl='';
-  for(let v=0;v<=maxV;v+=step){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#e5e9ee"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10.5" fill="#8b93a0">${v.toLocaleString('en-US')}</text>`;}
-  const lp=[];pts.forEach((p,i)=>{if(p.a!=null)lp.push(`${X(i).toFixed(1)},${Y(p.a).toFixed(1)}`);});
-  let dots='',xl='';
-  let lastIdx=-1;pts.forEach((p,i)=>{if(p.a!=null)lastIdx=i;});
-  pts.forEach((p,i)=>{
-    const isCur=(p.wk===cur);
-    xl+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="10.5" fill="${isCur?'#22262b':'#8b93a0'}" font-weight="${isCur?'800':'600'}">W${p.wk}</text>`;
-    if(p.a!=null){
-      const lastP=(i===lastIdx);
-      dots+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(p.a).toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#3d7a55" stroke-width="${lastP?2.6:2}"/>`;
-      dots+=`<text x="${X(i).toFixed(1)}" y="${Y(p.a)-11}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2c5e42">${p.a.toLocaleString('en-US')}</text>`;
-    } else {
-      dots+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(0).toFixed(1)}" r="3" fill="#eef1f4" stroke="#cfd5dc" stroke-width="1.5"/>`;
-    }
+  for(let v=0;v<=maxV;v+=step){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#e5e9ee"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10.5" fill="#8b93a0">${Math.round(v).toLocaleString('en-US')}</text>`;}
+  const rates=view.filter(p=>p.a!=null&&p.t).map(p=>p.a/p.t*100);
+  const capR=Math.max(120,Math.ceil(Math.max(0,...rates)/30)*30);
+  const YR=q=>TP+(base-TP)*(1-Math.min(q,capR)/capR);
+  for(let g=0;g<=3;g++){const q=capR*g/3;yl+=`<text x="${W2-R+6}" y="${YR(q)+4}" text-anchor="start" font-size="9.5" fill="#b3bac4">${Math.round(q)}%</text>`;}
+  const lp=[];view.forEach((p,i)=>{if(p.a!=null&&p.t)lp.push(`${X(i).toFixed(1)},${YR(p.a/p.t*100).toFixed(1)}`);});
+  let bars='',dots='',xl='',lastIdx=-1;
+  view.forEach((p,i)=>{if(p.a!=null)lastIdx=i;});
+  view.forEach((p,i)=>{
+    const on=(SEL===p.wk), cx=X(i);
+    xl+=`<text class="omc-x" onclick="setWeek(${i})" x="${cx}" y="${H-10}" text-anchor="middle" font-size="10.5" fill="${on?'#1e6f5c':(p.wk===cur?'#22262b':'#8b93a0')}" font-weight="${(on||p.wk===cur)?'800':'600'}">W${p.wk}</text>`;
+    if(p.t)bars+=`<rect x="${(cx-bw-1.5).toFixed(1)}" y="${Y(p.t).toFixed(1)}" width="${bw}" height="${(base-Y(p.t)).toFixed(1)}" rx="2.5" fill="#c9ddd0"/>`;
+    if(p.a!=null)bars+=`<rect x="${(cx+1.5).toFixed(1)}" y="${Y(p.a).toFixed(1)}" width="${bw}" height="${(base-Y(p.a)).toFixed(1)}" rx="2.5" fill="#2e7d52"/>`;
+    if(p.a!=null&&p.t){const lastP=(i===lastIdx),q=p.a/p.t*100;
+      dots+=`<circle cx="${cx.toFixed(1)}" cy="${YR(q).toFixed(1)}" r="${lastP?5.5:3.8}" fill="#fff" stroke="#1e6f5c" stroke-width="${lastP?2.5:2}"/>`;
+      if(lastP)dots+=`<text x="${cx.toFixed(1)}" y="${(YR(q)-10).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1e6f5c">${Math.round(q)}%</text>`;}
   });
-  const last=withData.length?withData[withData.length-1]:null;
+  const selP=SEL?pts.find(p=>p.wk===SEL):null;
+  const last=lastIdx>=0?view[lastIdx]:null;
   const rate=(last&&t)?Math.round(last.a/t*100):null;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황 <span>목표(회색 점선) · 주차별 실적(초록)</span></div>
+  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황 <span>목표·실적 막대 · 달성율(선) · W${allW[0]}~W${SEL} · 상단 「주」 선택과 연동</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">
-      ${grid}${yl}
-      ${t?`<line x1="${L}" y1="${Y(t)}" x2="${W2-R}" y2="${Y(t)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${Y(t)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">목표 ${t.toLocaleString('en-US')}</text>`:''}
-      ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#3d7a55" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''}
+      ${grid}${yl}${bars}
+      ${t?`<line x1="${L}" y1="${Y(t)}" x2="${W2-R}" y2="${Y(t)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${Y(t)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">당월목표 ${t.toLocaleString('en-US')}</text>`:''}
+      ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:''}
       ${dots}${xl}
     </svg>
-    <div class="omc-b"><span>${last?`W${last.wk} 실적 ${last.a.toLocaleString('en-US')} · 목표 ${(t||0).toLocaleString('en-US')} · ${rate}%`:'실적 입력 대기'}</span></div></div>`;
+    <div class="omc-b"><span>${last?`W${last.wk} 목표 ${(last.t||t||0).toLocaleString('en-US')} · 실적 ${last.a.toLocaleString('en-US')} · <b>${(last.t||t)?Math.round(last.a/(last.t||t)*100):0}%</b>${last.inc!=null?` │ 주간증분 ${last.inc.toLocaleString('en-US')}`:''}`:'실적 입력 대기'}</span></div></div>`;
 }
 function renderRRSales(){
   const wk=ovWeekKey();
@@ -3340,12 +3407,13 @@ function omPill(r){const p=r==null?null:Math.round(r*100);if(p==null)return '';c
 function ovMainTiles(extra){
   const all=ovScopeAgg('전체'),cn=ovScopeAgg('중국'),tw=ovScopeAgg('대만');
   const k=v=>Math.round(v/1000),n=v=>k(v).toLocaleString('en-US');
+  const exM=g=>(g.exTm||g.exT||0), suM=g=>(g.suTm||g.suT||0);
   const tile=(lb,valS,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${valS}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
-  h+=tile('전체 누적 수출',n(all.exA),all.exT?all.exA/all.exT:null,`누적목표 ${n(all.exT)} · 잔여 ${n(all.exT-all.exA)}`);
-  h+=tile('중국 누적 수출',n(cn.exA),cn.exT?cn.exA/cn.exT:null,`누적목표 ${n(cn.exT)} · 전체 비중 ${all.exA?Math.round(cn.exA/all.exA*100):0}%`);
-  h+=tile('대만 누적 수출',n(tw.exA),tw.exT?tw.exA/tw.exT:null,`누적목표 ${n(tw.exT)} · 전체 비중 ${all.exA?Math.round(tw.exA/all.exA*100):0}%`);
-  h+=tile('전체 누적 수금',n(all.suA),all.suT?all.suA/all.suT:null,`누적목표 ${n(all.suT)} · 잔여 ${n(all.suT-all.suA)}`);
+  h+=tile('전체 당월 수출',n(all.exA),exM(all)?all.exA/exM(all):null,`당월목표 ${n(exM(all))} · 잔여 ${n(Math.max(0,exM(all)-all.exA))}`);
+  h+=tile('중국 당월 수출',n(cn.exA),exM(cn)?cn.exA/exM(cn):null,`당월목표 ${n(exM(cn))} · 전체 비중 ${all.exA?Math.round(cn.exA/all.exA*100):0}%`);
+  h+=tile('대만 당월 수출',n(tw.exA),exM(tw)?tw.exA/exM(tw):null,`당월목표 ${n(exM(tw))} · 전체 비중 ${all.exA?Math.round(tw.exA/all.exA*100):0}%`);
+  h+=tile('전체 당월 수금',n(all.suA),suM(all)?all.suA/suM(all):null,`당월목표 ${n(suM(all))} · 잔여 ${n(Math.max(0,suM(all)-all.suA))}`);
   return h+(extra||'')+'</div>';
 }
 function ovCumChart(label,agg){
@@ -3453,47 +3521,101 @@ function mrEventTile(mon,label){
     <div class="om-ev2">목표 참석 <b>${attn.toLocaleString('en-US')}</b>명 · 신규고객 <b>${nc.toLocaleString('en-US')}</b>명</div>
     <div class="om-ev3">${kt?('핵심: '+esc(kt)):'<span class="mut">등록된 행사 없음</span>'}</div></div>`;
 }
-function mrFocusTiles(extra){ // 중점추진과제 KPI 5카드 (표시 월 = MFMON 기준으로 통일)
+function mrPctOf(v){const m=String(v==null?'':v).match(/(\d+(?:\.\d+)?)\s*%/);if(m)return Math.max(0,Math.min(150,Math.round(+m[1])));const n=String(v==null?'':v).trim();if(/^\d+(\.\d+)?$/.test(n))return Math.max(0,Math.min(150,Math.round(+n)));return null;}
+function mfByOwner(fm){ // 담당자별 중점추진과제(월말보고 기준) 묶기
+  const rows=(MREPORTS[String(fm)]||[]);
+  const pr={'상':0,'중':1,'하':2};
+  if(rows.length){
+    const map={};
+    rows.forEach(r=>{const key=r.m||'etc';(map[key]=map[key]||[]).push(r);});
+    return MGRS.filter(g=>map[g.id]&&map[g.id].length).map(g=>{
+      const ts=map[g.id].slice().sort((a,b)=>(pr[(a.pri||'').trim()]??1)-(pr[(b.pri||'').trim()]??1));
+      const ps=ts.map(t=>mrPctOf(t.r)).filter(p=>p!=null);
+      return {name:g.name,color:g.color,ini:g.ini,
+              tasks:ts.map(t=>({task:t.t,pri:(t.pri||'').trim(),big:t.big||'',pct:mrPctOf(t.r)})),
+              pct:ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null, scored:ps.length};
+    });
+  }
+  // 월말보고가 없으면 중점추진과제(MFOCUS) 담당자 지정분으로 대체
+  const list=(MFOCUS[String(fm)]||[]);const map={};
+  list.forEach(t=>{const own=mfOwners(t);(own.length?own:['미지정']).forEach(n=>{(map[n]=map[n]||[]).push(t);});});
+  const order={};MGRS.forEach((m,i)=>order[m.name]=i);
+  return Object.keys(map).sort((a,b)=>(order[a]??98)-(order[b]??99)).map(n=>{
+    const ts=map[n];let sw=0,sp=0,cnt=0;
+    ts.forEach(t=>{const p=mfProgNum(t,fm);if(p==null)return;const w=mfW(t);sw+=w;sp+=w*p;cnt++;});
+    const g=MGRS.find(x=>x.name===n);
+    return {name:n,color:(g&&g.color)||'#94a3b8',ini:(g&&g.ini)||n.slice(0,1),
+            tasks:ts.map(t=>({task:t.task,pri:'',big:'',pct:mfProgNum(t,fm)})),
+            pct:sw?Math.round(sp/sw):null,scored:cnt};
+  });
+}
+function mrFocusTiles(extra){ // 중점추진과제 KPI = 담당자별 핵심과제·일정·진행율
   try{ensureMFocusSeeds();}catch(e){}
   const fm=(typeof MFMON!=='undefined'&&MFMON)?String(MFMON):String(MONTH);
   const list=(MFOCUS[String(fm)]||[]), N=list.length, ml=mfMonLabel(fm);
-  const byR={}; list.forEach(t=>{const r=(t.region||'기타').trim()||'기타'; byR[r]=(byR[r]||0)+1;});
-  const rtxt=Object.keys(byR).map(k=>`${k} ${byR[k]}`).join(' · ')||'—';
-  let sw=0,sp=0,scored=0;
-  list.forEach(t=>{const p=mfProgNum(t,fm); if(p==null)return; const w=mfW(t); sw+=w; sp+=w*p; scored++;});
-  const act=sw?Math.round(sp/sw):null, plan=mfPlanPct(fm), gap=(act==null)?null:act-plan;
-  let ok=0,warn=0,late=0; list.forEach(t=>{const v=mfStatOf(t,plan,fm); if(v==='ok')ok++; else if(v==='warn')warn++; else late++;});
-  const el=plan/100; let onTrack=0,rated=0;
-  list.forEach(t=>{const p=mfProgNum(t,fm); if(p==null)return; rated++; if(p>=100||(el>0&&p/el>=100))onTrack++;});
-  const nd=mfNeeds(list), ndN=Object.keys(nd).reduce((a,k)=>a+nd[k],0);
-  const ndTxt=Object.keys(nd).map(k=>`${k} ${nd[k]}`).join(' · ')||'현재 없음';
-  const tile=(lb,v,sub,pill,cls)=>`<div class="om-tile ${cls||''}"><div class="om-tl">${lb} ${pill||''}</div><div class="om-tv">${v}</div><div class="om-ts">${sub}</div></div>`;
-  let h=`<div class="om-tiles om-tiles5">`;
-  h+=tile(ml+' 중점추진과제',N+'<span class="om-tu">건</span>',rtxt);
-  const gtxt=(act==null)?'진행률 미입력':`연간 기준 ${plan}%(${ml} 시점) · <b class="${gap>=0?'gp-p':'gp-m'}">${gap>=0?'+':''}${gap}%p</b> ${gap>=0?'초과':'미달'}`;
-  h+=tile('연간목표 진척률',(act==null?'—':act+'<span class="om-tu">%</span>'),gtxt+` <span class="om-tt">가중(핵심3·주요2·일반1) · 산정 ${scored}/${N}건</span>`,omPill(act==null?null:act/100));
-  h+=`<div class="om-tile"><div class="om-tl">과제 상태 <span class="om-tt">클릭 → 필터</span></div>
-    <div class="om-stat">
-      <span class="mfs ok${MFSTAT==='ok'?' on':''}" onclick="setMFStat('ok')">정상 <b>${ok}</b></span>
-      <span class="mfs warn${MFSTAT==='warn'?' on':''}" onclick="setMFStat('warn')">주의 <b>${warn}</b></span>
-      <span class="mfs late${MFSTAT==='late'?' on':''}" onclick="setMFStat('late')">지연 <b>${late}</b></span>
-    </div><div class="om-ts">연간 기준선 대비 · 주의=20%p 이내 · 지연=초과</div></div>`;
-  h+=tile('연말 달성 전망',onTrack+'<span class="om-tu">/'+(rated||N)+'건</span>','현 페이스 유지 시 연내 100% 도달'+(rated<N?` · 미산정 ${N-rated}건`:''),omPill(rated?onTrack/rated:null));
-  h+=tile('의사결정·지원 필요',ndN+'<span class="om-tu">건</span>',ndTxt,null,ndN?'om-need':'');
-  return h+'</div>';
-}
-function mrTeamTiles(extra){ // 중화팀과제 KPI
-  try{ensureMFocusSeeds();}catch(e){}
-  const fm=String(MONTH), list=(MFOCUS[fm]||[]);
-  let sw=0,sp=0,cnt=0; list.forEach(t=>{const p=mfProgNum(t,fm); if(p==null)return; const w=mfW(t); sw+=w; sp+=w*p; cnt++;});
+  const plan=mfPlanPct(fm);
+  let sw=0,sp=0; list.forEach(t=>{const p=mfProgNum(t,fm); if(p==null)return; const w=mfW(t); sw+=w; sp+=w*p;});
   const act=sw?Math.round(sp/sw):null;
-  const tile=(lb,v,sub,pill)=>`<div class="om-tile"><div class="om-tl">${lb} ${pill||''}</div><div class="om-tv">${v}</div><div class="om-ts">${sub}</div></div>`;
-  let h='<div class="om-tiles">';
-  h+=tile(MONTH+'월 중점추진과제',list.length+'<span class="om-tu">건</span>','매월 중점추진과제 기준');
-  h+=tile('중점추진과제 진척률',(act==null?'—':act+'<span class="om-tu">%</span>'),'연간목표 진척 가중평균 · 연간 기준 '+mfPlanPct(String(MONTH))+'% · 산정 '+cnt+'/'+list.length+'건',omPill(act==null?null:act/100));
-  h+=mrEventTile(MONTH,MONTH+'월 중화팀 행사');
-  h+=mrEventTile(Math.min(12,MONTH+1),Math.min(12,MONTH+1)+'월 중화팀 행사');
-  return h+'</div>';
+  let ok=0,warn=0,late=0; list.forEach(t=>{const v=mfStatOf(t,plan,fm); if(v==='ok')ok++; else if(v==='warn')warn++; else late++;});
+  // 담당자 지정된 과제만 인원별로 묶기
+  const map={},unassigned=[];
+  list.forEach(t=>{const own=mfOwners(t); if(!own.length){unassigned.push(t);return;} own.forEach(n=>{(map[n]=map[n]||[]).push(t);});});
+  const order={};MGRS.forEach((g,i)=>order[g.name]=i);
+  const owns=Object.keys(map).sort((a,b)=>(order[a]??98)-(order[b]??99)).map(n=>{
+    const g=MGRS.find(x=>x.name===n), ts=map[n];
+    const ps=ts.map(t=>mfProgNum(t,fm)).filter(p=>p!=null);
+    return {name:n,color:(g&&g.color)||'#94a3b8',ini:(g&&g.ini)||n.slice(0,1),tasks:ts,
+            pct:ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null};
+  });
+  let h=`<div class="mf-sumbar">
+      <div class="mfsb-i"><span class="mfsb-l">${ml} 중점추진과제</span><b>${N}건</b></div>
+      <div class="mfsb-i"><span class="mfsb-l">전체 진척률</span><b style="color:#1e6f5c">${act==null?'—':act+'%'}</b><span class="mfsb-s">연간 기준선 ${plan}%</span></div>
+      <div class="om-stat" style="flex:0 0 auto;width:230px;margin:0">
+        <span class="mfs ok${MFSTAT==='ok'?' on':''}" onclick="setMFStat('ok')">정상 <b>${ok}</b></span>
+        <span class="mfs warn${MFSTAT==='warn'?' on':''}" onclick="setMFStat('warn')">주의 <b>${warn}</b></span>
+        <span class="mfs late${MFSTAT==='late'?' on':''}" onclick="setMFStat('late')">지연 <b>${late}</b></span>
+      </div>
+      <div class="mfsb-s" style="margin-left:auto">담당자별 핵심과제 · 일정 · 진행율 ${unassigned.length?`· 미지정 ${unassigned.length}건`:''}</div>
+    </div>`;
+  if(!owns.length)
+    return h+`<div class="om-tile" style="margin-bottom:14px"><div class="om-tl">담당자별 핵심과제 · 일정 · 진행율</div><div class="om-ts" style="margin-top:8px">아래 ${ml} 중점추진과제 표에서 <b>담당자</b>를 지정하면, 그 담당자의 핵심과제·일정·진행율이 여기에 인원별로 정리됩니다. (현재 ${N}건 모두 미지정)</div></div>`;
+  h+='<div class="mo-grid">'+owns.map(o=>{
+    const rows=o.tasks.slice(0,4).map(t=>{
+      const p=mfProgNum(t,fm);
+      return `<li title="${esc(t.task||'')}"><div class="mk-t">${esc(t.task||'')}</div><div class="mk-m"><span class="mk-d">${esc(t.due||'일정 미정')}</span><span class="mk-b"><i style="width:${Math.min(100,p||0)}%;background:${p==null?'#cfd5dc':(p>=plan?'#2e7d52':(p>=plan-20?'#e8a33d':'#d96565'))}"></i></span><span class="mk-p">${p==null?'—':p+'%'}</span></div></li>`;}).join('');
+    const more=o.tasks.length>4?`<div class="mo-mut">외 ${o.tasks.length-4}건</div>`:'';
+    return `<div class="mo-tile">
+      <div class="mo-hd"><span class="mo-av" style="background:${o.color}">${esc(o.ini)}</span><span class="mo-nm">${esc(o.name)}</span><span class="mo-cnt">핵심과제 ${o.tasks.length}건</span><span class="mo-pv">${o.pct==null?'—':o.pct+'%'}</span></div>
+      <div class="mo-bar"><i style="width:${Math.min(100,o.pct||0)}%;background:${o.pct==null?'#cfd5dc':(o.pct>=plan?'#2e7d52':(o.pct>=plan-20?'#e8a33d':'#d96565'))}"></i></div>
+      <ul class="mo-li mk-li">${rows}</ul>${more}</div>`;}).join('')+'</div>';
+  return h;
+}
+function mrOwnerCards(fm,plan){ // 담당자별 주요내용 카드 (월말보고 기준)
+  const owns=mfByOwner(fm);
+  if(!owns.length)return `<div class="om-tile"><div class="om-tl">담당자별 주요내용</div><div class="om-ts" style="margin-top:8px">${mfMonLabel(fm)} 월말보고가 없습니다. 「구글시트 불러오기」로 반영하세요.</div></div>`;
+  return '<div class="mo-grid">'+owns.map(o=>{
+    const items=o.tasks.slice(0,4).map(t=>`<li title="${esc(t.task||'')}" style="${t.pri==='상'?'font-weight:800;color:#1e6f5c':''}">${t.pri==='상'?'★ ':''}${esc(t.task||'')}${t.pct!=null?` <span style="color:#9aa2ad">${t.pct}%</span>`:''}</li>`).join('');
+    const more=o.tasks.length>4?`<div class="mo-mut">외 ${o.tasks.length-4}건</div>`:'';
+    return `<div class="mo-tile">
+      <div class="mo-hd"><span class="mo-av" style="background:${o.color}">${esc(o.ini)}</span><span class="mo-nm">${esc(o.name)}</span><span class="mo-cnt">${o.tasks.length}건</span><span class="mo-pv">${o.pct==null?'—':o.pct+'%'}</span></div>
+      <div class="mo-bar"><i style="width:${Math.min(100,o.pct||0)}%;background:${o.pct==null?'#cfd5dc':(o.pct>=plan?'#2e7d52':(o.pct>=plan-20?'#e8a33d':'#d96565'))}"></i></div>
+      <ul class="mo-li">${items}</ul>${more}</div>`;}).join('')+'</div>';
+}
+function mrTeamTiles(extra){ // 중화팀과제 KPI = 담당자별 주요내용
+  try{ensureMFocusSeeds();}catch(e){}
+  const fm=String(MONTH);
+  const rows=(MREPORTS[fm]||[]);
+  const plan=mfPlanPct(fm);
+  const owns=mfByOwner(fm);
+  const ps=owns.map(o=>o.pct).filter(p=>p!=null);
+  const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+  let h=`<div class="mf-sumbar">
+      <div class="mfsb-i"><span class="mfsb-l">${MONTH}월 중화팀과제</span><b>${rows.length}건</b></div>
+      <div class="mfsb-i"><span class="mfsb-l">담당자</span><b>${owns.length}명</b></div>
+      <div class="mfsb-i"><span class="mfsb-l">평균 달성률</span><b style="color:#1e6f5c">${avg==null?'—':avg+'%'}</b><span class="mfsb-s">연간 기준선 ${plan}%</span></div>
+      <div class="mfsb-s" style="margin-left:auto">담당자별 주요내용 · ★ = 우선순위 상 · % = 달성률</div>
+    </div>`;
+  return h+mrOwnerCards(fm,plan);
 }
 function mrMonthTiles(extra){
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH);
@@ -3527,20 +3649,70 @@ function mrMonthChart(label,scope){
   pts.forEach(p=>{
     xl+=`<text x="${X(p.m)}" y="${H-10}" text-anchor="middle" font-size="10" fill="${p.m===MONTH?'#22262b':'#8b93a0'}" font-weight="${p.m===MONTH?'800':'600'}">${p.m}월</text>`;
     if(p.a!=null){const lastP=(p.m===lastM);
-      dots+=`<circle cx="${X(p.m).toFixed(1)}" cy="${Y(p.a).toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#46628f" stroke-width="${lastP?2.6:2}"/>`;
-      dots+=`<text x="${X(p.m).toFixed(1)}" y="${Y(p.a)-11}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#33619e">${p.a.toLocaleString('en-US')}</text>`;
+      dots+=`<circle cx="${X(p.m).toFixed(1)}" cy="${Y(p.a).toFixed(1)}" r="${lastP?6:4.5}" fill="#fff" stroke="#2e7d52" stroke-width="${lastP?2.6:2}"/>`;
+      dots+=`<text x="${X(p.m).toFixed(1)}" y="${Y(p.a)-11}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1e7a43">${p.a.toLocaleString('en-US')}</text>`;
     } else dots+=`<circle cx="${X(p.m).toFixed(1)}" cy="${Y(0).toFixed(1)}" r="3" fill="#eef1f4" stroke="#cfd5dc" stroke-width="1.5"/>`;
   });
   const last=withD.length?withD[withD.length-1]:null;
   const rate=(last&&T)?Math.round(last.a/T*100):null;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 누적 수출 현황 <span>목표(회색 점선) · 월별 누적(파랑)</span></div>
+  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 누적 수출 현황 <span>목표(회색 점선) · 월별 누적(초록)</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">
       ${grid}${yl}
       ${T?`<line x1="${L}" y1="${Y(T)}" x2="${W2-R}" y2="${Y(T)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${Y(T)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">목표 ${T.toLocaleString('en-US')}</text>`:''}
-      ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#46628f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''}
+      ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#2e7d52" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''}
       ${dots}${xl}
     </svg>
     <div class="omc-b"><span>${last?`누적 실적 ${last.a.toLocaleString('en-US')} · 목표 ${T.toLocaleString('en-US')} · ${rate}%`:'월별 실적 입력 대기'}</span></div></div>`;
+}
+/* 월별 목표대비실적(막대) + 누적 추이(선) 통합 차트 — 월간업무현황 본사실적 */
+let TMOPEN={};
+function tmToggle(k){TMOPEN[k]=!TMOPEN[k];render();}
+function niceStep(max,divs){const raw=Math.max(1e-9,max/(divs||3));const p=Math.pow(10,Math.floor(Math.log10(raw)));const n=raw/p;const m=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return m*p;}
+function mrComboChart(label,scope){
+  const k=v=>Math.round((v||0)/1000);
+  const rows=[];let cum=0,YT=0;
+  for(let m=1;m<=12;m++){const D=MDEAL[String(m)];
+    if(!D||!D.length){rows.push({m,t:null,a:null,c:null});continue;}
+    const g=ovScopeAggFrom(D,scope);
+    if(g.exT)YT=k(g.exT);
+    const t=k(g.exTm||0), hasA=!!g.exA;
+    if(hasA)cum+=g.exA;
+    rows.push({m,t:t||null,a:hasA?k(g.exA):null,c:hasA?k(cum):null});}
+  const SEL=Math.max(1,Math.min(12,+MONTH||12));   // 상단 「월」 선택값과 연동
+  const lim=SEL;                                   // 1~선택월까지만 표시
+  const view=rows.filter(r=>r.m<=lim);
+  const W2=460,H=300,L=56,R=52,TP=22,B=38;
+  const base=H-B;
+  const mMax=Math.max(1,...view.map(r=>Math.max(r.t||0,r.a||0)))*1.55;
+  const cMax=Math.max(1,YT,...view.map(r=>r.c||0))*1.10;
+  const band=(W2-L-R)/lim, bw=Math.max(5,Math.min(18,band*0.22));
+  const X=m=>L+band*(m-1)+band/2;
+  const Y=v=>TP+(base-TP)*(1-v/mMax);
+  const YC=v=>TP+(base-TP)*(1-v/cMax);
+  const stepL=niceStep(mMax,3);
+  let grid='',yl='';
+  for(let v=0;v<=mMax;v+=stepL){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#eef1f5"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#9aa2ad">${Math.round(v).toLocaleString('en-US')}</text>`;}
+  const stepC=niceStep(cMax,3);
+  for(let v=0;v<=cMax;v+=stepC)yl+=`<text x="${W2-R+7}" y="${YC(v)+4}" text-anchor="start" font-size="10" fill="#b3bac4">${Math.round(v).toLocaleString('en-US')}</text>`;
+  let bars='',xl='',dots='',lp=[],lastC=-1;
+  rows.forEach(r=>{if(r.c!=null&&r.m<=lim)lastC=r.m;});
+  view.forEach(r=>{const cx=X(r.m),on=(SEL===r.m);
+    xl+=`<text class="omc-x" onclick="setMonthSel('${r.m}')" x="${cx}" y="${H-11}" text-anchor="middle" font-size="${lim>9?10:11}" fill="${on?'#1e6f5c':(r.m===MONTH?'#22262b':'#8b93a0')}" font-weight="${(on||r.m===MONTH)?'800':'600'}">${r.m}월</text>`;
+    if(r.t)bars+=`<rect x="${(cx-bw-1.5).toFixed(1)}" y="${Y(r.t).toFixed(1)}" width="${bw}" height="${(base-Y(r.t)).toFixed(1)}" rx="2.5" fill="#c9ddd0"/>`;
+    if(r.a!=null)bars+=`<rect x="${(cx+1.5).toFixed(1)}" y="${Y(r.a).toFixed(1)}" width="${bw}" height="${(base-Y(r.a)).toFixed(1)}" rx="2.5" fill="#2e7d52"/>`;
+    if(r.c!=null){lp.push(`${cx.toFixed(1)},${YC(r.c).toFixed(1)}`);
+      const lastP=(r.m===lastC);
+      dots+=`<circle cx="${cx.toFixed(1)}" cy="${YC(r.c).toFixed(1)}" r="${lastP?5.5:3.6}" fill="#fff" stroke="#1e6f5c" stroke-width="${lastP?2.5:2}"/>`;
+      if(lastP){const rt=(cx<L+(W2-L-R)*0.62);dots+=`<text x="${(cx+(rt?9:-9)).toFixed(1)}" y="${(YC(r.c)-6).toFixed(1)}" text-anchor="${rt?'start':'end'}" font-size="10.5" font-weight="800" fill="#1e6f5c">누적 ${r.c.toLocaleString('en-US')}</text>`;}}
+  });
+  const goal=YT?`<line x1="${L}" y1="${YC(YT)}" x2="${W2-R}" y2="${YC(YT)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${YC(YT)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">연간목표 ${YT.toLocaleString('en-US')}</text>`:'';
+  const line=lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:'';
+  const done=view.filter(r=>r.a!=null&&r.t);
+  const lr=SEL?(rows[SEL-1].a!=null?rows[SEL-1]:null):(done.slice(-1)[0]||null);
+  const cLast=lastC>0?rows[lastC-1].c:0;
+  return `<div class="omc"><div class="omc-h">${esc(label)} 목표대비실적 · 누적 <span>1~${SEL}월 · 상단 「월」 선택과 연동</span></div>
+    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}</svg>
+    <div class="omc-b"><span>${lr?`${lr.m}월 목표 ${lr.t.toLocaleString('en-US')} · 실적 ${lr.a.toLocaleString('en-US')} · <b>${Math.round(lr.a/lr.t*100)}%</b> │ 1~${lastC>0?lastC:lr.m}월 누적 ${cLast.toLocaleString('en-US')} / 연간 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b>`:(SEL?`${SEL}월 실적 없음`:'월별 실적 입력 대기')}</span></div></div>`;
 }
 function mrDealTable(){
   const D=mdealRows(MONTH);
@@ -3610,9 +3782,72 @@ function renderTeamWeekCards(wk){
     </div>`;}).join('')+'</div>';
   return h;
 }
+function tmSortRows(rows){
+  const pr={'상':0,'중':1,'하':2};
+  return rows.map((r,i)=>({r,i,p:mrPctOf(r.r)}))
+    .sort((a,b)=>{
+      const on=x=>/상시|지속|진행/.test(String(x.r.r||''));
+      const ga=on(a)?1:0, gb=on(b)?1:0;                   // 상시·지속진행은 맨 아래
+      if(ga!==gb)return ga-gb;
+      const pa=pr[String(a.r.pri||'').trim()]??1, pb=pr[String(b.r.pri||'').trim()]??1;
+      if(pa!==pb)return pa-pb;                            // 상 → 중 → 하
+      const va=(a.p==null)?999:a.p, vb=(b.p==null)?999:b.p;
+      if(va!==vb)return va-vb;                            // 달성률 낮은 순 (미기재는 뒤)
+      return a.i-b.i;
+    }).map(x=>x.r);
+}
+function tmRateHtml(v){const s=String(v==null?'':v).trim();if(!s||s==='-')return '';
+  const p=mrPctOf(s); const c=(p==null)?'n':(p>=90?'g':(p>=60?'a':'r'));
+  return ` <b class="tmrt ${c}">${esc(s)}</b>`;}
+function tmList(items,key,render){
+  const open=!!TMOPEN[key], LIM=5;
+  const show=open?items:items.slice(0,LIM);
+  let h=`<ul class="tmul">${show.length?show.map(render).join(''):'<li class="mut" style="font-size:11px;color:#b0b7c0">없음</li>'}</ul>`;
+  if(items.length>LIM)h+=`<button class="tmmore" onclick="tmToggle('${key}')">${open?'접기':'+ '+(items.length-LIM)+'건 더보기'}</button>`;
+  return h;
+}
 function renderTeamMonthCards(isMR){
+  if(!isMR){const wkd=wkData(); if(wkd.length) return renderTeamWeekCards(wkd); return renderTeamMonthCardsLegacy(false);}
+  const m1=MONTH, m2=(MONTH<12?MONTH+1:12);
+  const rowsAll=mrData();
+  let h=`<div class="ov-sec">중화팀과제 <span class="ov-sub">담당자별 1인 1행 · ${m1}월 과제 · ${m2}월 과제 · ${m2}월 중점추진과제 · ★=우선순위 상 · 달성률 낮은 순 · 상시는 맨 아래</span></div>`;
+  const mgs=MGRS.filter(g=>rowsAll.some(r=>r.m===g.id));
+  if(!mgs.length)return h+`<div class="om-tile"><div class="om-ts">${m1}월 보고 데이터가 없습니다. 「구글시트 불러오기」로 반영하세요.</div></div>`;
+  mgs.forEach(g=>{
+    const mine=rowsAll.map((r,idx)=>({r,idx})).filter(x=>x.r.m===g.id);
+    const sorted=tmSortRows(mine.map(x=>x.r));
+    const idxOf=r=>mine.find(x=>x.r===r).idx;
+    const ps=sorted.map(r=>mrPctOf(r.r)).filter(p=>p!=null);
+    const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+    const nxt=sorted.filter(r=>String(r.a||'').trim());
+    const mfn=mfTasksForOwner(g.name,m2);
+    const rd=RRDATA.find(x=>(x.who||'').startsWith(g.name));
+    const roleLine=OVROLE[g.id]||((rd&&rd.role)?rd.role:(g.region||''));
+    const ed=(r,f)=>r[f]?`<div class="tmsub mr-ed2" data-i="${idxOf(r)}" data-f="${f}" ondblclick="mrEdit(this)" onblur="mrSave(this)" onkeydown="mrKey(event,this)" title="더블클릭 → 수정">${esc(r[f])}</div>`:'';
+    const hi=r=>String(r.pri||'').trim()==='상';
+    const li1=r=>`<li class="${hi(r)?'hi':''}"><div class="tmtt">${hi(r)?'★ ':''}${esc(r.t)}${tmRateHtml(r.r)}</div>${ed(r,'j')}</li>`;
+    const li2=r=>`<li class="${hi(r)?'hi':''}"><div class="tmtt">${hi(r)?'★ ':''}${esc(r.t)}</div>${ed(r,'a')}</li>`;
+    const li3=t=>`<li><div class="tmtt">${esc(t)}</div></li>`;
+    h+=`<div class="tmrow">
+      <div class="tmhd">
+        <span class="tmav" style="background:${g.color}">${esc(g.ini)}</span>
+        <div class="tmn"><b>${esc(g.name)}</b><span class="tmt">${esc(g.title)}</span><div class="tmrg">${esc(OVSUB[g.id]||g.region||'')}</div></div>
+        <div class="tmchips"><span>${m1}월 과제 ${sorted.length}건</span><span>${m2}월 계획 ${nxt.length}건</span><span>중점 ${mfn.length}건</span></div>
+        <div class="tmavg"><b>${avg==null?'–':avg+'%'}</b><span>평균 달성률</span></div>
+      </div>
+      <div class="tmbar"><i style="width:${avg||0}%"></i></div>
+      <div class="tmcols">
+        <div class="tmcol c1"><div class="tmch">${m1}월 과제 <b>${sorted.length}건</b><span class="tmchs">결과·달성률 · 더블클릭 수정</span></div>${tmList(sorted,'a'+g.id,li1)}</div>
+        <div class="tmcol c2"><div class="tmch">${m2}월 과제 <b>${nxt.length}건</b><span class="tmchs">익월 실행계획</span></div>${tmList(nxt,'b'+g.id,li2)}</div>
+        <div class="tmcol c3"><div class="tmch" onclick="MRTAB='focus';setMFMon(${m2})">${m2}월 중점추진과제 <b>${mfn.length}건</b><span class="tmchs">클릭 → 중점추진과제</span></div>${tmList(mfn,'c'+g.id,li3)}</div>
+      </div>
+      <div style="padding:0 18px 12px"><div class="ov-role">${esc(roleLine)}</div></div>
+    </div>`;
+  });
+  return h;
+}
+function renderTeamMonthCardsLegacy(isMR){
   let h='';
-  if(!isMR){const wkd=wkData(); if(wkd.length) return renderTeamWeekCards(wkd);} // 주간업무현황: 해당 주차 주간보고 연동
 
     const m1=MONTH, m2=(MONTH<12?MONTH+1:12);
     h+=`<div class="ov-sec">중화팀과제 </div>`;
@@ -3683,7 +3918,7 @@ function renderOverview(){
   } else {
     if(TAB==='mreport'){
       h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 1~6월 입력 시 누적 자동 반영</span></div>`;
-      h+=`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`;
+      h+=`<div class="om-charts">${mrComboChart('전체','전체')}${mrComboChart('중국','중국')}${mrComboChart('대만','대만')}</div>`;
       h+=`<div class="ov-sec" style="margin-top:18px">${MONTH}월 거래처별 실적 요약 <span class="ov-sub">당월 실적 + 1~${MONTH}월 누적</span></div>`;
       h+=mrDealTable();
     } else {
@@ -5870,7 +6105,8 @@ function perfBlock(metKey){
     <div class="scard"><div class="l">전년도 누적실적</div><div class="v">${fmtN(prevCum)}<small>${mt.unit}</small></div><div class="sub">2025 1~${sel}월</div></div>
     <div class="scard"><div class="l">성장율</div><div class="v ${grw<0?'red':'green'}">${grw>0?'+':''}${grw}<small>%</small></div><div class="sub">전년 누적 比</div></div>
   </div>
-  <div class="chartbox"><h4>월별 KPI · 실적 · 달성율 현황 <span class="lg">(1~${sel}월 · ${mt.kind})</span></h4>${chartSVG(S,sel,mt)}</div>
+  <div class="chartbox"><h4>월별 KPI · 실적 · 달성율 추세 <span class="lg">(1~${sel}월 · ${mt.kind})</span></h4>${chartSVG(S,sel,mt)}</div>
+  <div class="chartbox" style="margin-top:12px"><h4>누적 목표 대비 실적 <span class="lg">(1~${sel}월 누계 · ${mt.kind} · ${mt.unit})</span></h4>${cumChartSVG(S,sel,mt)}</div>
   ${perfTable(S,sel,mt)}
   </div>`;
 }
@@ -5891,29 +6127,77 @@ function corpPerfModule(){
   <div class="perf-pair">${group.map(k=>perfBlock(k)).join('')}</div>`;
   return h;
 }
+function pfHasAct(S,m){return S.act[m]!=null&&+S.act[m]>0;}
 function chartSVG(S,sel,mt){
   const W=1000,H=336,ml=58,mr=48,mtop=14,mb=38;
   const pw=W-ml-mr, ph=H-mtop-mb, n=Math.max(1,sel), yb=mtop+ph;
   const maxV=Math.max(1,...S.kpi.slice(0,sel),...S.act.slice(0,sel));
   const band=pw/n, bw=Math.min(24,band*0.26);
   let grid='';
-  for(let g=0;g<=4;g++){const y=yb-(g/4)*ph;grid+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#eef" stroke-width="1"/><text x="${ml-8}" y="${y+4}" font-size="11" fill="#9498a3" text-anchor="end">${Math.round(maxV*g/4).toLocaleString()}</text><text x="${W-mr+8}" y="${y+4}" font-size="11" fill="#9498a3" text-anchor="start">${g*30}%</text>`;}
-  let bars='',pts='',dots='',xlab='';
+  for(let g=0;g<=4;g++){const y=yb-(g/4)*ph;grid+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#eef" stroke-width="1"/><text x="${ml-8}" y="${y+4}" font-size="11" fill="#9498a3" text-anchor="end">${Math.round(maxV*g/4).toLocaleString()}</text><text x="${W-mr+8}" y="${y+4}" font-size="11" fill="#9498a3" text-anchor="start">${Math.round(120*g/4)}%</text>`;}
+  let bars='',dots='',xlab='',segs=[],cur=[],nodata=0;
   for(let m=0;m<sel;m++){const cx=ml+band*m+band/2;
     const kh=S.kpi[m]/maxV*ph, ah=S.act[m]/maxV*ph;
-    bars+=`<rect x="${cx-bw-2}" y="${yb-kh}" width="${bw}" height="${kh}" rx="3" fill="#c9ddd0"/><rect x="${cx+2}" y="${yb-ah}" width="${bw}" height="${ah}" rx="3" fill="#2e7d52"/>`;
-    const rate=S.kpi[m]?S.act[m]/S.kpi[m]:0, cap=Math.min(rate,1.2), py=mtop+(1-cap/1.2)*ph;
-    pts+=`${cx.toFixed(1)},${py.toFixed(1)} `;
-    dots+=`<circle cx="${cx}" cy="${py}" r="3.6" fill="#fff" stroke="#2e7d5b" stroke-width="2"/>`;
-    xlab+=`<text x="${cx}" y="${H-13}" font-size="12" fill="#9498a3" text-anchor="middle">${m+1}월</text>`;
+    const has=pfHasAct(S,m); if(!has)nodata++;
+    bars+=`<rect x="${cx-bw-2}" y="${yb-kh}" width="${bw}" height="${kh}" rx="3" fill="${has?'#c9ddd0':'#e6e9ee'}"/>`;
+    if(has)bars+=`<rect x="${cx+2}" y="${yb-ah}" width="${bw}" height="${ah}" rx="3" fill="#2e7d52"/>`;
+    if(has){
+      const rate=S.kpi[m]?S.act[m]/S.kpi[m]:0, cap=Math.min(rate,1.2), py=mtop+(1-cap/1.2)*ph;
+      cur.push(`${cx.toFixed(1)},${py.toFixed(1)}`);
+      dots+=`<circle cx="${cx}" cy="${py}" r="3.6" fill="#fff" stroke="#2e7d5b" stroke-width="2"/>`;
+    } else { if(cur.length){segs.push(cur);cur=[];}
+      xlab+=`<text x="${cx}" y="${mtop+12}" font-size="10" fill="#b6bcc6" text-anchor="middle">미입력</text>`; }
+    xlab+=`<text x="${cx}" y="${H-13}" font-size="12" fill="${has?'#9498a3':'#c2c7d0'}" text-anchor="middle">${m+1}월</text>`;
   }
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">${grid}${bars}<polyline points="${pts.trim()}" fill="none" stroke="#2e7d5b" stroke-width="2.5"/>${dots}${xlab}</svg>
-    <div style="display:flex;gap:18px;justify-content:center;margin-top:6px;font-size:11px;color:var(--ink2);font-weight:600">
+  if(cur.length)segs.push(cur);
+  const line=segs.filter(s=>s.length>1).map(s=>`<polyline points="${s.join(' ')}" fill="none" stroke="#2e7d5b" stroke-width="2.5"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">${grid}${bars}${line}${dots}${xlab}</svg>
+    <div style="display:flex;gap:18px;justify-content:center;margin-top:6px;font-size:11px;color:var(--ink2);font-weight:600;flex-wrap:wrap">
       <span><i style="display:inline-block;width:11px;height:11px;background:#c9ddd0;border-radius:2px;vertical-align:middle"></i> KPI</span>
       <span><i style="display:inline-block;width:11px;height:11px;background:#2e7d52;border-radius:2px;vertical-align:middle"></i> 실적</span>
       <span><i style="display:inline-block;width:11px;height:11px;background:#2e7d5b;border-radius:50%;vertical-align:middle"></i> 달성율</span>
+      ${nodata?`<span style="color:#b6bcc6"><i style="display:inline-block;width:11px;height:11px;background:#e6e9ee;border-radius:2px;vertical-align:middle"></i> 실적 미입력 ${nodata}개월 (달성율 선 제외)</span>`:''}
     </div>`;
 }
+/* 누적 목표 대비 실적 (KPI 누적 점선 · 실적 누적 면적) */
+function cumChartSVG(S,sel,mt){
+  const W=1000,H=300,ml=58,mr=18,mtop=16,mb=38;
+  const pw=W-ml-mr, ph=H-mtop-mb, n=Math.max(1,sel), yb=mtop+ph;
+  const ck=[],ca=[];let k=0,a=0,lastAct=-1;
+  for(let m=0;m<sel;m++){k+=(+S.kpi[m]||0);ck.push(k);
+    if(pfHasAct(S,m)){a+=(+S.act[m]||0);lastAct=m;}
+    ca.push(pfHasAct(S,m)||lastAct>=m?a:null);}
+  const maxV=Math.max(1,ck[sel-1]||1,a)*1.08;
+  const X=m=>ml+(n===1?pw/2:pw*m/(n-1));
+  const Y=v=>mtop+ph*(1-v/maxV);
+  let grid='';
+  for(let g=0;g<=4;g++){const y=yb-(g/4)*ph;grid+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#eef" stroke-width="1"/><text x="${ml-8}" y="${y+4}" font-size="11" fill="#9498a3" text-anchor="end">${Math.round(maxV*g/4).toLocaleString()}</text>`;}
+  const kpts=ck.map((v,m)=>`${X(m).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+  const idx=[];for(let m=0;m<sel;m++)if(pfHasAct(S,m))idx.push(m);
+  const apts=idx.map(m=>`${X(m).toFixed(1)},${Y(ca[m]).toFixed(1)}`).join(' ');
+  const area=idx.length>1?`<polygon points="${X(idx[0]).toFixed(1)},${yb} ${apts} ${X(idx[idx.length-1]).toFixed(1)},${yb}" fill="#2e7d52" opacity=".13"/>`:'';
+  let dots='',xlab='',gapb='';
+  for(let m=0;m<sel;m++){const cx=X(m);
+    xlab+=`<text x="${cx}" y="${H-13}" font-size="12" fill="${pfHasAct(S,m)?'#9498a3':'#c2c7d0'}" text-anchor="middle">${m+1}월</text>`;
+    if(pfHasAct(S,m)){dots+=`<circle cx="${cx}" cy="${Y(ca[m])}" r="3.4" fill="#fff" stroke="#2e7d52" stroke-width="2"/>`;}
+  }
+  const lm=idx.length?idx[idx.length-1]:-1;
+  if(lm>=0){const y1=Y(ck[lm]),y2=Y(ca[lm]),cx=X(lm),gp=ca[lm]-ck[lm];
+    gapb=`<line x1="${cx}" y1="${Math.min(y1,y2)}" x2="${cx}" y2="${Math.max(y1,y2)}" stroke="${gp<0?'#c0392b':'#2e7d52'}" stroke-width="2" stroke-dasharray="3 3"/>`
+      +`<text x="${cx-8}" y="${(y1+y2)/2+4}" font-size="11.5" font-weight="800" fill="${gp<0?'#c0392b':'#1e7a43'}" text-anchor="end">${gp>0?'+':''}${Math.round(gp).toLocaleString()}</text>`;}
+  const kc=lm>=0?ck[lm]:ck[sel-1], acc=lm>=0?ca[lm]:0, rate=kc?Math.round(acc/kc*100):0;
+  const fm=v=>Math.round(v).toLocaleString();
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">${grid}${area}
+    <polyline points="${kpts}" fill="none" stroke="#9aa6b8" stroke-width="2.2" stroke-dasharray="6 4"/>
+    ${idx.length>1?`<polyline points="${apts}" fill="none" stroke="#2e7d52" stroke-width="2.8"/>`:''}
+    ${gapb}${dots}${xlab}</svg>
+    <div style="display:flex;gap:18px;justify-content:center;margin-top:6px;font-size:11px;color:var(--ink2);font-weight:600;flex-wrap:wrap">
+      <span><i style="display:inline-block;width:14px;height:2px;background:#9aa6b8;vertical-align:middle"></i> 누적 목표</span>
+      <span><i style="display:inline-block;width:14px;height:3px;background:#2e7d52;vertical-align:middle"></i> 누적 실적</span>
+      <span style="color:var(--dim)">${lm>=0?`${lm+1}월 기준 · 목표 ${fm(kc)} · 실적 ${fm(acc)} · <b style="color:${acc<kc?'#c0392b':'#1e7a43'}">${acc-kc>0?'+':''}${fm(acc-kc)} (${rate}%)</b>`:'실적 입력 대기'}</span>
+    </div>`;
+}
+
 function perfTable(S,sel,mt){
   const editable=PBUMON!=='전체';
   const rows=[['kpi','KPI'],['act','2026 실적'],['prev','2025 실적']];
@@ -7116,25 +7400,32 @@ loadSPERF();
 (function(){
   const put=(iso,deal)=>{const k='W'+iso;const ex=SPHIST[k];
     if(ex&&ex.deal&&ex.deal.length&&ex._src!=='wkseed')return; // 사용자가 저장한 주차는 보존
-    SPHIST[k]=Object.assign({},ex||{},{week:'7월 W'+iso,_key:k,wk:iso,month:7,kpi:(ex&&ex.kpi)||[],rev:(ex&&ex.rev)||[],deal,_src:'wkseed'});};
+    const mo=(function(){for(let m=7;m<=12;m++){if(buildWeeks(m).some(x=>x.iso===iso))return m;}return 7;})();
+    SPHIST[k]=Object.assign({},ex||{},{week:mo+'월 W'+iso,_key:k,wk:iso,month:mo,kpi:(ex&&ex.kpi)||[],rev:(ex&&ex.rev)||[],deal,_src:'wkseed'});};
   put(29,[
-    {dealer:'닝보',grp:'중국',exT:1304525,exA:539389,ship:0.46,suT:1304525,suA:1100867},
-    {dealer:'북경',grp:'중국',exT:286195,exA:90311,ship:0.33,suT:402605,suA:200000},
-    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:4000,ship:1.0,suT:40644,suA:0},
-    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:68346,ship:0.8,suT:null,suA:null},
-    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:22480,ship:1.0,suT:null,suA:null}]);
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:650269,suT:18636056,suTm:1304525,suA:1100867},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:200000},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:4003,suT:205000,suTm:7000,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:68346,suT:1370000,suTm:150000,suA:0},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
   put(30,[
-    {dealer:'닝보',grp:'중국',exT:1304525,exA:539389,ship:0.46,suT:1304525,suA:1100867},
-    {dealer:'북경',grp:'중국',exT:286195,exA:90311,ship:0.33,suT:402605,suA:200000},
-    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:4000,ship:1.0,suT:40644,suA:0},
-    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:68346,ship:0.8,suT:null,suA:null},
-    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:22480,ship:1.0,suT:null,suA:null}]);
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:650269,suT:18636056,suTm:1304525,suA:1100867},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:200000},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:4003,suT:205000,suTm:7000,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:68346,suT:1370000,suTm:150000,suA:0},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
   put(31,[
-    {dealer:'닝보',grp:'중국',exT:1304525,exA:1149596,ship:1.0,suT:1304525,suA:1751135},
-    {dealer:'북경',grp:'중국',exT:286195,exA:267946,ship:1.0,suT:402605,suA:300085},
-    {dealer:'홍콩 킨월드',grp:'해외',exT:7000,exA:11309,ship:1.0,suT:40944,suA:40944},
-    {dealer:'대만 TBMS',grp:'해외',exT:220000,exA:362797,ship:1.0,suT:null,suA:null},
-    {dealer:'대만 Sunriser',grp:'해외',exT:25000,exA:47323,ship:1.0,suT:null,suA:42690}]);
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:205000,suTm:7000,suA:40944},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362798,suT:1370000,suTm:150000,suA:null},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}]);
+  put(32,[
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:57313,suT:18636056,suTm:1397705,suA:0},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:179229,suT:5032559,suTm:402605,suA:0},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:0,suT:205000,suTm:43000,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:0,suT:1370000,suTm:150000,suA:0},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:0,suT:280000,suTm:25000,suA:0}]);
   try{saveSPHIST();}catch(e){}
 })();
 render();
