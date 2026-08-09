@@ -367,23 +367,29 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .md-ev.mile .me-info{display:block;font-size:9.5px;font-weight:500;opacity:.95;margin-top:1px}
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
 /* 중화팀 행사 상세표: 1pt 작게 · 줄바꿈 방지 · 동일 크기 */
-/* 중화팀 행사 상세표 = 반기실적(.ptable.plan) 표와 동일 서식 */
-.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;letter-spacing:normal;font-size:13.5px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
-.ptable.miletbl th,.ptable.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle;color:#000}
-.ptable.miletbl thead th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.5px;padding:6px 4px;white-space:nowrap}
+/* 중화팀 행사 상세표 = 반기실적(.ptable.plan) 표와 동일 서식 (본문 +10%) */
+.ptable.miletbl{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;letter-spacing:normal;font-size:13.8px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
+.ptable.miletbl th,.ptable.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle!important;color:#000;font-weight:400}
+.ptable.miletbl thead th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:12.7px;padding:7px 4px;white-space:nowrap}
 .ptable.miletbl th.sortable{cursor:pointer}
 .ptable.miletbl th.sorted{font-weight:800;color:#2e7d52}
-.ptable.miletbl td{background:#fff;font-size:12.5px;padding:6px 5px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.ptable.miletbl td{background:#fff;font-size:13.8px;padding:7px 6px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.45}
+.ptable.miletbl td *{font-weight:400}
 .ptable.miletbl td.gcol,.ptable.miletbl td.gcol select{background:#fff}
-.ptable.miletbl input,.ptable.miletbl select,.ptable.miletbl textarea{border:1px solid transparent;background:transparent;font:inherit;font-size:12.5px;font-weight:400;color:#000;text-align:center;padding:3px 4px;width:100%;box-sizing:border-box;border-radius:0}
-.ptable.miletbl textarea,.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{text-align:left;resize:none;overflow:hidden;min-height:30px;line-height:1.45;white-space:pre-wrap}
+.ptable.miletbl input,.ptable.miletbl select,.ptable.miletbl textarea{border:1px solid transparent;background:transparent;font-family:inherit;font-size:13.8px;font-weight:400;color:#000;text-align:center;padding:3px 4px;width:100%;box-sizing:border-box;border-radius:0;line-height:1.45}
+.ptable.miletbl textarea,.ptable.miletbl td.infc textarea,.ptable.miletbl .rep-sum{text-align:left;resize:none;overflow:hidden;min-height:28px;line-height:1.45;white-space:pre-wrap;font-size:13.8px}
+.ptable.miletbl td.infc{text-align:left}
 .ptable.miletbl input:hover,.ptable.miletbl select:hover,.ptable.miletbl textarea:hover{border-color:var(--ln)}
 .ptable.miletbl input:focus,.ptable.miletbl select:focus,.ptable.miletbl textarea:focus{outline:none;border-color:var(--accent)}
-.ptable.miletbl td.mut{color:#000;font-size:12.5px}
-.ptable.miletbl td.mile-day input{color:#000;font-weight:400;font-size:12.5px}
-.ptable.miletbl .mile-own select,.ptable.miletbl .mile-own input{border:1px solid transparent;background:transparent}
+.ptable.miletbl td.mut{color:#000;font-size:13.8px}
+.ptable.miletbl td.mile-day input{color:#000;font-weight:400}
 .ptable.miletbl td.nmc input{white-space:normal}
-.ptable.miletbl .mile-infolink{font-size:12.5px;color:#000}
+.ptable.miletbl .mile-infolink{font-size:13.8px;color:#000;font-weight:400;text-decoration:none;line-height:1.45}
+.ptable.miletbl .mile-infolink:hover{text-decoration:underline}
+.ptable.miletbl .mile-infolink .mile-open{color:#9aa2ad;font-size:11px;font-weight:400}
+.ptable.miletbl .rep-open{font-size:12.4px;font-weight:400;color:#2e7d52}
+.ptable.miletbl .mile-own select,.ptable.miletbl .mile-own input{border:1px solid transparent;background:transparent}
+.ptable.miletbl .mile-del{font-size:13px;border:0;background:transparent;cursor:pointer}
 .mile-noday{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mile-noday .pl{font-size:11px;font-weight:800;color:var(--dim)}
 .mile-noday .md-ev{white-space:normal}
@@ -1769,9 +1775,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .mf-ownopt.on .mf-ck{background:var(--accent);border-color:var(--accent)}
 .mf-ownopt .mf-nm{white-space:nowrap;color:var(--ink);font-weight:600}
 /* 일정 상세 목록 담당자 드롭다운: 굵기 제거 · 글자 15% 축소 */
-.miletbl .mile-own .mf-ownchip{font-weight:400;font-size:10px}
-.miletbl .mile-own .mf-ownph{font-size:10px}
-.miletbl .mile-own .mf-ownopt{font-size:10px}
+.miletbl .mile-own .mf-ownchip{font-weight:400;font-size:13.8px;background:transparent;border:0;padding:0;color:#000}
+.miletbl .mile-own .mf-ownph{font-size:13.8px;color:#9aa2ad}
+.miletbl .mile-own .mf-ownopt{font-size:12.5px}
+.miletbl td.mile-own .mf-owntrig{border:1px solid transparent;background:transparent;border-radius:0;padding:2px 4px;justify-content:center;gap:3px}
+.miletbl td.mile-own .mf-owntrig:hover{border-color:var(--ln)}
+.miletbl td.mile-own .mf-cx{color:#b0b7c0;font-size:10px}
 .miletbl .mile-own .mf-ownopt .mf-nm{font-weight:400}
 /* 옅은 회색 처리 탭 (주요보고·통합) */
 .pm-tabs button.tab-dim{background:#f1f3f5;color:#aab2ba;border-color:#e6e9ec}
@@ -1795,7 +1804,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <aside class="rail">
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.09-M21</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.09-M23</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -4858,7 +4867,7 @@ function mileTable(){
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
   let html=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15px">일정 상세 목록 · 표 편집 <span style="font-size:12px;color:#64748b;font-weight:600">· 전체</span></h3><span class="unit">${list.length}건</span><button class="mile-add mini" onclick="exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button><button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 일정 추가</button></div>
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:6%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:8%')}${th('cat','구분','text-align:left;width:10%')}<th style="text-align:left;width:26%">내용개요</th><th style="text-align:center;width:6%">참가<br>인원</th><th style="text-align:center;width:6%">신규<br>고객</th><th style="text-align:center;width:6%">비용</th><th style="text-align:center;width:7%">PKG</th><th style="text-align:left;width:9%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:7%')}${th('cat','구분','text-align:center;width:10%')}<th style="text-align:center;width:24%">내용개요</th><th style="text-align:center;width:7%">참가인원</th><th style="text-align:center;width:7%">신규고객</th><th style="text-align:center;width:6%">비용</th><th style="text-align:center;width:6%">PKG</th><th style="text-align:center;width:9%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
   if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     html+=`<tr>
@@ -4961,12 +4970,17 @@ function exportMileXlsx(){
   const sc=MILESORT.col, dir=MILESORT.dir;
   if(sc){list.sort((a,b)=>{let va,vb;if(sc==='month'){va=+a.x.month||0;vb=+b.x.month||0;}else if(sc==='cat'){va=MCATLB[a.x.cat]||'';vb=MCATLB[b.x.cat]||'';}else{va=String(a.x[sc]||'');vb=String(b.x[sc]||'');}return (va<vb?-1:va>vb?1:0)*dir;});}
   else list.sort((a,b)=>(a.x.month-b.x.month)||String(a.x.date).localeCompare(String(b.x.date)));
-  const aoa=[['No','월','국가','구분','일정명','내용개요','비고']];
-  list.forEach((o,n)=>{const x=o.x;aoa.push([n+1, x.month||'', x.country||'중국', (MCATLB[x.cat]||x.cat||''), x.name||'', x.info||'', x.link||'']);});
+  const num=v=>{const s=String(v==null?'':v).replace(/,/g,'').trim();return (s!==''&&!isNaN(+s))?+s:(s||'');};
+  const aoa=[['No','월','일자','국가','구분','내용개요','참가인원','신규고객','비용','PKG','담당자','비고']];
+  list.forEach((o,n)=>{const x=o.x;
+    aoa.push([n+1, (+x.month||''), String((x.date||'').replace(/\d+\s*\/\s*/g,'').replace(/~/g,'-')),
+      x.country||'중국', (MCATLB[x.cat]||x.cat||''), x.info||x.name||'',
+      num(x.attn), num(x.newcust), num(x.cost), num(x.pkg),
+      (mileOwners(x).join(', ')||''), x.link||'']);});
   ensureXLSX(()=>{
     try{
       const ws=XLSX.utils.aoa_to_sheet(aoa);
-      ws['!cols']=[{wch:5},{wch:5},{wch:8},{wch:12},{wch:28},{wch:52},{wch:32}];
+      ws['!cols']=[{wch:5},{wch:5},{wch:14},{wch:8},{wch:12},{wch:52},{wch:9},{wch:9},{wch:10},{wch:9},{wch:12},{wch:32}];
       const wb=XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb,ws,'중화팀 행사 일정');
       XLSX.writeFile(wb,`중화팀_행사_일정목록_${YEAR}.xlsx`);
