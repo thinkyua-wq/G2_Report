@@ -1849,7 +1849,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M41</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M42</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -2264,7 +2264,8 @@ const MENULB={overview:'중화팀 관리 현황판',mreport:'월간업무현황'
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
 let VALL=false;
-const MEMBER_TABS=['mreport','calendar','calmonth']; // 열람 허용: 월간업무현황·중화팀 행사·중화팀 일정 (이유아 외 전원 + 공용 「중화팀」 계정)
+const MEMBER_TABS=['mreport','rr','calendar','calmonth']; // 열람 허용 메뉴 (이유아 외 전원 + 공용 「중화팀」 계정)
+const MEMBER_RRTABS=['wsales','focus','tcards','work','kanban']; // 주간업무현황 중 열람 허용 탭
 function RO(){return VROLE==='member';}   /* 팀원·공용 계정 = 읽기 전용 */
 function roBlock(){if(RO()){try{toast('읽기 전용 계정입니다 · 수정·저장은 팀장 계정에서만 가능합니다');}catch(e){}return true;}return false;}
 let RAILMIN=false; try{RAILMIN=localStorage.getItem('wr_railmin')==='1';}catch(e){}
@@ -4385,7 +4386,7 @@ function kanSyncWeekMonth(){   /* 과제진행율: 선택한 주차가 속한 �
   if(!(KANMONTHS.length===1&&KANMONTHS[0]===mo))KANMONTHS=[mo];
 }
 function gotoThisWeek(){const m=TODAY.getMonth()+1;if(m>=7&&m<=12&&MONTH!==m){MONTH=m;WEEKS=buildWeeks(MONTH);}W=Math.max(0,Math.min(WEEKS.length-1,todayWeekIdx()));PERIOD='week';EOMSEL=false;MEND='';}
-function setRRTab(t){RRTAB=t;if(t==='tcards'||t==='work'||t==='kanban'){gotoThisWeek();if(t==='kanban')kanSyncWeekMonth();}render();}
+function setRRTab(t){if(RO()&&!MEMBER_RRTABS.includes(t))t='wsales';RRTAB=t;if(t==='tcards'||t==='work'||t==='kanban'){gotoThisWeek();if(t==='kanban')kanSyncWeekMonth();}render();}
 function mgrAssignStrip(mid){
   const items=ASSIGN.map((a,i)=>({a,i})).filter(o=>o.a.mgr===mid&&!o.a.done);
   if(!items.length)return '';
@@ -4406,8 +4407,9 @@ function viewRR(rows){
   const fm=document.getElementById('fMgr').value;
   let html='<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
   const rrTabs=[['wsales','본사실적'],['focus','매월 중점추진과제'],['tcards','주간과제'],['work','과제상세'],['kanban','과제진행율'],['fixed','루틴업무'],['assign','지시 업무'],['report','주요보고'],['table','통합']]
-    .filter(([k])=>(k!=='table'&&k!=='report')||LOGINUID==='lee');
-  if(LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
+    .filter(([k])=>RO()?MEMBER_RRTABS.includes(k):((k!=='table'&&k!=='report')||LOGINUID==='lee'));
+  if(RO()&&!MEMBER_RRTABS.includes(RRTAB))RRTAB='wsales';
+  if(!RO()&&LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
   html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}${(k==='report'||k==='table')?' tab-dim':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
   if(RRTAB==='achieve')RRTAB='work';
   if(RRTAB==='wsales')return html+renderRRSales();
