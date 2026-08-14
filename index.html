@@ -1849,7 +1849,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M42</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M47</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -2249,7 +2249,7 @@ function perfSeries(metKey,bumon){
 }
 
 /* ============ STATE / HELPERS ============ */
-let W=2, TAB='mreport', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
+let W=2, TAB='rr', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
 let SUNIT='month', SMKT='', SY=2026, SI=7, SMATK='newc';  // 담당자별 실적: 집계단위·시장·연·기간index·매트릭스지표
 let YEAR=2026;  // 상단 기간: 연도
 let PMET='법인매출', PBUMON='전체', PMON=6;
@@ -2397,9 +2397,13 @@ function gotoPrevWeekDefault(){
     if(idx>=0){MONTH=m;WEEKS=ws;W=idx;PERIOD='week';MEND='';EOMSEL=false;try{MFMON=String(m);}catch(e){}return;}}
 }
 MONTH=TODAY.getMonth()+1; YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
-gotoPrevMonthDefault(); /* 첫 화면 = G2 월간성과 → 전달 기준 */
-KANMONTHS=[MONTH]; /* 업무진행율: 기본 해당월 기준 */
+gotoThisWeek(); /* 첫 화면 = 주간업무현황 · 본사실적 · 해당(현재) 주차 */
+try{MFMON=String(MONTH);}catch(e){}
+KANMONTHS=[MONTH]; /* 과제진행율: 기본 해당월 기준 */
 const st=p=>p>=100?'done':p>=80?'review':p>=40?'prog':'wait';
+const ST2KEY={'대기':'wait','진행중':'prog','마무리':'review','완료':'done','보류':'wait'};
+const KEY2ST={wait:'대기',prog:'진행중',review:'마무리',done:'완료'};
+function stOf(cell,p){const sx=cell&&cell.sx?normStatus(cell.sx):'';return sx&&ST2KEY[sx]?ST2KEY[sx]:st(p);}
 const stLabel={wait:'대기',prog:'진행중',review:'마무리',done:'완료'};
 const stColor={wait:'var(--wait)',prog:'var(--prog)',review:'var(--review)',done:'var(--done)'};
 const barGrad={
@@ -2421,7 +2425,7 @@ function pickAt(t){
     const c=wkAt(t,W); const carried=false;   // 이월 없음: 해당 주차에 값이 없으면 표시 안 함(비움)
     if(!c)return null;
     const due=(c.due)||t.due;
-    return {p:c.p,note:c.note,label:c.label||t.name,due,risk:(c.p<100&&isDate(due)&&new Date(due)<TODAY),prev:(W>0&&wkAt(t,W-1))?wkAt(t,W-1).p:null,carried};}
+    return {p:c.p,sx:c.sx||'',note:c.note,label:c.label||t.name,due,risk:(c.p<100&&isDate(due)&&new Date(due)<TODAY),prev:(W>0&&wkAt(t,W-1))?wkAt(t,W-1).p:null,carried};}
   // 월/연 : 최신 기록값
   let idx=-1,c=null; for(let k=WEEKS.length-1;k>=0;k--){const cc=wkAt(t,k);if(cc){idx=k;c=cc;break;}}
   if(!c)return null;
@@ -2446,7 +2450,7 @@ function activeRows(){
     if((TAB==='kanban'||(TAB==='rr'&&RRTAB==='kanban'))&&KANMONTHS.length){const sm=isDate(t.start)?+t.start.slice(5,7):1; const dm=isDate(pk.due)?+pk.due.slice(5,7):(TODAY.getMonth()+1); if(!KANMONTHS.some(m=>sm<=m&&m<=dm))return;}
     else if(PERIOD==='month'){const sm=isDate(t.start)?+t.start.slice(5,7):1; const dm=isDate(pk.due)?+pk.due.slice(5,7):(TODAY.getMonth()+1); if(!(sm<=MONTH&&MONTH<=dm))return;}
     if(q&&!(pk.label.toLowerCase().includes(q)||(pk.note||'').toLowerCase().includes(q)))return;
-    out.push({t,ti,label:pk.label,p:pk.p,st:st(pk.p),country:t.country,mgr:t.mgr,
+    out.push({t,ti,label:pk.label,p:pk.p,sx:pk.sx||'',st:stOf(pk,pk.p),country:t.country,mgr:t.mgr,
       note:pk.note,due:pk.due,risk:pk.risk,prev:pk.prev,carried:pk.carried,
       cat:t.cat||'',prio:(t.priority||PRIO[ti]||'중간')});
   });
@@ -3486,8 +3490,8 @@ function rrWeekChart(label,scope){
     }
     return {wk,a,t,inc:null};
   });
-  // 주간 증분(전주 대비) 산출 — a는 당월 누적 실적
-  let prev=0;pts.forEach(p=>{if(p.a!=null){p.inc=Math.max(0,p.a-prev);prev=p.a;}});
+  // 시트 값 = 그 주차 실적(증분) → 화면은 러닝 누적으로 환산
+  let run=0;pts.forEach(p=>{if(p.a!=null){p.inc=p.a;run+=p.a;p.a=run;}});
   const withData=pts.filter(p=>p.a!=null);
   const t=withData.length?withData[withData.length-1].t:(function(){const g=ovScopeAggFrom(ovDealD(),scope);return Math.round((g.exTm||g.exT)/1000);})();
   const selIdx=Math.max(0,Math.min(allW.length-1,+W||0));   // 상단 「주」 선택값과 연동
@@ -3521,14 +3525,14 @@ function rrWeekChart(label,scope){
   const selP=SEL?pts.find(p=>p.wk===SEL):null;
   const last=lastIdx>=0?view[lastIdx]:null;
   const rate=(last&&t)?Math.round(last.a/t*100):null;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황 <span>목표·실적 막대 · 달성율(선) · W${allW[0]}~W${SEL} · 상단 「주」 선택과 연동</span></div>
+  return `<div class="omc"><div class="omc-h">${esc(label)} 주별 수출 현황 <span>당월목표·누적실적 막대 · 달성율(선) · 주차 합산 · W${allW[0]}~W${SEL} · 상단 「주」 선택과 연동</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">
       ${grid}${yl}${bars}
       ${t?`<line x1="${L}" y1="${Y(t)}" x2="${W2-R}" y2="${Y(t)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${Y(t)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">당월목표 ${t.toLocaleString('en-US')}</text>`:''}
       ${lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:''}
       ${dots}${xl}
     </svg>
-    <div class="omc-b"><span>${last?`W${last.wk} 목표 ${(last.t||t||0).toLocaleString('en-US')} · 실적 ${last.a.toLocaleString('en-US')} · <b>${(last.t||t)?Math.round(last.a/(last.t||t)*100):0}%</b>${last.inc!=null?` │ 주간증분 ${last.inc.toLocaleString('en-US')}`:''}`:'실적 입력 대기'}</span></div></div>`;
+    <div class="omc-b"><span>${last?`W${last.wk} 누적 ${last.a.toLocaleString('en-US')} / 당월목표 ${(last.t||t||0).toLocaleString('en-US')} · <b>${(last.t||t)?Math.round(last.a/(last.t||t)*100):0}%</b>${last.inc!=null?` │ 주간 실적 ${last.inc.toLocaleString('en-US')}`:''}`:'실적 입력 대기'}</span></div></div>`;
 }
 function renderRRSales(){
   const wk=ovWeekKey();
@@ -3548,10 +3552,14 @@ function ovMainTiles(extra){
   const exM=g=>(g.exTm||g.exT||0), suM=g=>(g.suTm||g.suT||0);
   const tile=(lb,valS,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${valS}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
-  h+=tile('전체 당월 수출',n(all.exA),exM(all)?all.exA/exM(all):null,`당월목표 ${n(exM(all))} · 잔여 ${n(Math.max(0,exM(all)-all.exA))}`);
-  h+=tile('중국 당월 수출',n(cn.exA),exM(cn)?cn.exA/exM(cn):null,`당월목표 ${n(exM(cn))} · 전체 비중 ${all.exA?Math.round(cn.exA/all.exA*100):0}%`);
-  h+=tile('대만 당월 수출',n(tw.exA),exM(tw)?tw.exA/exM(tw):null,`당월목표 ${n(exM(tw))} · 전체 비중 ${all.exA?Math.round(tw.exA/all.exA*100):0}%`);
-  h+=tile('전체 당월 수금',n(all.suA),suM(all)?all.suA/suM(all):null,`당월목표 ${n(suM(all))} · 잔여 ${n(Math.max(0,suM(all)-all.suA))}`);
+  const wkL=(WEEKS[W]&&WEEKS[W].iso)?('W'+WEEKS[W].iso):'';
+  const wkFirst=(WEEKS[0]&&WEEKS[0].iso)?('W'+WEEKS[0].iso):'';
+  const cA=monthCumAgg('전체'), cC=monthCumAgg('중국'), cT=monthCumAgg('대만');
+  const rng=`${wkFirst}~${wkL} 합산`;
+  h+=tile(`전체 ${MONTH}월 누적 수출`,n(cA.exA),exM(cA)?cA.exA/exM(cA):null,`당월목표 ${n(exM(cA))} · 잔여 ${n(Math.max(0,exM(cA)-cA.exA))} · ${rng}`);
+  h+=tile(`중국 ${MONTH}월 누적 수출`,n(cC.exA),exM(cC)?cC.exA/exM(cC):null,`당월목표 ${n(exM(cC))} · 전체 비중 ${cA.exA?Math.round(cC.exA/cA.exA*100):0}%`);
+  h+=tile(`대만 ${MONTH}월 누적 수출`,n(cT.exA),exM(cT)?cT.exA/exM(cT):null,`당월목표 ${n(exM(cT))} · 전체 비중 ${cA.exA?Math.round(cT.exA/cA.exA*100):0}%`);
+  h+=tile(`전체 ${MONTH}월 누적 수금`,n(cA.suA),suM(cA)?cA.suA/suM(cA):null,`당월목표 ${n(suM(cA))} · 잔여 ${n(Math.max(0,suM(cA)-cA.suA))} · ${rng}`);
   return h+(extra||'')+'</div>';
 }
 function ovCumChart(label,agg){
@@ -4090,6 +4098,42 @@ function renderOverview(){
   h+='<div class="ov-foot">※ 데이터: 담당자 업무현황·지시 업무·거래처별 실적·KPI 달성현황·중화팀 R&R/루틴에서 자동 집계 · 매주 갱신</div>';
   return h+'</div>';
 }
+function ytdPrevFor(dealer){   /* 1월~전월 누적 (거래처별) */
+  let ex=0,su=0;
+  for(let m=1;m<MONTH;m++){(MDEAL[String(m)]||[]).forEach(d=>{
+    if(String(d.dealer||'')!==String(dealer||''))return;
+    ex+=(+d.exA||0); su+=(+d.suA||0);});}
+  return {ex,su};
+}
+function ytdOf(d){const p=ytdPrevFor(d.dealer);return {exY:p.ex+(+d.exA||0), suY:p.su+(+d.suA||0)};}
+function ovYtdAgg(scope){       /* 연초~선택주차 누적 */
+  const g={exY:0,suY:0,exT:0,suT:0,exTm:0,suTm:0,exA:0,suA:0};
+  (ovDealD()||[]).forEach(d=>{const dl=d.dealer||'';if(/소계|합계/.test(dl))return;
+    const isCn=d.grp==='중국',isTw=/대만/.test(dl),isHk=/홍콩/.test(dl);
+    if(scope==='중국'&&!isCn)return; if(scope==='대만'&&!isTw)return; if(scope==='홍콩'&&!isHk)return;
+    const y=ytdOf(d);
+    g.exY+=y.exY; g.suY+=y.suY;
+    g.exT+=(+d.exT||0); g.suT+=(+d.suT||0);
+    g.exTm+=(+d.exTm||0); g.suTm+=(+d.suTm||0);
+    g.exA+=(+d.exA||0); g.suA+=(+d.suA||0);});
+  return g;
+}
+/* 주간 실적은 「그 주차 증분」 → 당월 누적 = 그 달 W시작~선택주차 합산 */
+function wkDealOf(iso){const s=SPHIST['W'+iso];return (s&&s.deal&&s.deal.length)?s.deal:null;}
+function monthCumAgg(scope,uptoIdx){
+  const idx=(uptoIdx==null)?W:uptoIdx;
+  const g={exA:0,suA:0,exT:0,suT:0,exTm:0,suTm:0};
+  let lastRow=null;
+  WEEKS.forEach((w,i)=>{
+    if(i>idx||!w.iso)return;
+    const D=wkDealOf(w.iso)||((i===W)?ovDealD():null); if(!D)return;
+    const a=ovScopeAggFrom(D,scope);
+    g.exA+=a.exA; g.suA+=a.suA; lastRow=a;
+  });
+  if(lastRow){g.exT=lastRow.exT;g.suT=lastRow.suT;g.exTm=lastRow.exTm;g.suTm=lastRow.suTm;}
+  else{const a=ovScopeAggFrom(ovDealD(),scope);g.exT=a.exT;g.suT=a.suT;g.exTm=a.exTm;g.suTm=a.suTm;}
+  return g;
+}
 function ovDealTable(){
   const D=ovDealD();
   const k=n=>(n==null||n==='')?null:Math.round(n/1000);
@@ -4097,17 +4141,16 @@ function ovDealTable(){
   const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n=>n==null?'\u2014':n.toLocaleString('en-US');
   let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:36px">단위</th>'
-    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적</th><th>달성율</th><th>누적달성율</th>'
-    +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적</th><th>달성율</th><th>누적달성율</th></tr></thead><tbody>';
+    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적</th><th>달성율</th>'
+    +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적</th><th>달성율</th></tr></thead><tbody>';
   const mrate=(a,tm)=>(tm!=null&&tm>0&&a!=null)?a/tm:null; // 달성율 = 실적 ÷ 당월목표
   const row=(cls,g,nm,d)=>{
-    const exR=(d.exT?d.exA/d.exT:null), suR=(d.suT?d.suA/d.suT:null);
     return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td>천$</td>`
-      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(mrate(d.exA,d.exTm))}</td><td class="ov-pc">${pct(exR)}</td>`
-      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(mrate(d.suA,d.suTm))}</td><td class="ov-pc">${pct(suR)}</td></tr>`;
+      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(mrate(d.exA,d.exTm))}</td>`
+      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(mrate(d.suA,d.suTm))}</td></tr>`;
   };
-  const acc=()=>({exT:0,exTm:null,exA:0,suT:0,suTm:null,suA:0});
-  const add=(s2,d)=>{s2.exT+=(+d.exT||0);s2.exA+=(+d.exA||0);s2.suT+=(+d.suT||0);s2.suA+=(+d.suA||0);
+  const acc=()=>({exT:0,exTm:null,exA:0,suT:0,suTm:null,suA:0,exY:0,suY:0});
+  const add=(s2,d)=>{s2.exT+=(+d.exT||0);s2.exA+=(+d.exA||0);s2.suT+=(+d.suT||0);s2.suA+=(+d.suA||0);{const y=ytdOf(d);s2.exY+=y.exY;s2.suY+=y.suY;}
     if(d.exTm!=null&&d.exTm!=='')s2.exTm=(s2.exTm||0)+(+d.exTm||0);
     if(d.suTm!=null&&d.suTm!=='')s2.suTm=(s2.suTm||0)+(+d.suTm||0);};
   const cn=(D||[]).filter(d=>d.grp==='중국'), ov=(D||[]).filter(d=>d.grp!=='중국');
@@ -4117,11 +4160,11 @@ function ovDealTable(){
   ov.forEach(d=>{const isHk=/홍콩/.test(d.dealer);const g=isHk?'홍콩':(/대만/.test(d.dealer)?'대만':d.grp);const nm=d.dealer.replace(/^(홍콩|대만)\s*/,'');
     add(isHk?sHK:sTW,d);h+=row('',g,nm,d);});
   // 합계: 목표·실적=합 · 달성율은 합 기준
-  const tot=acc();[sCN,sTW,sHK].forEach(x=>{tot.exT+=x.exT;tot.exA+=x.exA;tot.suT+=x.suT;tot.suA+=x.suA;
+  const tot=acc();[sCN,sTW,sHK].forEach(x=>{tot.exT+=x.exT;tot.exA+=x.exA;tot.suT+=x.suT;tot.suA+=x.suA;tot.exY+=x.exY;tot.suY+=x.suY;
     if(x.exTm!=null)tot.exTm=(tot.exTm||0)+x.exTm; if(x.suTm!=null)tot.suTm=(tot.suTm||0)+x.suTm;});
   h+=row('ov-tot-row','합계','중국·대만·홍콩',tot);
   h+='</tbody></table>';
-  h+='<div class="ov-foot">※ 달성율 = 수출·수금 실적 ÷ 당월 목표 · 누적달성율 = 실적 ÷ 전체 목표 · 당월 목표는 구글시트 「수출 목표(당월)·수금 목표(당월)」 열 입력 시 자동 반영</div>';
+  h+='<div class="ov-foot">※ 이 표는 <b>선택한 주차('+esc(ovWeekKey())+') 시점</b>의 값만 표시 · 달성율 = 실적 ÷ 당월 목표 · 상단 카드·그래프는 당월 누적 기준</div>';
   return h;
 }
 let ASSIGN=[];
@@ -4386,7 +4429,7 @@ function kanSyncWeekMonth(){   /* 과제진행율: 선택한 주차가 속한 �
   if(!(KANMONTHS.length===1&&KANMONTHS[0]===mo))KANMONTHS=[mo];
 }
 function gotoThisWeek(){const m=TODAY.getMonth()+1;if(m>=7&&m<=12&&MONTH!==m){MONTH=m;WEEKS=buildWeeks(MONTH);}W=Math.max(0,Math.min(WEEKS.length-1,todayWeekIdx()));PERIOD='week';EOMSEL=false;MEND='';}
-function setRRTab(t){if(RO()&&!MEMBER_RRTABS.includes(t))t='wsales';RRTAB=t;if(t==='tcards'||t==='work'||t==='kanban'){gotoThisWeek();if(t==='kanban')kanSyncWeekMonth();}render();}
+function setRRTab(t){if(RO()&&!MEMBER_RRTABS.includes(t))t='wsales';RRTAB=t;if(t==='wsales'||t==='tcards'||t==='work'||t==='kanban'){gotoThisWeek();if(t==='kanban')kanSyncWeekMonth();}render();}
 function mgrAssignStrip(mid){
   const items=ASSIGN.map((a,i)=>({a,i})).filter(o=>o.a.mgr===mid&&!o.a.done);
   if(!items.length)return '';
@@ -4529,7 +4572,7 @@ function cardHTML(r){
   return `<div class="card${r.carried?' carried':''}" onclick="openDetail(${r.ti})">
     <div class="chips">
       ${r.cat?`<span class="chip" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${r.cat}</span>`:''}
-      ${(()=>{const cs=r.st==='done'?'완료':(r.st==='wait'?'대기':'진행중');return `<select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)">`+['진행중','완료','대기'].map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
+      ${(()=>{const cs=r.sx||KEY2ST[r.st]||'진행중';return `<select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)" title="상태 (구글시트 「상태」 열과 연동)">`+STATUS_OPTS.map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
     </div>
     <div class="ttl">${esc(r.label)}</div>
     <div class="note">${esc(r.note||'')}</div>
@@ -6514,7 +6557,16 @@ function editTaskMeta(ti,f,v){const t=TASKS[ti];if(!t)return;if(f==='mgr')t.mgr=
 function editTaskDueType(ti,v){const t=TASKS[ti];if(!t)return;if(v==='date'){if(!isDate(t.due))t.due='';}else t.due=v;saveTasks();render();openDetail(ti);}
 function editTaskWeekP(ti,k,v){const t=TASKS[ti];if(!t)return;v=(''+v).trim();const c=wkAt(t,k);if(v===''){if(c&&!(c.note||'').trim())wkSet(t,k,null);}else{if(!c)wkSet(t,k,{p:0,note:''});wkAt(t,k).p=Math.max(0,Math.min(100,+v||0));}saveTasks();render();openDetail(ti);}
 function editTaskWeekNote(ti,k,v){const t=TASKS[ti];if(!t)return;if(!wkAt(t,k))wkSet(t,k,{p:0,note:''});wkAt(t,k).note=v;saveTasks();render();openDetail(ti);}
-function setTaskStatus(ti,val){const m={'완료':100,'진행중':60,'대기':20};editTaskField(ti,'prog',m[val]!=null?m[val]:60);}
+function setTaskStatus(ti,val){
+  const t=TASKS[ti]; if(!t)return; if(roBlock())return;
+  const sx=normStatus(val)||'진행중';
+  let c=wkAt(t,W); if(!c){const lt=wkLatest(t); c=lt?lt.c:null;}
+  if(!c){wkSet(t,W,{p:0,note:''});c=wkAt(t,W);}
+  c.sx=sx;
+  if(sx==='완료'&&c.p<100)c.p=100;
+  if(sx==='대기'&&c.p>=100)c.p=0;
+  t.status=sx; saveTasks(); render();
+}
 let toastT;
 function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2200);}
 const DUETYPES=['정규 일자','행사일정 기준','방한일정 기준','상시'];
@@ -6667,7 +6719,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport')gotoPrevMonthDefault();else if(TAB==='rr'){if(RRTAB==='tcards'||RRTAB==='work'||RRTAB==='kanban')gotoThisWeek();else gotoPrevWeekDefault();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
+function setTab(t){TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport')gotoPrevMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')gotoPrevWeekDefault();else gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -7078,12 +7130,13 @@ function importG2Master(wb,scope){
     // ② 주간업무: 주차+담당자
     if(has('주차')&&has('담당자')){
       if(scope!=='week')return;
-      const cW=ci('주차'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=ci('핵심과제'),cK=ci('KPI'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
+      const cW=ci('주차'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=ci('핵심과제'),cK=ci('KPI'),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
         if(!w||!nm||!t)return;
         let due=String(r[cD]||'').trim(); due=due.replace(/^2026-/,'')||due;
-        (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),due,pri:String(r[cP]||'').trim(),p:String(r[cPr]||'').trim(),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim()});});
+        let st0=(cSt>=0?String(r[cSt]||'').trim():''); st0=st0.replace(/^2026-/,'')||st0;
+        (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:String(r[cPr]||'').trim(),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim()});});
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
       if(Object.keys(byW).length){saveWKREPORT();mergeWeeklyTasks(true);saveTasks();done.push('주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·'));}
       return;
@@ -7528,6 +7581,17 @@ function wkLatest(t){const ks=wkKeys(t);for(let i=ks.length-1;i>=0;i--){const c=
 function wkLabel(t){const ks=wkKeys(t);for(let i=ks.length-1;i>=0;i--){const c=t.wk[String(ks[i])];if(c&&c.label)return c.label;}return null;}
 function wkFirstNote(t){const ks=wkKeys(t);for(const k of ks){const c=t.wk[String(k)];if(c&&c.note)return c.note;}return '';}
 function isoMetaOf(iso){for(let m=7;m<=12;m++){const ws=buildWeeks(m);const i=ws.findIndex(x=>x.iso===+iso);if(i>=0)return {m,w:ws[i]};}return null;}
+const STATUS_OPTS=['대기','진행중','마무리','완료','보류'];
+function normStatus(v){
+  const s=String(v==null?'':v).trim();
+  if(!s)return '';
+  if(/^(완료|종료|done|100)/i.test(s))return '완료';
+  if(/^(마무리|검토|review)/i.test(s))return '마무리';
+  if(/^(대기|예정|미착수|착수전|wait)/i.test(s))return '대기';
+  if(/^(보류|중단|hold)/i.test(s))return '보류';
+  if(/^(진행|진행중|prog)/i.test(s))return '진행중';
+  return STATUS_OPTS.includes(s)?s:'';
+}
 function mergeWeeklyTasks(force){
   if(typeof WKREPORT==='undefined')return;
   const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
@@ -7547,6 +7611,7 @@ function mergeWeeklyTasks(force){
       t.wk=wkMigArr(t.wk);
       const key=String(+wkk);
       if(force||!t.wk[key])t.wk[key]={p:pnum(r.p),note:r.note||''};
+      if(r.stx&&t.wk[key])t.wk[key].sx=r.stx;   // 시트 「상태」 → 주차별 상태
       if(r.big)t.big=r.big; // 시트 대분류 → 과제진행율 그룹
       if(/^\d\d-\d\d$/.test(r.st||''))t.start='2026-'+r.st;
       if(/^\d\d-\d\d$/.test(r.due||''))t.due='2026-'+r.due; else if(r.due)t.due=r.due;
@@ -7554,7 +7619,7 @@ function mergeWeeklyTasks(force){
       if(r.c)t.country=r.c;
       {const pk={'상':'높음','중':'중간','하':'낮음'}[String(r.pri||'').trim()];if(pk)t.priority=pk;}
       const lastP=pnum(r.p);
-      t.status=lastP>=100?'완료':(lastP<=0?'예정':'진행중');
+      t.status=r.stx||(lastP>=100?'완료':(lastP<=0?'예정':'진행중'));
     });
   });
 }
