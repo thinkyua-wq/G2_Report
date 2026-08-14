@@ -368,6 +368,10 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
 /* 중화팀 행사 상세표: 1pt 작게 · 줄바꿈 방지 · 동일 크기 */
 /* 중화팀 행사 상세표 = 반기실적(.ptable.plan) 표와 동일 서식 (본문 +10%) */
+.ptable.triptbl{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;font-size:12.4px;border:1px solid #cbd5e1}
+.ptable.triptbl th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.4px;padding:7px 5px;white-space:nowrap;border:1px solid #cbd5e1}
+.ptable.triptbl td{border:1px solid #cbd5e1;padding:7px 6px;text-align:center;vertical-align:middle;color:#000;font-size:12.4px;line-height:1.45}
+.ptable.triptbl td.rl{text-align:left}
 .ptable.rept.miletbl{font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;letter-spacing:normal;font-size:12.4px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
 .ptable.rept.miletbl th,.ptable.rept.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle!important;color:#000;font-weight:400}
 .ptable.rept.miletbl thead th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.4px;padding:7px 4px;white-space:nowrap}
@@ -1849,7 +1853,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M47</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.14-M50</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -3534,6 +3538,37 @@ function rrWeekChart(label,scope){
     </svg>
     <div class="omc-b"><span>${last?`W${last.wk} 누적 ${last.a.toLocaleString('en-US')} / 당월목표 ${(last.t||t||0).toLocaleString('en-US')} · <b>${(last.t||t)?Math.round(last.a/(last.t||t)*100):0}%</b>${last.inc!=null?` │ 주간 실적 ${last.inc.toLocaleString('en-US')}`:''}`:'실적 입력 대기'}</span></div></div>`;
 }
+function tripStatusChip(s){
+  const k={'예정':'wait','확정':'prog','진행중':'prog','완료':'done','취소':'wait','대기':'wait','마무리':'review','보류':'wait'}[String(s||'').trim()]||'prog';
+  return `<span class="chip st ${k}">${esc(s||'예정')}</span>`;
+}
+function tripFmt(a,b){
+  const f=d=>String(d||'').slice(5).replace('-','/');
+  return b&&b!==a?`${f(a)}~${f(b)}`:f(a);
+}
+function tripPanel(mode){   /* mode: 'week' | 'month' */
+  const iso=(WEEKS[W]&&WEEKS[W].iso)||0;
+  const list=(mode==='week')?tripsOfWeek(iso):tripsOfMonth(MONTH);
+  const lb=(mode==='week')?('W'+iso+' 출장일정'):(MONTH+'월 출장일정');
+  const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':'해당 월에 걸쳐 있는 출장';
+  const sorted=list.slice().sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+  let h=`<div class="ov-sec" style="margin-top:18px">✈ ${esc(lb)} <span class="ov-sub">${sub} · 마스터시트 「출장일정」 탭 연동 · ${sorted.length}건</span></div>`;
+  if(!sorted.length)return h+`<div class="om-tile"><div class="om-ts">등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.</div></div>`;
+  h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%"><thead><tr>'
+    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="width:72px">담당자</th><th style="width:60px">국가</th>'
+    +'<th style="width:110px">지역/도시</th><th style="width:92px">구분</th><th style="width:130px">방문처</th>'
+    +'<th style="text-align:left">출장 목적 · 주요일정</th><th style="width:70px">상태</th></tr></thead><tbody>';
+  sorted.forEach(t=>{
+    const days=(t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1;
+    const g=MGRS.find(m=>m.name===t.mgr);
+    h+=`<tr><td><b>${esc(tripFmt(t.start,t.end))}</b></td><td>${days}일</td>`
+      +`<td>${g?`<span class="av" style="width:18px;height:18px;font-size:9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:10px">+${esc(t.with)}</div>`:''}</td>`
+      +`<td>${esc(t.country||'')}</td><td>${esc(t.city||'')}</td><td>${esc(t.cat||'')}</td><td>${esc(t.visit||'')}</td>`
+      +`<td class="rl">${esc(t.purpose||'')}${t.big?`<div class="mut" style="font-size:10.5px">↳ ${esc(t.big)}</div>`:''}${t.note?`<div class="mut" style="font-size:10.5px;color:#1e6f5c">✓ ${esc(t.note)}</div>`:''}</td>`
+      +`<td>${tripStatusChip(t.status)}</td></tr>`;});
+  h+='</tbody></table></div>';
+  return h;
+}
 function renderRRSales(){
   const wk=ovWeekKey();
   let h='<div class="ovw">';
@@ -3543,6 +3578,7 @@ function renderRRSales(){
   h+=`<div class="ov-sec" style="margin-top:18px">${esc(wk)} 거래처별 실적 요약 <span class="ov-sub">전체·중국·대만·홍콩 상세 · 실적 현황(주차별 저장)과 연동</span></div>`;
   h+=ovDealTable();
   h+='<div class="ov-foot">※ 주차별 실적은 실적 저장 시 주차(W29~) 단위로 누적 · 그래프는 저장된 주차 스냅샷 기준</div>';
+  h+=tripPanel('week');
   return h+'</div>';
 }
 function omPill(r){const p=r==null?null:Math.round(r*100);if(p==null)return '';const c=p>=90?'mr-g':p>=70?'mr-a':'mr-r';return `<span class="mr-badge ${c}">${p}%</span>`;}
@@ -4087,6 +4123,7 @@ function renderOverview(){
       h+=`<div class="om-charts">${mrComboChart('전체','전체')}${mrComboChart('중국','중국')}${mrComboChart('대만','대만')}</div>`;
       h+=`<div class="ov-sec" style="margin-top:18px">${MONTH}월 거래처별 실적 요약 <span class="ov-sub">당월 실적 + 1~${MONTH}월 누적</span></div>`;
       h+=mrDealTable();
+      h+=tripPanel('month');
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
       h+=ovMainTrendGrid();
@@ -4167,6 +4204,16 @@ function ovDealTable(){
   h+='<div class="ov-foot">※ 이 표는 <b>선택한 주차('+esc(ovWeekKey())+') 시점</b>의 값만 표시 · 달성율 = 실적 ÷ 당월 목표 · 상단 카드·그래프는 당월 누적 기준</div>';
   return h;
 }
+let TRIPS=[];
+try{const s=localStorage.getItem('wr_trips_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o))TRIPS=o;}}catch(e){}
+function saveTrips(){try{localStorage.setItem('wr_trips_v1',JSON.stringify(TRIPS));}catch(e){}}
+function tripIso(d){try{return +isoWeekNum(String(d).slice(0,10))||0;}catch(e){return 0;}}
+function tripsOfWeek(iso){return TRIPS.filter(t=>{
+  const a=tripIso(t.start), b=t.end?tripIso(t.end):a;
+  return iso&&a&&iso>=a&&iso<=(b||a);});}
+function tripsOfMonth(mo){return TRIPS.filter(t=>{
+  const sm=+String(t.start||'').slice(5,7), em=+String(t.end||t.start||'').slice(5,7)||sm;
+  return mo&&sm&&mo>=sm&&mo<=em;});}
 let ASSIGN=[];
 try{const s=localStorage.getItem('wr_assign_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o))ASSIGN=o;}}catch(e){}
 function saveAssign(){try{localStorage.setItem('wr_assign_v1',JSON.stringify(ASSIGN));}catch(e){}}
@@ -7102,6 +7149,16 @@ const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':
 function g2num(v){if(v==null)return null;const t=String(v).replace(/[,\s]/g,'');if(t===''||t==='-'||t==='—'||t==='–')return null;const n=parseFloat(t);return isNaN(n)?null:n;}
 function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:null;}
 function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
+function g2date(v){
+  if(v==null||v==='')return '';
+  if(v instanceof Date){const p=n=>String(n).padStart(2,'0');return v.getFullYear()+'-'+p(v.getMonth()+1)+'-'+p(v.getDate());}
+  const s=String(v).trim();
+  let m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(m)return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  m=s.match(/^(\d{1,2})[-./](\d{1,2})$/);
+  if(m)return '2026-'+String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0');
+  return '';
+}
 function importG2Master(wb,scope){
   const done=[];
   wb.SheetNames.forEach(sn=>{
@@ -7114,6 +7171,25 @@ function importG2Master(wb,scope){
     const ci=name=>hdr.findIndex(h=>h.includes(name));
     const has=name=>ci(name)>=0;
     const body=A.slice(hi+1);
+    // ⓪ 출장일정: 출발일+담당자
+    if(has('출발일')&&has('담당자')){
+      const cS=ci('출발일'),cE=ci('종료일'),cN=ci('담당자'),cCo=ci('동행'),cC=ci('국가'),cR=ci('지역'),
+            cG=ci('구분'),cV=ci('방문처'),cP=ci('목적'),cB=ci('연계'),cSt=ci('상태'),cBk=ci('항공'),
+            cCt=ci('예상비용'),cNo=hdr.findIndex(h=>h.includes('결과')||h.includes('비고'));
+      const out=[];
+      body.forEach(r=>{
+        const sd=g2date(r[cS]); const nm=String(r[cN]||'').trim();
+        if(!sd||!nm)return;
+        out.push({start:sd,end:g2date(cE>=0?r[cE]:'')||sd,mgr:nm,with:String(cCo>=0?r[cCo]||'':'').trim(),
+          country:String(cC>=0?r[cC]||'':'').trim()||'중국',city:String(cR>=0?r[cR]||'':'').trim(),
+          cat:String(cG>=0?r[cG]||'':'').trim(),visit:String(cV>=0?r[cV]||'':'').trim(),
+          purpose:String(cP>=0?r[cP]||'':'').trim(),big:String(cB>=0?r[cB]||'':'').trim(),
+          status:normStatus(cSt>=0?r[cSt]:'')||String(cSt>=0?r[cSt]||'':'').trim(),
+          book:String(cBk>=0?r[cBk]||'':'').trim(),cost:g2num(cCt>=0?r[cCt]:''),
+          note:String(cNo>=0?r[cNo]||'':'').trim()});});
+      if(out.length){TRIPS=out;saveTrips();done.push('출장일정 '+out.length+'건');}
+      return;
+    }
     // ① 월말보고: 보고월+담당자
     if(has('보고월')&&has('담당자')){
       if(scope!=='month')return;
