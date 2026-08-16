@@ -1690,6 +1690,19 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .sc-tg{width:28px;height:28px;border-radius:0;background:#f1f4f6;color:#667085;font-size:18px;font-weight:900;line-height:1;display:grid;place-items:center;flex:none;cursor:pointer;border:0;transition:.12s}
 .sc-tg:hover{background:var(--tl);color:#fff}
 .sc-b{margin-top:8px}
+.ptable.kpitbl{font-size:12px}
+.ptable.kpitbl td,.ptable.kpitbl th{border:1px solid #dfe2ec;padding:4px 6px;text-align:center;vertical-align:middle}
+.ptable.kpitbl input{border:1px solid transparent;background:transparent;font:inherit;font-size:12px;width:100%;box-sizing:border-box;padding:2px 4px;border-radius:0}
+.ptable.kpitbl input:hover{border-color:#e4eaee;background:#fbfcfd}
+.ptable.kpitbl input:focus{outline:none;border-color:var(--accent);background:#fff}
+.ptable.kpitbl td.kpi-mc{padding:2px}
+.ptable.kpitbl td.kpi-mc input{font-size:11px;padding:1px 3px}
+.ptable.kpitbl td.kpi-rt b{font-weight:800}
+.ptable.kpitbl td.kpi-auto{background:#f3f6f8;text-align:right}
+.ptable.kpitbl td.kpi-auto b{font-weight:800}
+.ptable.kpitbl td.kpi-auto span{display:block;font-size:8.5px;color:#8a99a4;font-weight:700;letter-spacing:.02em}
+.ptable.kpitbl td.kpi-mc{position:relative}
+.ptable.kpitbl .kpi-mr{display:block;font-size:8.5px;font-weight:800;text-align:right;line-height:1.2}
 .secbox{margin-top:14px}
 .rail-calsec{margin-top:auto}
 body.rail-min .rail-calsec{display:none!important}
@@ -2211,7 +2224,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.15-M133</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.16-M138</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -2614,7 +2627,7 @@ function perfSeries(metKey,bumon){
 }
 
 /* ============ STATE / HELPERS ============ */
-let W=2, TAB='rr', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
+let W=2, TAB='mreport', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
 let SUNIT='month', SMKT='', SY=2026, SI=7, SMATK='newc';  // 담당자별 실적: 집계단위·시장·연·기간index·매트릭스지표
 let YEAR=2026;  // 상단 기간: 연도
 let PMET='법인매출', PBUMON='전체', PMON=6;
@@ -2622,9 +2635,9 @@ const MENU=[
   ['mreport','월간업무현황','월간'],
   ['rr','주간업무현황','주간'],
   ['calmonth','중화팀 일정·행사','일정'],
-  ['goals','중화팀 성과목표','목표']
+  ['goals','팀업무','목표']
 ];
-const MENULB={overview:'중화팀 관리 현황판',mreport:'월간업무현황',rr:'주간업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'중화팀 성과목표',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
+const MENULB={overview:'중화팀 관리 현황판',mreport:'월간업무현황',rr:'주간업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
@@ -2804,7 +2817,8 @@ function gotoPrevWeekDefault(){
     if(idx>=0){MONTH=m;WEEKS=ws;W=idx;PERIOD='week';MEND='';EOMSEL=false;try{MFMON=String(m);}catch(e){}return;}}
 }
 MONTH=TODAY.getMonth()+1; YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
-gotoThisWeek(); /* 첫 화면 = 주간업무현황 · 본사실적 · 해당(현재) 주차 */
+gotoThisWeek(); /* 주간 기준값 준비 */
+try{gotoPrevMonthDefault();TAB='mreport';}catch(e){} /* 첫 화면 = 월간업무현황 */
 try{MFMON=String(MONTH);}catch(e){}
 KANMONTHS=[MONTH]; /* 과제진행율: 기본 해당월 기준 */
 const st=p=>p>=100?'done':p>=80?'review':p>=40?'prog':'wait';
@@ -3602,6 +3616,74 @@ function ovMonthEventsCard(){
       ${own?`<span class="ov-evown">${esc(own)}</span>`:''}</div>`;}).join('');
   return `<div class="ov-evcard"><div class="ov-evhead">🗓 ${MONTH}월 주요 행사 <span class="ov-sub">중화팀 행사 · ${list.length}건</span></div>
     <div class="ov-evbody">${list.length?rows:`<div class="ovev-empty" style="padding:12px 14px">${MONTH}월 등록된 행사 없음</div>`}</div></div>`;
+}
+/* ===== 주요업무 KPI 지표 (연간·월별 목표/실적) ===== */
+const KPI_SEED=[
+ ['중화팀 통합','본사 수출','만$',2270],['중화팀 통합','본사 송금','만$',2370],
+ ['중화팀 통합','법인 판매','억RMB',3.3],['중화팀 통합','법인 수금','억RMB',3.3],
+ ['중화팀 통합','임플란트 판매','만EA',115],['중화팀 통합','부진상권 M/S 개선(↑)','%',6],
+ ['중화팀 통합','DSO 진입점','점',250],['중화팀 통합','DSO 판매','만대',60],
+ ['중화팀 통합','하부고객 확대','점',8500],['중화팀 통합','하부고객 미출하 감소(↓)','%',30],
+ ['중화팀 통합','BD 판매 확대','점',1500],['중화팀 통합','BD 미출하 감소(↓)','%',30],
+ ['중화팀 통합','신제품 Ari 런칭(6월)','-',null],['중화팀 통합','ARi 판매','천EA',8],
+ ['중화팀 통합','BD 판매','천EA',72.5],['중화팀 통합','VOC·바이오레이즈 현지생산','-',null],
+ ['마케팅','교육·세미나 총','회',298],['마케팅','한국 방문행사','회',8],
+ ['마케팅','상담사 세미나','회',30],['마케팅','DSO 세미나','회',100],
+ ['마케팅','BD 세미나','회',93],['마케팅','한국·본사 마케팅','회',13],
+ ['마케팅','KOL 확대','명',77],['마케팅','전문강사 배양','명',30],
+ ['마케팅','법인 마케팅 활동','회',377],['마케팅','법인 마케팅 예산(매출%)','%',8.5],
+ ['마케팅','KIT Compensation','만불',100],['마케팅','PKG 활동','회',17],
+ ['마케팅','PKG 예산','억위안',1.26],['마케팅','제품런칭 R2Gate·플라즈마','-',null],
+ ['마케팅','플라즈마 재런칭(3월)·VOC','-',null],
+ ['홍콩·대만','본사 수출','만$',null],['홍콩·대만','본사 송금','만$',null],
+ ['홍콩·대만','판매','억RMB',null],['홍콩·대만','수금','억RMB',null],
+ ['홍콩·대만','임플란트 판매','만EA',null],
+].map(([g,t,u,y])=>({grp:g,item:t,unit:u,yt:y,ya:null,mt:Array(12).fill(null),ma:Array(12).fill(null)}));
+let KPIDATA=[]; try{const s=localStorage.getItem('wr_kpi_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)KPIDATA=o;}}catch(e){}
+if(!KPIDATA.length)KPIDATA=JSON.parse(JSON.stringify(KPI_SEED));
+function saveKPI(){try{localStorage.setItem('wr_kpi_v1',JSON.stringify(KPIDATA));}catch(e){}}
+let KPIMON=false;  /* 월별 목표/실적 펼침 */
+function toggleKpiMon(){KPIMON=!KPIMON;render();}
+function kfmt(v){return (v==null||v==='')?'':(typeof v==='number'?v.toLocaleString('en-US'):esc(String(v)));}
+function editKPI(i,f,v,mi){ if(roBlock())return; const r=KPIDATA[i]; if(!r)return;
+  const num=(v===''||v==null)?null:(isNaN(+String(v).replace(/,/g,''))?String(v):+String(v).replace(/,/g,''));
+  if(f==='mt')r.mt[mi]=num; else if(f==='ma')r.ma[mi]=num; else r[f]=num;
+  saveKPI(); }
+function kpiIsPct(r){return String(r.unit||'').includes('%');}
+function kpiAgg(arr,pct){const v=arr.filter(x=>x!=null&&x!==''&&!isNaN(+x)).map(x=>+x);if(!v.length)return null;return pct?v[v.length-1]:Math.round(v.reduce((a,b)=>a+b,0)*100)/100;}
+function kpiEffT(r){const m=kpiAgg(r.mt,kpiIsPct(r));return m!=null?m:(typeof r.yt==='number'?r.yt:null);}
+function kpiEffA(r){const m=kpiAgg(r.ma,kpiIsPct(r));return m!=null?m:(typeof r.ya==='number'?r.ya:null);}
+function kpiAutoT(r){return kpiAgg(r.mt,kpiIsPct(r))!=null;}
+function kpiAutoA(r){return kpiAgg(r.ma,kpiIsPct(r))!=null;}
+function kpiRate(r){const t=kpiEffT(r),a=kpiEffA(r);if(t==null||!t||a==null)return null;return Math.round(a/t*100);}
+function renderKPI2(){
+  const grps=['중화팀 통합','마케팅','홍콩·대만'];
+  const GC={'중화팀 통합':'#eaf1ec','마케팅':'#fdf3e2','홍콩·대만':'#eaf2fc'};
+  let h='<div class="ptable-wrap" style="margin:0"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📊 주요업무 KPI 지표 <span style="font-size:11px;color:var(--dim);font-weight:600">· 2026 연간·월별 목표/실적 · 마스터 「KPI지표」 연동</span></h3>'
+    +`<button class="mile-add mini" onclick="loadKPISheet()" style="background:var(--accent);color:#fff">📥 구글시트 불러오기</button>`
+    +`<button class="mile-add mini" onclick="toggleKpiMon()" style="margin-left:5px">${KPIMON?'월별 접기':'월별 펼치기'}</button>`
+    +`${RO()?'':'<button class="mile-add mini" onclick="exportKpiXlsx()" style="margin-left:5px">⬇ 엑셀</button>'}</div>`;
+  h+='<div style="overflow-x:auto"><table class="ptable edit kpitbl" style="width:100%"><thead><tr>'
+    +'<th style="width:96px">구분</th><th style="text-align:left;min-width:180px">KPI 항목</th><th style="width:60px">단위</th>'
+    +'<th style="width:84px">연간목표</th><th style="width:84px">연간실적</th><th style="width:62px">달성율</th>';
+  if(KPIMON)for(let m=1;m<=12;m++)h+=`<th style="width:120px">${m}月<br><span style="font-weight:400;color:var(--faint);font-size:9px">목표 / 실적</span></th>`;
+  h+='</tr></thead><tbody>';
+  grps.forEach(g=>{
+    const rows=KPIDATA.map((r,i)=>({r,i})).filter(o=>o.r.grp===g);
+    rows.forEach((o,n)=>{const r=o.r,i=o.i,rt=kpiRate(r);
+      h+=`<tr>${n===0?`<td rowspan="${rows.length}" style="background:${GC[g]};font-weight:800;vertical-align:middle">${esc(g)}</td>`:''}`
+        +`<td class="rl"><input value="${esc(r.item||'')}" onchange="editKPI(${i},'item',this.value)" style="text-align:left;font-weight:600"></td>`
+        +`<td><input value="${esc(r.unit||'')}" onchange="editKPI(${i},'unit',this.value)" style="text-align:center"></td>`
+        +(kpiAutoT(r)?`<td class="kpi-auto" title="월별 목표 ${kpiIsPct(r)?'최근월':'합계'} 자동"><b>${kfmt(kpiEffT(r))}</b><span>자동</span></td>`:`<td><input value="${kfmt(r.yt)}" onchange="editKPI(${i},'yt',this.value)" style="text-align:right"></td>`)
+        +(kpiAutoA(r)?`<td class="kpi-auto" title="월별 실적 ${kpiIsPct(r)?'최근월':'누적'} 자동"><b>${kfmt(kpiEffA(r))}</b><span>자동</span></td>`:`<td><input value="${kfmt(r.ya)}" onchange="editKPI(${i},'ya',this.value)" style="text-align:right"></td>`)
+        +`<td class="kpi-rt">${rt==null?'–':`<b class="${rt>=90?'ov-g':rt>=60?'ov-a':'ov-r'}">${rt}%</b>`}</td>`;
+      if(KPIMON)for(let m=0;m<12;m++){const mt2=r.mt[m],ma2=r.ma[m];
+        const mr=(typeof mt2==='number'&&mt2&&typeof ma2==='number')?Math.round(ma2/mt2*100):null;
+        h+=`<td class="kpi-mc"><input value="${kfmt(mt2)}" onchange="editKPI(${i},'mt',this.value,${m})" placeholder="목표" style="text-align:right"><input value="${kfmt(ma2)}" onchange="editKPI(${i},'ma',this.value,${m})" placeholder="실적" style="text-align:right;color:#1e6f5c">${mr!=null?`<span class="kpi-mr ${mr>=90?'ov-g':mr>=60?'ov-a':'ov-r'}">${mr}%</span>`:''}</td>`;}
+      h+='</tr>';});
+  });
+  h+='</tbody></table></div><div class="ov-foot">※ 월별 목표/실적을 입력하면 <b>연간값이 자동 집계</b>됩니다 (수량=합계 · %=최근월) · 달성율=실적÷목표 · 월별칸에도 그 달 달성율 표시 · 마스터 「KPI지표」 탭과 [구글시트 불러오기] 연동</div></div>';
+  return h;
 }
 let OVTAB='main';
 let MRTAB='main';
@@ -4577,7 +4659,7 @@ function renderOverview(){
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
   const isMR=(TAB==='mreport');
-  const OVTABS=[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
+  const OVTABS=isMR?[['main','본사실적'],['kpi','KPI 지표'],['focus','중점추진과제'],['month','월별과제']]:[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
   let CT=isMR?MRTAB:OVTAB;
   if(CT==='report')CT='month';
   if(!OVTABS.some(([k])=>k===CT))CT='main';
@@ -4592,7 +4674,9 @@ function renderOverview(){
   if(isMR)MRTAB=CT; else OVTAB=CT;
   h+='<div class="pm-tabs" style="margin-top:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   h+='<div class="ov-tabc">';
-  if(CT==='focus'){
+  if(CT==='kpi'){
+    h+=renderKPI2();
+  } else if(CT==='focus'){
     h+=renderFocus();
   } else if(CT==='month'){
     h+=renderTeamMonthCards(isMR);
@@ -6115,6 +6199,20 @@ function ensureXLSX(cb){
   },200);
 }
 /* 중화팀 행사 일정 상세 목록 → 이 표만 엑셀(.xlsx)로 내보내기 (표시 순서·필터·정렬 반영) */
+function exportKpiXlsx(){
+  const MON=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const head=['구분','KPI 항목','단위','연간목표','연간실적','달성율'];
+  MON.forEach(m=>{head.push(m+'목표');head.push(m+'실적');});
+  const aoa=[head];
+  KPIDATA.forEach(r=>{const rt=kpiRate(r);const row=[r.grp,r.item,r.unit,r.yt,r.ya,rt==null?'':rt+'%'];
+    for(let m=0;m<12;m++){row.push(r.mt[m]);row.push(r.ma[m]);}aoa.push(row);});
+  ensureXLSX(()=>{try{
+    const ws=XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols']=[{wch:13},{wch:26},{wch:8},{wch:10},{wch:10},{wch:8}].concat(Array(24).fill({wch:8}));
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'KPI지표_2026');
+    XLSX.writeFile(wb,`중화팀_KPI지표_${YEAR}.xlsx`);toast('KPI 지표를 엑셀로 내보냈습니다');
+  }catch(e){toast('엑셀 오류: '+((e&&e.message)||''));}});
+}
 function exportMileXlsx(){
   const q=((document.getElementById('fQ')||{}).value||'').trim().toLowerCase();
   let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
@@ -8079,6 +8177,7 @@ async function doSheetPull(silent){
   }catch(e){if(!silent)toast('시트 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
 }
 /* ===== 중화팀 월보고 전용 구글시트 (해당월 월보고 연동) ===== */
+const KPI_SHEET_ID='10KOuxI4iZ0J5D-9DKABMIMeAP8hT-iFu0vC13hGfE20'; // 중화팀_KPI지표_2026
 const MREPORT_SHEET_ID='1q3QY5DA4_kQ3zDuGMywIrvQ9bJIfeJuFII85S6Qk0wA'; // 2026년도_G2중화팀_업무보고_마스터파일
 const MREPORT_SHEET_URL='https://docs.google.com/spreadsheets/d/'+MREPORT_SHEET_ID+'/edit';
 async function doSheetPullById(id,silent){
@@ -8113,7 +8212,7 @@ function importG2Master(wb,scope){
     const A=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
     let hi=-1;
     for(let i=0;i<Math.min(14,A.length);i++){const row=(A[i]||[]).map(x=>String(x).replace(/\s/g,''));
-      if(row.some(x=>x.includes('거래처'))||row.some(x=>x.includes('담당자'))||row.some(x=>x.includes('일정명'))||row.some(x=>x.includes('출발일'))){hi=i;break;}}
+      if(row.some(x=>x.includes('거래처'))||row.some(x=>x.includes('담당자'))||row.some(x=>x.includes('일정명'))||row.some(x=>x.includes('출발일'))||(row.some(x=>x.includes('KPI항목'))&&row.some(x=>x.includes('연간목표')))){hi=i;break;}}
     if(hi<0)return;
     const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
     const ci=name=>hdr.findIndex(h=>h.includes(name));
@@ -8145,6 +8244,21 @@ function importG2Master(wb,scope){
       return;
     }
     // ⓪ 출장일정: 출발일+담당자
+    // ⓪-2 KPI 지표: 구분+KPI 항목+연간목표
+    if((has('KPI 항목')||has('kpi 항목')||has('KPI항목'))&&has('연간목표')){
+      const ci2=lbl=>hdr.findIndex(h=>h.replace(/\s/g,'')===lbl.replace(/\s/g,''));
+      const cG=ci2('구분'),cI=ci2('KPI 항목'),cU=ci2('단위'),cYt=ci2('연간목표'),cYa=ci2('연간실적');
+      const MONn=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      const mt=MONn.map(m=>ci2(m+'목표')), ma=MONn.map(m=>ci2(m+'실적'));
+      const nz=v=>{const s2=String(v==null?'':v).replace(/,/g,'').replace(/%/g,'').trim();return s2===''?null:(isNaN(+s2)?s2:+s2);};
+      const out=[];
+      body.forEach(r=>{const item=String(cI>=0?r[cI]||'':'').trim();if(!item)return;
+        out.push({grp:String(cG>=0?r[cG]||'':'').trim()||'중화팀 통합',item,unit:String(cU>=0?r[cU]||'':'').trim(),
+          yt:nz(cYt>=0?r[cYt]:null),ya:nz(cYa>=0?r[cYa]:null),
+          mt:mt.map(c=>nz(c>=0?r[c]:null)),ma:ma.map(c=>nz(c>=0?r[c]:null))});});
+      if(out.length){KPIDATA=out;saveKPI();done.push('KPI 지표 '+out.length+'건');}
+      return;
+    }
     if(has('출발일')&&has('담당자')){
       const cNm=hdr.findIndex(h=>h.includes('출장명')||h.includes('일정명')||h==='제목');
       const cS=ci('출발일'),cE=ci('종료일'),cN=ci('담당자'),cCo=ci('동행'),cC=ci('국가'),cR=ci('지역'),
@@ -8244,7 +8358,20 @@ async function doMasterPull(scope,silent){
     if(!silent)toast((scope==='month'?'[월간만] ':'[주간만] ')+'마스터 반영 · '+(done.length?done.join(' / '):'해당 데이터 없음'));
   }catch(e){if(!silent)toast('마스터 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
 }
-function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='mreport')doMasterPull('month',false); else if(TAB==='rr')doMasterPull('week',false); else doSheetPull(false); });}
+function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='mreport'){ if(MRTAB==='kpi')doKpiPull(false); else doMasterPull('month',false);} else if(TAB==='rr')doMasterPull('week',false); else doSheetPull(false); });}
+function loadKPISheet(){cloudAuth(()=>doKpiPull(false));}
+async function doKpiPull(silent){
+  setSyncBadge('sync');
+  try{const url=`https://www.googleapis.com/drive/v3/files/${KPI_SHEET_ID}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
+    const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
+    if(!res.ok){if(!silent)toast('KPI 시트 불러오기 실패 ('+res.status+') · 공유권한 확인');setSyncBadge('err');return;}
+    const buf=new Uint8Array(await res.arrayBuffer());
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const done=importG2Master(wb,'month')||[];
+    render();setSyncBadge('ok');
+    if(!silent)toast(done.length?('KPI 반영 · '+done.join(' / ')):'KPI 항목을 찾지 못했습니다 (열 제목 확인)');
+  }catch(e){if(!silent)toast('KPI 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
+}
 /* ============ 구글 슬라이드(PPT) 생성 → 중화팀업무보고 폴더 저장 ============ */
 const WRFOLDER='1m89LgxdjzL-8HyVPo1ibqzAVqquPv4J1';
 function pptWLabel(){const wk=WEEKS[W]||{name:'',range:''};return `${YEAR}년 ${MONTH}월 · ${wk.name}${wk.range?' ('+wk.range+')':''}`;}
