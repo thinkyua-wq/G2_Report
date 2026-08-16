@@ -2224,7 +2224,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic"><svg viewBox="0 0 24 24" width="62%" height="62%" fill="currentColor" aria-hidden="true"><path d="M3.4 4.2 12 11.3V4.2h.2L20.6 11a1.3 1.3 0 0 1 0 2l-8.4 6.8H12v-7.1L3.4 19.8A.8.8 0 0 1 2.1 19V5a.8.8 0 0 1 1.3-.8Z"/><rect x="20.2" y="4.2" width="2.6" height="15.6" rx="1.1"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.16-M138</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.16-M140</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec"><h4>메뉴</h4><nav class="rnav" id="rnav"></nav></div>
@@ -3619,12 +3619,12 @@ function ovMonthEventsCard(){
 }
 /* ===== 주요업무 KPI 지표 (연간·월별 목표/실적) ===== */
 const KPI_SEED=[
- ['중화팀 통합','본사 수출','만$',2270],['중화팀 통합','본사 송금','만$',2370],
- ['중화팀 통합','법인 판매','억RMB',3.3],['중화팀 통합','법인 수금','억RMB',3.3],
- ['중화팀 통합','임플란트 판매','만EA',115],['중화팀 통합','부진상권 M/S 개선(↑)','%',6],
- ['중화팀 통합','DSO 진입점','점',250],['중화팀 통합','DSO 판매','만대',60],
- ['중화팀 통합','하부고객 확대','점',8500],['중화팀 통합','하부고객 미출하 감소(↓)','%',30],
- ['중화팀 통합','BD 판매 확대','점',1500],['중화팀 통합','BD 미출하 감소(↓)','%',30],
+ ['중화팀 통합','본사 수출','만$',2270,[147.7,90.9,215.9,204.5,204.5,204.5,159.1,null,null,null,null,null],[99.1,90.4,191.8,185.7,173.4,195.5,141.8,null,null,null,null,null]],['중화팀 통합','본사 송금','만$',2370,[151.3,99.7,217.3,208.0,213.0,213.0,170.7,null,null,null,null,null],[93.6,87.8,200.3,168.5,125.8,157.5,205.1,null,null,null,null,null]],
+ ['중화팀 통합','법인 판매','억RMB',3.3,null,[0.2,0.137,0.303,0.236,0.224,0.235,0.163,0.042,0.0,0.0,0.0,0.0]],['중화팀 통합','법인 수금','억RMB',3.3],
+ ['중화팀 통합','임플란트 판매','만EA',115,null,[6.56,4.74,10.33,8.8,8.37,8.19,5.54,1.53,0.0,0.0,0.0,0.0]],['중화팀 통합','부진상권 M/S 개선(↑)','%',6],
+ ['중화팀 통합','DSO 진입점','점',250,null,null,76],['중화팀 통합','DSO 판매','만대',60,null,[1.91,1.41,2.26,1.79,1.35,1.38,1.2,0.38,null,null,null,null]],
+ ['중화팀 통합','하부고객 확대','점',8500,null,null,3570],['중화팀 통합','하부고객 미출하 감소(↓)','%',30],
+ ['중화팀 통합','BD 판매 확대','점',1500,null,null,76],['중화팀 통합','BD 미출하 감소(↓)','%',30],
  ['중화팀 통합','신제품 Ari 런칭(6월)','-',null],['중화팀 통합','ARi 판매','천EA',8],
  ['중화팀 통합','BD 판매','천EA',72.5],['중화팀 통합','VOC·바이오레이즈 현지생산','-',null],
  ['마케팅','교육·세미나 총','회',298],['마케팅','한국 방문행사','회',8],
@@ -3635,13 +3635,13 @@ const KPI_SEED=[
  ['마케팅','KIT Compensation','만불',100],['마케팅','PKG 활동','회',17],
  ['마케팅','PKG 예산','억위안',1.26],['마케팅','제품런칭 R2Gate·플라즈마','-',null],
  ['마케팅','플라즈마 재런칭(3월)·VOC','-',null],
- ['홍콩·대만','본사 수출','만$',null],['홍콩·대만','본사 송금','만$',null],
+ ['홍콩·대만','본사 수출','만$',375,[3.5,2.0,46.6,19.8,18.8,23.3,26.2,null,null,null,null,null],[4.7,1.5,58.2,12.0,25.4,40.5,42.1,null,null,null,null,null]],['홍콩·대만','본사 송금','만$',null,[3.0,3.5,2.0,3.6,4.3,4.3,17.8,null,null,null,null,null],[3.5,2.7,1.5,2.3,5.4,3.9,8.4,null,null,null,null,null]],
  ['홍콩·대만','판매','억RMB',null],['홍콩·대만','수금','억RMB',null],
  ['홍콩·대만','임플란트 판매','만EA',null],
-].map(([g,t,u,y])=>({grp:g,item:t,unit:u,yt:y,ya:null,mt:Array(12).fill(null),ma:Array(12).fill(null)}));
-let KPIDATA=[]; try{const s=localStorage.getItem('wr_kpi_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)KPIDATA=o;}}catch(e){}
+].map(a=>({grp:a[0],item:a[1],unit:a[2],yt:a[3],ya:(a[6]!==undefined?a[6]:null),mt:(a[4]||Array(12).fill(null)).slice(),ma:(a[5]||Array(12).fill(null)).slice()}));
+let KPIDATA=[]; try{const s=localStorage.getItem('wr_kpi_v3');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)KPIDATA=o;}}catch(e){}
 if(!KPIDATA.length)KPIDATA=JSON.parse(JSON.stringify(KPI_SEED));
-function saveKPI(){try{localStorage.setItem('wr_kpi_v1',JSON.stringify(KPIDATA));}catch(e){}}
+function saveKPI(){try{localStorage.setItem('wr_kpi_v3',JSON.stringify(KPIDATA));}catch(e){}}
 let KPIMON=false;  /* 월별 목표/실적 펼침 */
 function toggleKpiMon(){KPIMON=!KPIMON;render();}
 function kfmt(v){return (v==null||v==='')?'':(typeof v==='number'?v.toLocaleString('en-US'):esc(String(v)));}
@@ -3651,9 +3651,9 @@ function editKPI(i,f,v,mi){ if(roBlock())return; const r=KPIDATA[i]; if(!r)retur
   saveKPI(); }
 function kpiIsPct(r){return String(r.unit||'').includes('%');}
 function kpiAgg(arr,pct){const v=arr.filter(x=>x!=null&&x!==''&&!isNaN(+x)).map(x=>+x);if(!v.length)return null;return pct?v[v.length-1]:Math.round(v.reduce((a,b)=>a+b,0)*100)/100;}
-function kpiEffT(r){const m=kpiAgg(r.mt,kpiIsPct(r));return m!=null?m:(typeof r.yt==='number'?r.yt:null);}
+function kpiEffT(r){if(typeof r.yt==='number')return r.yt;return kpiAgg(r.mt,kpiIsPct(r));}
 function kpiEffA(r){const m=kpiAgg(r.ma,kpiIsPct(r));return m!=null?m:(typeof r.ya==='number'?r.ya:null);}
-function kpiAutoT(r){return kpiAgg(r.mt,kpiIsPct(r))!=null;}
+function kpiAutoT(r){return (typeof r.yt!=='number')&&kpiAgg(r.mt,kpiIsPct(r))!=null;}
 function kpiAutoA(r){return kpiAgg(r.ma,kpiIsPct(r))!=null;}
 function kpiRate(r){const t=kpiEffT(r),a=kpiEffA(r);if(t==null||!t||a==null)return null;return Math.round(a/t*100);}
 function renderKPI2(){
