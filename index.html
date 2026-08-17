@@ -2334,7 +2334,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M162</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M163</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -8460,12 +8460,14 @@ function cloudAuth(cb,silent){
   if(!cloudAvailable()){ if(!silent) cloudGuide(); return; }
   if(cloudTokenValid()){cb();return;}
   try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly',
-    callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncBadge('err');}}});
-    tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');}
+    callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncErr('구글 인증 실패: '+((resp&&(resp.error+' '+(resp.error_description||'')))||''),true);}},
+    error_callback:err=>{if(!silent)toast('구글 인증 창이 닫혔거나 차단되었습니다');setSyncErr('구글 인증 중단: '+((err&&(err.type||err.message))||''),true);}});
+    tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');setSyncErr('구글 인증 시작 실패: '+((e&&e.message)||e),true);}
 }
 function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,_ts:Date.now()});}
 async function driveFind(){const q=encodeURIComponent(`name='${CLOUD.fileName}' and trashed=false`);
   const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`,{headers:{Authorization:'Bearer '+CLOUD.token}});
+  if(!res.ok){let t='';try{t=await res.text();}catch(e){}throw new Error('드라이브 조회 실패 HTTP '+res.status+' '+t.slice(0,200));}
   const j=await res.json();return (j.files&&j.files[0])?j.files[0].id:null;}
 async function doCloudSave(silent){
   setSyncBadge('sync');
@@ -8474,9 +8476,9 @@ async function doCloudSave(silent){
     const body=`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${cloudPayload()}\r\n--${b}--`;
     const url=id?`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=multipart`:`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
     const res=await fetch(url,{method:id?'PATCH':'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'multipart/related; boundary='+b},body});
-    if(res.ok){if(!silent)toast('구글 드라이브에 저장했습니다');setSyncBadge('ok');}
-    else{if(!silent)toast('저장에 실패했습니다');setSyncBadge('err');}}
-  catch(e){if(!silent)toast('저장 중 오류가 발생했습니다');setSyncBadge('err');}
+    if(res.ok){if(!silent)toast('구글 드라이브에 저장했습니다');LASTSYNCERR='';NEEDAUTH=false;setSyncBadge('ok');}
+    else{let t='';try{t=await res.text();}catch(e){}if(!silent)toast('저장에 실패했습니다 (HTTP '+res.status+') · 상단 배지 클릭');setSyncErr('저장 실패 HTTP '+res.status+' '+t.slice(0,300));}}
+  catch(e){if(!silent)toast('저장 중 오류가 발생했습니다 · 상단 배지 클릭');setSyncErr('저장 오류: '+((e&&e.message)||e));}
 }
 function cloudSave(){if(roBlock())return;cloudAuth(()=>doCloudSave(false));}
 async function doCloudLoad(silent){
@@ -8683,7 +8685,7 @@ async function doMasterPull(scope,silent){
   setSyncBadge('sync');
   try{const url=`https://www.googleapis.com/drive/v3/files/${MREPORT_SHEET_ID}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
     const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
-    if(!res.ok){if(!silent)toast('마스터 시트 내보내기 실패 ('+res.status+') · 공유권한 확인');setSyncBadge('err');return;}
+    if(!res.ok){if(!silent)toast('마스터 시트 내보내기 실패 ('+res.status+') · 공유권한 확인');setSyncErr('마스터 시트 내보내기 실패 HTTP '+res.status);return;}
     const buf=new Uint8Array(await res.arrayBuffer());
     const wb=XLSX.read(buf,{type:'array',cellDates:true});
     let done=[];
@@ -8692,7 +8694,7 @@ async function doMasterPull(scope,silent){
     try{if(scope!=='month'&&Object.keys(WKREPORT||{}).length&&TAB==='mreport'&&PERIOD==='week'){gotoLastUpWeek();}}catch(e){}
     render();setSyncBadge('ok');
     if(!silent)toast((scope==='month'?'[월간만] ':scope==='week'?'[주간만] ':'[월간+주간] ')+'마스터 반영 · '+(done.length?done.join(' / '):'해당 데이터 없음'));
-  }catch(e){if(!silent)toast('마스터 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
+  }catch(e){if(!silent)toast('마스터 불러오기 오류: '+((e&&e.message)||e));setSyncErr('마스터 불러오기 오류: '+((e&&e.message)||e));}
 }
 function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doKpiPull(false);} else if(TAB==='mreport'||TAB==='calmonth'||TAB==='goals'){doMasterPull('all',false);} else doSheetPull(false); });}
 function loadKPISheet(){cloudAuth(()=>doKpiPull(false));}
@@ -8700,13 +8702,13 @@ async function doKpiPull(silent){
   setSyncBadge('sync');
   try{const url=`https://www.googleapis.com/drive/v3/files/${KPI_SHEET_ID}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
     const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
-    if(!res.ok){if(!silent)toast('KPI 시트 불러오기 실패 ('+res.status+') · 공유권한 확인');setSyncBadge('err');return;}
+    if(!res.ok){if(!silent)toast('KPI 시트 불러오기 실패 ('+res.status+') · 공유권한 확인');setSyncErr('KPI 시트 불러오기 실패 HTTP '+res.status);return;}
     const buf=new Uint8Array(await res.arrayBuffer());
     const wb=XLSX.read(buf,{type:'array',cellDates:true});
     const done=importG2Master(wb,'month')||[];
     render();setSyncBadge('ok');
     if(!silent)toast(done.length?('KPI 반영 · '+done.join(' / ')):'KPI 항목을 찾지 못했습니다 (열 제목 확인)');
-  }catch(e){if(!silent)toast('KPI 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
+  }catch(e){if(!silent)toast('KPI 불러오기 오류: '+((e&&e.message)||e));setSyncErr('KPI 불러오기 오류: '+((e&&e.message)||e));}
 }
 /* ============ 구글 슬라이드(PPT) 생성 → 중화팀업무보고 폴더 저장 ============ */
 const WRFOLDER='1m89LgxdjzL-8HyVPo1ibqzAVqquPv4J1';
@@ -8803,11 +8805,28 @@ function scheduleSync(){
   if(!SYNCON||!SYNC_READY||!cloudAvailable())return;
   setSyncBadge('pending');
   if(_syncTimer)clearTimeout(_syncTimer);
-  _syncTimer=setTimeout(()=>{_syncTimer=null;cloudAuth(()=>{if(_syncing)return;_syncing=true;doCloudSave(true).finally(()=>{_syncing=false;});},true);},2500);
+  _syncTimer=setTimeout(()=>{_syncTimer=null;if(NEEDAUTH){setSyncBadge('err');return;}cloudAuth(()=>{if(_syncing)return;_syncing=true;doCloudSave(true).finally(()=>{_syncing=false;});},true);},2500);
 }
+let LASTSYNCERR='',NEEDAUTH=false;
+function setSyncErr(msg,needAuth){LASTSYNCERR=String(msg||'');NEEDAUTH=!!needAuth;if(/401|403|invalid_grant|invalid_token|interaction_required|consent|login_required|인증/.test(LASTSYNCERR)){NEEDAUTH=true;CLOUD.token=null;CLOUD.tokenExp=0;}setSyncBadge('err');}
 function setSyncBadge(state){_syncState=state;const el=document.getElementById('syncBadge');if(!el)return;
-  const map={off:['',''],pending:['⏳ 동기화 대기','#8a6d1a'],sync:['⟳ 동기화 중','#1f6f52'],ok:['✅ 구글 동기화됨','#1f6f52'],err:['⚠ 동기화 오류','#c0392b']};
-  const m=map[state]||map.off;el.textContent=m[0];el.style.color=m[1];el.style.display=SYNCON&&m[0]?'inline-flex':'none';}
+  const map={off:['',''],pending:['⏳ 동기화 대기','#8a6d1a'],sync:['⟳ 동기화 중','#1f6f52'],ok:['✅ 구글 동기화됨','#1f6f52'],err:[NEEDAUTH?'⚠ 구글 재로그인 필요 · 클릭':'⚠ 동기화 오류 · 클릭','#c0392b']};
+  const m=map[state]||map.off;el.textContent=m[0];el.style.color=m[1];el.style.display=SYNCON&&m[0]?'inline-flex':'none';el.style.cursor=state==='err'?'pointer':'default';el.onclick=state==='err'?showSyncErr:null;el.title=state==='err'?LASTSYNCERR:'';}
+function showSyncErr(){
+  const dw=document.getElementById('drawer');
+  const hint=NEEDAUTH?'구글 로그인 세션이 만료되었거나 권한 동의가 필요합니다. 아래 「구글 재로그인 후 저장」을 누르면 구글 창이 뜨고, 승인하면 바로 저장·동기화가 재개됩니다.'
+    :/413|too large|payload/i.test(LASTSYNCERR)?'저장 데이터가 너무 큽니다(구글 업로드 한도). 「메뉴 ▾ → 백업(JSON)」으로 내려받은 뒤 오래된 주차 데이터를 정리해 주세요.'
+    :/404/.test(LASTSYNCERR)?'구글 드라이브의 저장 파일을 찾지 못했습니다. 「다시 시도」를 누르면 새로 만듭니다.'
+    :/Failed to fetch|NetworkError|network/i.test(LASTSYNCERR)?'네트워크 오류입니다. 인터넷 연결(사내망 차단 여부)을 확인한 뒤 다시 시도해 주세요.'
+    :'일시적 오류일 수 있습니다. 「다시 시도」를 눌러 주세요. 반복되면 아래 상세 내용을 알려 주세요.';
+  dw.innerHTML=`<div class="dw-h"><div class="top"><div style="min-width:0"><div class="chips"><span class="chip" style="background:var(--riskSoft);color:var(--risk)">동기화 오류</span></div><h3>구글 동기화가 실패했습니다</h3></div><button class="close" onclick="closeDetail()">✕</button></div></div>
+    <div class="dw-b"><div class="set-p">${esc(hint)}</div>
+    <div class="dw-save" style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="closeDetail();retrySync(true)" style="background:var(--accent)">🔑 구글 재로그인 후 저장</button><button onclick="closeDetail();retrySync(false)">↻ 다시 시도</button></div>
+    <div class="dw-sec">상세</div><div class="set-hint" style="word-break:break-all;font-family:Consolas,monospace;font-size:11px">${esc(LASTSYNCERR||'(기록 없음)')}</div>
+    <div class="set-hint" style="margin-top:8px">※ 자동 동기화가 부담되면 「메뉴 ▾ → 설정 → 자동 동기화」를 끄고 「☁ 저장」만 수동으로 사용해도 됩니다.</div></div>`;
+  document.getElementById('ov').classList.add('on');dw.classList.add('on');
+}
+function retrySync(reauth){if(reauth){CLOUD.token=null;CLOUD.tokenExp=0;}NEEDAUTH=false;LASTSYNCERR='';setSyncBadge('sync');cloudAuth(()=>doCloudSave(false),false);}
 function cloudStartup(){
   if(!SYNCON){setSyncBadge('off');return;}
   let tries=0;
