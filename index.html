@@ -2287,10 +2287,12 @@ body.vw-ro .lb-full{display:none}
 .hm-tile .s{font-size:11px;color:var(--faint)}
 .hm-bar{height:5px;background:var(--tGry);border-radius:3px;overflow:hidden;margin-top:8px}
 .hm-bar i{display:block;height:100%;background:#7a9c8a;border-radius:3px}
-.hm-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.hm-people{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.hm-people.one{grid-template-columns:minmax(0,1fr)}
+@media(max-width:1400px){.hm-people{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1100px){.hm-people{grid-template-columns:1fr}.hm-tiles{grid-template-columns:repeat(2,1fr)}.home{grid-template-columns:1fr}}
 .hm-p{border:1px solid var(--ln);border-radius:8px;overflow:hidden;background:#fff}
-.hm-p .ph{background:var(--sf);padding:10px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--ln);cursor:pointer}
+.hm-p .ph{background:#fff;padding:10px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--ln);cursor:pointer}
 .hm-p .ph .av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
 .hm-p .ph .nm{font-weight:700;font-size:13.5px}
 .hm-p .ph .nm small{font-weight:400;color:var(--dim);margin-left:4px;font-size:11px}
@@ -2321,6 +2323,15 @@ body.vw-ro .lb-full{display:none}
 .kstrip .ks-arr{margin-left:auto;font-size:10.5px;font-weight:600;color:var(--dim)}
 .kstrip.kstrip-min{padding-bottom:0}
 .kstrip.kstrip-min .kstrip-h{margin-bottom:0}
+.rail{scrollbar-width:none;-ms-overflow-style:none;gap:12px}
+/* 핵심지표 타일만 옅은 회색(50%) */
+.om-tile,.hm-tile{background:rgba(233,231,226,.3)!important}
+.rail::-webkit-scrollbar{display:none}
+.hm-ctl{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap}
+.hm-ctl .hm-cl{font-size:10.5px;color:var(--faint)}
+.hm-ctl input,.hm-ctl select{font:inherit;font-size:11px;border:1px solid var(--ln);border-radius:4px;padding:2px 4px;background:#fff;color:var(--ink)}
+.hm-ctl input[type=date]{width:112px}.hm-ctl input[type=number]{width:46px;text-align:right}
+.hm-ctl input:disabled,.hm-ctl select:disabled{background:#f4f3f0;color:var(--faint)}
 </style>
 </head>
 <body>
@@ -2337,7 +2348,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M165</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M177</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3937,6 +3948,7 @@ function renderKPI2(){
 let OVTAB='main';
 let MRTAB='main';
 function setOVtab(t){
+  try{window.scrollTo(0,0);}catch(e){}
   if(TAB==='mreport'){MRTAB=t;
     if(t==='week'){gotoLastUpWeek();}
     else if(t==='kanban'){kanSyncWeekMonth();}
@@ -4281,6 +4293,12 @@ function rrWeekChart(label,scope){
     </svg>
     <div class="omc-b"><span>${last?`W${last.wk} 누적 ${last.a.toLocaleString('en-US')} / 당월목표 ${(last.t||t||0).toLocaleString('en-US')} · <b>${(last.t||t)?Math.round(last.a/(last.t||t)*100):0}%</b>${last.inc!=null?` │ 주간 실적 ${last.inc.toLocaleString('en-US')}`:''}`:'실적 입력 대기'}</span></div></div>`;
 }
+function tripAutoStatus(t){ /* 당일 기준 자동: 종료<오늘=완료 · 시작≤오늘≤종료=진행중 · 시작>오늘=예정 (취소·보류는 유지) */
+  const sx=String(t&&t.status||'').trim();if(/취소|보류|연기/.test(sx))return sx;
+  const sd=String(t&&t.start||'').slice(0,10),ed=String(t&&t.end||sd||'').slice(0,10),td=todayStr();
+  if(!sd)return sx||'예정';
+  if(ed&&ed<td)return '완료';if(sd<=td&&(!ed||td<=ed))return '진행중';return '예정';
+}
 function tripStatusChip(s){
   const k={'예정':'wait','확정':'prog','진행중':'prog','완료':'done','취소':'wait','대기':'wait','마무리':'review','보류':'wait'}[String(s||'').trim()]||'prog';
   return `<span class="chip st ${k}">${esc(s||'예정')}</span>`;
@@ -4362,7 +4380,7 @@ function tripPanel(mode){   /* mode: 'week' | 'month' */
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td>`
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'big',this.value,0,this)" placeholder="연계 프로젝트">${esc(t.big||'')}</textarea>${(function(){const L=tripLinks(t);return [L.mile?`<span class="tp-lk mile">🏷 ${esc(L.mile.name)}</span>`:'',L.task?`<span class="tp-lk task">📌 ${esc(L.task.t)}</span>`:''].filter(Boolean).join('');})()}</td>`
       +`<td class="rl"><textarea class="trip-tx res" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'note',this.value,0,this)" placeholder="프로젝트 결과·성과">${esc(t.note||'')}</textarea></td>`
-      +`<td>${tripStatusChip(t.status)}</td></tr>`;});
+      +`<td>${tripStatusChip(tripAutoStatus(t))}</td></tr>`;});
   h+='</tbody></table></div>';
   h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적 · 연계 프로젝트 · 결과</b>는 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.</div>';
   return h;
@@ -4602,7 +4620,7 @@ function mrTeamTiles(extra){ // 중화팀과제 KPI = 담당자별 주요내용
   const ps=owns.map(o=>o.pct).filter(p=>p!=null);
   const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
   let h=`<div class="mf-sumbar">
-      <div class="mfsb-i"><span class="mfsb-l">${MONTH}월 월별과제</span><b>${rows.length}건</b></div>
+      <div class="mfsb-i"><span class="mfsb-l">${fm}월 월별과제</span><b>${rows.length}건</b></div>
       <div class="mfsb-i"><span class="mfsb-l">담당자</span><b>${owns.length}명</b></div>
       <div class="mfsb-i"><span class="mfsb-l">평균 달성률</span><b style="color:#1e6f5c">${avg==null?'—':avg+'%'}</b><span class="mfsb-s">연간 기준선 ${plan}%</span></div>
       <div class="mfsb-s" style="margin-left:auto">담당자별 주요내용 · ★ = 우선순위 「상」</div>
@@ -4833,8 +4851,10 @@ function renderTeamMonthCards(isMR){
   const m1=mrEffMonth2(), m2=(m1<12?m1+1:12);
   const rowsAll=MREPORTS[String(m1)]||[];
   let h=`<div class="ov-sec">월별과제 <span class="ov-sub">${m1!==MONTH?`<b style="color:var(--risk)">${MONTH}월 월말보고 미입력 → 최종 입력월(${m1}월) 표시</b> · `:''}담당자별 1인 1행 · ${m1}월 과제 · ${m2}월 과제 · ${m2}월 중점추진과제 · ★=우선순위 상 · 달성률 낮은 순 · 상시는 맨 아래 · 마스터 「월말보고」 연동</span></div>`;
-  const mgs=MGRS.filter(g=>rowsAll.some(r=>r.m===g.id));
+  let mgs=mgrsOrdered().filter(g=>rowsAll.some(r=>r.m===g.id));
   if(!mgs.length)return h+`<div class="om-tile"><div class="om-ts">${m1}월 보고 데이터가 없습니다. 「구글시트 불러오기」로 반영하세요.</div></div>`;
+  h+=`<div class="rr-ctrlbar" style="margin-bottom:12px"><span class="pl">담당자</span>${personTabs(MMSEL,'setMMSel',m=>rowsAll.filter(r=>r.m===m.id).length)}</div>`;
+  if(MMSEL)mgs=mgs.filter(g=>g.id===MMSEL);
   mgs.forEach(g=>{
     const mine=rowsAll.map((r,idx)=>({r,idx})).filter(x=>x.r.m===g.id);
     const sorted=tmSortRows(mine.map(x=>x.r));
@@ -4936,17 +4956,21 @@ function renderHome(){
   h+='<div class="hm-mini">KEY METRICS · 누적 수출·수금 (천$) · KPI</div>';
   h+=mrMonthTiles('');
   // people
-  h+='<div class="hm-mini">WEEKLY TASKS · 담당자별 (진행 중 상위 3건 · 카드 클릭 시 주간과제로)</div><div class="hm-people">';
-  mgrsOrdered().forEach(m=>{const my=rows.filter(r=>r.mgr===m.id);if(!my.length)return;
+  h+=`<div class="hm-mini" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">WEEKLY TASKS · 담당자별 <span style="font-weight:400;color:var(--faint)">(진행 중 상위 3건 · 담당자 여러 명 선택 가능 · 카드 클릭 시 주간과제로)</span>${HMTASKS?personTabs(HMSEL,'setHMSel',m=>rows.filter(r=>r.mgr===m.id).length):''}<span class="x" onclick="toggleHMTasks()" style="margin-left:auto;font-size:11px;color:var(--faint);cursor:pointer;border:1px solid var(--ln);border-radius:4px;padding:1px 7px;background:#fff">${HMTASKS?'▾ 숨기기':'▸ 펼치기'}</span></div>`;
+  const HM_DEFAULT=['lee','seo','yu']; /* 팀종합: 기본 이유아·서혜민·유훈종 3명 · 탭에서 다른 담당자 선택 가능 */
+  const cards=[];
+  mgrsOrdered().forEach(m=>{if(HMSEL.length?!HMSEL.includes(m.id):!HM_DEFAULT.includes(m.id))return;const my=rows.filter(r=>r.mgr===m.id);if(!my.length)return;let h='';
     const avg=Math.round(my.reduce((a,r)=>a+(r.p||0),0)/my.length);const done=my.filter(r=>r.p>=100).length;
     const top=my.filter(r=>r.p<100).sort((a,b)=>String(a.due||'9')<String(b.due||'9')?-1:1).slice(0,3);
     h+=`<div class="hm-p"><div class="ph" onclick="MGRSEL=['${m.id}'];setTab('mreport');setOVtab('week')"><span class="av" style="background:${m.color}">${esc(m.ini)}</span><span class="nm">${esc(m.name)}<small>${esc(m.title||'')}${m.role?' · '+esc(m.role):''}</small></span><span class="rt hm-num">${avg}%<small>과제 ${my.length}${done?' · 완료 '+done:''}</small></span></div>`;
     top.forEach(r=>{const pk=prioKo(r.prio);h+=`<div class="hm-it"><div class="t">${esc(r.label||r.name||'')}<span class="due hm-date">${r.due?esc(String(r.due).replace(/^2026-/,'').replace('-','/')):'상시'}</span></div><div class="tags">${hmTag(r.cat,'b')}${pk?hmTag(pk,pk==='상'?'r':pk==='중'?'y':''):''}${hmTag(r.country,hmCtryCls(r.country))}${r.risk?hmTag('지연주의','o'):''}</div><div class="prog"><div class="hm-bar"><i style="width:${Math.min(100,r.p||0)}%"></i></div><b class="hm-num">${r.p||0}%</b></div></div>`;});
     if(!top.length)h+='<div class="hm-it hm-empty">진행 중 과제 없음</div>';
-    h+='</div>';});
-  h+='</div>';
+    h+='</div>';cards.push(h);});
+  h+='<div class="hm-people'+(cards.length===1?' one':'')+'"'+(HMTASKS?'':' style="display:none"')+'>'+cards.join('')+'</div>';
   // dealer table
-  {const em=mrEffMonth();h+=`<div class="hm-mini">DEALER RESULT · ${em}월${em!==MONTH?' (최종 입력월)':''} · 천$</div>`;h+=mrDealTable();}
+  h+='<div class="hm-mini">TRIP SCHEDULE · '+MONTH+'월 출장일정</div>';
+  try{h+=tripPanelHead('month')+tripPanel('month');}catch(e){}
+  {const em=mrEffMonth();h+=`<div class="hm-mini" style="margin-top:22px">DEALER RESULT · ${em}월${em!==MONTH?' (최종 입력월)':''} · 천$</div>`;h+=mrDealTable();}
   h+='</div>';
   // ── right ──
   if(HOMESIDE){
@@ -4955,14 +4979,16 @@ function renderHome(){
     const asg=(ASSIGN||[]).filter(a=>!a.done).slice(0,5);
     if(!asg.length)h+='<div class="hm-empty">진행 중 지시 없음</div>';
     asg.forEach(a=>{const g=mgrById(a.mgr)||{};let dd='';if(a.due){const dl=Math.round((new Date(a.due)-new Date(todayStr()))/86400000);dd=dl<0?`D+${-dl}`:dl===0?'D-Day':`D-${dl}`;}
-      h+=`<div class="hm-ev" onclick="setTab('mreport');setOVtab('ops')"><div class="d hm-date">${esc(a.due||a.since||'')} · ${esc(a.from||'팀장')} → ${esc(g.name||'')}</div>${esc(a.task||'')}<div class="tags">${hmTag('지시','b')}${dd?hmTag(dd,/D\+|D-Day|D-[0-3]$/.test(dd)?'r':'y'):''}${hmTag(a.status,'')}</div></div>`;});
+      const gi=ASSIGN.indexOf(a);const ce=canEditAssign(a);
+      const ctl=`<div class="hm-ctl" onclick="event.stopPropagation()"><span class="hm-cl">착수</span><input type="date" value="${esc(a.start||'')}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'start',this.value)"><select ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'status',this.value)">${['착수전','진행중','완료'].map(o=>`<option ${(a.status||'착수전')===o?'selected':''}>${o}</option>`).join('')}</select><input type="number" min="0" max="100" value="${a.prog||0}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'prog',this.value)" title="진행율 %"><span class="hm-cl">%</span></div>`;
+      h+=`<div class="hm-ev" onclick="${RO()?'':"setTab('mreport');setOVtab('ops')"}"><div class="d hm-date">${esc(a.due||a.since||'')} · ${esc(a.from||'팀장')} → ${esc(g.name||'')}</div>${esc(a.task||'')}<div class="tags">${hmTag('지시','b')}${dd?hmTag(dd,/D\+|D-Day|D-[0-3]$/.test(dd)?'r':'y'):''}${hmTag(a.status,(a.status==='진행중')?'g':(a.status==='완료')?'gr':'')}${a.start?hmTag('착수 '+String(a.start).slice(5).replace('-','/'),'y'):''}${(a.prog>0&&a.prog<100)?hmTag(a.prog+'%',''):''}</div></div>`;});
     h+='</div>';
-    h+='<div class="hm-blk"><div class="hm-sec"><span class="em">🧳</span>SCHEDULE <span class="sub">· 14일</span></div>';
-    const up=hmUpcoming(14).slice(0,8);
+    h+='<div class="hm-blk"><div class="hm-sec"><span class="em">🧳</span>SCHEDULE <span class="sub">· 오늘부터 가까운 순 3건</span></div>';
+    const up=hmUpcoming(90).sort((a,b)=>a.ds<b.ds?-1:a.ds>b.ds?1:0).slice(0,3);
     if(!up.length)h+='<div class="hm-empty">예정 일정 없음</div>';
     up.forEach(e=>{const f=x=>x?x.slice(5).replace('-','/'):'';h+=`<div class="hm-ev" onclick="railCalPick('${e.ds}')"><div class="d hm-date">${f(e.ds)}${e.de?' → '+f(e.de):''}</div>${esc(e.title)}<div class="tags">${hmTag(e.kind,e.cls)}${hmTag(e.country,hmCtryCls(e.country))}</div></div>`;});
     h+='</div>';
-    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🔗</span>INFORMATION</div><div class="hm-lk"><a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener">마스터파일 (구글시트)</a><span onclick="setTab('goals');GOALSUB='kpi';render()">KPI 지표</span><span onclick="setTab('goals');GOALSUB='team';render()">중화팀 R&R</span><span onclick="setTab('calmonth')">중화팀 일정·행사·출장</span></div></div>`;
+    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🔗</span>INFORMATION</div><div class="hm-lk"><a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener">마스터파일 (구글시트)</a><span onclick="setTab('mreport');setOVtab('month')">월별과제</span><span onclick="setTab('mreport');setOVtab('week')">주간과제</span><span onclick="setTab('calmonth')">중화팀 일정·행사·출장</span></div></div>`;
     h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🎬</span>REPORT DECK</div><button class="tb-b" onclick="genGooglePPT()" style="width:100%">🖼 구글 PPT 자동 생성</button></div>`;
     h+='</div>';
   }
@@ -4985,7 +5011,7 @@ function renderOverview(){
   h+='<div class="pm-tabs" style="margin-bottom:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   const showTiles=!isMR||['main','focus','month'].includes(CT);
   if(showTiles){
-    const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${MONTH}월 월별과제 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+    const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별과제 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     h+=`<div class="ov-sec">핵심 지표 <span class="ov-sub">${secSub}</span></div>`;
     const evTile=evListTile(wev);
     if(isMR){
@@ -5113,9 +5139,11 @@ function tripsOfMonth(mo){return TRIPS.filter(t=>{
   return mo&&sm&&mo>=sm&&mo<=em;});}
 let ASSIGN=[];
 try{const s=localStorage.getItem('wr_assign_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o))ASSIGN=o;}}catch(e){}
-function saveAssign(){try{localStorage.setItem('wr_assign_v1',JSON.stringify(ASSIGN));}catch(e){}}
+function saveAssign(){try{localStorage.setItem('wr_assign_v1',JSON.stringify(ASSIGN));}catch(e){}try{if(typeof assignAutoSheet==='function')assignAutoSheet();}catch(e){}}
 function todayStr(){const d=TODAY;return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function addAssign(){ASSIGN.unshift({mgr:(MGRS[0]||{}).id||'',from:'이유아',task:'',cat:'',prio:'중간',since:todayStr(),due:'',start:'',status:'착수전',prog:0,done:false});saveAssign();render();}
+function canEditAssign(a){return !RO()||(a&&LOGINUID&&a.mgr===LOGINUID);}
+function editAssignOwn(i,f,v){const a=ASSIGN[i];if(!a)return;if(!canEditAssign(a)){roBlock();render();return;}if(f==='start'&&v&&(a.status||'착수전')==='착수전'){a.status='진행중';if(!(a.prog>0))a.prog=10;}editAssign(i,f,v);}
 function editAssign(i,f,v){if(!ASSIGN[i])return;
   if(f==='done')ASSIGN[i].done=!!v;
   else if(f==='prog'){const n=Math.max(0,Math.min(100,Math.round(+v||0)));ASSIGN[i].prog=n;ASSIGN[i].done=(n>=100);if(n>=100)ASSIGN[i].status='완료';else if(ASSIGN[i].status==='완료')ASSIGN[i].status='진행중';}
@@ -5132,7 +5160,10 @@ function emailAssign(i){const a=ASSIGN[i];if(!a)return;
   window.location.href=`mailto:${to}${cc?`?cc=${encodeURIComponent(cc)}&`:'?'}subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
   toast(`${m.name||''} (${to}) 앞으로 메일 작성창을 열었습니다`);
 }
-function delAssign(i){ASSIGN.splice(i,1);saveAssign();render();}
+let ASSIGN_TRASH=[]; try{ASSIGN_TRASH=JSON.parse(localStorage.getItem('wr_assign_trash')||'[]')||[];}catch(e){ASSIGN_TRASH=[];}
+function delAssign(i){const a=ASSIGN[i];if(!a)return;if(String(a.task||'').trim()&&!confirm('이 지시를 삭제할까요?\n· '+a.task))return;
+  ASSIGN.splice(i,1);saveAssign();ASSIGN_TRASH.unshift(Object.assign({},a,{_del:todayStr()}));ASSIGN_TRASH=ASSIGN_TRASH.slice(0,30);try{localStorage.setItem('wr_assign_trash',JSON.stringify(ASSIGN_TRASH));}catch(e){}render();toast('지시 삭제 · 표 아래 「삭제된 지시」에서 복원 가능');}
+function undelAssign(k){const a=ASSIGN_TRASH[k];if(!a)return;ASSIGN_TRASH.splice(k,1);delete a._del;ASSIGN.unshift(a);saveAssign();try{localStorage.setItem('wr_assign_trash',JSON.stringify(ASSIGN_TRASH));}catch(e){}render();}
 function renderRoutineMeetings(){
   let h='<div class="ptable-wrap" style="margin:0"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🔁 업무 일정 · 루틴 회의</h3><span class="unit">매주 · 매월 반복</span></div>';
   h+='<table class="ov-tbl"><thead><tr><th style="width:44px">요일</th><th style="width:74px">구분</th><th style="text-align:left">매주 반복 회의</th></tr></thead><tbody>';
@@ -5159,7 +5190,7 @@ function renderAssign(){
   const prioOpt=(sel)=>[['높음','상'],['중간','중'],['낮음','하']].map(([v,o])=>`<option value="${v}" ${(sel||'중간')===v?'selected':''}>${o}</option>`).join('');
   const stOpt=(sel)=>['착수전','진행중','완료'].map(o=>`<option ${(sel||'착수전')===o?'selected':''}>${o}</option>`).join('');
   const openN=ASSIGN.filter(a=>!a.done).length;
-  let h=`<div class="ptable-wrap" style="margin:0 0 18px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📌 지시 업무 <span style="font-size:11px;color:var(--dim);font-weight:600">· 진행 ${openN} / 전체 ${ASSIGN.length} · 담당자별 업무에 반영</span></h3><span class="unit">자동저장</span><button class="reset" onclick="addAssign()">＋ 지시 추가</button></div>`;
+  let h=`<div class="ptable-wrap" style="margin:0 0 18px"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📌 지시 업무 <span style="font-size:11px;color:var(--dim);font-weight:600">· 진행 ${openN} / 전체 ${ASSIGN.length} · 담당자별 업무에 반영</span></h3><span class="unit">자동저장 · ☁ 저장 시 마스터시트 「지시」 탭에도 기록</span><button class="reset" onclick="addAssign()">＋ 지시 추가</button>${RO()?'':`<button class="reset" onclick="cloudAuth(()=>sheetSaveAssign(false))" style="margin-left:6px" title="마스터시트 「지시」 탭에 지금 기록">📤 시트에 기록</button>`}</div>`;
   h+='<div style="overflow-x:auto"><table class="ptable assign">'
     +'<thead><tr>'
     +'<th style="width:120px">지시일</th>'
@@ -5167,9 +5198,12 @@ function renderAssign(){
     +'<th style="width:130px">담당자</th>'
     +'<th style="text-align:left">지시사항</th>'
     +'<th style="width:64px">중요도</th>'
+    +'<th style="width:120px">착수일</th>'
+    +'<th style="width:80px">상태</th>'
+    +'<th style="width:64px">진행율</th>'
     +'<th style="width:52px">통지</th>'
     +'<th style="width:48px">삭제</th></tr></thead><tbody>';
-  if(!ASSIGN.length)h+=`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:18px">지시 업무가 없습니다. 「＋ 지시 추가」로 등록하세요.</td></tr>`;
+  if(!ASSIGN.length)h+=`<tr><td colspan="10" style="text-align:center;color:var(--faint);padding:18px">지시 업무가 없습니다. 「＋ 지시 추가」로 등록하세요.</td></tr>`;
   ASSIGN.forEach((a,i)=>{
     h+=`<tr class="${a.done?'adone':''}">
       <td><input type="date" value="${esc(a.since||'')}" onchange="editAssign(${i},'since',this.value)"></td>
@@ -5177,10 +5211,15 @@ function renderAssign(){
       <td><select onchange="editAssign(${i},'mgr',this.value)">${mgrOpt(a.mgr)}</select></td>
       <td class="rl"><input value="${esc(a.task||'')}" onchange="editAssign(${i},'task',this.value)" placeholder="지시사항 입력" style="text-align:left"></td>
       <td><select onchange="editAssign(${i},'prio',this.value)">${prioOpt(a.prio)}</select></td>
+      <td><input type="date" value="${esc(a.start||'')}" onchange="editAssignOwn(${i},'start',this.value)"></td>
+      <td><select onchange="editAssign(${i},'status',this.value)">${stOpt(a.status)}</select></td>
+      <td><input type="number" min="0" max="100" value="${a.prog||0}" onchange="editAssign(${i},'prog',this.value)" style="text-align:right"></td>
       <td style="text-align:center"><button class="xbtn mailx" title="담당자에게 이메일 전송(통지)" onclick="emailAssign(${i})">✉</button></td>
       <td style="text-align:center"><button class="mile-del" onclick="delAssign(${i})" title="삭제">🗑</button></td>
     </tr>`;});
-  return h+'</tbody></table></div></div>';
+  h+='</tbody></table></div>';
+  if(ASSIGN_TRASH.length){h+=`<details style="margin-top:8px"><summary style="font-size:11.5px;color:var(--dim);cursor:pointer">🗑 삭제된 지시 ${ASSIGN_TRASH.length}건 · 복원</summary><table class="ptable" style="margin-top:6px"><tbody>`+ASSIGN_TRASH.map((a,k)=>{const g=mgrById(a.mgr)||{};return `<tr><td class="mut" style="width:90px">${esc(a._del||'')}</td><td style="width:80px">${esc(g.name||'')}</td><td class="rl">${esc(a.task||'')}</td><td style="width:70px;text-align:center"><button class="mile-add mini" onclick="undelAssign(${k})">↩ 복원</button></td></tr>`;}).join('')+'</tbody></table></details>';}
+  return h+'</div>';
 }
 function renderRRTable(rows){
   const all=rows.slice().sort(sortRows);
@@ -6888,6 +6927,11 @@ function calMgrTable(){
 function setCalGrp(g){CALGRP=g;render();}
 function setCalSub(s){CALSUB=s;render();}
 function setMgrTab(id){const el=document.getElementById('fMgr');if(el)el.value=id;render();}
+let MMSEL='',HMSEL=[],HMTASKS=true; try{HMSEL=JSON.parse(localStorage.getItem('wr_hmsel')||'[]')||[];}catch(e){HMSEL=[];} try{HMTASKS=localStorage.getItem('wr_hmtasks')!=='0';}catch(e){}
+function setMMSel(id){MMSEL=(MMSEL===id)?'':id;render();}
+function setHMSel(id){if(id==='')HMSEL=[];else{const i=HMSEL.indexOf(id);if(i>=0)HMSEL.splice(i,1);else HMSEL.push(id);}try{localStorage.setItem('wr_hmsel',JSON.stringify(HMSEL));}catch(e){}render();}
+function toggleHMTasks(){HMTASKS=!HMTASKS;try{localStorage.setItem('wr_hmtasks',HMTASKS?'1':'0');}catch(e){}render();}
+function personTabs(sel,fn,counts){const isOn=id=>Array.isArray(sel)?sel.includes(id):sel===id;const any=Array.isArray(sel)?sel.length>0:!!sel;return `<div class="nametabs inline"><button class="${any?'':'on'}" onclick="${fn}('')">전체</button>`+mgrsOrdered().map(m=>{const n=counts?counts(m):0;return `<button class="${isOn(m.id)?'on':''}" onclick="${fn}('${m.id}')"><span class="mtav" style="background:${m.color}">${esc(m.ini)}</span>${esc(m.name)}${n?`<span class="mtn">${n}</span>`:''}</button>`;}).join('')+'</div>';}
 function toggleMgrTab(id){if(id===''){MGRSEL=[];}else{MGRSEL=(MGRSEL.length===1&&MGRSEL[0]===id)?[]:[id];}const el=document.getElementById('fMgr');if(el)el.value='';render();}
 function toggleCatTab(c){if(c===''){CATSEL=[];}else{const i=CATSEL.indexOf(c);if(i>=0)CATSEL.splice(i,1);else CATSEL.push(c);}render();}
 function togglePrioTab(p){if(p===''){PRIOSEL=[];}else{const i=PRIOSEL.indexOf(p);if(i>=0)PRIOSEL.splice(i,1);else PRIOSEL.push(p);}render();}
@@ -8081,7 +8125,10 @@ function applyBackup(d){
   if(Array.isArray(d.proj)){PROJECTS=d.proj;saveProj();}
   if(d.shist&&typeof d.shist==='object'){SPHIST=d.shist;saveSPHIST();}
   if(Array.isArray(d.quarters)&&d.quarters.length){QUARTERS=d.quarters;saveQuarters();}
-  if(Array.isArray(d.assign)){ASSIGN=d.assign;saveAssign();}
+  if(Array.isArray(d.assign)){ /* 지시: 덮어쓰지 않고 병합 (로컬에만 있는 지시 유지) */
+    const key=a=>[a.mgr||'',String(a.task||'').trim(),a.since||'',a.due||''].join('|');
+    const seen=new Set(d.assign.map(key));const extra=(ASSIGN||[]).filter(a=>String(a.task||'').trim()&&!seen.has(key(a)));
+    ASSIGN=extra.concat(d.assign);saveAssign();}
   if(Array.isArray(d.rr)&&d.rr.length){RRDATA=d.rr;saveRR();}
   if(Array.isArray(d.rrteam)&&d.rrteam.length){RRTEAM=d.rrteam;saveRRTeam();}
   if(Array.isArray(d.ptasks)&&d.ptasks.length){PTASKS=d.ptasks;savePTasks();}
@@ -8151,7 +8198,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -8485,7 +8532,7 @@ function cloudGuide(){
 function cloudAuth(cb,silent){
   if(!cloudAvailable()){ if(!silent) cloudGuide(); return; }
   if(cloudTokenValid()){cb();return;}
-  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly',
+  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
     callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncErr('구글 인증 실패: '+((resp&&(resp.error+' '+(resp.error_description||'')))||''),true);}},
     error_callback:err=>{if(!silent)toast('구글 인증 창이 닫혔거나 차단되었습니다');setSyncErr('구글 인증 중단: '+((err&&(err.type||err.message))||''),true);}});
     tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');setSyncErr('구글 인증 시작 실패: '+((e&&e.message)||e),true);}
@@ -8506,7 +8553,42 @@ async function doCloudSave(silent){
     else{let t='';try{t=await res.text();}catch(e){}if(!silent)toast('저장에 실패했습니다 (HTTP '+res.status+') · 상단 배지 클릭');setSyncErr('저장 실패 HTTP '+res.status+' '+t.slice(0,300));}}
   catch(e){if(!silent)toast('저장 중 오류가 발생했습니다 · 상단 배지 클릭');setSyncErr('저장 오류: '+((e&&e.message)||e));}
 }
-function cloudSave(){if(roBlock())return;cloudAuth(()=>doCloudSave(false));}
+function cloudSave(){if(roBlock())return;cloudAuth(async()=>{await doCloudSave(false);try{await sheetSaveAssign(false);}catch(e){}});}
+/* ---- 지시 업무 → 마스터시트 「지시」 탭 기록 (☁ 저장 시) ---- */
+const ASSIGN_SHEET='지시';
+const ASSIGN_HDR=['지시일','기한','담당자','지시사항','중요도','착수일','상태','진행율','지시자','완료여부','최종수정'];
+async function sheetEnsureTab(){
+  const base=`https://sheets.googleapis.com/v4/spreadsheets/${MREPORT_SHEET_ID}`;
+  const r=await fetch(base+'?fields=sheets.properties.title',{headers:{Authorization:'Bearer '+CLOUD.token}});
+  if(!r.ok){let t='';try{t=await r.text();}catch(e){}throw new Error('시트 조회 실패 HTTP '+r.status+' '+t.slice(0,160));}
+  const j=await r.json();const titles=(j.sheets||[]).map(x=>x.properties&&x.properties.title);
+  if(titles.includes(ASSIGN_SHEET))return false;
+  const r2=await fetch(base+':batchUpdate',{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'application/json'},body:JSON.stringify({requests:[{addSheet:{properties:{title:ASSIGN_SHEET}}}]})});
+  if(!r2.ok){let t='';try{t=await r2.text();}catch(e){}throw new Error('「지시」 탭 생성 실패 HTTP '+r2.status+' '+t.slice(0,160));}
+  return true;
+}
+async function sheetSaveAssign(silent){
+  if(RO())return;
+  setSyncBadge('sync');
+  try{
+    const created=await sheetEnsureTab();
+    const base=`https://sheets.googleapis.com/v4/spreadsheets/${MREPORT_SHEET_ID}/values/`;
+    const rng=encodeURIComponent(ASSIGN_SHEET+'!A1:K2000');
+    const rows=[ASSIGN_HDR].concat((ASSIGN||[]).filter(a=>String(a.task||'').trim()).map(a=>{const g=mgrById(a.mgr)||{};return [a.since||'',a.due||'',g.name||'',a.task||'',prioKo(a.prio)||'',a.start||'',a.status||(a.done?'완료':'착수전'),String(a.prog||0),a.from||'이유아',a.done?'Y':'',todayStr()];}));
+    const rc=await fetch(base+rng+':clear',{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token}});
+    if(!rc.ok){let t='';try{t=await rc.text();}catch(e){}throw new Error('「지시」 탭 지우기 실패 HTTP '+rc.status+' '+t.slice(0,160));}
+    const ru=await fetch(base+rng+'?valueInputOption=RAW',{method:'PUT',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'application/json'},body:JSON.stringify({range:ASSIGN_SHEET+'!A1:K2000',majorDimension:'ROWS',values:rows})});
+    if(!ru.ok){let t='';try{t=await ru.text();}catch(e){}throw new Error('「지시」 탭 기록 실패 HTTP '+ru.status+' '+t.slice(0,160));}
+    ASSIGN_DIRTY=false;setSyncBadge('ok');
+    if(!silent)toast(`마스터시트 「지시」 탭에 ${rows.length-1}건 기록${created?' (탭 새로 생성)':''}`);
+  }catch(e){const m=(e&&e.message)||String(e);if(/403|PERMISSION|insufficient|scope/i.test(m)){setSyncErr('지시 시트 기록 권한 없음 → 구글 재로그인(스프레드시트 권한 동의) 필요: '+m,true);}else setSyncErr('지시 시트 기록 오류: '+m);
+    if(!silent)toast('지시 시트 기록 실패 · 상단 배지 클릭');}
+}
+let ASSIGN_DIRTY=false;
+function assignAutoSheet(){ /* 지시 등록·수정 직후 토큰이 살아있으면 조용히 시트에도 기록 */
+  ASSIGN_DIRTY=true;
+  try{if(!RO()&&cloudAvailable()&&cloudTokenValid()){clearTimeout(assignAutoSheet._t);assignAutoSheet._t=setTimeout(()=>sheetSaveAssign(true),1500);}}catch(e){}
+}
 async function doCloudLoad(silent){
   try{const id=await driveFind();if(!id){if(!silent)toast('드라이브에 저장된 파일이 없습니다');return;}
     const res=await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`,{headers:{Authorization:'Bearer '+CLOUD.token}});
@@ -8648,6 +8730,24 @@ function importG2Master(wb,scope){
           ['name','purpose','big','note'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});});
         out.forEach(t=>{if(!String(t.name||'').trim())t.name=[t.city||t.country,t.visit].filter(Boolean).join(' ')||(t.cat||'출장');});
         TRIPS=out;saveTrips();done.push('출장일정 '+out.length+'건');}
+      return;
+    }
+    // ⓪ 지시 탭: 지시사항+담당자 (+착수일/상태/진행율) → 기존 지시와 매칭해 상태 갱신, 없으면 추가
+    if(has('지시사항')&&has('담당자')&&!has('주차')&&!has('보고월')){
+      const cT=ci('지시사항'),cN=ci('담당자'),cS=ci('지시일'),cD=ci('기한')>=0?ci('기한'):ci('완료기한'),cSt=ci('착수일'),cStx=ci('상태'),cP=ci('진행율')>=0?ci('진행율'):ci('진행률'),cPr=ci('중요도');
+      let n=0;
+      body.forEach(r=>{const task=String(r[cT]||'').trim();const nm=NAME2ID[String(r[cN]||'').trim().replace(/(팀장|차장|과장|대리|사원)$/,'')]||NAME2ID[String(r[cN]||'').trim()];if(!task||!nm)return;
+        const since=g2date(cS>=0?r[cS]:'')||'',due=g2date(cD>=0?r[cD]:'')||'',start=g2date(cSt>=0?r[cSt]:'')||'';
+        const stx=String(cStx>=0?r[cStx]||'':'').trim();const pg=g2num(cP>=0?r[cP]:'');
+        const norm=x=>String(x||'').replace(/\s+/g,'').toLowerCase();
+        let hit=ASSIGN.find(a=>a.mgr===nm&&norm(a.task)===norm(task));
+        if(!hit){hit={mgr:nm,from:'이유아',task,cat:'',prio:String(cPr>=0?r[cPr]||'':'').trim()||'중간',since:since||todayStr(),due,start:'',status:'착수전',prog:0,done:false};ASSIGN.unshift(hit);}
+        if(start)hit.start=start;if(due&&!hit.due)hit.due=due;
+        if(pg!=null){hit.prog=Math.max(0,Math.min(100,Math.round(pg<=1&&pg>0?pg*100:pg)));hit.done=hit.prog>=100;}
+        if(stx){hit.status=/완료/.test(stx)?'완료':/진행|착수/.test(stx)?'진행중':'착수전';if(hit.status==='완료'){hit.prog=100;hit.done=true;}else hit.done=false;}
+        {const cF=ci('지시자');if(cF>=0&&String(r[cF]||'').trim())hit.from=String(r[cF]).trim();const cDn=ci('완료여부');if(cDn>=0&&/^y|완료|true/i.test(String(r[cDn]||'').trim())){hit.done=true;hit.status='완료';hit.prog=100;}}
+        n++;});
+      if(n){saveAssign();done.push('지시 '+n+'건');}
       return;
     }
     // ① 월말보고: 보고월+담당자
