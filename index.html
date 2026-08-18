@@ -2325,7 +2325,7 @@ body.vw-ro .lb-full{display:none}
 .kstrip.kstrip-min .kstrip-h{margin-bottom:0}
 .rail{scrollbar-width:none;-ms-overflow-style:none;gap:12px}
 /* 핵심지표 타일만 옅은 회색(50%) */
-.om-tile,.hm-tile{background:rgba(233,231,226,.3)!important}
+.om-tile,.hm-tile{background:rgba(233,231,226,.4)!important}
 .rail::-webkit-scrollbar{display:none}
 .hm-ctl{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap}
 .hm-ctl .hm-cl{font-size:10.5px;color:var(--faint)}
@@ -2348,7 +2348,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M177</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M180</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5001,7 +5001,7 @@ function renderOverview(){
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
   const isMR=(TAB==='mreport');
-  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별과제'],['week','주간과제'],['kanban','과제진행율'],['ops','루틴업무']]
+  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별과제'],['week','주간과제'],['kanban','과제진행율'],['ops','지시사항F/U']]
                  :[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
   if(isMR&&RO())OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban'].includes(k));
   let CT=isMR?MRTAB:OVTAB;
@@ -6465,6 +6465,24 @@ function mileTableHead(){
     &&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)).length;
   return `<div class="pm-head" style="margin:0"><h3 style="font-size:15px">📋 중화팀 행사 <span style="font-size:12px;color:#64748b;font-weight:600">· 2026 중점시장활동</span></h3><span class="unit">${n}건</span><button class="mile-add mini" onclick="event.stopPropagation();exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button>${RO()?'':`<button class="mile-add mini" onclick="event.stopPropagation();addMile()" style="margin-left:5px">＋ 행사 추가</button>`}</div>`;
 }
+function mileDayNorm(v,mo){ /* 일자 정규화: Date/ISO/시리얼/'8/21'/'21~23' → '21' 또는 '21~23' */
+  if(v==null||v==='')return '';
+  const one=x=>{
+    if(x instanceof Date&&!isNaN(x))return String(x.getDate());
+    let t=String(x).trim();
+    if(/^\d{4,5}(\.\d+)?$/.test(t)){const n=+t;if(n>20000&&n<80000){const d=new Date(Date.UTC(1899,11,30)+n*86400000);return String(d.getUTCDate());}}
+    let m=t.match(/^\d{4}[-./](\d{1,2})[-./](\d{1,2})/);if(m)return String(+m[2]);
+    m=t.match(/^[A-Za-z]{3}\s+[A-Za-z]{3}\s+(\d{1,2})\s+\d{4}/);if(m)return String(+m[1]);
+    m=t.match(/^(\d{1,2})[\/.월]\s*(\d{1,2})일?$/);if(m)return String(+m[2]);
+    m=t.match(/^(\d{1,2})일?$/);if(m)return String(+m[1]);
+    return t;};
+  const t=String(v instanceof Date?one(v):v).trim();
+  const parts=t.split(/\s*[~\-–]\s*/);
+  if(parts.length===2&&parts.every(p=>p.trim())){const a=one(parts[0]),b=one(parts[1]);if(/^\d+$/.test(a)&&/^\d+$/.test(b))return a+'~'+b;}
+  return one(t);
+}
+function fmtThou(v){const t=String(v==null?'':v).trim();if(!t)return '';const n=Number(t.replace(/,/g,''));if(t.replace(/,/g,'')!==''&&!isNaN(n)&&/^-?\d+(\.\d+)?$/.test(t.replace(/,/g,'')))return n.toLocaleString('en-US',{maximumFractionDigits:2});return t;}
+function mileFixDates(){let n=0;(MILESTONES||[]).forEach(x=>{const d=String(x.date||'');if(!d)return;if(/GMT|T\d\d:|[A-Za-z]{3}\s|\d{4}[-./]\d{1,2}[-./]\d{1,2}|^\d{5}$/.test(d)){const mo=+x.month||'';const raw=d.replace(/^\d{1,2}\s*\/\s*(?=\S)/,'');const nd=mileDayNorm(raw,mo);if(nd&&nd!==d){x.date=(mo?mo+'/':'')+nd;n++;}}});if(n){try{saveMile();}catch(e){}}return n;}
 function mileTable(){
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
   let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
@@ -6483,14 +6501,14 @@ function mileTable(){
     html+=`<tr>
       <td class="mut">${n+1}</td>
       <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" oninput="editMileTbl(${i},'month',this.value,0,this)" onchange="editMileTbl(${i},'month',this.value,1)" class="mile-mnum"></td>
-      <td class="mile-day"><input value="${esc((x.date||'').replace(/\d+\s*\/\s*/g,'').replace(/~/g,'-'))}" oninput="editMileTbl(${i},'date',this.value,0,this)" placeholder="일자"></td>
+      <td class="mile-day"><input value="${esc(mileDayNorm((x.date||'').replace(/^\d+\s*\/\s*/,''),x.month).replace(/~/g,'-'))}" oninput="editMileTbl(${i},'date',this.value,0,this)" placeholder="일자"></td>
       <td style="text-align:center"><select onchange="editMileTbl(${i},'country',this.value,1)">${ctryOpts(x.country)}</select></td>
       <td><select onchange="editMileTbl(${i},'cat',this.value,1)">${catOpts(x.cat)}</select></td>
       <td class="infc">${x.link?`<span class="mile-infotext">${esc(x.info||x.name||'(내용 없음)')}</span>`:`<textarea class="rep-sum" oninput="autogrow(this);editMileTbl(${i},'info',this.value,0,this)" placeholder="일정명">${esc(x.info||x.name||'')}</textarea>`}</td>
-      <td class="mile-attn"><input value="${esc(x.attn||'')}" oninput="editMileTbl(${i},'attn',this.value,0,this)" placeholder="-"></td>
-      <td class="mile-attn"><input value="${esc(x.newcust||'')}" oninput="editMileTbl(${i},'newcust',this.value,0,this)" placeholder="-"></td>
-      <td class="mile-attn"><input value="${esc(x.cost||'')}" oninput="editMileTbl(${i},'cost',this.value,0,this)" placeholder="-"></td>
-      <td class="mile-attn"><input value="${esc(x.pkg||'')}" oninput="editMileTbl(${i},'pkg',this.value,0,this)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(fmtThou(x.attn))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'attn',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(fmtThou(x.newcust))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'newcust',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(fmtThou(x.cost))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'cost',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
+      <td class="mile-attn"><input value="${esc(fmtThou(x.pkg))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'pkg',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
       <td class="mile-own">${ownerCellMile(x,i)}</td>
       <td class="mile-bigo">${x.link?`<a class="rep-open mile-linkico" href="${esc(x.link)}" target="_blank" rel="noopener" title="링크 열기">🔗</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
@@ -8529,13 +8547,13 @@ function cloudGuide(){
     </div>`;
   document.getElementById('ov').classList.add('on');dw.classList.add('on');
 }
-function cloudAuth(cb,silent){
+function cloudAuth(cb,silent,force){
   if(!cloudAvailable()){ if(!silent) cloudGuide(); return; }
-  if(cloudTokenValid()){cb();return;}
+  if(cloudTokenValid()&&!force){cb();return;}
   try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
     callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncErr('구글 인증 실패: '+((resp&&(resp.error+' '+(resp.error_description||'')))||''),true);}},
     error_callback:err=>{if(!silent)toast('구글 인증 창이 닫혔거나 차단되었습니다');setSyncErr('구글 인증 중단: '+((err&&(err.type||err.message))||''),true);}});
-    tc.requestAccessToken(silent?{prompt:''}:{});}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');setSyncErr('구글 인증 시작 실패: '+((e&&e.message)||e),true);}
+    tc.requestAccessToken(force?{prompt:'consent'}:(silent?{prompt:''}:{}));}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');setSyncErr('구글 인증 시작 실패: '+((e&&e.message)||e),true);}
 }
 function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,_ts:Date.now()});}
 async function driveFind(){const q=encodeURIComponent(`name='${CLOUD.fileName}' and trashed=false`);
@@ -8560,7 +8578,7 @@ const ASSIGN_HDR=['지시일','기한','담당자','지시사항','중요도','�
 async function sheetEnsureTab(){
   const base=`https://sheets.googleapis.com/v4/spreadsheets/${MREPORT_SHEET_ID}`;
   const r=await fetch(base+'?fields=sheets.properties.title',{headers:{Authorization:'Bearer '+CLOUD.token}});
-  if(!r.ok){let t='';try{t=await r.text();}catch(e){}throw new Error('시트 조회 실패 HTTP '+r.status+' '+t.slice(0,160));}
+  if(!r.ok){let t='';try{t=await r.text();}catch(e){}throw new Error('시트 조회 실패 HTTP '+r.status+' '+t.slice(0,400));}
   const j=await r.json();const titles=(j.sheets||[]).map(x=>x.properties&&x.properties.title);
   if(titles.includes(ASSIGN_SHEET))return false;
   const r2=await fetch(base+':batchUpdate',{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'application/json'},body:JSON.stringify({requests:[{addSheet:{properties:{title:ASSIGN_SHEET}}}]})});
@@ -8581,7 +8599,7 @@ async function sheetSaveAssign(silent){
     if(!ru.ok){let t='';try{t=await ru.text();}catch(e){}throw new Error('「지시」 탭 기록 실패 HTTP '+ru.status+' '+t.slice(0,160));}
     ASSIGN_DIRTY=false;setSyncBadge('ok');
     if(!silent)toast(`마스터시트 「지시」 탭에 ${rows.length-1}건 기록${created?' (탭 새로 생성)':''}`);
-  }catch(e){const m=(e&&e.message)||String(e);if(/403|PERMISSION|insufficient|scope/i.test(m)){setSyncErr('지시 시트 기록 권한 없음 → 구글 재로그인(스프레드시트 권한 동의) 필요: '+m,true);}else setSyncErr('지시 시트 기록 오류: '+m);
+  }catch(e){const m=(e&&e.message)||String(e);setSyncErr('지시 시트 기록 오류: '+m,/insufficient|scope|401/i.test(m));
     if(!silent)toast('지시 시트 기록 실패 · 상단 배지 클릭');}
 }
 let ASSIGN_DIRTY=false;
@@ -8671,7 +8689,7 @@ function importG2Master(wb,scope){
         if(!mo||mo<1||mo>12||!nm)return;
         const gl=String(cG>=0?r[cG]||'':'').replace(/\s/g,'');
         const cat=LB2K[gl]||Object.keys(MCATLB).find(k=>gl.includes(k))||'교육';
-        const dt=String(cD>=0?r[cD]||'':'').trim();
+        const dt=mileDayNorm(cD>=0?r[cD]:'',mo);
         const txt=v=>{const s=String(v==null?'':v).trim();return (s===''||s==='0')?'':s;};
         out.push({id:'gs'+(out.length+1),name:nm,cat,country:String(cC>=0?r[cC]||'':'').trim()||'중국',
           month:mo,date:dt?(mo+'/'+dt):'',dateEnd:'',info:nm,link:'',
@@ -8933,26 +8951,31 @@ function scheduleSync(){
   if(_syncTimer)clearTimeout(_syncTimer);
   _syncTimer=setTimeout(()=>{_syncTimer=null;if(NEEDAUTH){setSyncBadge('err');return;}cloudAuth(()=>{if(_syncing)return;_syncing=true;doCloudSave(true).finally(()=>{_syncing=false;});},true);},2500);
 }
-let LASTSYNCERR='',NEEDAUTH=false;
-function setSyncErr(msg,needAuth){LASTSYNCERR=String(msg||'');NEEDAUTH=!!needAuth;if(/401|403|invalid_grant|invalid_token|interaction_required|consent|login_required|인증/.test(LASTSYNCERR)){NEEDAUTH=true;CLOUD.token=null;CLOUD.tokenExp=0;}setSyncBadge('err');}
+let LASTSYNCERR='',NEEDAUTH=false,APIOFF=false;
+function setSyncErr(msg,needAuth){LASTSYNCERR=String(msg||'');NEEDAUTH=!!needAuth;APIOFF=false;
+  if(/accessNotConfigured|has not been used|SERVICE_DISABLED|API .*disabled|사용 설정/i.test(LASTSYNCERR)){APIOFF=true;NEEDAUTH=false;}
+  else if(/401|403|invalid_grant|invalid_token|interaction_required|consent|login_required|insufficient|scope|인증|PERMISSION_DENIED/i.test(LASTSYNCERR)){NEEDAUTH=true;CLOUD.token=null;CLOUD.tokenExp=0;}
+  setSyncBadge('err');}
 function setSyncBadge(state){_syncState=state;const el=document.getElementById('syncBadge');if(!el)return;
-  const map={off:['',''],pending:['⏳ 동기화 대기','#8a6d1a'],sync:['⟳ 동기화 중','#1f6f52'],ok:['✅ 구글 동기화됨','#1f6f52'],err:[NEEDAUTH?'⚠ 구글 재로그인 필요 · 클릭':'⚠ 동기화 오류 · 클릭','#c0392b']};
+  const map={off:['',''],pending:['⏳ 동기화 대기','#8a6d1a'],sync:['⟳ 동기화 중','#1f6f52'],ok:['✅ 구글 동기화됨','#1f6f52'],err:[APIOFF?'⚠ Sheets API 사용 설정 필요 · 클릭':NEEDAUTH?'⚠ 구글 재로그인 필요 · 클릭':'⚠ 동기화 오류 · 클릭','#c0392b']};
   const m=map[state]||map.off;el.textContent=m[0];el.style.color=m[1];el.style.display=SYNCON&&m[0]?'inline-flex':'none';el.style.cursor=state==='err'?'pointer':'default';el.onclick=state==='err'?showSyncErr:null;el.title=state==='err'?LASTSYNCERR:'';}
 function showSyncErr(){
   const dw=document.getElementById('drawer');
-  const hint=NEEDAUTH?'구글 로그인 세션이 만료되었거나 권한 동의가 필요합니다. 아래 「구글 재로그인 후 저장」을 누르면 구글 창이 뜨고, 승인하면 바로 저장·동기화가 재개됩니다.'
+  const proj=(CLOUD.clientId||'').split('-')[0];
+  const hint=APIOFF?`구글 클라우드 프로젝트에서 <b>Google Sheets API</b>가 켜져 있지 않아 시트에 기록할 수 없습니다(로그인 문제가 아닙니다). 아래 링크에서 「사용 설정(Enable)」을 한 번만 누른 뒤 1~2분 후 다시 시도하세요.<br><a href="https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=${esc(proj)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">▶ Google Sheets API 사용 설정 열기</a>`
+    :NEEDAUTH?'구글 토큰에 <b>스프레드시트 편집 권한</b>이 없거나 세션이 만료되었습니다. 아래 「구글 재로그인(권한 동의) 후 저장」을 누르면 구글 동의창이 다시 뜨며, 「Google 스프레드시트 보기·수정」에 체크하고 승인하면 재개됩니다.'
     :/413|too large|payload/i.test(LASTSYNCERR)?'저장 데이터가 너무 큽니다(구글 업로드 한도). 「메뉴 ▾ → 백업(JSON)」으로 내려받은 뒤 오래된 주차 데이터를 정리해 주세요.'
     :/404/.test(LASTSYNCERR)?'구글 드라이브의 저장 파일을 찾지 못했습니다. 「다시 시도」를 누르면 새로 만듭니다.'
     :/Failed to fetch|NetworkError|network/i.test(LASTSYNCERR)?'네트워크 오류입니다. 인터넷 연결(사내망 차단 여부)을 확인한 뒤 다시 시도해 주세요.'
     :'일시적 오류일 수 있습니다. 「다시 시도」를 눌러 주세요. 반복되면 아래 상세 내용을 알려 주세요.';
   dw.innerHTML=`<div class="dw-h"><div class="top"><div style="min-width:0"><div class="chips"><span class="chip" style="background:var(--riskSoft);color:var(--risk)">동기화 오류</span></div><h3>구글 동기화가 실패했습니다</h3></div><button class="close" onclick="closeDetail()">✕</button></div></div>
-    <div class="dw-b"><div class="set-p">${esc(hint)}</div>
-    <div class="dw-save" style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="closeDetail();retrySync(true)" style="background:var(--accent)">🔑 구글 재로그인 후 저장</button><button onclick="closeDetail();retrySync(false)">↻ 다시 시도</button></div>
+    <div class="dw-b"><div class="set-p">${hint}</div>
+    <div class="dw-save" style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="closeDetail();retrySync(true)" style="background:var(--accent)">🔑 구글 재로그인(권한 동의) 후 저장</button><button onclick="closeDetail();retrySync(false)">↻ 다시 시도</button></div>
     <div class="dw-sec">상세</div><div class="set-hint" style="word-break:break-all;font-family:Consolas,monospace;font-size:11px">${esc(LASTSYNCERR||'(기록 없음)')}</div>
     <div class="set-hint" style="margin-top:8px">※ 자동 동기화가 부담되면 「메뉴 ▾ → 설정 → 자동 동기화」를 끄고 「☁ 저장」만 수동으로 사용해도 됩니다.</div></div>`;
   document.getElementById('ov').classList.add('on');dw.classList.add('on');
 }
-function retrySync(reauth){if(reauth){CLOUD.token=null;CLOUD.tokenExp=0;}NEEDAUTH=false;LASTSYNCERR='';setSyncBadge('sync');cloudAuth(()=>doCloudSave(false),false);}
+function retrySync(reauth){if(reauth){CLOUD.token=null;CLOUD.tokenExp=0;}NEEDAUTH=false;APIOFF=false;LASTSYNCERR='';setSyncBadge('sync');cloudAuth(async()=>{await doCloudSave(false);try{await sheetSaveAssign(false);}catch(e){}},false,!!reauth);}
 function cloudStartup(){
   if(!SYNCON){setSyncBadge('off');return;}
   let tries=0;
@@ -9369,6 +9392,7 @@ loadSPERF();
 })();
 try{mergeWkIntoTasks();}catch(e){}
 render();
+try{mileFixDates();}catch(e){}
 </script>
 </body>
 </html>
