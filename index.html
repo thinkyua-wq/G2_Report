@@ -2348,7 +2348,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M181</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M182</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -9017,7 +9017,8 @@ function openSettings(focus){
       <div class="dw-sec">구글 드라이브 실시간 동기화</div>
       <div class="set-p">${cloudOn?'✅ <b>연동 준비됨</b> — 아래 「자동 동기화」를 켜면 데이터를 바꿀 때마다 구글 드라이브에 자동 저장되고, 다른 기기에서 열면 최신 데이터를 자동으로 불러옵니다.':(local?'⚠️ 지금은 <b>로컬 파일</b>로 열려 있어 구글 연동이 꺼져 있습니다. 이 파일을 웹(https)에 올린 뒤 아래 클라이언트 ID를 설정하세요.':'⚠️ 구글 <b>클라이언트 ID</b>가 아직 없습니다. 아래 2단계를 따라 설정하면 실시간 동기화가 켜집니다.')}</div>
       <div class="set-hint" style="margin-bottom:8px"><b>설정 방법 (최초 1회)</b><br>① 이 파일을 웹(https)에 올립니다 — 예: GitHub Pages.<br>② Google Cloud Console → API 및 서비스 → 사용자 인증 정보 → <b>OAuth 클라이언트 ID(웹)</b> 발급 → 「승인된 JavaScript 원본」에 이 페이지 주소(https://…)를 등록 → 발급된 <b>클라이언트 ID</b>를 아래에 붙여넣기.</div>
-      <div class="set-row"><input class="dw-edit-i" id="gcid" placeholder="구글 OAuth 클라이언트 ID (xxxxx.apps.googleusercontent.com)" value="${esc(CLOUD.clientId||'')}"><button onclick="saveCloudId()">적용</button></div>
+      <div class="set-row"><input class="dw-edit-i" id="gcid" placeholder="구글 OAuth 클라이언트 ID (xxxxx.apps.googleusercontent.com)" value="${esc(CLOUD.clientId||'')}"><button onclick="saveCloudId()">적용</button><button onclick="resetCloudId()" style="margin-left:6px" title="파일에 내장된 기본 클라이언트 ID로 되돌리기">기본값 복원</button></div>
+      <div class="set-hint">현재 사용 중: <b>${CLOUD.clientId===CLOUD_DEFAULT_CID?'기본값(G2 Report Web)':'사용자 지정'}</b> · ${esc(CLOUD.clientId||'')}</div>
       <div class="set-row" style="align-items:center;gap:10px;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" id="autosync" ${SYNCON?'checked':''} onchange="toggleAutoSync(this)" style="width:16px;height:16px;accent-color:var(--accent)"><b>자동 동기화</b> — 변경 시 구글에 자동 저장(백업). 로컬 데이터를 덮어쓰지 않으며, 다른 기기 데이터를 받아오려면 「☁ 불러오기」 사용</label></div>
       <div class="set-hint">동기화 대상: 이 현황판의 모든 데이터(과제·실적·목표·일정·주요보고 등)가 구글 드라이브의 <b>${esc(CLOUD.fileName)}</b> 파일 하나로 저장됩니다. 「☁ 저장 / ☁ 불러오기」로 수동 실행도 가능합니다.</div>
       <div class="dw-sec">앱으로 설치 (PWA)</div>
@@ -9030,7 +9031,8 @@ function openSettings(focus){
   document.getElementById('ov').classList.add('on');dw.classList.add('on');
   if(focus==='cloud'){const g=document.getElementById('gcid');if(g)setTimeout(()=>g.focus(),80);}
 }
-function saveCloudId(){const v=(document.getElementById('gcid').value||'').trim();CLOUD.clientId=v;try{localStorage.setItem('wr_gcid',v);}catch(e){}
+function resetCloudId(){CLOUD.clientId=CLOUD_DEFAULT_CID;try{localStorage.removeItem('wr_gcid_custom');localStorage.removeItem('wr_gcid');}catch(e){}CLOUD.token=null;CLOUD.tokenExp=0;toast('기본 클라이언트 ID(G2 Report Web)로 복원했습니다');openSettings('cloud');}
+function saveCloudId(){const v=(document.getElementById('gcid').value||'').trim();if(!v||v===CLOUD_DEFAULT_CID){resetCloudId();return;}if(!/\.apps\.googleusercontent\.com$/.test(v)){toast('클라이언트 ID 형식이 아닙니다 (…apps.googleusercontent.com)');return;}CLOUD.clientId=v;CLOUD.token=null;CLOUD.tokenExp=0;try{localStorage.setItem('wr_gcid_custom',v);}catch(e){}
   toast(v?(cloudAvailable()?'구글 연동이 활성화되었습니다':'저장됨 · 웹(https) 호스팅에서 활성화됩니다'):'클라이언트 ID를 비웠습니다');}
 function toggleAutoWeekly(el){CLOUD.autoWeekly=!!el.checked;try{localStorage.setItem('wr_autoweekly',CLOUD.autoWeekly?'1':'0');}catch(e){}toast(CLOUD.autoWeekly?'매주 자동 저장을 켰습니다':'매주 자동 저장을 껐습니다');}
 function toggleAutoSync(el){SYNCON=!!el.checked;try{localStorage.setItem('wr_autosync',SYNCON?'1':'0');}catch(e){}
@@ -9041,7 +9043,9 @@ function toggleAutoSync(el){SYNCON=!!el.checked;try{localStorage.setItem('wr_aut
     cloudAuth(async()=>{SYNC_READY=true;setSyncBadge('ok');doCloudSave(true);});
   } else {SYNC_READY=false;setSyncBadge('off');toast('자동 동기화를 껐습니다');}
 }
-try{const gc=localStorage.getItem('wr_gcid');if(gc)CLOUD.clientId=gc;}catch(e){}
+/* 클라이언트 ID: 파일 기본값(G2 Report Web) 우선 · 설정에서 명시적으로 바꾼 값(wr_gcid_custom)만 덮어씀 · 예전 wr_gcid는 무시(잘못된 값으로 invalid_client 발생 방지) */
+const CLOUD_DEFAULT_CID=CLOUD.clientId;
+try{const gc=localStorage.getItem('wr_gcid_custom');if(gc&&/\.apps\.googleusercontent\.com$/.test(gc))CLOUD.clientId=gc;localStorage.removeItem('wr_gcid');}catch(e){}
 try{const aw=localStorage.getItem('wr_autoweekly');if(aw!=null)CLOUD.autoWeekly=(aw==='1');}catch(e){}
 
 /* PWA manifest (inline) */
