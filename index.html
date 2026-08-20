@@ -2332,6 +2332,10 @@ body.vw-ro .lb-full{display:none}
 .hm-ctl input,.hm-ctl select{font:inherit;font-size:11px;border:1px solid var(--ln);border-radius:4px;padding:2px 4px;background:#fff;color:var(--ink)}
 .hm-ctl input[type=date]{width:112px}.hm-ctl input[type=number]{width:46px;text-align:right}
 .hm-ctl input:disabled,.hm-ctl select:disabled{background:#f4f3f0;color:var(--faint)}
+/* 회의록 표 글자 20% 증대 */
+.mintbl,.mintbl td,.mintbl th{font-size:13.5px}
+.mintbl input,.mintbl textarea{font-size:13.5px!important}
+.mintbl .mile-add.mini{font-size:12px}
 </style>
 </head>
 <body>
@@ -2348,7 +2352,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M182</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M189</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5307,13 +5311,132 @@ function pickThumb_rep(i){pickThumbInto(REPORTS[i],saveReports);}
 function clr_rep(i){clearFileOf(REPORTS[i],saveReports);}
 function dl_rep(i){dlFile(REPORTS[i].fileId,REPORTS[i].fileName);}
 function editLink_rep(i,v){REPORTS[i].link=v;saveReports();render();}
-function renderReports(){
+/* ═ 회의록 (팀장 전용 · 캘린더 회의와 연동) ═ */
+let MINUTES=[];try{const s0=localStorage.getItem('wr_minutes_v1');if(s0)MINUTES=JSON.parse(s0)||[];}catch(e){}
+function saveMinutes(){try{localStorage.setItem('wr_minutes_v1',JSON.stringify(MINUTES));}catch(e){}}
+function minSyncFromCal(){ /* 캘린더의 회의·일정([지시] 제외) → 회의록 행 자동 생성 */
+  let n=0;(CALLIST||[]).forEach(ev=>{const t=String(ev.title||'').trim();if(!t||/^\[지시\]/.test(t))return;
+    if(MINUTES.some(m=>m.calId===ev.id))return;
+    MINUTES.push({id:'mn'+(ev.id||Date.now()),calId:ev.id,title:t.replace(/^\[(회의|일정)\]\s*/,''),date:ev.sdate||ev.date||todayStr(),summary:'',link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
+  if(n)saveMinutes();return n;}
+function addMinute(){MINUTES.unshift({id:'mn'+Date.now(),calId:'',title:'',date:todayStr(),summary:'',link:'',fileName:'',fileType:'',fileId:'',thumb:''});saveMinutes();render();}
+function editMinute(i,f,v){if(MINUTES[i]){MINUTES[i][f]=v;MINUTES[i].dirty=1;saveMinutes();scheduleMinSync(MINUTES[i].id);if(f==='date')render();}}
+function delMinute(i){if(MINUTES[i]&&String(MINUTES[i].summary||'').trim()&&!confirm('이 회의록을 삭제할까요?'))return;if(MINUTES[i]&&MINUTES[i].fileId)repDelFile(MINUTES[i].fileId);MINUTES.splice(i,1);saveMinutes();render();}
+function pickFile_min(i){pickFileInto(MINUTES[i],saveMinutes);}
+function pickThumb_min(i){pickThumbInto(MINUTES[i],saveMinutes);}
+function clr_min(i){clearFileOf(MINUTES[i],saveMinutes);}
+/* ═ 구글 캘린더 「Mgg_회의일정」 ⇄ 회의·보고 양방향 동기화 ═ */
+let GCALID=''; try{GCALID=localStorage.getItem('wr_gcalid')||'';}catch(e){}
+async function gcalFindCal(){
+  if(GCALID)return GCALID;
+  const res=await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=100',{headers:{Authorization:'Bearer '+CLOUD.token}});
+  const j=await res.json();if(!res.ok)throw Object.assign(new Error((j.error&&j.error.message)||('HTTP '+res.status)),{gj:j});
+  const hit=(j.items||[]).find(c=>/mgg[_\s]?회의일정/i.test(String(c.summary||'')));
+  if(!hit)throw new Error('「Mgg_회의일정」 캘린더를 찾지 못했습니다 · 구글 캘린더에서 이름 확인');
+  GCALID=hit.id;try{localStorage.setItem('wr_gcalid',GCALID);}catch(e){}return GCALID;
+}
+function gcalErrHandle(msg,silent){
+  if(/has not been used|accessNotConfigured|disabled/i.test(msg)){setSyncErr('Google Calendar API 사용 설정 필요: '+msg);if(!silent)toast('Calendar API가 꺼져 있습니다 · 상단 배지 클릭 → 사용 설정');}
+  else if(/insufficient|scope|401|PERMISSION/i.test(msg)){setSyncErr('캘린더 권한 동의 필요: '+msg,true);if(!silent)toast('구글 재로그인(캘린더 권한 동의)이 필요합니다 · 상단 배지 클릭');}
+  else if(!silent)toast('구글 캘린더 동기화 실패: '+msg);
+}
+async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
+  cloudAuth(async()=>{
+    try{
+      const cal=await gcalFindCal();
+      const y=YEAR,m=MONTH,pad=n=>String(n).padStart(2,'0');
+      const tmin=`${y}-${pad(m)}-01T00:00:00+09:00`;
+      const tmax=`${m===12?y+1:y}-${pad(m===12?1:m+1)}-01T00:00:00+09:00`;
+      /* ① 구글 → 대시보드 */
+      const url=`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events?singleEvents=true&orderBy=startTime&maxResults=250&timeMin=${encodeURIComponent(tmin)}&timeMax=${encodeURIComponent(tmax)}`;
+      const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
+      const j=await res.json().catch(()=>({}));
+      if(!res.ok){gcalErrHandle((j.error&&j.error.message)||('HTTP '+res.status),silent);return;}
+      const remoteIds=new Set();let nNew=0,nUpd=0;
+      (j.items||[]).forEach(ev=>{
+        if(ev.status==='cancelled')return;remoteIds.add(ev.id);
+        const sd=(ev.start&&(ev.start.date||String(ev.start.dateTime||'').slice(0,10)))||'';if(!sd)return;
+        const st=(ev.start&&ev.start.dateTime)?String(ev.start.dateTime).slice(11,16):'';
+        const en=(ev.end&&ev.end.dateTime)?String(ev.end.dateTime).slice(11,16):'';
+        const title=String(ev.summary||'(제목 없음)').trim();
+        let hit=CALLIST.find(x=>x.gid===ev.id);
+        if(!hit){CALLIST.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1});nNew++;}
+        else{if(hit.title!==title||hit.sdate!==sd||hit.start!==st){hit.title=title;hit.sdate=sd;hit.edate=sd;hit.start=st;hit.end=en;nUpd++;}}
+      });
+      /* ② 대시보드 → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) */
+      let nPush=0,nPatch=0;
+      const ym=`${y}-${pad(m)}`;
+      for(const x of (CALLIST||[])){
+        const sd=String(x.sdate||x.date||'');if(sd.slice(0,7)!==ym)continue;
+        const t=String(x.title||'').trim();if(!t||/^\[지시\]/.test(t))continue;
+        const body=x.start?{summary:t,start:{dateTime:`${sd}T${x.start}:00`,timeZone:'Asia/Seoul'},end:{dateTime:`${sd}T${(x.end&&x.end>x.start)?x.end:addHour(x.start)}:00`,timeZone:'Asia/Seoul'}}
+                          :{summary:t,start:{date:sd},end:{date:nextDay(x.edate||sd)}};
+        try{
+          if(!x.gid){
+            const r2=await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events`,{method:'POST',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+            const j2=await r2.json();if(r2.ok&&j2.id){x.gid=j2.id;x.gcal=1;nPush++;}
+          }else if(x._dirty){
+            const r2=await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events/${encodeURIComponent(x.gid)}`,{method:'PATCH',headers:{Authorization:'Bearer '+CLOUD.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+            if(r2.ok){delete x._dirty;nPatch++;}
+          }
+        }catch(e){}
+      }
+      if(nNew||nUpd||nPush||nPatch){saveCal();try{minSyncFromCal();}catch(e){}render();}
+      if(!silent)toast(`⇄ Mgg_회의일정 동기화 · 가져옴 ${nNew}건${nUpd?'·갱신 '+nUpd:''} / 올림 ${nPush}건${nPatch?'·수정 '+nPatch:''}`);
+      try{localStorage.setItem('wr_gcal_last',todayStr());}catch(e){}
+    }catch(e){gcalErrHandle((e&&e.message)||String(e),silent);}
+  });
+}
+function addHour(t){const h=Math.min(23,(+String(t).slice(0,2))+1);return String(h).padStart(2,'0')+String(t).slice(2);}
+function nextDay(d){const x=new Date(d);x.setDate(x.getDate()+1);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;}
+let NPROXY=''; try{NPROXY=localStorage.getItem('wr_nproxy')||'';}catch(e){}
+function setNProxy(v){NPROXY=(v||'').trim();try{localStorage.setItem('wr_nproxy',NPROXY);}catch(e){}toast(NPROXY?'노션 연동 주소 저장 · 이제 회의록이 자동 전송됩니다':'노션 연동 주소를 비웠습니다');render();}
+let _minSyncT={};
+function scheduleMinSync(id){ /* 입력 멈춘 뒤 3초 후 노션 자동 전송 */
+  if(!NPROXY)return; clearTimeout(_minSyncT[id]);
+  _minSyncT[id]=setTimeout(()=>{const i=MINUTES.findIndex(m=>m.id===id);if(i>=0)notionPushMin(i,true);},3000);
+}
+async function notionPushMin(i,silent){
+  const m=MINUTES[i];if(!m)return;
+  if(!String(m.title||'').trim()&&!String(m.summary||'').trim()){if(!silent)toast('제목 또는 내용을 먼저 입력하세요');return;}
+  if(!NPROXY){if(!silent){notionCopyMin(i);}return;}
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'minute',id:m.id,nid:m.nid||'',title:m.title||'(제목 없음)',date:m.date||'',summary:m.summary||''})});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j&&j.ok){m.nid=j.nid||m.nid;m.nsync=todayStr();m.dirty=0;saveMinutes();if(!silent)toast('노션에 저장했습니다');const el=document.querySelector('.mintbl');if(el)render();}
+    else{if(!silent)toast('노션 전송 실패: '+((j&&j.error)||res.status));}
+  }catch(e){if(!silent)toast('노션 전송 오류 · 연동 주소/네트워크 확인');}
+}
+function notionCopyMin(i){const m=MINUTES[i];if(!m)return;
+  const tx=`[회의록] ${m.title||'(제목 없음)'} · ${m.date||''}\n\n주요내용\n${m.summary||'-'}\n\n(G2 중화팀 대시보드 · 회의·보고에서 작성)`;
+  try{navigator.clipboard.writeText(tx).then(()=>{toast('회의록을 복사했습니다 · 노션 아카이브가 열리면 [회의록] 구분으로 붙여넣기 하세요');window.open('https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a','_blank');});}catch(e){toast('복사 실패');}}
+function renderMinutes(){
+  minSyncFromCal();
+  const list=MINUTES.map((m,i)=>({m,i})).sort((a,b)=>String(b.m.date||'').localeCompare(String(a.m.date||'')));
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· 캘린더 회의 자동 연동 · ${MINUTES.length}건</span></h3><span class="unit">최신 회의가 맨 위 · 입력 즉시 자동저장${NPROXY?' · 노션 자동 전송(3초)':''}</span><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a><button class="reset" onclick="addMinute()">＋ 회의록 추가</button></div>`;
+  if(!NPROXY)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
+  h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:130px">제목</th><th style="width:96px">일자</th><th>주요내용</th><th style="width:86px">미리보기</th><th style="width:96px">노션</th><th style="width:32px"></th></tr></thead><tbody>';
+  if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">회의록이 없습니다. 캘린더에 회의를 등록하거나 「＋ 회의록 추가」를 누르세요.</td></tr>`;
+  list.forEach(({m,i},n0)=>{h+=`<tr>
+    <td class="mut">${n0+1}</td>
+    <td class="rl"><input value="${esc(m.title||'')}" onchange="editMinute(${i},'title',this.value)" placeholder="회의명"></td>
+    <td><input type="date" value="${esc(m.date||'')}" onchange="editMinute(${i},'date',this.value)"></td>
+    <td class="rl"><textarea class="rep-sum" oninput="autogrow(this);editMinute(${i},'summary',this.value)" placeholder="핵심 내용 · 결정사항 · F/U — 입력 즉시 자동저장 · 노션 자동 반영">${esc(m.summary||'')}</textarea></td>
+    <td style="text-align:center">${attThumbCell(m,'min',i)}</td>
+    <td style="text-align:center">${m.nid?`<span style="font-size:10px;color:#1e6f5c;font-weight:700" title="노션에 저장됨${m.nsync?' · '+esc(m.nsync):''}">✅ 동기화됨</span><br>`:`<span style="font-size:10px;color:var(--faint)">미전송</span><br>`}<button class="mile-add mini" onclick="notionPushMin(${i})" title="노션 아카이브에 [회의록]으로 저장/갱신">↑ 지금 전송</button></td>
+    <td style="text-align:center"><button class="mile-del" onclick="delMinute(${i})">🗑</button></td>
+  </tr>`;});
+  return h+'</tbody></table></div><div class="dw-hint" style="margin-top:6px">※ 「📋 노션」 = 회의록을 [회의록] 구분 텍스트로 복사하고 노션 아카이브 페이지를 엽니다 → 붙여넣기만 하면 주요보고와 같은 곳에 구분되어 올라갑니다.</div></div>';
+  return h;
+}
+function renderReports(fmgr){
   const mgrOpt=(sel)=>MGRS.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
   let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">📑 주요보고 <span style="font-size:11px;color:var(--dim);font-weight:600">· 주간회의 발표자료 · ${REPORTS.length}건</span></h3><span class="unit">제목·일자·주요내용·미리보기·첨부(드라이브 링크/파일) · 자동저장</span><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a><button class="reset" onclick="addReport()">＋ 보고 추가</button></div>`;
-  h+='<div style="overflow-x:auto"><table class="ptable rept"><thead><tr><th style="width:30px">No</th><th style="text-align:left;width:210px">제목</th><th style="width:120px">일자</th><th style="width:104px">담당자</th><th style="text-align:left;min-width:240px">주요내용</th><th style="width:104px">미리보기</th><th style="width:172px">첨부 · 링크</th><th style="width:32px"></th></tr></thead><tbody>';
-  if(!REPORTS.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">등록된 보고가 없습니다. 「＋ 보고 추가」로 등록하세요.</td></tr>`;
-  REPORTS.forEach((r,i)=>{h+=`<tr>
-    <td class="mut">${i+1}</td>
+  h+='<div style="overflow-x:auto"><table class="ptable rept"><thead><tr><th style="width:30px">No</th><th style="text-align:left;width:130px">제목</th><th style="width:96px">일자</th><th style="width:104px">담당자</th><th style="text-align:left;min-width:240px">주요내용</th><th style="width:104px">미리보기</th><th style="width:172px">첨부 · 링크</th><th style="width:32px"></th></tr></thead><tbody>';
+  const REPV=REPORTS.map((r,i)=>({r,i})).filter(o=>!fmgr||o.r.mgr===fmgr);
+  if(!REPV.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">등록된 보고가 없습니다. 「＋ 보고 추가」로 등록하세요.</td></tr>`;
+  REPV.forEach(({r,i},n0)=>{h+=`<tr>
+    <td class="mut">${n0+1}</td>
     <td class="rl"><input value="${esc(r.title||'')}" onchange="editReport(${i},'title',this.value)" placeholder=""></td>
     <td><input type="date" value="${esc(r.date||'')}" onchange="editReport(${i},'date',this.value)"></td>
     <td><select onchange="editReport(${i},'mgr',this.value)">${mgrOpt(r.mgr)}</select></td>
@@ -6130,7 +6253,7 @@ function calModalSave(){
   const ev={title,sdate,edate,start:cmVal('cm_start'),end:cmVal('cm_end'),desc:cmVal('cm_desc'),repeat:cmVal('cm_repeat')||'none'};
   if(CALMODAL.idx>=0&&CALLIST[CALMODAL.idx])Object.assign(CALLIST[CALMODAL.idx],ev);
   else CALLIST.push(Object.assign({id:'e'+(CUID++)},ev));
-  saveCal();CALMODAL.open=false;render();toast('저장되었습니다');
+  {const e0=CALLIST[CALMODAL.idx];if(e0&&e0.gid)e0._dirty=1;}saveCal();CALMODAL.open=false;render();toast('저장되었습니다');
 }
 function calModalDelete(){if(CALMODAL.idx>=0)CALLIST.splice(CALMODAL.idx,1);saveCal();CALMODAL.open=false;render();toast('삭제되었습니다');}
 function addCalTodo(){const el=document.getElementById('ct_new');const t=(el.value||'').trim();if(!t)return;CALTODO.push({id:'t'+(CUID++),text:t,done:false});saveCalTodo();render();}
@@ -6176,7 +6299,7 @@ function calDow(date){return ['일','월','화','수','목','금','토'][new Dat
 function calEvsOn(date){return CALLIST.map((e,idx)=>({e,idx})).filter(o=>{const a=o.e.sdate||o.e.date;if(!a)return false;const b=o.e.edate||a;return a<=date&&date<=b;})
   .sort((x,y)=>String(x.e.start||'').localeCompare(String(y.e.start||'')));}
 function calAddOn(date){if(roBlock())return;CALLIST.push({id:'e'+(CUID++),title:'',sdate:date,edate:date,start:'',end:'',desc:'',repeat:'none'});saveCal();CALSEL=date;render();}
-function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();
+function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
 function milePanelSec(date,miles){
   let h=`<div class="cxs-sec"><span class="bar" style="background:#f0a500"></span>중화팀 행사 <span style="color:#c3cbd2">${miles.length}</span>${RO()?'':`<button class="add" onclick="mileAddOn('${date}')">＋ 추가</button>`}</div>`;
@@ -6678,7 +6801,10 @@ function calFilterBarX(){
     +MGRS.filter(m=>mgrIds.includes(m.id)).map(m=>`<option value="${m.id}" ${MILEMGR===m.id?'selected':''}>${esc(m.name)}</option>`).join('')+'</select>';
 }
 function setMileCtry(c){MILECTRY=c;render();}
-function setMileMgr(id){MILEMGR=id;render();}
+function setMileMgr(id){MILEMGR=id;if(GOALSUB==='meet'&&TAB==='goals'&&id!=='lee')MEETMINE=false;render();}
+let MEETMINE=true; try{MEETMINE=localStorage.getItem('wr_meetmine')!=='0';}catch(e){}
+let MEETSEC={ev:false,rep:false}; try{MEETSEC=JSON.parse(localStorage.getItem('wr_meetsec')||'{"ev":false,"rep":false}')||{ev:false,rep:false};}catch(e){MEETSEC={ev:false,rep:false};}
+function setMeetMine(v){MEETMINE=!!v;try{localStorage.setItem('wr_meetmine',MEETMINE?'1':'0');}catch(e){}if(!MEETMINE)MILEMGR='';render();}
 function calMileMatrix(){
   const nowM=7, months=Array.from({length:12},(_,i)=>i+1);
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
@@ -7693,7 +7819,10 @@ function renderMGoals(){
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  html+='<div class="pm-tabs" style="margin-bottom:16px">'+[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['report','주요보고'],['table','통합'],['sched','업무일정']].map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';
+  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['report','주요보고'],['meet','회의·보고'],['table','통합'],['sched','업무일정']];
+  if(LOGINUID!=='lee')gtabs=gtabs.filter(([k])=>k!=='meet'); /* 회의·보고 = 팀장 전용 */
+  if(GOALSUB==='meet'&&LOGINUID!=='lee')GOALSUB='goal';
+  html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
   if(GOALSUB==='mgoal')return html+renderMGoals();
   if(GOALSUB==='rr')return html+renderRR();
@@ -7701,6 +7830,20 @@ function viewGoals(){
   if(GOALSUB==='prr')return html+renderPersonRR();
   if(GOALSUB==='kpi')return html+renderKPI2();
   if(GOALSUB==='report')return html+renderReports();
+  if(GOALSUB==='meet'){ /* 회의·보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고는 접힘 */
+    let h2='';
+    h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
+      <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
+      <button class="mile-add mini" onclick="setMeetMine(false)" style="${MEETMINE?'':'background:var(--accent);color:#fff'}">전체 보기</button>
+      <button class="mile-add mini" onclick="gcalPull(false)" style="margin-left:10px" title="구글 「Mgg_회의일정」 캘린더와 이번 달 회의를 서로 반영합니다 (가져오기+올리기)">⇄ 구글 캘린더 동기화 (Mgg_회의일정)</button>
+      <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_gcal_last');return d?('마지막 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
+    if(MEETMINE){MILEMGR='lee';}
+    h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 행사 · 출장 · 회의`,()=>monthCalendarBody())+calModalHTML();
+    h2+='<div style="margin-top:18px">'+renderMinutes()+'</div>';
+    h2+=`<details style="margin-top:16px" ${MEETSEC.ev?'open':''} ontoggle="MEETSEC.ev=this.open;try{localStorage.setItem('wr_meetsec',JSON.stringify(MEETSEC));}catch(e){}"><summary style="font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;padding:6px 0">▸ 중화팀 행사 · 출장 목록 (펼치기/숨기기)</summary><div style="margin-top:8px">${calListTabs()}</div></details>`;
+    h2+=`<details style="margin-top:10px" ${MEETSEC.rep?'open':''} ontoggle="MEETSEC.rep=this.open;try{localStorage.setItem('wr_meetsec',JSON.stringify(MEETSEC));}catch(e){}"><summary style="font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;padding:6px 0">▸ 주요보고 (펼치기/숨기기)</summary><div style="margin-top:8px">${renderReports(MEETMINE?'lee':'')}</div></details>`;
+    return html+h2;
+  }
   if(GOALSUB==='table')return html+'<div style="margin-top:4px">'+renderCombined(activeRows())+'</div>';
   if(GOALSUB==='sched')return html+'<div style="margin-top:4px">'+renderRoutineMeetings()+'</div>';
   if(GOALSUB==='road')return html+perfRoad();
@@ -8140,6 +8283,7 @@ function applyBackup(d){
   if(d.perf){PERFDATA=d.perf;savePerf();}
   if(d.plan){PLAN=d.plan;}if(d.road){ROADMAP=d.road;}if(d.goals){GOALS=d.goals;}if(d.plan||d.road||d.goals){normalizePlan();savePlan();}
   if(Array.isArray(d.mile)){MILESTONES=d.mile;saveMile();}
+  if(Array.isArray(d.minutes)){MINUTES=d.minutes;saveMinutes();}
   if(Array.isArray(d.proj)){PROJECTS=d.proj;saveProj();}
   if(d.shist&&typeof d.shist==='object'){SPHIST=d.shist;saveSPHIST();}
   if(Array.isArray(d.quarters)&&d.quarters.length){QUARTERS=d.quarters;saveQuarters();}
@@ -8550,12 +8694,12 @@ function cloudGuide(){
 function cloudAuth(cb,silent,force){
   if(!cloudAvailable()){ if(!silent) cloudGuide(); return; }
   if(cloudTokenValid()&&!force){cb();return;}
-  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets',
+  try{const tc=google.accounts.oauth2.initTokenClient({client_id:CLOUD.clientId,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events',
     callback:resp=>{if(resp&&resp.access_token){CLOUD.token=resp.access_token;CLOUD.tokenExp=Date.now()+((resp.expires_in||3600)*1000);cb();}else{if(!silent)toast('구글 인증에 실패했습니다');setSyncErr('구글 인증 실패: '+((resp&&(resp.error+' '+(resp.error_description||'')))||''),true);}},
     error_callback:err=>{if(!silent)toast('구글 인증 창이 닫혔거나 차단되었습니다');setSyncErr('구글 인증 중단: '+((err&&(err.type||err.message))||''),true);}});
     tc.requestAccessToken(force?{prompt:'consent'}:(silent?{prompt:''}:{}));}catch(e){if(!silent)toast('구글 인증을 시작할 수 없습니다');setSyncErr('구글 인증 시작 실패: '+((e&&e.message)||e),true);}
 }
-function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,_ts:Date.now()});}
+function cloudPayload(){return JSON.stringify({tasks:TASKS,notes:NOTES,perf:PERFDATA,plan:PLAN,road:ROADMAP,mile:MILESTONES,proj:PROJECTS,goals:GOALS,sales:SPERF,shist:SPHIST,quarters:QUARTERS,assign:ASSIGN,rr:RRDATA,rrteam:RRTEAM,ptasks:PTASKS,mfocus:MFOCUS,cal:CALLIST,caltodo:CALTODO,calmemo:CALMEMO,annual:CJANNUAL,reports:REPORTS,mgoals:MGOALS,fixed:FIXEDWORK,fixedlog:FIXEDLOG,fkkpi:FKDATA,ovmeet:OVMEET,fdocs:FOCUSDOCS,minutes:MINUTES,_ts:Date.now()});}
 async function driveFind(){const q=encodeURIComponent(`name='${CLOUD.fileName}' and trashed=false`);
   const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name)`,{headers:{Authorization:'Bearer '+CLOUD.token}});
   if(!res.ok){let t='';try{t=await res.text();}catch(e){}throw new Error('드라이브 조회 실패 HTTP '+res.status+' '+t.slice(0,200));}
@@ -8962,7 +9106,8 @@ function setSyncBadge(state){_syncState=state;const el=document.getElementById('
 function showSyncErr(){
   const dw=document.getElementById('drawer');
   const proj=(CLOUD.clientId||'').split('-')[0];
-  const hint=APIOFF?`구글 클라우드 프로젝트에서 <b>Google Sheets API</b>가 켜져 있지 않아 시트에 기록할 수 없습니다(로그인 문제가 아닙니다). 아래 링크에서 「사용 설정(Enable)」을 한 번만 누른 뒤 1~2분 후 다시 시도하세요.<br><a href="https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=${esc(proj)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">▶ Google Sheets API 사용 설정 열기</a>`
+  const isCal=/Calendar/i.test(LASTSYNCERR);
+  const hint=APIOFF?`구글 클라우드 프로젝트에서 <b>${isCal?'Google Calendar API':'Google Sheets API'}</b>가 켜져 있지 않습니다(로그인 문제가 아닙니다). 아래 링크에서 「사용 설정(Enable)」을 한 번만 누른 뒤 1~2분 후 다시 시도하세요.<br><a href="https://console.developers.google.com/apis/api/${isCal?'calendar-json':'sheets'}.googleapis.com/overview?project=${esc(proj)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">▶ ${isCal?'Google Calendar API':'Google Sheets API'} 사용 설정 열기</a>`
     :NEEDAUTH?'구글 토큰에 <b>스프레드시트 편집 권한</b>이 없거나 세션이 만료되었습니다. 아래 「구글 재로그인(권한 동의) 후 저장」을 누르면 구글 동의창이 다시 뜨며, 「Google 스프레드시트 보기·수정」에 체크하고 승인하면 재개됩니다.'
     :/413|too large|payload/i.test(LASTSYNCERR)?'저장 데이터가 너무 큽니다(구글 업로드 한도). 「메뉴 ▾ → 백업(JSON)」으로 내려받은 뒤 오래된 주차 데이터를 정리해 주세요.'
     :/404/.test(LASTSYNCERR)?'구글 드라이브의 저장 파일을 찾지 못했습니다. 「다시 시도」를 누르면 새로 만듭니다.'
