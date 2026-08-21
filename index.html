@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M212</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M213</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2497,6 +2497,8 @@ const MGRS=[
 ];
 /* 표시 제외 담당자 (장민훈 이사 · 대만법인장) */
 const MGR_HIDE=['jang'];
+/* 지시 업무(ASSIGN) 담당자 선택란 전용 추가 인원 · 팀 과제·실적 화면(mgrsOrdered 등)에는 노출되지 않음 */
+const ASSIGN_EXTRA_MGRS=[{id:'jung', name:'정대영', title:'부사장', region:'경영지원', color:'#6b4c9a', ini:'정'}];
 /* ===== 월간 성과/실행현황 (G2중화 월보고) · PPTX·구글시트 연동 데이터 2026-08 ===== */
 let MREPORT_MON=8;
 let MREPORT26=[
@@ -3011,7 +3013,7 @@ const barGrad={
   review:'linear-gradient(90deg,#e5a94a,#d99429)',
   done:'linear-gradient(90deg,#33b57a,#26a269)'};
 const ccls={'중국':'cn','홍콩':'hk','대만':'tw'};
-const mgrById=id=>MGRS.find(m=>m.id===id);
+const mgrById=id=>MGRS.find(m=>m.id===id)||ASSIGN_EXTRA_MGRS.find(m=>m.id===id);
 function esc(s){return (s+'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function dueMeta(t,w){const c=wkAt(t,w); const d=(c&&c.due)||t.due; return d;}
 function isDate(s){return /^\d{4}-\d{2}-\d{2}$/.test(s);}
@@ -3056,9 +3058,12 @@ function activeRows(){
   out.sort(sortRows);
   return out;
 }
-/* 필터 결과 정렬: 지연주의 → 완료예정일 오름차순(날짜) → 진행율 내림차순 */
+/* 필터 결과 정렬: 지연주의 → 우선순위(상·중·하) → 완료예정일 오름차순(날짜) → 진행율 내림차순 */
 function sortRows(a,b){
   if(a.risk!==b.risk)return a.risk?-1:1;
+  const PR={'상':0,'중':1,'하':2};
+  const ap=PR[prioKo(a.prio)]!=null?PR[prioKo(a.prio)]:1, bp=PR[prioKo(b.prio)]!=null?PR[prioKo(b.prio)]:1;
+  if(ap!==bp)return ap-bp;
   const ad=isDate(a.due),bd=isDate(b.due);
   if(ad&&bd&&a.due!==b.due)return a.due<b.due?-1:1;
   if(ad!==bd)return ad?-1:1;
@@ -5044,7 +5049,7 @@ function renderHome(){
   const cards=[];
   mgrsOrdered().forEach(m=>{if(HMSEL.length?!HMSEL.includes(m.id):!HM_DEFAULT.includes(m.id))return;const my=rows.filter(r=>r.mgr===m.id);if(!my.length)return;let h='';
     const avg=Math.round(my.reduce((a,r)=>a+(r.p||0),0)/my.length);const done=my.filter(r=>r.p>=100).length;
-    const top=my.filter(r=>r.p<100).sort((a,b)=>String(a.due||'9')<String(b.due||'9')?-1:1).slice(0,3);
+    const top=my.filter(r=>r.p<100).sort((a,b)=>{const ap=prioKo(a.prio)==='상'?0:1,bp=prioKo(b.prio)==='상'?0:1;if(ap!==bp)return ap-bp;return String(a.due||'9')<String(b.due||'9')?-1:1;}).slice(0,3);
     h+=`<div class="hm-p"><div class="ph" onclick="MGRSEL=['${m.id}'];setTab('mreport');setOVtab('week')"><span class="av" style="background:${m.color}">${esc(m.ini)}</span><span class="nm">${esc(m.name)}<small>${esc(m.title||'')}${m.role?' · '+esc(m.role):''}</small></span><span class="rt hm-num">${avg}%<small>과제 ${my.length}${done?' · 완료 '+done:''}</small></span></div>`;
     top.forEach(r=>{const pk=prioKo(r.prio);h+=`<div class="hm-it"><div class="t">${esc(r.label||r.name||'')}<span class="due hm-date">${r.due?esc(String(r.due).replace(/^2026-/,'').replace('-','/')):'상시'}</span></div><div class="tags">${hmTag(r.cat,'b')}${pk?hmTag(pk,pk==='상'?'r':pk==='중'?'y':''):''}${hmTag(r.country,hmCtryCls(r.country))}${r.risk?hmTag('지연주의','o'):''}</div><div class="prog"><div class="hm-bar"><i style="width:${Math.min(100,r.p||0)}%"></i></div><b class="hm-num">${r.p||0}%</b></div></div>`;});
     if(!top.length)h+='<div class="hm-it hm-empty">진행 중 과제 없음</div>';
@@ -5059,7 +5064,7 @@ function renderHome(){
   if(HOMESIDE){
     h+='<div>';
     h+='<div class="hm-blk"><div class="hm-sec"><span class="em">📌</span>DIRECTIVES<span class="x" onclick="toggleHomeSide()" title="오른쪽 닫기">닫기 ▸</span></div>';
-    const asg=(ASSIGN||[]).filter(a=>!a.done).slice(0,5);
+    const asg=(ASSIGN||[]).filter(a=>!a.done);
     if(!asg.length)h+='<div class="hm-empty">진행 중 지시 없음</div>';
     asg.forEach(a=>{const g=mgrById(a.mgr)||{};let dd='';if(a.due){const dl=Math.round((new Date(a.due)-new Date(todayStr()))/86400000);dd=dl<0?`D+${-dl}`:dl===0?'D-Day':`D-${dl}`;}
       const gi=ASSIGN.indexOf(a);const ce=canEditAssign(a);
@@ -5271,7 +5276,7 @@ function renderOps(){
   return h+'</div>';
 }
 function renderAssign(){
-  const mgrOpt=(sel)=>`<option value="" ${!sel?'selected':''}>담당자 지정</option>`+MGRS.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
+  const mgrOpt=(sel)=>`<option value="" ${!sel?'selected':''}>담당자 지정</option>`+MGRS.concat(ASSIGN_EXTRA_MGRS).map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
   const prioOpt=(sel)=>[['높음','상'],['중간','중'],['낮음','하']].map(([v,o])=>`<option value="${v}" ${(sel||'중간')===v?'selected':''}>${o}</option>`).join('');
   const stOpt=(sel)=>['착수전','진행중','완료'].map(o=>`<option ${(sel||'착수전')===o?'selected':''}>${o}</option>`).join('');
   const openN=ASSIGN.filter(a=>!a.done).length;
@@ -8579,7 +8584,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';}document.body.classList.remove('rail-open');render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';MILECTRY='';CALKIND='';try{localStorage.setItem('wr_calkind','');}catch(e){}}document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
