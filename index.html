@@ -34,7 +34,7 @@ html,body,input,select,textarea,button,table{
 .num,.n,td.n,.kpi-rt,.kpi-mr,.tile .n,.ov-perf td:not(.rl),.kpitbl td input,.kpitbl td.kpi-mc,.kv-n,.pcol-h .pct,.rr-pct,.pm-num,.ov-num,.rcal-d,.rcal-tt,.hm-num,.hm-date,.prog b,.wc-p{font-family:Arial,"Helvetica Neue",Helvetica,"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif;font-variant-numeric:tabular-nums}
 input[type=number]{font-family:Arial,Helvetica,sans-serif}
 html,body{background:var(--bg);color:var(--ink);
-  font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
+  font-size:15.4px;line-height:1.5;-webkit-text-size-adjust:100%}
 .zh,.tag-cn,:lang(zh){font-family:"Microsoft YaHei","微软雅黑","PingFang SC",sans-serif}
 button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 ::selection{background:var(--accentSoft)}
@@ -2334,8 +2334,29 @@ body.vw-ro .lb-full{display:none}
 .hm-ctl input:disabled,.hm-ctl select:disabled{background:#f4f3f0;color:var(--faint)}
 /* 회의록 표 글자 20% 증대 */
 .mintbl,.mintbl td,.mintbl th{font-size:13.5px}
+.mn-btns{display:inline-flex;gap:5px;margin-left:10px;flex-wrap:wrap}
+.mintbl .mn-tt input.mn-ti{white-space:normal;font-size:12.5px!important;line-height:1.35;height:auto;min-height:34px;padding:3px 5px;word-break:keep-all}
+.mintbl .mn-sm{position:relative}
+.mintbl .rep-sum.clamp7{max-height:calc(1.5em * 7);overflow:hidden}
+.mintbl .mn-more{display:block;margin-top:2px;font-size:10.5px;font-weight:700;color:var(--accent);background:none;border:0;cursor:pointer;padding:0}
+.mintbl .mn-nt{text-align:center}
+.mintbl .mn-send{font-size:11px;padding:1px 6px}
+.mn-pg{display:flex;gap:4px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.mn-pg button{font-size:11.5px;font-weight:700;border:1px solid var(--ln);background:#fff;color:var(--dim);border-radius:4px;padding:3px 9px;cursor:pointer}
+.mn-pg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mn-pg button:disabled{opacity:.4;cursor:default}
+.mn-pgi{font-size:11px;color:var(--faint);margin-left:6px}
+.mn-btns .reset{margin:0}
+.mintbl .mn-dt input{font-size:10.8px!important;padding:2px 3px;letter-spacing:-.3px;width:100%}
+.mintbl .mn-nt{text-align:center;white-space:nowrap;padding-left:2px;padding-right:2px}
+.mintbl .mn-ok{font-size:11px;margin-right:3px}
+.mintbl .mn-send{font-size:10.5px;font-weight:700;border:1px solid #cfe3d8;background:#f4faf7;color:#2f5e44;border-radius:4px;padding:2px 7px;cursor:pointer;line-height:1.5}
+.mintbl .mn-send.done{border-color:var(--ln);background:#fafafa;color:var(--dim)}
 .mintbl input,.mintbl textarea{font-size:13.5px!important}
 .mintbl .mile-add.mini{font-size:12px}
+/* 전역 글자 10% 확대 */
+html{font-size:110%}
+body,input,select,textarea,button,table{font-size:inherit}
 </style>
 </head>
 <body>
@@ -2352,7 +2373,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M191</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M197</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2763,9 +2784,10 @@ let PMET='법인매출', PBUMON='전체', PMON=6;
 const MENU=[['home','팀 종합현황','홈'],
   ['mreport','업무현황','업무'],
   ['calmonth','중화팀 일정·행사','일정'],
-  ['goals','팀업무','목표']
+  ['goals','팀업무','목표'],
+  ['meetrep','회의일정보고','회의']
 ];
-const MENULB={home:'팀 종합현황',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
+const MENULB={home:'팀 종합현황',meetrep:'회의일정보고',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
@@ -3057,11 +3079,11 @@ function render(){
   if(fmSel.options.length<=1){MGRS.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name+' '+m.title;fmSel.appendChild(o);});}
   const rows=activeRows();
   // rail menu
-  const cnt={home:'',overview:'',mreport:'',rr:rows.length,kanban:rows.length,calendar:MILESTONES.length,calmonth:MILESTONES.length,goals:'',perf:rows.length,sales:'',separate:MGRS.filter(m=>m.empty&&!TASKS.some(t=>t.mgr===m.id)).length+PROJECTS.length};
+  const cnt={home:'',meetrep:'',overview:'',mreport:'',rr:rows.length,kanban:rows.length,calendar:MILESTONES.length,calmonth:MILESTONES.length,goals:'',perf:rows.length,sales:'',separate:MGRS.filter(m=>m.empty&&!TASKS.some(t=>t.mgr===m.id)).length+PROJECTS.length};
   renderRailRole();
   renderRailCal();
   applyMemberScope();
-  const menuItems=(VROLE==='member')?MENU.filter(([k])=>MEMBER_TABS.includes(k)):MENU;
+  const menuItems=((VROLE==='member')?MENU.filter(([k])=>MEMBER_TABS.includes(k)):MENU).filter(([k])=>k!=='meetrep'||LOGINUID==='lee');
   document.getElementById('rnav').innerHTML=menuItems.map(([k,l,ic])=>
     `<button class="${TAB===k?'on':''}" onclick="setTab('${k}')" title="${esc(l)}"><span class="ic">${ic||'•'}</span><span class="mnu-lb">${l}</span>${cnt[k]!==''?`<span class="cnt">${cnt[k]}</span>`:''}</button>`).join('');
   // period control: 연도 · 월 · 주
@@ -3090,7 +3112,7 @@ function render(){
   const extra=(TAB==='goals'||TAB==='perf'||TAB==='sales'||TAB==='overview'||TAB==='mreport')?'':(TAB==='separate')?` · 별도 항목 ${cnt.separate}건`:` · 표시 과제 ${rows.length}건${HIDEDONE?' · 완료 숨김':''}`;
   document.getElementById('asof').innerHTML=(TAB==='home')?(`${YEAR}년 ${MONTH}월 · ${WEEKS[W]?WEEKS[W].name:''} · 실적·과제·지시·일정 한눈에 · 상세는 각 페이지에서`):(TAB==='mreport')?(`업무현황 · ${PERIOD==='week'?('주간 · '+(WEEKS[W]?WEEKS[W].name:'')):(MONTH+'월 월간')} · <a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">마스터파일 열기 ↗</a> · [구글시트 불러오기] = 마스터 월간+주간 전체 반영(월말보고·주간업무·거래처실적·출장·행사·KPI)`):(TAB==='overview')?(`${periodLabel()} · 실적·팀 업무·역할·지시·루틴 한눈에`):(TAB==='sales')?(esc(SPERF.week||'')+' · 거래처별 수출·수금 KPI'):`${periodLabel()}${extra}`;
   // KPI / goalbar visibility
-  const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='mreport'&&TAB!=='rr'&&TAB!=='home');
+  const showKPI=(TAB!=='goals'&&TAB!=='perf'&&TAB!=='sales'&&TAB!=='overview'&&TAB!=='mreport'&&TAB!=='rr'&&TAB!=='home'&&TAB!=='meetrep');
   document.getElementById('kpis').style.display=showKPI?'':'none';
   document.getElementById('kpis').className='kpis'+((TAB==='calendar'||TAB==='calmonth')?' compact cal4':(TAB==='kanban'?' compact':''));
   document.getElementById('goalbar').style.display='none';
@@ -3100,6 +3122,7 @@ function render(){
   if(TAB==='overview')v.innerHTML=renderOverview();
   else if(TAB==='home')v.innerHTML=renderHome();
   else if(TAB==='mreport')v.innerHTML=renderOverview();
+  else if(TAB==='meetrep')v.innerHTML=renderMeetRep();
   else if(TAB==='rr')v.innerHTML=viewRR(rows);
   else if(TAB==='kanban')v.innerHTML=viewKanban(rows);
   else if(TAB==='calmonth'){CALVIEW='month';v.innerHTML=viewCalendar();}
@@ -5425,23 +5448,63 @@ async function notionPushMin(i,silent){
 function notionCopyMin(i){const m=MINUTES[i];if(!m)return;
   const tx=`[회의록] ${m.title||'(제목 없음)'} · ${m.date||''}\n\n주요내용\n${m.summary||'-'}\n\n(G2 중화팀 대시보드 · 회의·보고에서 작성)`;
   try{navigator.clipboard.writeText(tx).then(()=>{toast('회의록을 복사했습니다 · 노션 아카이브가 열리면 [회의록] 구분으로 붙여넣기 하세요');window.open('https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a','_blank');});}catch(e){toast('복사 실패');}}
+function mdShort(d){const t=String(d||'');const m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);return m?(+m[2]+'/'+ +m[3]):t;}
+function editMinuteDate(i,v){const t=String(v||'').trim();const y=(MINUTES[i]&&String(MINUTES[i].date||'').slice(0,4))||String(YEAR||2026);
+  const m=t.match(/^(\d{1,2})\s*[\/.\-월]\s*(\d{1,2})/);
+  if(m)editMinute(i,'date',`${y}-${String(+m[1]).padStart(2,'0')}-${String(+m[2]).padStart(2,'0')}`);
+  else if(/^\d{4}-\d{2}-\d{2}$/.test(t))editMinute(i,'date',t);
+  else render();}
+function minTitles(){ /* 캘린더에 등록된 회의명 목록 */
+  const out=[];(CALLIST||[]).forEach(ev=>{const t=String(ev.title||'').replace(/^\[(회의|일정)\]\s*/,'').trim();if(t&&!/^\[지시\]/.test(ev.title||'')&&!out.includes(t))out.push(t);});
+  (MINUTES||[]).forEach(m=>{const t=String(m.title||'').trim();if(t&&!out.includes(t))out.push(t);});
+  return out;}
+function minTitleCell(m,i){
+  const cur=String(m.title||'');const opts=minTitles();
+  return `<input class="mn-ti" list="mnTitles" value="${esc(cur)}" oninput="editMinute(${i},'title',this.value)" placeholder="회의명 선택·입력">`;
+}
+let MNOPEN={}; function toggleMnSum(i){MNOPEN[i]=!MNOPEN[i];render();}
+let MNPAGE=0; function setMnPage(p){MNPAGE=Math.max(0,p);MNOPEN={};render();}
+function minSumCell(m,i){
+  const tx=String(m.summary||'');
+  const lines=tx.split(/\n/).length;const many=(lines>7||tx.length>520);
+  const op=!!MNOPEN[i];
+  return `<textarea class="rep-sum${(!op&&many)?' clamp7':''}" oninput="autogrow(this);editMinute(${i},'summary',this.value)" placeholder="">${esc(tx)}</textarea>`
+    +(many?`<button class="mn-more" onclick="toggleMnSum(${i})">${op?'▲ 접기':'▼ 더보기 ('+lines+'줄)'}</button>`:'');
+}
+async function notionPushAll(){
+  const targets=MINUTES.map((m,i)=>({m,i})).filter(o=>!o.m.nid&&(String(o.m.title||'').trim()||String(o.m.summary||'').trim()));
+  if(!targets.length){toast('전송할 회의록이 없습니다 (모두 동기화됨)');return;}
+  if(!NPROXY){toast('노션 연동 주소를 먼저 연결하세요');return;}
+  toast(`노션 전송 중… ${targets.length}건`);
+  let ok=0;for(const o of targets){try{await notionPushMin(o.i,true);if(MINUTES[o.i]&&MINUTES[o.i].nid)ok++;}catch(e){}}
+  render();toast(`노션 전송 완료 ${ok}/${targets.length}건`);
+}
 function renderMinutes(){
   minSyncFromCal();
-  const list=MINUTES.map((m,i)=>({m,i})).sort((a,b)=>String(b.m.date||'').localeCompare(String(a.m.date||'')));
-  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· 캘린더 회의 자동 연동 · ${MINUTES.length}건</span></h3><span class="unit">최신 회의가 맨 위 · 입력 즉시 자동저장${NPROXY?' · 노션 자동 전송(3초)':''}</span><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약 가져오기</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button></div>`;
+  const all=MINUTES.map((m,i)=>({m,i})).sort((a,b)=>String(b.m.date||'').localeCompare(String(a.m.date||'')));
+  const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
+  if(MNPAGE>=pages)MNPAGE=pages-1; if(MNPAGE<0)MNPAGE=0;
+  const list=all.slice(MNPAGE*PER,MNPAGE*PER+PER);
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· 캘린더 회의 자동 연동 · ${MINUTES.length}건</span></h3><span class="unit">최신 회의가 맨 위 · 입력 즉시 자동저장${NPROXY?' · 노션 자동 전송(3초)':''}</span><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송 회의록을 노션에 한 번에 전송">↑ 노션 일괄전송${(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length?' ('+(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length+')':''}</button>`:''}</span></div>`;
   if(!NPROXY)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
-  h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:130px">제목</th><th style="width:96px">일자</th><th>주요내용</th><th style="width:86px">미리보기</th><th style="width:96px">노션</th><th style="width:32px"></th></tr></thead><tbody>';
+  h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
+  h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:150px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
   if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">회의록이 없습니다. 캘린더에 회의를 등록하거나 「＋ 회의록 추가」를 누르세요.</td></tr>`;
-  list.forEach(({m,i},n0)=>{h+=`<tr>
+  list.forEach(({m,i},n1)=>{const n0=MNPAGE*PER+n1;h+=`<tr>
     <td class="mut">${n0+1}</td>
-    <td class="rl"><input value="${esc(m.title||'')}" onchange="editMinute(${i},'title',this.value)" placeholder="회의명"></td>
-    <td><input type="date" value="${esc(m.date||'')}" onchange="editMinute(${i},'date',this.value)"></td>
-    <td class="rl"><textarea class="rep-sum" oninput="autogrow(this);editMinute(${i},'summary',this.value)" placeholder="핵심 내용 · 결정사항 · F/U — 입력 즉시 자동저장 · 노션 자동 반영">${esc(m.summary||'')}</textarea></td>
-    <td style="text-align:center">${attThumbCell(m,'min',i)}</td>
-    <td style="text-align:center">${m.nid?`<span style="font-size:10px;color:#1e6f5c;font-weight:700" title="노션에 저장됨${m.nsync?' · '+esc(m.nsync):''}">✅ 동기화됨</span><br>`:`<span style="font-size:10px;color:var(--faint)">미전송</span><br>`}<button class="mile-add mini" onclick="notionPushMin(${i})" title="노션 아카이브에 [회의록]으로 저장/갱신">↑ 지금 전송</button></td>
+    <td class="rl mn-tt">${minTitleCell(m,i)}</td>
+    <td class="mn-dt"><input type="text" value="${esc(mdShort(m.date))}" onchange="editMinuteDate(${i},this.value)" placeholder="8/21" title="${esc(m.date||'')} · 월/일 입력"></td>
+    <td class="rl mn-sm">${minSumCell(m,i)}</td>
+    <td class="mn-nt">${m.nid?`<span class="mn-ok" title="노션 저장됨${m.nsync?' · '+esc(m.nsync):''}">✅</span>`:`<button class="mn-send" onclick="notionPushMin(${i})" title="노션에 전송">↑</button>`}</td>
     <td style="text-align:center"><button class="mile-del" onclick="delMinute(${i})">🗑</button></td>
   </tr>`;});
-  return h+'</tbody></table></div><div class="dw-hint" style="margin-top:6px">※ 「📋 노션」 = 회의록을 [회의록] 구분 텍스트로 복사하고 노션 아카이브 페이지를 엽니다 → 붙여넣기만 하면 주요보고와 같은 곳에 구분되어 올라갑니다.</div></div>';
+  h+='</tbody></table></div>';
+  if(pages>1){h+='<div class="mn-pg">'
+    +`<button ${MNPAGE<=0?'disabled':''} onclick="setMnPage(${MNPAGE-1})">‹ 이전</button>`
+    +Array.from({length:pages},(_,k)=>k).map(k=>`<button class="${k===MNPAGE?'on':''}" onclick="setMnPage(${k})">${k+1}</button>`).join('')
+    +`<button ${MNPAGE>=pages-1?'disabled':''} onclick="setMnPage(${MNPAGE+1})">다음 ›</button>`
+    +`<span class="mn-pgi">전체 ${all.length}건 · ${MNPAGE+1}/${pages}페이지</span></div>`;}
+  return h+'<div class="dw-hint" style="margin-top:6px">※ 제목은 캘린더 회의명에서 선택하거나 직접 입력(입력 즉시 반영) · 주요내용은 7줄까지 표시, 「더보기」로 전체 열람 · 노션은 「↑ 노션 일괄전송」으로 미전송분을 한 번에 보냅니다.</div></div>';
   return h;
 }
 function renderReports(fmgr){
@@ -6818,7 +6881,9 @@ function calFilterBarX(){
 function setMileCtry(c){MILECTRY=c;render();}
 function setMileMgr(id){MILEMGR=id;if(GOALSUB==='meet'&&TAB==='goals'&&id!=='lee')MEETMINE=false;render();}
 let MEETMINE=true; try{MEETMINE=localStorage.getItem('wr_meetmine')!=='0';}catch(e){}
-let MEETSEC={ev:false,rep:false}; try{MEETSEC=JSON.parse(localStorage.getItem('wr_meetsec')||'{"ev":false,"rep":false}')||{ev:false,rep:false};}catch(e){MEETSEC={ev:false,rep:false};}
+let MEETSEC={ev:false,rep:false,min:true}; try{MEETSEC=Object.assign({ev:false,rep:false,min:true},JSON.parse(localStorage.getItem('wr_meetsec')||'{}')||{});}catch(e){MEETSEC={ev:false,rep:false,min:true};}
+let MEETTAB='min'; try{MEETTAB=localStorage.getItem('wr_meettab')||'min';}catch(e){}
+function setMeetTab(k){MEETTAB=k;try{localStorage.setItem('wr_meettab',k);}catch(e){}render();}
 function setMeetMine(v){MEETMINE=!!v;try{localStorage.setItem('wr_meetmine',MEETMINE?'1':'0');}catch(e){}if(!MEETMINE)MILEMGR='';render();}
 function calMileMatrix(){
   const nowM=7, months=Array.from({length:12},(_,i)=>i+1);
@@ -7831,21 +7896,9 @@ function renderMGoals(){
     </div>`;});
   return h+'</div>';
 }
-function viewGoals(){
-  let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
-  if(GOALSUB==='story')GOALSUB='goal';
-  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['report','주요보고'],['meet','회의·보고'],['table','통합'],['sched','업무일정']];
-  if(LOGINUID!=='lee')gtabs=gtabs.filter(([k])=>k!=='meet'); /* 회의·보고 = 팀장 전용 */
-  if(GOALSUB==='meet'&&LOGINUID!=='lee')GOALSUB='goal';
-  html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
-  if(GOALSUB==='focusq')return html+renderQuarterFocus();
-  if(GOALSUB==='mgoal')return html+renderMGoals();
-  if(GOALSUB==='rr')return html+renderRR();
-  if(GOALSUB==='team')return html+renderTeamRR();
-  if(GOALSUB==='prr')return html+renderPersonRR();
-  if(GOALSUB==='kpi')return html+renderKPI2();
-  if(GOALSUB==='report')return html+renderReports();
-  if(GOALSUB==='meet'){ /* 회의·보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고는 접힘 */
+function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고 접힘 · 팀장 전용 */
+  if(LOGINUID!=='lee')return '<div style="padding:30px;color:var(--faint)">권한이 없습니다.</div>';
+  let h1=`<div class="sec-h"><h2>회의일정보고</h2><span class="hint">회의 캘린더 · 회의록(노션 연동) · PLAUD 요약</span><span class="line"></span></div>`;
     let h2='';
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
@@ -7854,11 +7907,25 @@ function viewGoals(){
       <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_gcal_last');return d?('마지막 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
     if(MEETMINE){MILEMGR='lee';}
     h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 행사 · 출장 · 회의`,()=>monthCalendarBody())+calModalHTML();
-    h2+='<div style="margin-top:18px">'+renderMinutes()+'</div>';
-    h2+=`<details style="margin-top:16px" ${MEETSEC.ev?'open':''} ontoggle="MEETSEC.ev=this.open;try{localStorage.setItem('wr_meetsec',JSON.stringify(MEETSEC));}catch(e){}"><summary style="font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;padding:6px 0">▸ 중화팀 행사 · 출장 목록 (펼치기/숨기기)</summary><div style="margin-top:8px">${calListTabs()}</div></details>`;
-    h2+=`<details style="margin-top:10px" ${MEETSEC.rep?'open':''} ontoggle="MEETSEC.rep=this.open;try{localStorage.setItem('wr_meetsec',JSON.stringify(MEETSEC));}catch(e){}"><summary style="font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;padding:6px 0">▸ 주요보고 (펼치기/숨기기)</summary><div style="margin-top:8px">${renderReports(MEETMINE?'lee':'')}</div></details>`;
-    return html+h2;
-  }
+    {const MT=[['min','회의록'],['ev','중화팀 행사·출장'],['rep','주요보고']];
+     if(!['min','ev','rep'].includes(MEETTAB))MEETTAB='min';
+     h2+='<div class="pm-tabs" style="margin:18px 0 12px">'+MT.map(([k,l])=>`<button class="${MEETTAB===k?'on':''}" onclick="setMeetTab('${k}')">${esc(l)}</button>`).join('')+'</div>';
+     h2+=(MEETTAB==='min')?renderMinutes():(MEETTAB==='ev')?calListTabs():renderReports(MEETMINE?'lee':'');}
+    return h1+h2;
+}
+function viewGoals(){
+  let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
+  if(GOALSUB==='story')GOALSUB='goal';
+  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['report','주요보고'],['table','통합'],['sched','업무일정']];
+  if(GOALSUB==='meet')GOALSUB='goal'; /* 회의일정보고 = 별도 메뉴로 이동 */
+  html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
+  if(GOALSUB==='focusq')return html+renderQuarterFocus();
+  if(GOALSUB==='mgoal')return html+renderMGoals();
+  if(GOALSUB==='rr')return html+renderRR();
+  if(GOALSUB==='team')return html+renderTeamRR();
+  if(GOALSUB==='prr')return html+renderPersonRR();
+  if(GOALSUB==='kpi')return html+renderKPI2();
+  if(GOALSUB==='report')return html+renderReports();
   if(GOALSUB==='table')return html+'<div style="margin-top:4px">'+renderCombined(activeRows())+'</div>';
   if(GOALSUB==='sched')return html+'<div style="margin-top:4px">'+renderRoutineMeetings()+'</div>';
   if(GOALSUB==='road')return html+perfRoad();
@@ -8375,7 +8442,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
