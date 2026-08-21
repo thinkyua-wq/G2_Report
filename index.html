@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M219</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M220</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2614,12 +2614,16 @@ try{const s1=localStorage.getItem('wr_mdeal_v2');if(s1){const o=JSON.parse(s1);i
 function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v2',JSON.stringify(MDEAL));}catch(e){}}
 function mdealRows(m){return MDEAL[String(m)]||[];}
 function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 합산 · 목표=최근 달 전체목표)
-  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[];
-  for(let m=1;m<=upto;m++){const D=MDEAL[String(m)];if(!D||!D.length)continue;
+  /* upto월(보통 당월) 자체는 「거래처실적_월간」이 아직 없으면 「거래처실적_주간」을 선택 주차까지 잠정 합산해 반영 · 그 외 과거 월은 그대로 건너뜀 */
+  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null;
+  for(let m=1;m<=upto;m++){
+    let D=MDEAL[String(m)];
+    if((!D||!D.length)&&m===upto){const mr=mrDealMonthRows(m);if(mr.rows.length){D=mr.rows;liveUpto=mr.uptoWeek;}}
+    if(!D||!D.length)continue;
     const g=ovScopeAggFrom(D,scope);
     if(g.exA)cumA+=g.exA; if(g.suA)cumSu+=g.suA;
     if(g.exT)T=g.exT; if(g.suT)S=g.suT; any=true; months.push(m);}
-  return {cumA,cumSu,T,S,any,months};
+  return {cumA,cumSu,T,S,any,months,liveUpto};
 }
 function saveMReport(){try{localStorage.setItem('wr_mreports_v5',JSON.stringify(MREPORTS));}catch(e){}}
 /* ===== 市场本部 重点KPI (summary 시트 · 8월/1~8월 누적) ===== */
@@ -4718,7 +4722,7 @@ function mrMonthTiles(extra){
   h+=tile('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`전체목표 ${n(C.T)} · 비중 ${A.cumA?Math.round(C.cumA/A.cumA*100):0}%`);
   h+=tile('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`전체목표 ${n(T.T)} · 비중 ${A.cumA?Math.round(T.cumA/A.cumA*100):0}%`);
   h+=tile('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`전체목표 ${n(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`);
-  return h+(extra||'')+'</div>';
+  return h+(extra||'')+(A.liveUpto?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:11px;color:var(--risk);margin-top:2px">※ ${MONTH}월 「거래처실적_월간」 데이터가 아직 없어 「거래처실적_주간」 W${A.liveUpto.iso}까지 잠정 합산한 값입니다</div>`:'')+'</div>';
 }
 function mrMonthChart(label,scope){
   const upto=12, k=v=>Math.round((v||0)/1000);
