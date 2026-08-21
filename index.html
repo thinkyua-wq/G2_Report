@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M205</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M206</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5535,6 +5535,25 @@ function mnDateFromTitle(t,y){
   if(m){const mo=+m[2],d=+m[3];if(mo>=1&&mo<=12&&d>=1&&d<=31)return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
   return '';
 }
+function mnHasCJK(t){const s=String(t||'');const han=(s.match(/[\u4e00-\u9fff]/g)||[]).length;const kor=(s.match(/[\uac00-\ud7a3]/g)||[]).length;return han>=8&&han>kor*0.5;}
+async function mnTranslateAll(){
+  if(!NPROXY){toast('노션 연동 주소를 먼저 연결하세요');return;}
+  const t=MINUTES.map((m,i)=>({m,i})).filter(o=>mnHasCJK(o.m.summary)||mnHasCJK(o.m.title));
+  if(!t.length){toast('중국어 회의록이 없습니다');return;}
+  toast(`번역 중… ${t.length}건`);let ok=0;
+  for(const o of t){
+    try{
+      const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'translate',text:(o.m.full||o.m.summary||'')})});
+      const j=await res.json().catch(()=>({}));
+      if(j&&j.ok&&j.text){o.m.full=j.text;o.m.summary=j.brief||j.text;o.m.dirty=1;ok++;}
+      if(mnHasCJK(o.m.title)){
+        const r2=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'translate',text:o.m.title})});
+        const j2=await r2.json().catch(()=>({}));if(j2&&j2.ok&&j2.text)o.m.title=j2.text.split('\n')[0];
+      }
+    }catch(e){}
+  }
+  saveMinutes();render();toast(ok?`한국어 번역 완료 ${ok}건 · 노션 전송으로 반영하세요`:'번역 실패 · val 코드(v8) 업데이트를 확인하세요');
+}
 function mnFixDates(silent){
   const y=String(YEAR||2026);const nrm=x=>String(x||'').replace(/^\[[^\]]*\]\s*/,'').replace(/\s+/g,'').toLowerCase();
   let n=0;
@@ -5563,7 +5582,7 @@ function renderMinutes(){
   const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
   if(MNPAGE>=pages)MNPAGE=pages-1; if(MNPAGE<0)MNPAGE=0;
   const list=all.slice(MNPAGE*PER,MNPAGE*PER+PER);
-  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button><button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button><select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?'<button class="reset" onclick="mnTranslateAll()" title="중국어로 들어온 회의록을 한국어로 번역합니다">🌐 한국어 번역</button>':''}<button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button><select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
   if(!NPROXY)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
   h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
   h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:230px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
