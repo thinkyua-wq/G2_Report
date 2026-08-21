@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M206</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M207</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5485,7 +5485,14 @@ async function notionPushMin(i,silent){
   try{
     const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'minute',id:m.id,nid:m.nid||'',title:m.title||'(제목 없음)',date:m.date||'',summary:m.summary||''})});
     const j=await res.json().catch(()=>({}));
-    if(res.ok&&j&&j.ok){m.nid=j.nid||m.nid;m.nsync=todayStr();m.dirty=0;saveMinutes();if(!silent)toast('노션에 저장했습니다');const el=document.querySelector('.mintbl');if(el)render();}
+    if(res.ok&&j&&j.ok){
+      m.nid=j.nid||m.nid;m.nsync=todayStr();m.dirty=0;saveMinutes();
+      if(!silent){toast('노션에 저장했습니다');render();}
+      else{ /* 입력 중 포커스가 끊기지 않도록 전체 재렌더 대신 상태 아이콘만 갱신 */
+        try{const cell=document.querySelector('.mintbl tr[data-mid="'+CSS.escape(m.id)+'"] td.mn-nt');
+          if(cell)cell.innerHTML='<span class="mn-ok" title="노션 저장됨'+(m.nsync?' · '+esc(m.nsync):'')+'">✅</span>';}catch(e){}
+      }
+    }
     else{if(!silent)toast('노션 전송 실패: '+((j&&j.error)||res.status));}
   }catch(e){if(!silent)toast('노션 전송 오류 · 연동 주소/네트워크 확인');}
 }
@@ -5554,6 +5561,23 @@ async function mnTranslateAll(){
   }
   saveMinutes();render();toast(ok?`한국어 번역 완료 ${ok}건 · 노션 전송으로 반영하세요`:'번역 실패 · val 코드(v8) 업데이트를 확인하세요');
 }
+async function mnTranslateOne(i){ /* 특정 한 건만 재번역 (다른 회의록은 건드리지 않음) */
+  const m=MINUTES[i];if(!m)return;
+  if(!NPROXY){toast('노션 연동 주소를 먼저 연결하세요');return;}
+  toast('번역 중…');
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'translate',text:(m.full||m.summary||'')})});
+    const j=await res.json().catch(()=>({}));
+    if(j&&j.ok&&j.text){
+      m.full=j.text;m.summary=j.brief||j.text;m.dirty=1;
+      if(mnHasCJK(m.title)){
+        const r2=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'translate',text:m.title})});
+        const j2=await r2.json().catch(()=>({}));if(j2&&j2.ok&&j2.text)m.title=j2.text.split('\n')[0];
+      }
+      saveMinutes();render();toast('번역 완료 · 노션 전송으로 반영하세요');
+    }else{toast('번역 실패 · val 코드(v8/v9) 배포 여부를 확인하세요');}
+  }catch(e){toast('번역 오류 · 연동 주소/네트워크 확인');}
+}
 function mnFixDates(silent){
   const y=String(YEAR||2026);const nrm=x=>String(x||'').replace(/^\[[^\]]*\]\s*/,'').replace(/\s+/g,'').toLowerCase();
   let n=0;
@@ -5587,11 +5611,11 @@ function renderMinutes(){
   h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
   h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:230px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
   if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">회의록이 없습니다. 캘린더에 회의를 등록하거나 「＋ 회의록 추가」를 누르세요.</td></tr>`;
-  list.forEach(({m,i},n1)=>{const n0=MNPAGE*PER+n1;h+=`<tr>
+  list.forEach(({m,i},n1)=>{const n0=MNPAGE*PER+n1;const cjk=NPROXY&&(mnHasCJK(m.summary)||mnHasCJK(m.title));h+=`<tr data-mid="${esc(m.id)}">
     <td class="mut">${n0+1}</td>
     <td class="rl mn-tt">${minTitleCell(m,i)}</td>
     <td class="mn-dt"><input type="text" value="${esc(mdShort(m.date))}" onchange="editMinuteDate(${i},this.value)" placeholder="8/21" title="${esc(m.date||'')} · 월/일 입력"></td>
-    <td class="rl mn-sm">${minSumCell(m,i)}</td>
+    <td class="rl mn-sm">${minSumCell(m,i)}${cjk?`<button class="mn-more" style="color:#2f6ea3" onclick="mnTranslateOne(${i})" title="이 회의록만 한국어로 재번역">🌐 이 항목만 번역</button>`:''}</td>
     <td class="mn-nt">${(m.nid&&!m.dirty)?`<span class="mn-ok" title="노션 저장됨${m.nsync?' · '+esc(m.nsync):''}">✅</span>`:`<button class="mn-send${m.nid?' upd':''}" onclick="notionPushMin(${i})" title="${m.nid?'수정됨 · 노션 갱신':'노션에 전송'}">${m.nid?'↻':'↑'}</button>`}</td>
     <td style="text-align:center"><button class="mile-del" onclick="delMinute(${i})">🗑</button></td>
   </tr>`;});
