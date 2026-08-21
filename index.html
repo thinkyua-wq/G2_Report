@@ -2352,7 +2352,7 @@ body.vw-ro .lb-full{display:none}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M190</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M191</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5406,7 +5406,7 @@ async function plaudPull(silent){ /* PLAUD(Zapier) 요약 가져오기 → 회�
     items.forEach(it=>{
       const key='pl:'+(it.nid||it.id);
       if(MINUTES.some(m=>m.plaud===key))return;
-      MINUTES.unshift({id:'mn'+(it.id||Date.now()),calId:'',plaud:key,title:'[PLAUD] '+(it.title||'회의'),date:(it.date||todayStr()).slice(0,10),summary:it.summary||'',nid:it.nid||'',nsync:todayStr(),link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
+      MINUTES.unshift({id:'mn'+(it.id||Date.now()),calId:'',plaud:key,title:'[PLAUD] '+(it.title||'회의'),date:(it.date||todayStr()).slice(0,10),summary:(it.brief||it.summary||''),full:(it.summary||''),nid:it.nid||'',nsync:todayStr(),link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
     if(n){saveMinutes();render();}
     if(!silent)toast(n?`PLAUD 회의요약 ${n}건을 회의록에 추가했습니다 (노션에도 이미 저장됨)`:'새로 들어온 PLAUD 요약이 없습니다');
   }catch(e){if(!silent)toast('PLAUD 가져오기 오류 · 연동 주소 확인');}
