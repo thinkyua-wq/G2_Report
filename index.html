@@ -2335,7 +2335,15 @@ body.vw-ro .lb-full{display:none}
 /* 회의록 표 글자 20% 증대 */
 .mintbl,.mintbl td,.mintbl th{font-size:13.5px}
 .mn-btns{display:inline-flex;gap:5px;margin-left:10px;flex-wrap:wrap}
-.mintbl .mn-tt input.mn-ti{white-space:normal;font-size:12.5px!important;line-height:1.35;height:auto;min-height:34px;padding:3px 5px;word-break:keep-all}
+.mintbl textarea.mn-ti{width:100%;min-width:0;white-space:pre-wrap;font-size:12.5px!important;line-height:1.35;min-height:36px;padding:3px 5px;word-break:keep-all;overflow-wrap:anywhere;resize:none;border:1px solid transparent;background:transparent;font-family:inherit}
+.mintbl textarea.mn-ti:hover{border-color:var(--ln);background:#fff}
+.mintbl textarea.mn-ti:focus{border-color:var(--accent);background:#fff;outline:none}
+.mr-cum{display:flex;align-items:center;gap:5px;margin:0 0 10px;flex-wrap:wrap}
+.mr-cum .pl{font-size:11px;font-weight:700;color:var(--dim)}
+.mr-cum button{font-size:11.5px;font-weight:700;border:1px solid var(--ln);background:#fff;color:var(--dim);border-radius:6px;padding:4px 12px;cursor:pointer}
+.mr-cum button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mr-cum .hint{font-size:11px;color:var(--faint);margin-left:4px}
+.mn-sort{font:inherit;font-size:11.5px;border:1px solid var(--ln);border-radius:6px;padding:4px 8px;background:#fff;color:var(--dim);cursor:pointer;max-width:170px}
 .mintbl .mn-sm{position:relative}
 .mintbl .rep-sum.clamp7{max-height:calc(1.5em * 7);overflow:hidden}
 .mintbl .mn-more{display:block;margin-top:2px;font-size:10.5px;font-weight:700;color:var(--accent);background:none;border:0;cursor:pointer;padding:0}
@@ -2373,7 +2381,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M197</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.17-M203</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3980,6 +3988,7 @@ function setOVtab(t){
     if(t==='week'){gotoLastUpWeek();}
     else if(t==='kanban'){kanSyncWeekMonth();}
     else if(t==='ops'){OPSTAB='assign';}
+    else if(t==='sched'){PERIOD='month';EOMSEL=false;MEND='';}
     else {PERIOD='month';EOMSEL=false;MEND='';}
   } else OVTAB=t;
   render();}
@@ -4654,9 +4663,22 @@ function mrTeamTiles(extra){ // 중화팀과제 KPI = 담당자별 주요내용
     </div>`;
   return h+mrOwnerCards(fm,plan);
 }
+function mrMonthTilesCur(extra,k,n){ /* 당월(선택월) 기준 타일 */
+  const g=sc=>{const D=MDEAL[String(MONTH)]||[];const a=ovScopeAggFrom(D,sc);return {t:a.exTm||0,a:a.exA||0,st:a.suTm||0,sa:a.suA||0};};
+  const A=g('전체'),C=g('중국'),T=g('대만');
+  const tile=(lb,val,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
+  let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
+  h+=tile(MONTH+'월 수출',A.a,A.t?A.a/A.t:null,`${MONTH}월 목표 ${n(A.t)} · 차이 ${n(A.a-A.t)}`);
+  h+=tile('중국 '+MONTH+'월 수출',C.a,C.t?C.a/C.t:null,`목표 ${n(C.t)} · 비중 ${A.a?Math.round(C.a/A.a*100):0}%`);
+  h+=tile('대만 '+MONTH+'월 수출',T.a,T.t?T.a/T.t:null,`목표 ${n(T.t)} · 비중 ${A.a?Math.round(T.a/A.a*100):0}%`);
+  h+=tile(MONTH+'월 수금',A.sa,A.st?A.sa/A.st:null,`${MONTH}월 목표 ${n(A.st)} · 차이 ${n(A.sa-A.st)}`);
+  if(extra)h+=extra;
+  return h+'</div>';
+}
 function mrMonthTiles(extra){
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH);
   const k=v=>Math.round((v||0)/1000),n=v=>k(v).toLocaleString('en-US');
+  if(MRCUM==='mon')return mrMonthTilesCur(extra,k,n);
   const tile=(lb,val,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
   h+=tile('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`전체목표 ${n(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`);
@@ -4718,7 +4740,7 @@ function mrComboChart(label,scope){
   const SEL=Math.max(1,Math.min(12,+MONTH||12));   // 상단 「월」 선택값과 연동
   const lim=SEL;                                   // 1~선택월까지만 표시
   const view=rows.filter(r=>r.m<=lim);
-  const W2=460,H=300,L=56,R=52,TP=22,B=38;
+  const W2=460,H=300,L=56,R=52,TP=26,B=(typeof MRCUM!=='undefined'&&MRCUM==='sum')?38:52;
   const base=H-B;
   const mMax=Math.max(1,...view.map(r=>Math.max(r.t||0,r.a||0)))*1.55;
   const cMax=Math.max(1,YT,...view.map(r=>r.c||0))*1.10;
@@ -4740,15 +4762,28 @@ function mrComboChart(label,scope){
     if(r.c!=null){lp.push(`${cx.toFixed(1)},${YC(r.c).toFixed(1)}`);
       const lastP=(r.m===lastC);
       dots+=`<circle cx="${cx.toFixed(1)}" cy="${YC(r.c).toFixed(1)}" r="${lastP?5.5:3.6}" fill="#fff" stroke="#1e6f5c" stroke-width="${lastP?2.5:2}"/>`;
-      if(lastP){const rt=(cx<L+(W2-L-R)*0.62);dots+=`<text x="${(cx+(rt?9:-9)).toFixed(1)}" y="${(YC(r.c)-6).toFixed(1)}" text-anchor="${rt?'start':'end'}" font-size="10.5" font-weight="800" fill="#1e6f5c">누적 ${r.c.toLocaleString('en-US')}</text>`;}}
+      }
+    if(MRCUM!=='sum'){ /* 월 아래 목표/실적 소형 표기 */
+      const fs=lim>9?7.6:8.6;
+      if(r.t!=null)xl+=`<text x="${cx}" y="${H-25}" text-anchor="middle" font-size="${fs}" fill="#9aa2ad">${r.t.toLocaleString('en-US')}</text>`;
+      if(r.a!=null)xl+=`<text x="${cx}" y="${H-17}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#3f6b52">${r.a.toLocaleString('en-US')}</text>`;
+    }
   });
+  let cumTop='';
+  if(lastC>0&&rows[lastC-1].c!=null){
+    const cx=X(lastC), cy=YC(rows[lastC-1].c);
+    const tx=Math.max(L+34,Math.min(W2-R-34,cx));          // 좌우 넘침 방지
+    const ty=Math.max(12,cy-13);                            // 꼭지점 위 · 상단 밖 방지
+    const lb=`1~${lastC}월 누적 ${rows[lastC-1].c.toLocaleString('en-US')}`;
+    cumTop=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1e6f5c" stroke="#fff" stroke-width="3.5" paint-order="stroke">${lb}</text>`;
+  }
   const goal=YT?`<line x1="${L}" y1="${YC(YT)}" x2="${W2-R}" y2="${YC(YT)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${YC(YT)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">연간목표 ${YT.toLocaleString('en-US')}</text>`:'';
   const line=lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:'';
   const done=view.filter(r=>r.a!=null&&r.t);
   const lr=SEL?(rows[SEL-1].a!=null?rows[SEL-1]:null):(done.slice(-1)[0]||null);
   const cLast=lastC>0?rows[lastC-1].c:0;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 목표대비실적 · 누적 <span>1~${SEL}월 · 상단 「월」 선택과 연동</span></div>
-    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}</svg>
+  return `<div class="omc"><div class="omc-h">${esc(label)} ${MRCUM==='mon'?'월별 목표대비실적':'목표대비실적 · 누적'} <span>${MRCUM==='mon'?SEL+'월 중심':'1~'+SEL+'월'} · 상단 「월」 선택과 연동</span></div>
+    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}${cumTop}</svg>
     <div class="omc-b"><span>${lr?`${lr.m}월 목표 ${lr.t.toLocaleString('en-US')} · 실적 ${lr.a.toLocaleString('en-US')} · <b>${Math.round(lr.a/lr.t*100)}%</b> │ 1~${lastC>0?lastC:lr.m}월 누적 ${cLast.toLocaleString('en-US')} / 연간 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b>`:(SEL?`${SEL}월 실적 없음`:'월별 실적 입력 대기')}</span></div></div>`;
 }
 function mdealLastMonth(){let mx=0;Object.keys(MDEAL||{}).forEach(k=>{const m=+k;if(m&&(MDEAL[k]||[]).length&&m>mx)mx=m;});return mx||null;}
@@ -5028,7 +5063,7 @@ function renderOverview(){
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
   const isMR=(TAB==='mreport');
-  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별과제'],['week','주간과제'],['kanban','과제진행율'],['ops','지시사항F/U']]
+  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별과제'],['week','주간과제'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정']]
                  :[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
   if(isMR&&RO())OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban'].includes(k));
   let CT=isMR?MRTAB:OVTAB;
@@ -5055,6 +5090,8 @@ function renderOverview(){
     h+='<div style="margin-top:2px">'+viewKanban(activeRows())+'</div>';
   } else if(CT==='ops'){
     h+='<div style="margin-top:2px">'+renderOps()+'</div>';
+  } else if(CT==='sched'){
+    h+='<div style="margin-top:2px">'+renderRoutineMeetings()+'</div>';
   } else if(CT==='focus'){
     h+=renderFocus();
   } else if(CT==='month'){
@@ -5067,6 +5104,7 @@ function renderOverview(){
       h+=ovDealTable();
     } else if(TAB==='mreport'){
       h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 1~6월 입력 시 누적 자동 반영</span></div>`;
+      h+=`<div class="mr-cum"><span class="pl">보기</span><button class="${MRCUM==='mon'?'on':''}" onclick="setMrCum('mon')">당월</button><button class="${MRCUM==='sum'?'on':''}" onclick="setMrCum('sum')">누적</button><span class="hint">당월=${MONTH}월 목표·실적 중심 · 누적=1~${MONTH}월 합계</span></div>`;
       h+=`<div class="om-charts">${mrComboChart('전체','전체')}${mrComboChart('중국','중국')}${mrComboChart('대만','대만')}</div>`;
       {const em=mrEffMonth();h+=`<div class="ov-sec" style="margin-top:18px">${em}월 거래처별 실적 요약 <span class="ov-sub">${em!==MONTH?`${MONTH}월 데이터 미입력 → 최종 입력월(${em}월) 표시 · `:''}당월 실적 + 1~${em}월 누적</span></div>`;}
       h+=mrDealTable();
@@ -5429,7 +5467,7 @@ async function plaudPull(silent){ /* PLAUD(Zapier) 요약 가져오기 → 회�
     items.forEach(it=>{
       const key='pl:'+(it.nid||it.id);
       if(MINUTES.some(m=>m.plaud===key))return;
-      MINUTES.unshift({id:'mn'+(it.id||Date.now()),calId:'',plaud:key,title:'[PLAUD] '+(it.title||'회의'),date:(it.date||todayStr()).slice(0,10),summary:(it.brief||it.summary||''),full:(it.summary||''),nid:it.nid||'',nsync:todayStr(),link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
+      MINUTES.unshift({id:'mn'+(it.id||Date.now()),calId:'',plaud:key,title:'[PLAUD] '+(it.title||'회의'),date:(mnDateFromTitle(it.title,String(YEAR||2026))||(it.date||todayStr()).slice(0,10)),summary:(it.brief||it.summary||''),full:(it.summary||''),nid:it.nid||'',nsync:todayStr(),link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
     if(n){saveMinutes();render();}
     if(!silent)toast(n?`PLAUD 회의요약 ${n}건을 회의록에 추가했습니다 (노션에도 이미 저장됨)`:'새로 들어온 PLAUD 요약이 없습니다');
   }catch(e){if(!silent)toast('PLAUD 가져오기 오류 · 연동 주소 확인');}
@@ -5459,11 +5497,12 @@ function minTitles(){ /* 캘린더에 등록된 회의명 목록 */
   (MINUTES||[]).forEach(m=>{const t=String(m.title||'').trim();if(t&&!out.includes(t))out.push(t);});
   return out;}
 function minTitleCell(m,i){
-  const cur=String(m.title||'');const opts=minTitles();
-  return `<input class="mn-ti" list="mnTitles" value="${esc(cur)}" oninput="editMinute(${i},'title',this.value)" placeholder="회의명 선택·입력">`;
+  return `<textarea class="mn-ti" rows="2" oninput="autogrow(this);editMinute(${i},'title',this.value)" placeholder="">${esc(String(m.title||''))}</textarea>`;
 }
 let MNOPEN={}; function toggleMnSum(i){MNOPEN[i]=!MNOPEN[i];render();}
 let MNPAGE=0; function setMnPage(p){MNPAGE=Math.max(0,p);MNOPEN={};render();}
+let MNSORT='date'; try{MNSORT=localStorage.getItem('wr_mnsort')||'date';}catch(e){}
+function setMnSort(v){MNSORT=v;MNPAGE=0;MNOPEN={};try{localStorage.setItem('wr_mnsort',v);}catch(e){}render();}
 function minSumCell(m,i){
   const tx=String(m.summary||'');
   const lines=tx.split(/\n/).length;const many=(lines>7||tx.length>520);
@@ -5479,16 +5518,47 @@ async function notionPushAll(){
   let ok=0;for(const o of targets){try{await notionPushMin(o.i,true);if(MINUTES[o.i]&&MINUTES[o.i].nid)ok++;}catch(e){}}
   render();toast(`노션 전송 완료 ${ok}/${targets.length}건`);
 }
+/* 제목·캘린더로 일자 자동 보정 : "08-12 coxo회의" → 2026-08-12 · 같은 회의명 캘린더 일정과 매칭 */
+function mnDateFromTitle(t,y){
+  const s0=String(t||'').replace(/^\[[^\]]*\]\s*/,'');
+  let m=s0.match(/(20\d{2})[-.\/](\d{1,2})[-.\/](\d{1,2})/);
+  if(m)return `${m[1]}-${String(+m[2]).padStart(2,'0')}-${String(+m[3]).padStart(2,'0')}`;
+  m=s0.match(/(^|[^\d])(\d{1,2})\s*[-.\/월]\s*(\d{1,2})\s*일?([^\d]|$)/);
+  if(m){const mo=+m[2],d=+m[3];if(mo>=1&&mo<=12&&d>=1&&d<=31)return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+  return '';
+}
+function mnFixDates(silent){
+  const y=String(YEAR||2026);const nrm=x=>String(x||'').replace(/^\[[^\]]*\]\s*/,'').replace(/\s+/g,'').toLowerCase();
+  let n=0;
+  (MINUTES||[]).forEach(m=>{
+    let d=mnDateFromTitle(m.title,y);                       /* ① 제목의 날짜 */
+    if(!d&&m.calId){const ev=(CALLIST||[]).find(x=>x.id===m.calId);if(ev)d=String(ev.sdate||ev.date||'').slice(0,10);}
+    if(!d){const tn=nrm(m.title);                            /* ② 같은 회의명 캘린더 일정 */
+      const hits=(CALLIST||[]).filter(x=>nrm(x.title)===tn&&(x.sdate||x.date));
+      if(hits.length===1)d=String(hits[0].sdate||hits[0].date).slice(0,10);}
+    if(d&&d!==m.date){m.date=d;m.dirty=1;n++;}
+  });
+  if(n){saveMinutes();render();}
+  if(!silent)toast(n?`일자 ${n}건을 제목·달력 기준으로 맞췄습니다`:'모든 일자가 이미 달력과 일치합니다');
+  return n;
+}
 function renderMinutes(){
   minSyncFromCal();
-  const all=MINUTES.map((m,i)=>({m,i})).sort((a,b)=>String(b.m.date||'').localeCompare(String(a.m.date||'')));
+  if(!renderMinutes._fixed){renderMinutes._fixed=1;try{mnFixDates(true);}catch(e){}}
+  let all=MINUTES.map((m,i)=>({m,i}));
+  if(String(MNSORT||'').startsWith('t:')){const key=MNSORT.slice(2);all=all.filter(o=>String(o.m.title||'').trim()===key);}
+  const cmpD=(a,b)=>String(b.m.date||'').localeCompare(String(a.m.date||''));
+  if(MNSORT==='date_a')all.sort((a,b)=>-cmpD(a,b));
+  else if(MNSORT==='title')all.sort((a,b)=>String(a.m.title||'').localeCompare(String(b.m.title||''),'ko')||cmpD(a,b));
+  else if(MNSORT==='title_d')all.sort((a,b)=>String(b.m.title||'').localeCompare(String(a.m.title||''),'ko')||cmpD(a,b));
+  else all.sort(cmpD);
   const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
   if(MNPAGE>=pages)MNPAGE=pages-1; if(MNPAGE<0)MNPAGE=0;
   const list=all.slice(MNPAGE*PER,MNPAGE*PER+PER);
-  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· 캘린더 회의 자동 연동 · ${MINUTES.length}건</span></h3><span class="unit">최신 회의가 맨 위 · 입력 즉시 자동저장${NPROXY?' · 노션 자동 전송(3초)':''}</span><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송 회의록을 노션에 한 번에 전송">↑ 노션 일괄전송${(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length?' ('+(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length+')':''}</button>`:''}</span></div>`;
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· 캘린더 회의 자동 연동 · ${MINUTES.length}건</span></h3><span class="unit">최신 회의가 맨 위 · 입력 즉시 자동저장${NPROXY?' · 노션 자동 전송(3초)':''}</span><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button><button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button><select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송 회의록을 노션에 한 번에 전송">↑ 노션 일괄전송${(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length?' ('+(MINUTES||[]).filter(x=>!x.nid&&(String(x.title||'').trim()||String(x.summary||'').trim())).length+')':''}</button>`:''}</span></div>`;
   if(!NPROXY)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
   h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
-  h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:150px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
+  h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:230px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
   if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">회의록이 없습니다. 캘린더에 회의를 등록하거나 「＋ 회의록 추가」를 누르세요.</td></tr>`;
   list.forEach(({m,i},n1)=>{const n0=MNPAGE*PER+n1;h+=`<tr>
     <td class="mut">${n0+1}</td>
@@ -6883,6 +6953,8 @@ function setMileMgr(id){MILEMGR=id;if(GOALSUB==='meet'&&TAB==='goals'&&id!=='lee
 let MEETMINE=true; try{MEETMINE=localStorage.getItem('wr_meetmine')!=='0';}catch(e){}
 let MEETSEC={ev:false,rep:false,min:true}; try{MEETSEC=Object.assign({ev:false,rep:false,min:true},JSON.parse(localStorage.getItem('wr_meetsec')||'{}')||{});}catch(e){MEETSEC={ev:false,rep:false,min:true};}
 let MEETTAB='min'; try{MEETTAB=localStorage.getItem('wr_meettab')||'min';}catch(e){}
+let MRCUM='sum'; try{MRCUM=localStorage.getItem('wr_mrcum')||'sum';}catch(e){}
+function setMrCum(v){MRCUM=v;try{localStorage.setItem('wr_mrcum',v);}catch(e){}render();}
 function setMeetTab(k){MEETTAB=k;try{localStorage.setItem('wr_meettab',k);}catch(e){}render();}
 function setMeetMine(v){MEETMINE=!!v;try{localStorage.setItem('wr_meetmine',MEETMINE?'1':'0');}catch(e){}if(!MEETMINE)MILEMGR='';render();}
 function calMileMatrix(){
@@ -7916,8 +7988,8 @@ function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) 
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['report','주요보고'],['table','통합'],['sched','업무일정']];
-  if(GOALSUB==='meet')GOALSUB='goal'; /* 회의일정보고 = 별도 메뉴로 이동 */
+  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합']];
+  if(GOALSUB==='meet'||GOALSUB==='report'||GOALSUB==='sched')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정=업무현황 끝 */
   html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
   if(GOALSUB==='mgoal')return html+renderMGoals();
