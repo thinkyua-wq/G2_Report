@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M213</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M215</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4739,13 +4739,14 @@ function mrMonthChart(label,scope){
 let TMOPEN={};
 function tmToggle(k){TMOPEN[k]=!TMOPEN[k];render();}
 function niceStep(max,divs){const raw=Math.max(1e-9,max/(divs||3));const p=Math.pow(10,Math.floor(Math.log10(raw)));const n=raw/p;const m=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return m*p;}
-function mrComboChart(label,scope){
+function mrScopeRows(scope){
+  /* 1~(당월 또는 당월-1)월은 월간(MDEAL), 당월 실적이 아직 없으면 당월은 주차별(SPHIST)로 쪼개 이어붙임 */
   const k=v=>Math.round((v||0)/1000);
   const curM=Math.max(1,Math.min(12,+MONTH||12));
   const hasCurMonthly=!!(MDEAL[String(curM)]&&MDEAL[String(curM)].length);
   const monthLimit=hasCurMonthly?curM:curM-1;
   let cum=0,YT=0;
-  const rows=[];   // 통합 버킷: 1~(당월 또는 당월-1)월은 월간, 당월 실적이 아직 없으면 당월은 주차별로 쪼개서 이어붙임
+  const rows=[];
   for(let m=1;m<=monthLimit;m++){const D=MDEAL[String(m)];
     if(!D||!D.length){rows.push({wk:false,m,lb:m+'월',t:null,a:null,c:null});continue;}
     const g=ovScopeAggFrom(D,scope);
@@ -4765,24 +4766,24 @@ function mrComboChart(label,scope){
       if(hasA)cum+=g.exA; // 시트 값 = 그 주차 실적(증분) → 누적으로 이어붙임
       rows.push({wk:true,wIdx,iso:w.iso,lb:w.name,t:t||null,a:hasA?k(cum):null,c:hasA?k(cum):null});});
   }
-  const lim=rows.length;
-  const view=rows;
-  const W2=460,H=300,L=56,R=52,TP=26,B=38;
+  const rangeLb=hasCurMonthly?('1~'+curM+'월'):(monthLimit>=1?('1~'+monthLimit+'월+'+curM+'월 주차별'):(curM+'월 주차별'));
+  return {rows,YT,hasCurMonthly,monthLimit,curM,rangeLb};
+}
+/* 월별(당월은 주차별) 목표대비실적 · 막대그래프 전용(누적선 없음) */
+function mrBarChart(label,scope){
+  const {rows,rangeLb}=mrScopeRows(scope);
+  const view=rows, lim=view.length;
+  const W2=460,H=270,L=54,R=18,TP=22,B=38;
   const base=H-B;
-  const mMax=Math.max(1,...view.map(r=>Math.max(r.t||0,r.a||0)))*1.55;
-  const cMax=Math.max(1,YT,...view.map(r=>r.c||0))*1.10;
-  const band=(W2-L-R)/Math.max(1,lim), bw=Math.max(5,Math.min(18,band*0.22));
+  const mMax=Math.max(1,...view.map(r=>Math.max(r.t||0,r.a||0)))*1.2;
+  const band=(W2-L-R)/Math.max(1,lim), bw=Math.max(5,Math.min(18,band*0.24));
   const X=i=>L+band*i+band/2;
   const Y=v=>TP+(base-TP)*(1-v/mMax);
-  const YC=v=>TP+(base-TP)*(1-v/cMax);
-  const stepL=niceStep(mMax,3);
+  const step=niceStep(mMax,3);
   let grid='',yl='';
-  for(let v=0;v<=mMax;v+=stepL){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#eef1f5"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#9aa2ad">${Math.round(v).toLocaleString('en-US')}</text>`;}
-  const stepC=niceStep(cMax,3);
-  for(let v=0;v<=cMax;v+=stepC)yl+=`<text x="${W2-R+7}" y="${YC(v)+4}" text-anchor="start" font-size="10" fill="#b3bac4">${Math.round(v).toLocaleString('en-US')}</text>`;
-  let bars='',xl='',dots='',lp=[],lastIdx=-1;
+  for(let v=0;v<=mMax;v+=step){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#eef1f5"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#9aa2ad">${Math.round(v).toLocaleString('en-US')}</text>`;}
+  let bars='',xl='';
   const curWkIso=(PERIOD==='week'&&WEEKS[W])?WEEKS[W].iso:null;
-  view.forEach((r,i)=>{if(r.c!=null)lastIdx=i;});
   view.forEach((r,i)=>{const cx=X(i);
     const on=r.wk?(curWkIso!=null&&r.iso===curWkIso):(!r.wk&&r.m===MONTH);
     const isCur=r.wk||(r.m===MONTH);
@@ -4790,6 +4791,33 @@ function mrComboChart(label,scope){
     xl+=`<text class="omc-x" onclick="${onclick}" x="${cx}" y="${H-11}" text-anchor="middle" font-size="${lim>9?10:11}" fill="${on?'#1e6f5c':(isCur?'#22262b':'#8b93a0')}" font-weight="${(on||isCur)?'800':'600'}">${r.lb}</text>`;
     if(r.t)bars+=`<rect x="${(cx-bw-1.5).toFixed(1)}" y="${Y(r.t).toFixed(1)}" width="${bw}" height="${(base-Y(r.t)).toFixed(1)}" rx="2.5" fill="#c9ddd0"/>`;
     if(r.a!=null)bars+=`<rect x="${(cx+1.5).toFixed(1)}" y="${Y(r.a).toFixed(1)}" width="${bw}" height="${(base-Y(r.a)).toFixed(1)}" rx="2.5" fill="#5b8a6e"/>`;
+  });
+  let lastData=null; for(let i=view.length-1;i>=0;i--){if(view[i].t!=null||view[i].a!=null){lastData=view[i];break;}}
+  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 목표대비실적 <span>목표(회색)·실적(초록) · ${rangeLb}</span></div>
+    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${xl}</svg>
+    <div class="omc-b"><span>${lastData?`${lastData.lb} ${lastData.wk?'주간':'월'}목표 ${(lastData.t||0).toLocaleString('en-US')} · 실적 ${(lastData.a||0).toLocaleString('en-US')}`:'실적 입력 대기'}</span></div></div>`;
+}
+/* 1월~현재 누적 수출·수금 · 누적선 전용(막대 없음) */
+function mrCumChart(label,scope){
+  const {rows,YT,rangeLb}=mrScopeRows(scope);
+  const view=rows, lim=view.length;
+  const W2=460,H=270,L=56,R=18,TP=26,B=38;
+  const base=H-B;
+  const cMax=Math.max(1,YT,...view.map(r=>r.c||0))*1.10;
+  const band=(W2-L-R)/Math.max(1,lim);
+  const X=i=>L+band*i+band/2;
+  const YC=v=>TP+(base-TP)*(1-v/cMax);
+  const step=niceStep(cMax,3);
+  let grid='',yl='';
+  for(let v=0;v<=cMax;v+=step){grid+=`<line x1="${L}" y1="${YC(v)}" x2="${W2-R}" y2="${YC(v)}" stroke="#eef1f5"/>`;yl+=`<text x="${L-8}" y="${YC(v)+4}" text-anchor="end" font-size="10" fill="#9aa2ad">${Math.round(v).toLocaleString('en-US')}</text>`;}
+  let xl='',dots='',lp=[],lastIdx=-1;
+  const curWkIso=(PERIOD==='week'&&WEEKS[W])?WEEKS[W].iso:null;
+  view.forEach((r,i)=>{if(r.c!=null)lastIdx=i;});
+  view.forEach((r,i)=>{const cx=X(i);
+    const on=r.wk?(curWkIso!=null&&r.iso===curWkIso):(!r.wk&&r.m===MONTH);
+    const isCur=r.wk||(r.m===MONTH);
+    const onclick=r.wk?`setWeek(${r.wIdx})`:`setMonthSel('${r.m}')`;
+    xl+=`<text class="omc-x" onclick="${onclick}" x="${cx}" y="${H-11}" text-anchor="middle" font-size="${lim>9?10:11}" fill="${on?'#1e6f5c':(isCur?'#22262b':'#8b93a0')}" font-weight="${(on||isCur)?'800':'600'}">${r.lb}</text>`;
     if(r.c!=null){lp.push(`${cx.toFixed(1)},${YC(r.c).toFixed(1)}`);
       const lastP=(i===lastIdx);
       dots+=`<circle cx="${cx.toFixed(1)}" cy="${YC(r.c).toFixed(1)}" r="${lastP?5.5:3.6}" fill="#fff" stroke="#1e6f5c" stroke-width="${lastP?2.5:2}"/>`;
@@ -4798,34 +4826,57 @@ function mrComboChart(label,scope){
   let cumTop='';
   if(lastIdx>=0&&view[lastIdx].c!=null){
     const cx=X(lastIdx), cy=YC(view[lastIdx].c);
-    const tx=Math.max(L+34,Math.min(W2-R-34,cx));          // 좌우 넘침 방지
-    const ty=Math.max(12,cy-13);                            // 꼭지점 위 · 상단 밖 방지
+    const tx=Math.max(L+34,Math.min(W2-R-34,cx));
+    const ty=Math.max(12,cy-13);
     const lb=`1~${view[lastIdx].lb} 누적 ${view[lastIdx].c.toLocaleString('en-US')}`;
     cumTop=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1e6f5c" stroke="#fff" stroke-width="3.5" paint-order="stroke">${lb}</text>`;
   }
   const goal=YT?`<line x1="${L}" y1="${YC(YT)}" x2="${W2-R}" y2="${YC(YT)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${YC(YT)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">연간목표 ${YT.toLocaleString('en-US')}</text>`:'';
   const line=lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:'';
-  const lr=lastIdx>=0?view[lastIdx]:null;
   const cLast=lastIdx>=0?(view[lastIdx].c||0):0;
-  const rangeLb=hasCurMonthly?('1~'+curM+'월'):(monthLimit>=1?('1~'+monthLimit+'월+'+curM+'월 주차별'):(curM+'월 주차별'));
-  return `<div class="omc"><div class="omc-h">${esc(label)} 목표대비실적 · 누적 <span>${rangeLb} · 상단 「월」 선택과 연동</span></div>
-    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}${cumTop}</svg>
-    <div class="omc-b"><span>${(lr&&lr.a!=null&&lr.t)?`${lr.lb} ${lr.wk?'주간':'월'}목표 ${lr.t.toLocaleString('en-US')} · 누적실적 ${lr.a.toLocaleString('en-US')} │ 연간 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b>`:'실적 입력 대기'}</span></div></div>`;
+  return `<div class="omc"><div class="omc-h">${esc(label)} 1월~현재 누적 <span>${rangeLb} · 상단 「월」 선택과 연동</span></div>
+    <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${goal}${line}${dots}${xl}${cumTop}</svg>
+    <div class="omc-b"><span>누적실적 ${cLast.toLocaleString('en-US')} │ 연간목표 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b></span></div></div>`;
 }
 function mdealLastMonth(){let mx=0;Object.keys(MDEAL||{}).forEach(k=>{const m=+k;if(m&&(MDEAL[k]||[]).length&&m>mx)mx=m;});return mx||null;}
-function mrEffMonth(){const D=mdealRows(MONTH);if(D.length)return MONTH;const lm=mdealLastMonth();return lm||MONTH;}
-function mrDealTable(){const em=mrEffMonth();if(em===MONTH)return mrDealTable0();const sv=MONTH;MONTH=em;let r='';try{r=mrDealTable0();}finally{MONTH=sv;}return r;}
+/* 해당 월의 「거래처실적_월간」 데이터가 아직 없을 때, 그 달의 「거래처실적_주간」(SPHIST) 주차별 실적을
+   선택 주차까지 이어 합산해 임시 당월 거래처 행을 만든다 · exTm/suTm(당월목표)은 주차마다 동일하게 실려오므로 최신 값 사용 */
+function mrDealMonthRows(month){
+  const D0=mdealRows(month);
+  if(D0.length)return {rows:D0,fromWeek:false,uptoWeek:null};
+  const ws=buildWeeks(month).filter(w=>w.iso);
+  if(!ws.length)return {rows:[],fromWeek:false,uptoWeek:null};
+  const acc={},order=[];let lastData=null;
+  ws.forEach(w=>{
+    const key='W'+w.iso;
+    const dl=(SPHIST[key]&&SPHIST[key].deal)||[];
+    if(!dl.length)return;
+    lastData=w;
+    dl.forEach(d=>{const dealer=d.dealer;if(!dealer)return;
+      if(!acc[dealer]){acc[dealer]={dealer,grp:d.grp,owner:d.owner,exT:null,exTm:null,exA:0,suT:null,suTm:null,suA:0};order.push(dealer);}
+      const a=acc[dealer];a.exA+=(+d.exA||0);a.suA+=(+d.suA||0);
+      if(d.exT!=null)a.exT=d.exT;if(d.exTm!=null)a.exTm=d.exTm;
+      if(d.suT!=null)a.suT=d.suT;if(d.suTm!=null)a.suTm=d.suTm;
+      if(d.owner)a.owner=d.owner;});
+  });
+  return {rows:order.map(dl=>acc[dl]),fromWeek:true,uptoWeek:lastData};
+}
+function mrEffMonth(){if(mdealRows(MONTH).length)return MONTH; if(mrDealMonthRows(MONTH).rows.length)return MONTH; const lm=mdealLastMonth();return lm||MONTH;}
+function mrDealTable(){return mrDealTable0();}
 function mrDealTable0(){
-  const D=mdealRows(MONTH);
+  const {rows:D,fromWeek,uptoWeek}=mrDealMonthRows(MONTH);
   const k=n2=>(n2==null||n2==='')?null:Math.round(n2/1000);
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
-  const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
-  const num=n2=>n2==null?'\u2014':n2.toLocaleString('en-US');
-  const cumOf=(dl,f)=>{let c=0,any=false;for(let m=1;m<=MONTH;m++){(MDEAL[String(m)]||[]).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=x[f];any=true;}});}return any?c:null;};
+  const pct=r=>r==null?'—':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
+  const num=n2=>n2==null?'—':n2.toLocaleString('en-US');
+  const wkExtra={}; if(fromWeek)D.forEach(d=>{wkExtra[d.dealer]={ex:d.exA||0,su:d.suA||0};});
+  const cumOf=(dl,f)=>{let c=0,any=false;const upToM=fromWeek?MONTH-1:MONTH;for(let m=1;m<=upToM;m++){(MDEAL[String(m)]||[]).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=x[f];any=true;}});}
+    if(fromWeek&&wkExtra[dl]){const add2=f==='exA'?wkExtra[dl].ex:(f==='suA'?wkExtra[dl].su:0);if(add2){c+=add2;any=true;}}
+    return any?c:null;};
   let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
     +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월)</th><th>달성율</th><th>누적실적</th><th>누적달성율</th>'
     +'<th>수금목표<br>(전체)</th><th>수금실적<br>(당월)</th><th>누적수금</th><th>수금<br>누적달성율</th></tr></thead><tbody>';
-  if(!D.length){h+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
+  if(!D.length){h+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
   const acc={exT:0,exTm:null,exA:0,suT:0,suA:0,cA:0,cS:0};
   const accCn={...acc};const accAll={...acc};
   const row=(cls,g,d)=>{
@@ -4844,7 +4895,7 @@ function mrDealTable0(){
     const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
     h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td class="rl"></td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
   h+='</tbody></table>';
-  h+='<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
+  h+=fromWeek?`<div class="ov-foot">※ ${MONTH}월 「거래처실적_월간」 미입력 → 「거래처실적_주간」 W${uptoWeek?uptoWeek.iso:''}까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · 달성율 = 당월 실적 ÷ 당월 목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:'<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
   return h;
 }
 function renderTeamWeekCards(wk){
@@ -5129,9 +5180,11 @@ function renderOverview(){
       h+=`<div class="ov-sec" style="margin-top:18px">${esc(ovWeekKey())} 거래처별 실적 요약</div>`;
       h+=ovDealTable();
     } else if(TAB==='mreport'){
-      h+=`<div class="ov-sec">본사 실적 · 1월~현재 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 당월 실적이 아직 없으면 「거래처실적_주간」 기준 주차별로 이어서 표시</span></div>`;
-      h+=`<div class="om-charts">${mrComboChart('전체','전체')}${mrComboChart('중국','중국')}${mrComboChart('대만','대만')}</div>`;
-      {const em=mrEffMonth();h+=`<div class="ov-sec" style="margin-top:18px">${em}월 거래처별 실적 요약 <span class="ov-sub">${em!==MONTH?`${MONTH}월 데이터 미입력 → 최종 입력월(${em}월) 표시 · `:''}당월 실적 + 1~${em}월 누적</span></div>`;}
+      h+=`<div class="ov-sec">본사 실적 · 월별 목표대비실적 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 당월 실적이 아직 없으면 「거래처실적_주간」 기준 주차별로 이어서 표시</span></div>`;
+      h+=`<div class="om-charts">${mrBarChart('전체','전체')}${mrBarChart('중국','중국')}${mrBarChart('대만','대만')}</div>`;
+      h+=`<div class="ov-sec" style="margin-top:18px">본사 실적 · 1월~현재 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 목표대비실적과 동일 기준 누적</span></div>`;
+      h+=`<div class="om-charts">${mrCumChart('전체','전체')}${mrCumChart('중국','중국')}${mrCumChart('대만','대만')}</div>`;
+      {const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);h+=`<div class="ov-sec" style="margin-top:18px">${MONTH}월 거래처별 실적 요약 <span class="ov-sub">${em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:''}당월 실적 + 1~${MONTH}월 누적</span></div>`;}
       h+=mrDealTable();
       h+='<div style="margin-top:18px">'+tripPanelHead('month')+tripPanel('month')+'</div>';
     } else {
@@ -5785,17 +5838,7 @@ function mgrAssignStrip(mid){
     <span class="asg-d">${o.a.due?esc(fmtDue(o.a.due)):'미정'}</span></div>`).join('')}</div>`;
 }
 function viewRR(rows){
-  // 이번주 과제(주간보고) 순서와 과제상세 매칭 정렬
-  try{const wkArr=(typeof wkData==='function')?wkData():[];
-    if(wkArr.length&&Array.isArray(rows)){
-      const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
-      const ord={};wkArr.forEach((r,i)=>{ord[r.m+'|'+norm(r.t)]=i;});
-      const oi=t=>{const tn=norm(t.name||(t.t&&t.t.name));const mg=t.mgr||(t.t&&t.t.mgr);const k=mg+'|'+tn;
-        if(k in ord)return ord[k];
-        for(const kk in ord){if(!kk.startsWith(mg+'|'))continue;const nn=kk.slice(kk.indexOf('|')+1);if(nn.includes(tn)||tn.includes(nn))return ord[kk];}
-        return 9999;};
-      rows.sort((a,b)=>oi(a)-oi(b));
-    }}catch(e){}
+  // 정렬은 sortRows() 기준(지연주의 -> 우선순위 상/중/하 -> 완료예정일 -> 진행율)을 그대로 사용 · 원본 시트 행순서로 덮어쓰지 않음
   const fm=document.getElementById('fMgr').value;
   const inMR=(TAB==='mreport');
   let html=inMR?'':'<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
