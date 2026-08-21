@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M210</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M212</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3110,7 +3110,7 @@ function render(){
       let h=`<span class="pl">연도</span><select class="per-dd" onchange="setYear(this.value)">`+
         [2025,2026,2027].map(y=>`<option value="${y}" ${y===YEAR?'selected':''}>${y}년</option>`).join('')+`</select>`;
       h+=`<span class="pl">월</span><select class="per-dd" onchange="setMonthSel(this.value)"><option value="year" ${PERIOD==='year'?'selected':''}>연간 전체</option>`+
-        ((TAB==='mreport')?[1,2,3,4,5,6,7,8,9,10,11,12]:[7,8,9,10,11,12]).map(m=>`<option value="${m}" ${PERIOD!=='year'&&m===MONTH?'selected':''}>${m}월</option>`).join('')+`</select>`;
+        ((TAB==='mreport'||TAB==='calmonth')?[1,2,3,4,5,6,7,8,9,10,11,12]:[7,8,9,10,11,12]).map(m=>`<option value="${m}" ${PERIOD!=='year'&&m===MONTH?'selected':''}>${m}월</option>`).join('')+`</select>`;
       const noWk=(TAB==='mreport'&&(MRTAB==='month'||MRTAB==='focus'));
       if(PERIOD!=='year'&&!noWk){
         h+=`<span class="pl">주</span><select class="per-dd" onchange="selWeekDD(this.value)">`;
@@ -4683,9 +4683,9 @@ function mrMonthTilesCur(extra,k,n){ /* 당월(선택월) 기준 타일 · 선�
   return h+(em!==MONTH?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:11px;color:var(--risk);margin-top:2px">※ ${MONTH}월 거래처실적 데이터가 아직 없어 최종 입력월(${em}월) 기준으로 표시 중</div>`:'')+'</div>';
 }
 function mrMonthTiles(extra){
+  /* 팀종합현황·업무현황(본사실적) KPI지표 기준 = 항상 1월~현재월 누적 (당월 단독 보기는 사용하지 않음) */
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH);
   const k=v=>Math.round((v||0)/1000),n=v=>k(v).toLocaleString('en-US');
-  if(MRCUM==='mon')return mrMonthTilesCur(extra,k,n);
   const tile=(lb,val,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
   h+=tile('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`전체목표 ${n(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`);
@@ -4736,23 +4736,38 @@ function tmToggle(k){TMOPEN[k]=!TMOPEN[k];render();}
 function niceStep(max,divs){const raw=Math.max(1e-9,max/(divs||3));const p=Math.pow(10,Math.floor(Math.log10(raw)));const n=raw/p;const m=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return m*p;}
 function mrComboChart(label,scope){
   const k=v=>Math.round((v||0)/1000);
-  const rows=[];let cum=0,YT=0;
-  for(let m=1;m<=12;m++){const D=MDEAL[String(m)];
-    if(!D||!D.length){rows.push({m,t:null,a:null,c:null});continue;}
+  const curM=Math.max(1,Math.min(12,+MONTH||12));
+  const hasCurMonthly=!!(MDEAL[String(curM)]&&MDEAL[String(curM)].length);
+  const monthLimit=hasCurMonthly?curM:curM-1;
+  let cum=0,YT=0;
+  const rows=[];   // 통합 버킷: 1~(당월 또는 당월-1)월은 월간, 당월 실적이 아직 없으면 당월은 주차별로 쪼개서 이어붙임
+  for(let m=1;m<=monthLimit;m++){const D=MDEAL[String(m)];
+    if(!D||!D.length){rows.push({wk:false,m,lb:m+'월',t:null,a:null,c:null});continue;}
     const g=ovScopeAggFrom(D,scope);
     if(g.exT)YT=k(g.exT);
     const t=k(g.exTm||0), hasA=!!g.exA;
     if(hasA)cum+=g.exA;
-    rows.push({m,t:t||null,a:hasA?k(g.exA):null,c:hasA?k(cum):null});}
-  const SEL=Math.max(1,Math.min(12,+MONTH||12));   // 상단 「월」 선택값과 연동
-  const lim=SEL;                                   // 1~선택월까지만 표시
-  const view=rows.filter(r=>r.m<=lim);
-  const W2=460,H=300,L=56,R=52,TP=26,B=(typeof MRCUM!=='undefined'&&MRCUM==='sum')?38:58;
+    rows.push({wk:false,m,lb:m+'월',t:t||null,a:hasA?k(g.exA):null,c:hasA?k(cum):null});}
+  if(!hasCurMonthly){
+    buildWeeks(curM).forEach((w,wIdx)=>{
+      if(!w.iso)return; // 자리표시자 주차(데이터 없는 1~6월 등)는 표시하지 않음
+      const key='W'+w.iso;
+      const D=(SPHIST[key]&&SPHIST[key].deal&&SPHIST[key].deal.length)?SPHIST[key].deal:null;
+      if(!D){rows.push({wk:true,wIdx,iso:w.iso,lb:w.name,t:null,a:null,c:null});return;}
+      const g=ovScopeAggFrom(D,scope);
+      if(g.exT&&!YT)YT=k(g.exT);
+      const t=k(g.exTm||g.exT||0), hasA=!!g.exA;
+      if(hasA)cum+=g.exA; // 시트 값 = 그 주차 실적(증분) → 누적으로 이어붙임
+      rows.push({wk:true,wIdx,iso:w.iso,lb:w.name,t:t||null,a:hasA?k(cum):null,c:hasA?k(cum):null});});
+  }
+  const lim=rows.length;
+  const view=rows;
+  const W2=460,H=300,L=56,R=52,TP=26,B=38;
   const base=H-B;
   const mMax=Math.max(1,...view.map(r=>Math.max(r.t||0,r.a||0)))*1.55;
   const cMax=Math.max(1,YT,...view.map(r=>r.c||0))*1.10;
-  const band=(W2-L-R)/lim, bw=Math.max(5,Math.min(18,band*0.22));
-  const X=m=>L+band*(m-1)+band/2;
+  const band=(W2-L-R)/Math.max(1,lim), bw=Math.max(5,Math.min(18,band*0.22));
+  const X=i=>L+band*i+band/2;
   const Y=v=>TP+(base-TP)*(1-v/mMax);
   const YC=v=>TP+(base-TP)*(1-v/cMax);
   const stepL=niceStep(mMax,3);
@@ -4760,38 +4775,37 @@ function mrComboChart(label,scope){
   for(let v=0;v<=mMax;v+=stepL){grid+=`<line x1="${L}" y1="${Y(v)}" x2="${W2-R}" y2="${Y(v)}" stroke="#eef1f5"/>`;yl+=`<text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#9aa2ad">${Math.round(v).toLocaleString('en-US')}</text>`;}
   const stepC=niceStep(cMax,3);
   for(let v=0;v<=cMax;v+=stepC)yl+=`<text x="${W2-R+7}" y="${YC(v)+4}" text-anchor="start" font-size="10" fill="#b3bac4">${Math.round(v).toLocaleString('en-US')}</text>`;
-  let bars='',xl='',dots='',lp=[],lastC=-1;
-  rows.forEach(r=>{if(r.c!=null&&r.m<=lim)lastC=r.m;});
-  view.forEach(r=>{const cx=X(r.m),on=(SEL===r.m);
-    xl+=`<text class="omc-x" onclick="setMonthSel('${r.m}')" x="${cx}" y="${(typeof MRCUM!=='undefined'&&MRCUM==='sum')?(H-11):(H-6)}" text-anchor="middle" font-size="${lim>9?10:11}" fill="${on?'#1e6f5c':(r.m===MONTH?'#22262b':'#8b93a0')}" font-weight="${(on||r.m===MONTH)?'800':'600'}">${r.m}월</text>`;
+  let bars='',xl='',dots='',lp=[],lastIdx=-1;
+  const curWkIso=(PERIOD==='week'&&WEEKS[W])?WEEKS[W].iso:null;
+  view.forEach((r,i)=>{if(r.c!=null)lastIdx=i;});
+  view.forEach((r,i)=>{const cx=X(i);
+    const on=r.wk?(curWkIso!=null&&r.iso===curWkIso):(!r.wk&&r.m===MONTH);
+    const isCur=r.wk||(r.m===MONTH);
+    const onclick=r.wk?`setWeek(${r.wIdx})`:`setMonthSel('${r.m}')`;
+    xl+=`<text class="omc-x" onclick="${onclick}" x="${cx}" y="${H-11}" text-anchor="middle" font-size="${lim>9?10:11}" fill="${on?'#1e6f5c':(isCur?'#22262b':'#8b93a0')}" font-weight="${(on||isCur)?'800':'600'}">${r.lb}</text>`;
     if(r.t)bars+=`<rect x="${(cx-bw-1.5).toFixed(1)}" y="${Y(r.t).toFixed(1)}" width="${bw}" height="${(base-Y(r.t)).toFixed(1)}" rx="2.5" fill="#c9ddd0"/>`;
     if(r.a!=null)bars+=`<rect x="${(cx+1.5).toFixed(1)}" y="${Y(r.a).toFixed(1)}" width="${bw}" height="${(base-Y(r.a)).toFixed(1)}" rx="2.5" fill="#5b8a6e"/>`;
     if(r.c!=null){lp.push(`${cx.toFixed(1)},${YC(r.c).toFixed(1)}`);
-      const lastP=(r.m===lastC);
+      const lastP=(i===lastIdx);
       dots+=`<circle cx="${cx.toFixed(1)}" cy="${YC(r.c).toFixed(1)}" r="${lastP?5.5:3.6}" fill="#fff" stroke="#1e6f5c" stroke-width="${lastP?2.5:2}"/>`;
       }
-    if(MRCUM!=='sum'){ /* 월 라벨 위쪽에 목표/실적 (겹치지 않게 축 아래 3단) */
-      const fs=lim>9?7.2:8.2;
-      if(r.t!=null)xl+=`<text x="${cx}" y="${H-30}" text-anchor="middle" font-size="${fs}" fill="#a8b0ba">${r.t.toLocaleString('en-US')}</text>`;
-      if(r.a!=null)xl+=`<text x="${cx}" y="${H-19}" text-anchor="middle" font-size="${fs+0.4}" font-weight="700" fill="#3f6b52">${r.a.toLocaleString('en-US')}</text>`;
-    }
   });
   let cumTop='';
-  if(lastC>0&&rows[lastC-1].c!=null){
-    const cx=X(lastC), cy=YC(rows[lastC-1].c);
+  if(lastIdx>=0&&view[lastIdx].c!=null){
+    const cx=X(lastIdx), cy=YC(view[lastIdx].c);
     const tx=Math.max(L+34,Math.min(W2-R-34,cx));          // 좌우 넘침 방지
     const ty=Math.max(12,cy-13);                            // 꼭지점 위 · 상단 밖 방지
-    const lb=`1~${lastC}월 누적 ${rows[lastC-1].c.toLocaleString('en-US')}`;
+    const lb=`1~${view[lastIdx].lb} 누적 ${view[lastIdx].c.toLocaleString('en-US')}`;
     cumTop=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#1e6f5c" stroke="#fff" stroke-width="3.5" paint-order="stroke">${lb}</text>`;
   }
   const goal=YT?`<line x1="${L}" y1="${YC(YT)}" x2="${W2-R}" y2="${YC(YT)}" stroke="#b6bdc7" stroke-width="2" stroke-dasharray="7 6"/><text x="${W2-R}" y="${YC(YT)-6}" text-anchor="end" font-size="10" font-weight="700" fill="#8b93a0">연간목표 ${YT.toLocaleString('en-US')}</text>`:'';
   const line=lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:'';
-  const done=view.filter(r=>r.a!=null&&r.t);
-  const lr=SEL?(rows[SEL-1].a!=null?rows[SEL-1]:null):(done.slice(-1)[0]||null);
-  const cLast=lastC>0?rows[lastC-1].c:0;
-  return `<div class="omc"><div class="omc-h">${esc(label)} ${MRCUM==='mon'?'월별 목표대비실적':'목표대비실적 · 누적'} <span>${MRCUM==='mon'?SEL+'월 중심':'1~'+SEL+'월'} · 상단 「월」 선택과 연동</span></div>
+  const lr=lastIdx>=0?view[lastIdx]:null;
+  const cLast=lastIdx>=0?(view[lastIdx].c||0):0;
+  const rangeLb=hasCurMonthly?('1~'+curM+'월'):(monthLimit>=1?('1~'+monthLimit+'월+'+curM+'월 주차별'):(curM+'월 주차별'));
+  return `<div class="omc"><div class="omc-h">${esc(label)} 목표대비실적 · 누적 <span>${rangeLb} · 상단 「월」 선택과 연동</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}${cumTop}</svg>
-    <div class="omc-b"><span>${lr?`${lr.m}월 목표 ${lr.t.toLocaleString('en-US')} · 실적 ${lr.a.toLocaleString('en-US')} · <b>${Math.round(lr.a/lr.t*100)}%</b> │ 1~${lastC>0?lastC:lr.m}월 누적 ${cLast.toLocaleString('en-US')} / 연간 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b>`:(SEL?`${SEL}월 실적 없음`:'월별 실적 입력 대기')}</span></div></div>`;
+    <div class="omc-b"><span>${(lr&&lr.a!=null&&lr.t)?`${lr.lb} ${lr.wk?'주간':'월'}목표 ${lr.t.toLocaleString('en-US')} · 누적실적 ${lr.a.toLocaleString('en-US')} │ 연간 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b>`:'실적 입력 대기'}</span></div></div>`;
 }
 function mdealLastMonth(){let mx=0;Object.keys(MDEAL||{}).forEach(k=>{const m=+k;if(m&&(MDEAL[k]||[]).length&&m>mx)mx=m;});return mx||null;}
 function mrEffMonth(){const D=mdealRows(MONTH);if(D.length)return MONTH;const lm=mdealLastMonth();return lm||MONTH;}
@@ -5044,11 +5058,9 @@ function renderHome(){
   // ── right ──
   if(HOMESIDE){
     h+='<div>';
-    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">📌</span>DIRECTIVES <span class="sub">· ${WEEKS[W]?WEEKS[W].name+' 기준':''}</span><span class="x" onclick="toggleHomeSide()" title="오른쪽 닫기">닫기 ▸</span></div>`;
-    const hmWR=isoRange((WEEKS[W]&&WEEKS[W].iso)||0);
-    let asg=(ASSIGN||[]).filter(a=>!a.done);
-    asg=(hmWR?asg.filter(a=>!a.due||a.due<=hmWR.b):asg).sort((a,b)=>String(a.due||'9999-99')<String(b.due||'9999-99')?-1:1).slice(0,8);
-    if(!asg.length)h+='<div class="hm-empty">이번 주 기준 진행 중 지시 없음</div>';
+    h+='<div class="hm-blk"><div class="hm-sec"><span class="em">📌</span>DIRECTIVES<span class="x" onclick="toggleHomeSide()" title="오른쪽 닫기">닫기 ▸</span></div>';
+    const asg=(ASSIGN||[]).filter(a=>!a.done).slice(0,5);
+    if(!asg.length)h+='<div class="hm-empty">진행 중 지시 없음</div>';
     asg.forEach(a=>{const g=mgrById(a.mgr)||{};let dd='';if(a.due){const dl=Math.round((new Date(a.due)-new Date(todayStr()))/86400000);dd=dl<0?`D+${-dl}`:dl===0?'D-Day':`D-${dl}`;}
       const gi=ASSIGN.indexOf(a);const ce=canEditAssign(a);
       const ctl=`<div class="hm-ctl" onclick="event.stopPropagation()"><span class="hm-cl">착수</span><input type="date" value="${esc(a.start||'')}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'start',this.value)"><select ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'status',this.value)">${['착수전','진행중','완료'].map(o=>`<option ${(a.status||'착수전')===o?'selected':''}>${o}</option>`).join('')}</select><input type="number" min="0" max="100" value="${a.prog||0}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'prog',this.value)" title="진행율 %"><span class="hm-cl">%</span></div>`;
@@ -5112,8 +5124,7 @@ function renderOverview(){
       h+=`<div class="ov-sec" style="margin-top:18px">${esc(ovWeekKey())} 거래처별 실적 요약</div>`;
       h+=ovDealTable();
     } else if(TAB==='mreport'){
-      h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 1~6월 입력 시 누적 자동 반영</span></div>`;
-      h+=`<div class="mr-cum"><span class="pl">보기</span><button class="${MRCUM==='mon'?'on':''}" onclick="setMrCum('mon')">당월</button><button class="${MRCUM==='sum'?'on':''}" onclick="setMrCum('sum')">누적</button><span class="hint">당월=${MONTH}월 목표·실적 중심 · 누적=1~${MONTH}월 합계</span></div>`;
+      h+=`<div class="ov-sec">본사 실적 · 1월~현재 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 당월 실적이 아직 없으면 「거래처실적_주간」 기준 주차별로 이어서 표시</span></div>`;
       h+=`<div class="om-charts">${mrComboChart('전체','전체')}${mrComboChart('중국','중국')}${mrComboChart('대만','대만')}</div>`;
       {const em=mrEffMonth();h+=`<div class="ov-sec" style="margin-top:18px">${em}월 거래처별 실적 요약 <span class="ov-sub">${em!==MONTH?`${MONTH}월 데이터 미입력 → 최종 입력월(${em}월) 표시 · `:''}당월 실적 + 1~${em}월 누적</span></div>`;}
       h+=mrDealTable();
@@ -8568,7 +8579,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth')gotoTodayDefault();document.body.classList.remove('rail-open');render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';}document.body.classList.remove('rail-open');render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
