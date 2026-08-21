@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M208</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M209</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -8715,7 +8715,7 @@ function importWeekly(input){
     const numOf=x=>{const v=String(x==null?'':x).replace(/[^0-9.\-]/g,'');return v===''?null:+v;};
     // 과제 (빈 줄은 건너뛰고 ■ 구분에서만 멈춤)
     if(tH>=0){const H=(A[tH]||[]).map(c=>norm(c));const ci=n=>H.findIndex(x=>x.includes(norm(n)));
-      const cC=ci('국가'),cW=ci('담당자'),cNr=ci('핵심과제'),cN=cNr>=0?cNr:0,cS=ci('상태'),cPg=ci('진행율'),cPr=ci('우선순위'),cSt=ci('시작일'),cD=ci('완료예정일'),cB=ci('비고'),cKpi=ci('KPI관리기준');
+      const cC=ci('국가'),cW=ci('담당자'),cNr=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cN=cNr>=0?cNr:0,cS=ci('상태'),cPg=ci('진행율'),cPr=ci('우선순위'),cSt=ci('시작일'),cD=ci('완료예정일'),cB=ci('비고'),cKpi=ci('KPI관리기준');
       let cCat=ci('구분'); if(cCat<0)cCat=ci('R&R');
       const STP={'완료':100,'진행중':60,'예정':10,'대기':25,'보류':20,'착수전':0};
       const progOf=v=>{v=String(v==null?'':v).trim().replace('%','').trim();if(v==='')return null;if(STP[v]!=null)return STP[v];const n=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(n)?null:Math.max(0,Math.min(100,Math.round(n)));};
@@ -9131,10 +9131,10 @@ function importG2Master(wb,scope){
       if(Object.keys(byM).length){saveMReport();done.push('월말보고 '+Object.keys(byM).map(m=>m+'월('+byM[m].length+')').join('·'));}
       return;
     }
-    // ② 주간업무: 주차+담당자
-    if(has('주차')&&has('담당자')){
+    // ② 주간업무: 주차+담당자 (거래처실적_주간 탭에 담당자 열이 추가되며 이 조건과 겹치므로 !has('거래처')로 배타 처리)
+    if(has('주차')&&has('담당자')&&!has('거래처')){
       if(scope!=='week')return;
-      const cW=ci('주차'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=ci('핵심과제'),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
+      const cW=ci('주차'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
         if(!w||!nm||!t)return;
