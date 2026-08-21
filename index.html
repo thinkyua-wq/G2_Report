@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M207</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M208</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4669,17 +4669,18 @@ function mrTeamTiles(extra){ // 중화팀과제 KPI = 담당자별 주요내용
     </div>`;
   return h+mrOwnerCards(fm,plan);
 }
-function mrMonthTilesCur(extra,k,n){ /* 당월(선택월) 기준 타일 */
-  const g=sc=>{const D=MDEAL[String(MONTH)]||[];const a=ovScopeAggFrom(D,sc);return {t:a.exTm||0,a:a.exA||0,st:a.suTm||0,sa:a.suA||0};};
+function mrMonthTilesCur(extra,k,n){ /* 당월(선택월) 기준 타일 · 선택월 데이터가 아직 없으면 최종 입력월로 폴백(거래처별 실적요약과 동일 규칙) */
+  const em=mrEffMonth();
+  const g=sc=>{const D=MDEAL[String(em)]||[];const a=ovScopeAggFrom(D,sc);return {t:a.exTm||0,a:a.exA||0,st:a.suTm||0,sa:a.suA||0};};
   const A=g('전체'),C=g('중국'),T=g('대만');
   const tile=(lb,val,r,sub)=>`<div class="om-tile"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   let h=`<div class="om-tiles${extra?' om-tiles5':''}">`;
-  h+=tile(MONTH+'월 수출',A.a,A.t?A.a/A.t:null,`${MONTH}월 목표 ${n(A.t)} · 차이 ${n(A.a-A.t)}`);
-  h+=tile('중국 '+MONTH+'월 수출',C.a,C.t?C.a/C.t:null,`목표 ${n(C.t)} · 비중 ${A.a?Math.round(C.a/A.a*100):0}%`);
-  h+=tile('대만 '+MONTH+'월 수출',T.a,T.t?T.a/T.t:null,`목표 ${n(T.t)} · 비중 ${A.a?Math.round(T.a/A.a*100):0}%`);
-  h+=tile(MONTH+'월 수금',A.sa,A.st?A.sa/A.st:null,`${MONTH}월 목표 ${n(A.st)} · 차이 ${n(A.sa-A.st)}`);
+  h+=tile(em+'월 수출',A.a,A.t?A.a/A.t:null,`${em}월 목표 ${n(A.t)} · 차이 ${n(A.a-A.t)}`);
+  h+=tile('중국 '+em+'월 수출',C.a,C.t?C.a/C.t:null,`목표 ${n(C.t)} · 비중 ${A.a?Math.round(C.a/A.a*100):0}%`);
+  h+=tile('대만 '+em+'월 수출',T.a,T.t?T.a/T.t:null,`목표 ${n(T.t)} · 비중 ${A.a?Math.round(T.a/A.a*100):0}%`);
+  h+=tile(em+'월 수금',A.sa,A.st?A.sa/A.st:null,`${em}월 목표 ${n(A.st)} · 차이 ${n(A.sa-A.st)}`);
   if(extra)h+=extra;
-  return h+'</div>';
+  return h+(em!==MONTH?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:11px;color:var(--risk);margin-top:2px">※ ${MONTH}월 거래처실적 데이터가 아직 없어 최종 입력월(${em}월) 기준으로 표시 중</div>`:'')+'</div>';
 }
 function mrMonthTiles(extra){
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH);
@@ -4802,15 +4803,15 @@ function mrDealTable0(){
   const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n2=>n2==null?'\u2014':n2.toLocaleString('en-US');
   const cumOf=(dl,f)=>{let c=0,any=false;for(let m=1;m<=MONTH;m++){(MDEAL[String(m)]||[]).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=x[f];any=true;}});}return any?c:null;};
-  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:36px">단위</th>'
+  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
     +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월)</th><th>달성율</th><th>누적실적</th><th>누적달성율</th>'
     +'<th>수금목표<br>(전체)</th><th>수금실적<br>(당월)</th><th>누적수금</th><th>수금<br>누적달성율</th></tr></thead><tbody>';
-  if(!D.length){h+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
+  if(!D.length){h+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
   const acc={exT:0,exTm:null,exA:0,suT:0,suA:0,cA:0,cS:0};
   const accCn={...acc};const accAll={...acc};
   const row=(cls,g,d)=>{
     const cA=cumOf(d.dealer,'exA'),cS=cumOf(d.dealer,'suA');
-    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td>천$</td>`
+    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td class="rl">${esc(d.owner||'—')}</td><td>천$</td>`
       +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct((d.exTm&&d.exA!=null)?d.exA/d.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct((d.exT&&cA!=null)?cA/d.exT:null)}</td>`
       +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct((d.suT&&cS!=null)?cS/d.suT:null)}</td></tr>`;};
   D.forEach(d=>{const g=/닝보|북경/.test(d.dealer)?'중국':(/대만/.test(d.dealer)?'대만':'홍콩');h+=row('',g,d);});
@@ -4819,10 +4820,10 @@ function mrDealTable0(){
   const cn=D.filter(d=>/닝보|북경/.test(d.dealer));
   if(cn.length){const cA=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
     const sc={dealer:'소계',exT:sum(cn,'exT'),exTm:sum(cn,'exTm'),exA:sum(cn,'exA'),suT:sum(cn,'suT'),suA:sum(cn,'suA')};
-    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;}
+    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td class="rl"></td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;}
   if(D.length){const cA=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
     const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
-    h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
+    h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td class="rl"></td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
   h+='</tbody></table>';
   h+='<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
   return h;
@@ -5168,12 +5169,12 @@ function ovDealTable(){
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
   const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n=>n==null?'\u2014':n.toLocaleString('en-US');
-  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:36px">단위</th>'
+  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
     +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적</th><th>달성율</th>'
     +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적</th><th>달성율</th></tr></thead><tbody>';
   const mrate=(a,tm)=>(tm!=null&&tm>0&&a!=null)?a/tm:null; // 달성율 = 실적 ÷ 당월목표
   const row=(cls,g,nm,d)=>{
-    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td>천$</td>`
+    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td class="rl">${esc(d.owner||(nm==='소계'||nm==='중국·대만·홍콩'?'':'—'))}</td><td>천$</td>`
       +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(mrate(d.exA,d.exTm))}</td>`
       +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(mrate(d.suA,d.suTm))}</td></tr>`;
   };
@@ -9147,12 +9148,12 @@ function importG2Master(wb,scope){
     // ③ 거래처실적_월간: 보고월+거래처
     if(has('보고월')&&has('거래처')){
       if(scope!=='month')return;
-      const cM=ci('보고월'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적');
+      const cM=ci('보고월'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자');
       const byM={};
       body.forEach(r=>{const mo=g2mon(r[cM]);const dl=String(r[cD2]||'').trim();if(!mo||!dl||/소계|합계/.test(dl))return;
         const exT=g2num(r[cT1]),exA=g2num(r[cA1]);
         if(exT==null&&exA==null)return; // 빈 달 스킵
-        (byM[mo]=byM[mo]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
+        (byM[mo]=byM[mo]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
       Object.keys(byM).forEach(mo=>{MDEAL[String(mo)]=byM[mo];});
       if(Object.keys(byM).length){saveMDEAL();done.push('거래처실적(월간) '+Object.keys(byM).map(m=>m+'월').join('·'));}
       return;
@@ -9160,12 +9161,12 @@ function importG2Master(wb,scope){
     // ④ 거래처실적_주간: 주차+거래처
     if(has('주차')&&has('거래처')){
       if(scope!=='week')return;
-      const cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적');
+      const cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자');
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const dl=String(r[cD2]||'').trim();if(!w||!dl||/소계|합계/.test(dl))return;
         const exT=g2num(r[cT1]),exA=g2num(r[cA1]);
         if(exT==null&&exA==null)return;
-        (byW[w]=byW[w]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
+        (byW[w]=byW[w]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
       Object.keys(byW).forEach(w=>{const k='W'+w;const ex=SPHIST[k]||{};
         SPHIST[k]=Object.assign({},ex,{week:'W'+w,_key:k,wk:+w,month:(function(){for(let m=7;m<=12;m++){if(buildWeeks(m).some(x=>x.iso===+w))return m;}return 7;})(),kpi:ex.kpi||[],rev:ex.rev||[],deal:byW[w],_src:'sheet'});});
       if(Object.keys(byW).length){saveSPHIST();done.push('거래처실적(주간) '+Object.keys(byW).map(w=>'W'+w).join('·'));}
