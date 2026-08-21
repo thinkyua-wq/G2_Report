@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M209</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M210</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2955,7 +2955,7 @@ function renderRailRole(){
   el.innerHTML=h;
 }
 let GOALSUB='goal', MILECTRY='', MILEMGR='', MILESORT={col:'',dir:1};
-let GYM={y:2026,m:7}; try{const s=localStorage.getItem('wr_goalym_v1');if(s){const o=JSON.parse(s);if(o&&o.y)GYM=o;}}catch(e){}
+let GYM={y:2026,m:Math.max(7,Math.min(12,new Date().getMonth()+1))}; try{const s=localStorage.getItem('wr_goalym_v1');if(s){const o=JSON.parse(s);if(o&&o.y)GYM=o;}}catch(e){}
 function setGYM(k,v){GYM[k]=+v;try{localStorage.setItem('wr_goalym_v1',JSON.stringify(GYM));}catch(e){}render();}
 function gymSel(){
   const yrs=[2025,2026,2027,2028,2029,2030];
@@ -3114,7 +3114,7 @@ function render(){
       const noWk=(TAB==='mreport'&&(MRTAB==='month'||MRTAB==='focus'));
       if(PERIOD!=='year'&&!noWk){
         h+=`<span class="pl">주</span><select class="per-dd" onchange="selWeekDD(this.value)">`;
-        h+=WEEKS.map(w=>{const fd=(w.asof||'').slice(5).replace('-','.').replace(/^0/,'');return `<option value="${w.id}" ${(PERIOD==='week'&&!MEND&&w.id===W)?'selected':''}>${w.name}${w.iso?' ('+fd+')':''}</option>`;}).join('');
+        h+=WEEKS.map(w=>{const fd=(w.asof||'').slice(5).replace('-','.').replace(/^0/,'');return `<option value="${w.id}" ${(!MEND&&w.id===W)?'selected':''}>${w.name}${w.iso?' ('+fd+')':''}</option>`;}).join('');
         h+=`</select>`;
       }
       perbar.innerHTML=h;
@@ -4400,11 +4400,11 @@ function tripPanelHead(mode){
   const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':'해당 월에 걸쳐 있는 출장';
   return `<div class="ov-sec" style="margin:0">✈ ${esc(lb)} <span class="ov-sub">${sub} · 마스터시트 「출장일정」 탭 연동 · ${list.length}건</span></div>`;
 }
-function tripPanel(mode){   /* mode: 'week' | 'month' */
+function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
   const iso=(WEEKS[W]&&WEEKS[W].iso)||0;
-  const list=((mode==='week')?tripsOfWeek(iso):tripsOfMonth(MONTH)).filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR));
-  const lb=(mode==='week')?('W'+iso+' 출장일정'):(MONTH+'월 출장일정');
-  const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':'해당 월에 걸쳐 있는 출장';
+  const list=((mode==='week')?tripsOfWeek(iso):(mode==='year')?TRIPS.slice():tripsOfMonth(MONTH)).filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR));
+  const lb=(mode==='week')?('W'+iso+' 출장일정'):(mode==='year')?(YEAR+'년 출장일정 · 전체'):(MONTH+'월 출장일정');
+  const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':(mode==='year')?'완료 여부와 관계없이 연간 전체 출장을 표시':'해당 월에 걸쳐 있는 출장';
   const sorted=list.slice().sort((a,b)=>String(a.start).localeCompare(String(b.start)));
   let h='';
   if(!sorted.length)return `<div class="om-tile"><div class="om-ts">등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.</div></div>`;
@@ -5044,9 +5044,11 @@ function renderHome(){
   // ── right ──
   if(HOMESIDE){
     h+='<div>';
-    h+='<div class="hm-blk"><div class="hm-sec"><span class="em">📌</span>DIRECTIVES<span class="x" onclick="toggleHomeSide()" title="오른쪽 닫기">닫기 ▸</span></div>';
-    const asg=(ASSIGN||[]).filter(a=>!a.done).slice(0,5);
-    if(!asg.length)h+='<div class="hm-empty">진행 중 지시 없음</div>';
+    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">📌</span>DIRECTIVES <span class="sub">· ${WEEKS[W]?WEEKS[W].name+' 기준':''}</span><span class="x" onclick="toggleHomeSide()" title="오른쪽 닫기">닫기 ▸</span></div>`;
+    const hmWR=isoRange((WEEKS[W]&&WEEKS[W].iso)||0);
+    let asg=(ASSIGN||[]).filter(a=>!a.done);
+    asg=(hmWR?asg.filter(a=>!a.due||a.due<=hmWR.b):asg).sort((a,b)=>String(a.due||'9999-99')<String(b.due||'9999-99')?-1:1).slice(0,8);
+    if(!asg.length)h+='<div class="hm-empty">이번 주 기준 진행 중 지시 없음</div>';
     asg.forEach(a=>{const g=mgrById(a.mgr)||{};let dd='';if(a.due){const dl=Math.round((new Date(a.due)-new Date(todayStr()))/86400000);dd=dl<0?`D+${-dl}`:dl===0?'D-Day':`D-${dl}`;}
       const gi=ASSIGN.indexOf(a);const ce=canEditAssign(a);
       const ctl=`<div class="hm-ctl" onclick="event.stopPropagation()"><span class="hm-cl">착수</span><input type="date" value="${esc(a.start||'')}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'start',this.value)"><select ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'status',this.value)">${['착수전','진행중','완료'].map(o=>`<option ${(a.status||'착수전')===o?'selected':''}>${o}</option>`).join('')}</select><input type="number" min="0" max="100" value="${a.prog||0}" ${ce?'':'disabled'} onchange="editAssignOwn(${gi},'prog',this.value)" title="진행율 %"><span class="hm-cl">%</span></div>`;
@@ -6745,17 +6747,17 @@ let CALLTAB='mile'; try{CALLTAB=localStorage.getItem('wr_calltab')||'mile';}catc
 function setCalLTab(t){CALLTAB=t;try{localStorage.setItem('wr_calltab',t);}catch(e){}render();}
 function calListTabs(){
   const mm=MILESTONES.filter(x=>(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)).length;
-  const tp=tripsOfMonth(MONTH).filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR)).length;
+  const tp=TRIPS.filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR)).length;
   const pj=[...new Set((TRIPS||[]).map(t=>String(t.big||'').trim()||'(미지정)'))].length;
-  const TABS=[['mile','중화팀 행사',mm],['trip',MONTH+'월 출장일정',tp],['proj','프로젝트별 출장·결과',pj]];
+  const TABS=[['mile','중화팀 행사',mm],['trip',YEAR+'년 출장일정(전체)',tp],['proj','프로젝트별 출장·결과',pj]];
   let h='<div class="seccard" style="padding-top:10px"><div class="cltabs">'
     +TABS.map(([k,l,n])=>`<button class="cltab${CALLTAB===k?' on':''}" onclick="setCalLTab('${k}')">${esc(l)}<span class="cln">${n}</span></button>`).join('')
     +'<div class="cltab-act">'+(CALLTAB==='mile'
         ? `<button class="mile-add mini" onclick="exportMileXlsx()">⬇ 엑셀 내보내기</button>${RO()?'':'<button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 행사 추가</button>'}`
-        : (CALLTAB==='trip' ? '<span class="cltab-sub">마스터시트 「출장일정」 탭 연동 · 목적·연계 프로젝트·결과 편집</span>'
+        : (CALLTAB==='trip' ? '<span class="cltab-sub">마스터시트 「출장일정」 탭 연동 · 완료 여부 관계없이 연간 전체 표시 · 목적·연계 프로젝트·결과 편집</span>'
                             : '<span class="cltab-sub">연계 프로젝트 기준 출장 이력 · 누적 성과 롤업</span>'))
     +'</div></div><div class="cltab-b">'
-    +(CALLTAB==='mile'?mileTable():CALLTAB==='trip'?tripPanel('month'):tripProjectRollup())
+    +(CALLTAB==='mile'?mileTable():CALLTAB==='trip'?tripPanel('year'):tripProjectRollup())
     +'</div></div>';
   return h;
 }
@@ -9015,6 +9017,14 @@ function g2date(v){
   if(m)return '2026-'+String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0');
   return '';
 }
+/* 구글시트 날짜형 셀(Date 객체) 또는 "2026-MM-DD"/"MM-DD" 텍스트를 "MM-DD"로 통일 · 그 외 텍스트("상시" 등)는 그대로 유지 */
+function g2mmdd(v){
+  if(v instanceof Date&&!isNaN(v)){const p=n=>String(n).padStart(2,'0');return p(v.getMonth()+1)+'-'+p(v.getDate());}
+  const s=String(v||'').trim();
+  const m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(m)return String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  return s;
+}
 function importG2Master(wb,scope){
   const done=[];
   wb.SheetNames.forEach(sn=>{
@@ -9138,8 +9148,8 @@ function importG2Master(wb,scope){
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
         if(!w||!nm||!t)return;
-        let due=String(r[cD]||'').trim(); due=due.replace(/^2026-/,'')||due;
-        let st0=(cSt>=0?String(r[cSt]||'').trim():''); st0=st0.replace(/^2026-/,'')||st0;
+        let due=g2mmdd(r[cD]);
+        let st0=(cSt>=0?g2mmdd(r[cSt]):'');
         (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:String(r[cPr]||'').trim(),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
       if(Object.keys(byW).length){saveWKREPORT();mergeWeeklyTasks(true);saveTasks();done.push('주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·'));}
