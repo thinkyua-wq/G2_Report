@@ -2387,7 +2387,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M218</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M219</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2883,10 +2883,11 @@ let LOGINSWITCH=false;   /* true면 기존 세션을 유지한 채 로그인폼�
 function loginExpired(){if(LOGIN_TTL<=0)return false;try{const t=+(localStorage.getItem('wr_login_ts')||0);return !t||Date.now()-t>LOGIN_TTL;}catch(e){return false;}}
 if(LOGIN_TTL>0)setInterval(()=>{if(LOGINUID&&loginExpired()){try{toast('자동 로그아웃되었습니다');}catch(e){}logout();}},60000);
 if(LOGIN_OFF&&!USERS[LOGINUID])LOGINUID='lee';
-/* GUEST = 실제 비밀번호로 로그인한 적 없는 상태(최초 접속·로그아웃 직후) · 데이터 열람 범위는 중화팀공용과 같지만 볼 수 있는 메뉴가 더 제한됨 */
+/* GUEST = 실제 비밀번호로 로그인(doLogin 성공)한 적 없는 상태 · wr_authed==='1'일 때만 인증된 것으로 인정 */
 let GUEST=true; try{GUEST=localStorage.getItem('wr_authed')!=='1';}catch(e){}
-/* 로그인 정보가 없으면(최초 접속·로그아웃 직후) 게스트로 중화팀공용 데이터 범위에 기본 진입 */
-if(!LOGIN_OFF&&!USERS[LOGINUID]){LOGINUID='team';GUEST=true;try{localStorage.setItem('wr_login','team');localStorage.setItem('wr_login_ts',String(Date.now()));localStorage.removeItem('wr_authed');}catch(e){}}
+/* 인증되지 않았으면(최초 접속·로그아웃 직후) 예전에 저장된 로그인(예: 이유아 계정)이 남아있어도 무시하고
+   항상 게스트로 중화팀공용 데이터 범위에 기본 진입 · "처음 열면 무조건 게스트"를 보장 */
+if(!LOGIN_OFF&&GUEST){LOGINUID='team';try{localStorage.setItem('wr_login','team');localStorage.setItem('wr_login_ts',String(Date.now()));localStorage.removeItem('wr_authed');}catch(e){}}
 if(USERS[LOGINUID]){VROLE=USERS[LOGINUID].role;if(VROLE==='member'){MEMBERID=(LOGINUID==='team')?'':LOGINUID;if(LOGINUID==='team')VALL=true;}}
 function doLogin(){
   const id=(document.getElementById('lg_id').value||'').trim().toLowerCase();
@@ -6042,8 +6043,9 @@ function mgrDrop(e,id){
   DRAGMGR='';render();
 }
 function resetMgrOrder(){MGRORDER=[];try{localStorage.removeItem('wr_mgrorder_v2');}catch(e){}render();}
-let WCOPEN={};
-function wcToggle(ti){WCOPEN[ti]=!WCOPEN[ti];render();}
+let WCOPEN={}; /* 값이 없으면(undefined) 기본값 = 펼침(open) · false로 명시된 것만 접힘 */
+function wcOpen(ti){return WCOPEN[ti]!==false;}
+function wcToggle(ti){WCOPEN[ti]=!wcOpen(ti);render();}
 function isoRange(iso){
   try{const mon=isoWeekMonday(2026,iso);const sun=new Date(mon);sun.setUTCDate(mon.getUTCDate()+6);
     const p2=n=>String(n).padStart(2,'0');
@@ -6131,7 +6133,7 @@ function addDirect(mid){
   try{ if(typeof emailAssign==='function') setTimeout(()=>{ if(confirm('담당자에게 이메일로 통지할까요? (메일 작성창이 열립니다)')) emailAssign(0); },200); }catch(e){}
 }
 function cardFold(r,showMgr){
-  const op=!!WCOPEN[r.ti];
+  const op=wcOpen(r.ti);
   const g=showMgr?(mgrById(r.mgr)||null):null;
   return `<div class="wcard${op?' open':''}">
     <div class="wc-m" onclick="wcToggle(${r.ti})">
