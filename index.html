@@ -1693,6 +1693,21 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .cxs-rep-in:focus{border-color:var(--tl);background:#fff;outline:none}
 .cxs-rep-in.cell-ok{background:#e8f7f0;border-color:#7dd0ae}
 .cxs-rep-g .cxs-rep-in{margin-bottom:0}
+.cx-legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;font-weight:600;color:#8a94a3;margin:-4px 0 10px}
+.cx-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:1px}
+.cx-tm{opacity:.65;font-weight:600;margin-left:3px}
+.cx-wkdd{position:relative}
+.cx-wkdd-tg{font-size:11px;font-weight:700;color:#667085;border:1px solid #e6ebef;background:#fff;border-radius:0;padding:5px 11px;cursor:pointer;transition:.12s;white-space:nowrap}
+.cx-wkdd-tg:hover{border-color:var(--tl);color:var(--tl)}
+.cx-wkdd.open .cx-wkdd-tg{border-color:var(--tl);color:var(--tl);background:#f4faf8}
+.cx-wkdd-tg .ar{font-size:9px;margin-left:2px}
+.cx-wkdd-pn{position:absolute;top:calc(100% + 4px);left:0;z-index:40;background:#fff;border:1px solid #e2e8ee;box-shadow:0 6px 20px rgba(24,25,32,.12);padding:8px;min-width:180px;display:flex;flex-direction:column;gap:2px}
+.cx-wkdd-op{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#344054;padding:5px 6px;cursor:pointer;white-space:nowrap}
+.cx-wkdd-op:hover{background:#f7f9fb}
+.cx-wkdd-op input{margin:0}
+.cx-wkdd-clr{margin-top:4px;font-size:11px;font-weight:700;color:#b3492f;background:#fff6f4;border:1px solid #f3d9d1;padding:5px 8px;cursor:pointer}
+.cx-wktbl{margin:6px 0 18px}
+.mn-dt-lk{font-size:11.5px;font-weight:700;color:#2f6ea3;white-space:nowrap}
 .secbox{margin-top:18px}
 .secbox:first-child{margin-top:0}
 .secbox-h{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding:2px 2px 6px;background:none;border:0;transition:.12s}
@@ -2836,9 +2851,9 @@ const MENU=[['home','팀 종합현황','홈'],
   ['mreport','업무현황','업무'],
   ['calmonth','중화팀 일정·행사','일정'],
   ['goals','팀업무','목표'],
-  ['meetrep','회의일정보고','회의']
+  ['meetrep','G2일정관리(이유아)','회의']
 ];
-const MENULB={home:'팀 종합현황',meetrep:'회의일정보고',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
+const MENULB={home:'팀 종합현황',meetrep:'G2일정관리(이유아)',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
@@ -3206,7 +3221,8 @@ function render(){
   else if(TAB==='sales')v.innerHTML=viewSales();
   else v.innerHTML=viewPerf(rows);
   {const rt=document.getElementById('rrtop');if(rt)rt.innerHTML='';}
-  document.querySelectorAll('.rr-memo,.qc-t,.rr-cell,.md-t,.mcal-memo textarea,.mg-one,.rep-sum,.miletbl .infc textarea,.mile-date').forEach(autogrow);
+  document.querySelectorAll('.rr-memo,.qc-t,.rr-cell,.md-t,.mcal-memo textarea,.mg-one,.rep-sum,.miletbl .infc textarea,.mile-date,.cxs-tx,.cxs-rep-in,.cxs-memo').forEach(autogrow);
+  if(NEWEVFOCUS){const nid=NEWEVFOCUS;NEWEVFOCUS=null;setTimeout(()=>{const el=document.getElementById('cev_title_'+nid);if(el){el.focus();}},0);}
 }
 function autogrow(el){el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
 
@@ -5313,12 +5329,23 @@ function tripReportHTML(t,i){
   h+='<div class="cxs-rep-lb">📎 출장기안서</div>'+ta(r.draftDoc,'PDF·이미지 링크 또는 메모','draftDoc');
   h+='<div class="cxs-rep-lb">📎 항공권</div>'+ta(r.ticket,'PDF·이미지 링크 또는 메모','ticket');
   h+='<div class="cxs-rep-h">📝 출장내용</div>'+ta(r.body,'일자별 출장 내용을 입력해주세요','body');
-  h+='<div class="cxs-rep-h">📷 사진</div><div class="cxs-rep-ph">드래그 앤 드롭 또는 붙여넣기로 추가</div>';
+  h+='<div class="cxs-rep-h">📷 사진 · PDF</div><div class="cxs-rep-ph">이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계로 사진·PDF 파일 자체는 붙여넣을 수 없어요) · 구글 드라이브에 올린 뒤 공유 링크를 위 「출장기안서·항공권」 칸에 붙여넣거나, 아래 「노션으로 복사」로 노션에 옮겨 그 페이지에 파일을 첨부하세요.</div>';
   h+='<div class="cxs-rep-h">💭 출장 후 느낀점</div>';
   h+='<div class="cxs-rep-lb">성과 및 소득</div>'+ta(fl.result,'성과 및 소득','feelings.result');
   h+='<div class="cxs-rep-lb">아쉬웠던 점 · 개선 필요</div>'+ta(fl.improve,'아쉬웠던 점 · 개선 필요','feelings.improve');
   h+='<div class="cxs-rep-lb">다음 출장 시 참고사항</div>'+ta(fl.next,'다음 출장 시 참고사항','feelings.next');
+  h+=`<button class="mile-add mini" style="margin-top:8px" onclick="notionCopyTrip(${i})" title="출장리포트 내용을 복사해 노션에 붙여넣고, 거기서 사진·PDF를 첨부하세요">📋 노션으로 복사</button>`;
   return h;
+}
+function notionCopyTrip(i){
+  const t=TRIPS[i];if(!t)return;const r=t.report||{};const fl=r.feelings||{};
+  const tx=`[출장리포트] ${t.name||''} · ${tripFmt(t.start,t.end)}\n\n`
+    +`중화팀 출장자: ${r.staffCN||'-'}\n본사 출장자: ${r.staffHQ||'-'}\n\n`
+    +`출장기안서: ${r.draftDoc||'-'}\n항공권: ${r.ticket||'-'}\n\n`
+    +`[출장내용]\n${r.body||'-'}\n\n`
+    +`[출장 후 느낀점]\n성과 및 소득: ${fl.result||'-'}\n아쉬웠던 점 · 개선 필요: ${fl.improve||'-'}\n다음 출장 시 참고사항: ${fl.next||'-'}\n\n`
+    +`(G2일정관리(이유아) · 출장리포트에서 작성)`;
+  try{navigator.clipboard.writeText(tx).then(()=>{toast('출장리포트를 복사했습니다 · 노션에 붙여넣고 사진·PDF를 첨부하세요');window.open('https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a','_blank');});}catch(e){toast('복사 실패');}
 }
 function tripIso(d){try{return +isoWeekNum(String(d).slice(0,10))||0;}catch(e){return 0;}}
 function tripsOfWeek(iso){return TRIPS.filter(t=>{
@@ -5500,8 +5527,8 @@ function editLink_rep(i,v){REPORTS[i].link=v;saveReports();render();}
 /* ═ 회의록 (팀장 전용 · 캘린더 회의와 연동) ═ */
 let MINUTES=[];try{const s0=localStorage.getItem('wr_minutes_v1');if(s0)MINUTES=JSON.parse(s0)||[];}catch(e){}
 function saveMinutes(){try{localStorage.setItem('wr_minutes_v1',JSON.stringify(MINUTES));}catch(e){}}
-function minSyncFromCal(){ /* 캘린더의 회의·일정([지시] 제외) → 회의록 행 자동 생성 */
-  let n=0;(CALLIST||[]).forEach(ev=>{const t=String(ev.title||'').trim();if(!t||/^\[지시\]/.test(t))return;
+function minSyncFromCal(){ /* G2일정관리(이유아)의 회의·일정([지시] 제외) → 회의록 행 자동 생성 · 팀 캘린더(CALLIST)는 대상 아님 */
+  let n=0;(LEECAL||[]).forEach(ev=>{const t=String(ev.title||'').trim();if(!t||/^\[지시\]/.test(t))return;
     if(MINUTES.some(m=>m.calId===ev.id))return;
     MINUTES.push({id:'mn'+(ev.id||Date.now()),calId:ev.id,title:t.replace(/^\[(회의|일정)\]\s*/,''),date:ev.sdate||ev.date||todayStr(),summary:'',link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
   if(n)saveMinutes();return n;}
@@ -5545,14 +5572,14 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
         const st=(ev.start&&ev.start.dateTime)?String(ev.start.dateTime).slice(11,16):'';
         const en=(ev.end&&ev.end.dateTime)?String(ev.end.dateTime).slice(11,16):'';
         const title=String(ev.summary||'(제목 없음)').trim();
-        let hit=CALLIST.find(x=>x.gid===ev.id);
-        if(!hit){CALLIST.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1});nNew++;}
+        let hit=LEECAL.find(x=>x.gid===ev.id);
+        if(!hit){LEECAL.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1});nNew++;}
         else{if(hit.title!==title||hit.sdate!==sd||hit.start!==st){hit.title=title;hit.sdate=sd;hit.edate=sd;hit.start=st;hit.end=en;nUpd++;}}
       });
-      /* ② 대시보드 → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) */
+      /* ② G2일정관리(이유아) → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) · CALLIST(팀 캘린더)는 대상 아님 */
       let nPush=0,nPatch=0;
       const ym=`${y}-${pad(m)}`;
-      for(const x of (CALLIST||[])){
+      for(const x of (LEECAL||[])){
         const sd=String(x.sdate||x.date||'');if(sd.slice(0,7)!==ym)continue;
         const t=String(x.title||'').trim();if(!t||/^\[지시\]/.test(t))continue;
         const body=x.start?{summary:t,start:{dateTime:`${sd}T${x.start}:00`,timeZone:'Asia/Seoul'},end:{dateTime:`${sd}T${(x.end&&x.end>x.start)?x.end:addHour(x.start)}:00`,timeZone:'Asia/Seoul'}}
@@ -5567,7 +5594,7 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
           }
         }catch(e){}
       }
-      if(nNew||nUpd||nPush||nPatch){saveCal();try{minSyncFromCal();}catch(e){}render();}
+      if(nNew||nUpd||nPush||nPatch){saveLeeCal();try{minSyncFromCal();}catch(e){}render();}
       if(!silent)toast(`⇄ Mgg_회의일정 동기화 · 가져옴 ${nNew}건${nUpd?'·갱신 '+nUpd:''} / 올림 ${nPush}건${nPatch?'·수정 '+nPatch:''}`);
       try{localStorage.setItem('wr_gcal_last',todayStr());}catch(e){}
     }catch(e){gcalErrHandle((e&&e.message)||String(e),silent);}
@@ -5619,7 +5646,7 @@ function notionCopyMin(i){const m=MINUTES[i];if(!m)return;
   const tx=`[회의록] ${m.title||'(제목 없음)'} · ${m.date||''}\n\n주요내용\n${m.summary||'-'}\n\n(G2 중화팀 대시보드 · 회의·보고에서 작성)`;
   try{navigator.clipboard.writeText(tx).then(()=>{toast('회의록을 복사했습니다 · 노션 아카이브가 열리면 [회의록] 구분으로 붙여넣기 하세요');window.open('https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a','_blank');});}catch(e){toast('복사 실패');}}
 function mdShort(d){const t=String(d||'');const m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);return m?(+m[2]+'/'+ +m[3]):t;}
-function editMinuteDate(i,v){const t=String(v||'').trim();const y=(MINUTES[i]&&String(MINUTES[i].date||'').slice(0,4))||String(YEAR||2026);
+function editMinuteDate(i,v){if(MINUTES[i]&&MINUTES[i].calId)return; const t=String(v||'').trim();const y=(MINUTES[i]&&String(MINUTES[i].date||'').slice(0,4))||String(YEAR||2026);
   const m=t.match(/^(\d{1,2})\s*[\/.\-월]\s*(\d{1,2})/);
   if(m)editMinute(i,'date',`${y}-${String(+m[1]).padStart(2,'0')}-${String(+m[2]).padStart(2,'0')}`);
   else if(/^\d{4}-\d{2}-\d{2}$/.test(t))editMinute(i,'date',t);
@@ -5702,9 +5729,9 @@ function mnFixDates(silent){
   let n=0;
   (MINUTES||[]).forEach(m=>{
     let d=mnDateFromTitle(m.title,y);                       /* ① 제목의 날짜 */
-    if(!d&&m.calId){const ev=(CALLIST||[]).find(x=>x.id===m.calId);if(ev)d=String(ev.sdate||ev.date||'').slice(0,10);}
-    if(!d){const tn=nrm(m.title);                            /* ② 같은 회의명 캘린더 일정 */
-      const hits=(CALLIST||[]).filter(x=>nrm(x.title)===tn&&(x.sdate||x.date));
+    if(!d&&m.calId){const ev=(LEECAL||[]).find(x=>x.id===m.calId);if(ev)d=String(ev.sdate||ev.date||'').slice(0,10);}
+    if(!d){const tn=nrm(m.title);                            /* ② 같은 회의명 캘린더 일정 (G2일정관리) */
+      const hits=(LEECAL||[]).filter(x=>nrm(x.title)===tn&&(x.sdate||x.date));
       if(hits.length===1)d=String(hits[0].sdate||hits[0].date).slice(0,10);}
     if(d&&d!==m.date){m.date=d;m.dirty=1;n++;}
   });
@@ -5712,8 +5739,22 @@ function mnFixDates(silent){
   if(!silent)toast(n?`일자 ${n}건을 제목·달력 기준으로 맞췄습니다`:'모든 일자가 이미 달력과 일치합니다');
   return n;
 }
+/* 캘린더에 연동된(calId) 회의록은 그 일정의 날짜를 실시간으로 그대로 따라가게 함 · 손으로 바꾼 캘린더 일정이 있으면 즉시 반영 */
+function minSyncDatesFromCal(){
+  let n=0;
+  (MINUTES||[]).forEach(m=>{
+    if(!m.calId)return;
+    const ev=(LEECAL||[]).find(x=>x.id===m.calId);
+    if(!ev)return;
+    const d=String(ev.sdate||ev.date||'').slice(0,10);
+    if(d&&d!==m.date){m.date=d;m.dirty=1;n++;}
+  });
+  if(n)saveMinutes();
+  return n;
+}
 function renderMinutes(){
   minSyncFromCal();
+  minSyncDatesFromCal();
   if(!renderMinutes._fixed){renderMinutes._fixed=1;try{mnFixDates(true);}catch(e){}}
   let all=MINUTES.map((m,i)=>({m,i}));
   if(String(MNSORT||'').startsWith('t:')){const key=MNSORT.slice(2);all=all.filter(o=>String(o.m.title||'').trim()===key);}
@@ -5733,7 +5774,7 @@ function renderMinutes(){
   list.forEach(({m,i},n1)=>{const n0=MNPAGE*PER+n1;const cjk=NPROXY&&(mnHasCJK(m.summary)||mnHasCJK(m.title));h+=`<tr data-mid="${esc(m.id)}">
     <td class="mut">${n0+1}</td>
     <td class="rl mn-tt">${minTitleCell(m,i)}</td>
-    <td class="mn-dt"><input type="text" value="${esc(mdShort(m.date))}" onchange="editMinuteDate(${i},this.value)" placeholder="8/21" title="${esc(m.date||'')} · 월/일 입력"></td>
+    <td class="mn-dt">${m.calId?`<span class="mn-dt-lk" title="캘린더 일정과 자동 연동됨 · 날짜를 바꾸려면 달력에서 그 일정을 수정하세요 · ${esc(m.date||'')}">🔗 ${esc(mdShort(m.date))}</span>`:`<input type="text" value="${esc(mdShort(m.date))}" onchange="editMinuteDate(${i},this.value)" placeholder="8/21" title="${esc(m.date||'')} · 월/일 입력">`}</td>
     <td class="rl mn-sm">${minSumCell(m,i)}${cjk?`<button class="mn-more" style="color:#2f6ea3" onclick="mnTranslateOne(${i})" title="이 회의록만 한국어로 재번역">🌐 이 항목만 번역</button>`:''}</td>
     <td class="mn-nt">${(m.nid&&!m.dirty)?`<span class="mn-ok" title="노션 저장됨${m.nsync?' · '+esc(m.nsync):''}">✅</span>`:`<button class="mn-send${m.nid?' upd':''}" onclick="notionPushMin(${i})" title="${m.nid?'수정됨 · 노션 갱신':'노션에 전송'}">${m.nid?'↻':'↑'}</button>`}</td>
     <td style="text-align:center"><button class="mile-del" onclick="delMinute(${i})">🗑</button></td>
@@ -6488,7 +6529,7 @@ try{const s=localStorage.getItem('wr_caltodo_v1');if(s)CALTODO=JSON.parse(s)||[]
 /* 일정 로드 + 구모델(날짜맵/문자열/배열) → 평면 리스트(기간·시간·반복) 마이그레이션 */
 (function loadCal(){
   let raw=null; try{const s=localStorage.getItem('wr_calev_v1');if(s)raw=JSON.parse(s);}catch(e){}
-  if(Array.isArray(raw)){CALLIST=raw.map(e=>({id:e.id||'e'+(CUID++),title:e.title||'',sdate:e.sdate||e.date||'',edate:e.edate||e.sdate||e.date||'',start:e.start||'',end:e.end||'',desc:e.desc||'',repeat:e.repeat||'none'}));}
+  if(Array.isArray(raw)){CALLIST=raw.map(e=>({...e,id:e.id||'e'+(CUID++),title:e.title||'',sdate:e.sdate||e.date||'',edate:e.edate||e.sdate||e.date||'',start:e.start||'',end:e.end||'',desc:e.desc||'',repeat:e.repeat||'none'}));}
   else if(raw&&typeof raw==='object'){
     Object.keys(raw).sort().forEach(date=>{const v=raw[date];
       if(typeof v==='string'){v.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(t=>CALLIST.push({id:'e'+(CUID++),title:t,sdate:date,edate:date,start:'',end:'',desc:'',repeat:'none'}));}
@@ -6497,6 +6538,20 @@ try{const s=localStorage.getItem('wr_caltodo_v1');if(s)CALTODO=JSON.parse(s)||[]
   }
 })();
 function saveCal(){try{localStorage.setItem('wr_calev_v1',JSON.stringify(CALLIST));}catch(e){}}
+/* G2일정관리(이유아) 전용 개인 일정 · 중화팀 일정·행사(CALLIST)와 완전히 분리된 별도 저장소
+   · 팀 공유 캘린더에는 절대 노출되지 않음 · 이 파일이 처음 실행될 때, 그동안 팀 캘린더(CALLIST)에
+   섞여 있던 「내 구글캘린더(Mgg_회의일정) 동기화 항목(gc_)」만 명확히 개인 것이므로 이쪽으로 이관한다 */
+let LEECAL=[];
+(function loadLeeCal(){
+  try{const s=localStorage.getItem('wr_leecal_v1');if(s){const raw=JSON.parse(s);if(Array.isArray(raw))LEECAL=raw;}}catch(e){}
+  const moved=CALLIST.filter(e=>String(e.id||'').indexOf('gc_')===0);
+  if(moved.length){
+    CALLIST=CALLIST.filter(e=>String(e.id||'').indexOf('gc_')!==0);
+    LEECAL=LEECAL.concat(moved);
+    saveCal();
+  }
+})();
+function saveLeeCal(){try{localStorage.setItem('wr_leecal_v1',JSON.stringify(LEECAL));}catch(e){}}
 /* 중화팀 R&R 관리표 기준 루틴 회의 → 8~12월 캘린더 자동 채우기 */
 function seedRoutineMeetings(){
   const Y=2026, pad=n=>String(n).padStart(2,'0'), dstr=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
@@ -6605,11 +6660,18 @@ function calPickItem(d,kind,key){
 }
 function focCls(kind,key){return (CALFOCUS&&CALFOCUS.k===kind&&String(CALFOCUS.i)===String(key))?' foc':'';}
 function calDow(date){return ['일','월','화','수','목','금','토'][new Date(date+'T00:00:00').getDay()];}
-function calEvsOn(date){return CALLIST.map((e,idx)=>({e,idx})).filter(o=>{const a=o.e.sdate||o.e.date;if(!a)return false;const b=o.e.edate||a;return a<=date&&date<=b;})
+function calEvsOn(date,list){list=list||CALLIST;return list.map((e,idx)=>({e,idx})).filter(o=>{const a=o.e.sdate||o.e.date;if(!a)return false;const b=o.e.edate||a;return a<=date&&date<=b;})
   .sort((x,y)=>String(x.e.start||'').localeCompare(String(y.e.start||'')));}
-function calAddOn(date){if(roBlock())return;CALLIST.push({id:'e'+(CUID++),title:'',sdate:date,edate:date,start:'',end:'',desc:'',repeat:'none'});saveCal();CALSEL=date;render();}
+/* 중화팀 일정·행사(CALLIST) 전용 · 계속 사용 */
+let NEWEVFOCUS=null;
+function calAddOn(date){if(roBlock())return;const id='e'+(CUID++);CALLIST.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'});saveCal();CALSEL=date;NEWEVFOCUS=id;render();}
 function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
+/* G2일정관리(이유아) 전용 · LEECAL에만 작용 · 회의일정보고(meetrep)에서만 호출됨 */
+function calAddOnL(date){if(roBlock())return;const id='e'+(CUID++);LEECAL.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'});saveLeeCal();CALSEL=date;NEWEVFOCUS=id;render();}
+function calEditFieldL(idx,f,v,el){if(roBlock())return;const e=LEECAL[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveLeeCal();
+  if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
+function calDelIdxL(i){if(LEECAL[i]){LEECAL.splice(i,1);saveLeeCal();render();}}
 function milePanelSec(date,miles){
   let h=`<div class="cxs-sec"><span class="bar" style="background:#f0a500"></span>중화팀 행사 <span style="color:#c3cbd2">${miles.length}</span>${RO()?'':`<button class="add" onclick="mileAddOn('${date}')">＋ 추가</button>`}</div>`;
   if(!miles.length)h+='<div class="cxs-emp">해당 행사가 없습니다.</div>';
@@ -6633,19 +6695,21 @@ function mileAddOn(date){if(roBlock())return;const m=+date.slice(5,7),d=+date.sl
 function calDayPanel(mode){
   const M=mode||'cal';
   const date=calSelDate();
-  const evs=fMeet()?calEvsOn(date):[], miles=calMilesFor(date).filter(fMile), trips=calTripsFor(date).filter(fTrip);
+  const isMe=(TAB==='meetrep');
+  const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST):[], miles=calMilesFor(date).filter(fMile), trips=calTripsFor(date).filter(fTrip);
   const n=evs.length+miles.length+trips.length;
   if(!CALSIDE)return '';
   let h=`<div class="calx-sw"><div class="calx-side"><div class="cxs-h"><span class="d">${+date.slice(5,7)}월 ${+date.slice(8,10)}일</span><span class="w">${calDow(date)}요일</span><span class="n">${n}건</span><button class="cxs-fold" onclick="toggleCalSide()" title="상세 숨기기">›</button></div><div class="cxs-b">`;
   if(M==='mile')h+=milePanelSec(date,miles);
-  /* 팀 일정 */
-  h+=`<div class="cxs-sec"><span class="bar" style="background:#2f9e79"></span>팀 일정 <span style="color:#c3cbd2">${evs.length}</span>${RO()?'':`<button class="add" onclick="calAddOn('${date}')">＋ 추가</button>`}</div>`;
+  /* 팀 일정 (meetrep=G2일정관리(이유아)는 LEECAL, 그 외에는 CALLIST) */
+  h+=`<div class="cxs-sec"><span class="bar" style="background:#2f9e79"></span>${isMe?'내 일정':'팀 일정'} <span style="color:#c3cbd2">${evs.length}</span>${RO()?'':`<button class="add" onclick="${isMe?'calAddOnL':'calAddOn'}('${date}')">＋ 추가</button>`}</div>`;
   if(!evs.length)h+='<div class="cxs-emp">등록된 일정이 없습니다.</div>';
-  evs.forEach(o=>{const e=o.e,i=o.idx;
+  evs.forEach(o=>{const e=o.e,i=o.idx;const ef=isMe?'calEditFieldL':'calEditField',df=isMe?'calDelIdxL':'calDelIdx';
     h+=`<div class="cxs-card c${focCls('meet',i)}">
-      <div class="cxs-r"><input class="cxs-in" value="${esc(e.title||'')}" placeholder="일정 제목" oninput="calEditField(${i},'title',this.value,this)"><button class="cxs-x" title="삭제" onclick="calDelIdx(${i})">×</button></div>
-      <div class="cxs-r"><input class="cxs-in sm" type="time" value="${esc(e.start||'')}" oninput="calEditField(${i},'start',this.value,this)"><span style="color:#c3cbd2;font-size:11px">~</span><input class="cxs-in sm" type="time" value="${esc(e.end||'')}" oninput="calEditField(${i},'end',this.value,this)"><input class="cxs-in sm" style="width:auto;flex:1;min-width:0" type="date" value="${esc(e.sdate||date)}" oninput="calEditField(${i},'sdate',this.value,this)"></div>
-      <textarea class="cxs-tx" placeholder="설명·메모" oninput="autogrow(this);calEditField(${i},'desc',this.value,this)">${esc(e.desc||'')}</textarea>
+      <div class="cxs-r"><input id="cev_title_${e.id}" class="cxs-in" value="${esc(e.title||'')}" placeholder="일정 제목부터 입력하세요" oninput="${ef}(${i},'title',this.value,this)"><button class="cxs-x" title="삭제" onclick="${df}(${i})">×</button></div>
+      <div class="cxs-r"><input class="cxs-in sm" type="time" value="${esc(e.start||'')}" oninput="${ef}(${i},'start',this.value,this)"><span style="color:#c3cbd2;font-size:11px">~</span><input class="cxs-in sm" type="time" value="${esc(e.end||'')}" oninput="${ef}(${i},'end',this.value,this)"><input class="cxs-in sm" style="width:auto;flex:1;min-width:0" type="date" value="${esc(e.sdate||date)}" oninput="${ef}(${i},'sdate',this.value,this)"></div>
+      ${!isMe?'':`<div class="cxs-lb">기준사항 (안건·체크리스트)</div><textarea class="cxs-tx" placeholder="이 회의에서 확인·논의할 기준사항을 적어두세요" oninput="autogrow(this);${ef}(${i},'agenda',this.value,this)">${esc(e.agenda||'')}</textarea>`}
+      <textarea class="cxs-tx" placeholder="설명·메모" oninput="autogrow(this);${ef}(${i},'desc',this.value,this)">${esc(e.desc||'')}</textarea>
     </div>`;});
   /* 행사 */
   if(M!=='mile')h+=milePanelSec(date,miles);
@@ -6661,7 +6725,7 @@ function calDayPanel(mode){
       <textarea class="cxs-tx" placeholder="연계 프로젝트" oninput="autogrow(this);editTrip(${i},'big',this.value,0,this)">${esc(t.big||'')}</textarea>
       <div class="cxs-lb">프로젝트 결과</div>
       <textarea class="cxs-tx" style="color:#186b56;font-weight:600" placeholder="결과·성과" oninput="autogrow(this);editTrip(${i},'note',this.value,0,this)">${esc(t.note||'')}</textarea>
-      ${(function(){const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
+      ${TAB!=='meetrep'?'':(function(){const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
         return `<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${lb}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t,i)+'</div>':''}`;})()}
     </div>`;});
   /* 메모 */
@@ -6674,33 +6738,109 @@ function monthCalendarBody(){
   const td=`${TODAY.getFullYear()}-${pad(TODAY.getMonth()+1)}-${pad(TODAY.getDate())}`;
   const sel=calSelDate();
   const first=new Date(y,m-1,1).getDay(), dim=new Date(y,m,0).getDate();
+  const isMe=(TAB==='meetrep');
   let g='<div class="calx-hd">'+['일','월','화','수','목','금','토'].map((l,i)=>`<div class="calx-dw s${i}">${l}</div>`).join('')+'</div><div class="calx-g">';
-  for(let i=0;i<first;i++)g+='<div class="calx-d emp"></div>';
-  for(let d=1;d<=dim;d++){
+  const dayBtn=(d)=>{
     const date=`${y}-${pad(m)}-${pad(d)}`, dw=new Date(y,m-1,d).getDay();
-    const evs=fMeet()?calEvsOn(date):[], ml=calMilesFor(date).filter(fMile), tp=calTripsFor(date).filter(fTrip);
+    const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST):[], ml=calMilesFor(date).filter(fMile), tp=calTripsFor(date).filter(fTrip);
     let chips=[];
     ml.forEach(x=>{const col=MCAT[x.cat]||'#c9821a';const mi=MILESTONES.indexOf(x);
       chips.push(`<span class="cx-ev e" onclick="event.stopPropagation();calPickItem('${date}','mile',${mi})" title="행사 · ${esc(x.country||'중국')} · ${esc(x.name||'')}${x.info?' · '+esc(x.info):''}"><i class="cxk" style="background:${col}">행사</i>${esc(x.country||'중국')} · ${esc(x.name||'')}</span>`);});
     tp.forEach(t=>{const ti=TRIPS.indexOf(t);
       chips.push(`<span class="cx-ev t" onclick="event.stopPropagation();calPickItem('${date}','trip',${ti})" title="출장 · ${esc(t.country||'')} · ${esc(t.name||'')} · ${esc(t.mgr||'')}"><i class="cxk" style="background:#4a90d9">출장</i>${esc(t.country||'')}${t.country?' · ':''}${esc(t.name||t.mgr||'출장')}</span>`);});
-    evs.forEach(o=>chips.push(`<span class="cx-ev c" onclick="event.stopPropagation();calPickItem('${date}','meet',${o.idx})" title="회의 · ${esc(o.e.title||'')}"><i class="cxk" style="background:#2f9e79">회의</i>${o.e.start?esc(o.e.start)+' ':''}${esc(o.e.title||'(제목 없음)')}</span>`));
+    evs.forEach(o=>{const tmTx=o.e.start?esc(o.e.start)+(o.e.end?'~'+esc(o.e.end):''):'종일';
+      chips.push(`<span class="cx-ev c" onclick="event.stopPropagation();calPickItem('${date}','meet',${o.idx})" title="회의 · ${tmTx} · ${esc(o.e.title||'')}"><i class="cxk" style="background:#2f9e79">회의</i>${esc(o.e.title||'(제목 없음)')} <span class="cx-tm">${tmTx}</span></span>`);});
     if(CALDMEMO[date])chips.push(`<span class="cx-ev m" title="메모">📝 ${esc(String(CALDMEMO[date]).slice(0,18))}</span>`);
-    g+=`<button class="calx-d s${dw}${date===td?' tod':''}${date===sel?' sel':''}" onclick="calPick('${date}')"><span class="calx-dn">${d}</span>${chips.join('')}</button>`;
+    return `<button class="calx-d s${dw}${date===td?' tod':''}${date===sel?' sel':''}" onclick="calPick('${date}')"><span class="calx-dn">${d}</span>${chips.join('')}</button>`;
+  };
+  const wkFilter=(isMe&&MEETWK.length)?calMonthWeeks().filter(w=>MEETWK.includes(w.idx)):null;
+  if(wkFilter){
+    /* 주차 드롭다운에서 고른 주(들)만 · 실제 달력 행(일~토) 기준으로 정렬 */
+    wkFilter.forEach(w=>{
+      const leadDow=new Date(y,m-1,w.s).getDay();
+      for(let i=0;i<leadDow;i++)g+='<div class="calx-d emp"></div>';
+      for(let d=w.s;d<=w.e;d++)g+=dayBtn(d);
+      const used=leadDow+(w.e-w.s+1);
+      for(let i=used;i<7;i++)g+='<div class="calx-d emp"></div>';
+    });
+  } else {
+    for(let i=0;i<first;i++)g+='<div class="calx-d emp"></div>';
+    for(let d=1;d<=dim;d++)g+=dayBtn(d);
+    const tot=(dim+first); for(let i=0;i<(7-tot%7)%7;i++)g+='<div class="calx-d emp"></div>';
   }
-  const tot=(dim+first); for(let i=0;i<(7-tot%7)%7;i++)g+='<div class="calx-d emp"></div>';
   g+='</div>';
   const cal='<div class="calx-cal"><div class="calx-top"><div class="calx-tt">'+y+'년 '+m+'월</div>'
     +'<div class="calx-nv"><button onclick="calMonthStep(-1)" title="이전달">‹</button><button onclick="calMonthStep(1)" title="다음달">›</button></div>'
     +'<button class="calx-today" onclick="railCalToday()">오늘</button>'
     +calFilterBarX()
+    +(TAB==='meetrep'?meetWeekDDHTML():'')
     +(RO()?'':'<button class="calx-today mini" onclick="seedRoutineMeetings()">＋ 루틴 회의</button>')
     +(CALSIDE?'':'<button class="calx-today op" onclick="toggleCalSide()" title="상세 보기">‹ 상세</button>')
-    +'</div>'+g+'</div>';
+    +'</div>'+(TAB==='meetrep'?calLegendHTML():'')+g+'</div>';
   const dups=calMileDups();
   const dupBanner=dups.length?`<div class="weeknote" style="border-color:#e6b800;background:#fff8e1;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>⚠ 행사와 중복된 일정 ${dups.length}건</b> — 같은 항목이 「중화팀 행사」와 이 「일정」에 모두 있습니다. 행사(중점시장활동·세미나)는 <b>「중화팀 행사」</b>, 팀 내부 회의·루틴은 이 <b>「일정」</b>으로 나눠 관리하세요. <span style="color:#8a6d1a">중복: ${dups.slice(0,6).map(d=>esc(d.title)).join(' · ')}${dups.length>6?' 외':''}</span></div><button class="mile-add" onclick="dedupCalFromMile()">이 일정에서 중복 정리</button></div>`:'';
-  return dupBanner+`<div class="calx${CALSIDE?'':' nosd'}">`+cal+calDayPanel()+'</div>';
+  return dupBanner+`<div class="calx${CALSIDE?'':' nosd'}">`+cal+calDayPanel()+'</div>'+(TAB==='meetrep'?meetWeekTableHTML():'');
 }
+/* 달력 옆 색상 범례 · 회의일정보고 전용 */
+function calLegendHTML(){
+  return '<div class="cx-legend">'
+    +'<span><i style="background:#2f9e79"></i>회의</span>'
+    +'<span><i style="background:#4a90d9"></i>출장</span>'
+    +'<span><i style="background:#c9821a"></i>행사</span>'
+    +'<span>📝 메모</span>'
+    +'</div>';
+}
+/* 회의일정보고(G2일정관리) 전용 주차별 다중선택 보기 · 전역 주차(W)와는 별개 ·
+   실제 달력 행(일~토) 기준으로 그 달의 주차를 나눔 · 선택 시 달력도 그 주(행)만 표시 */
+let MEETWK=[];
+function calMonthWeeks(){
+  const y=YEAR,m=MONTH;
+  const first=new Date(y,m-1,1).getDay(), dim=new Date(y,m,0).getDate();
+  const cells=[]; for(let i=0;i<first;i++)cells.push(null); for(let d=1;d<=dim;d++)cells.push(d);
+  while(cells.length%7)cells.push(null);
+  const weeks=[];
+  for(let i=0;i<cells.length;i+=7){const row=cells.slice(i,i+7).filter(d=>d!=null);if(row.length)weeks.push({idx:weeks.length,s:row[0],e:row[row.length-1]});}
+  return weeks;
+}
+function toggleMeetWk(k){const i=MEETWK.indexOf(k);if(i>=0)MEETWK.splice(i,1);else MEETWK.push(k);render();}
+function clearMeetWk(){MEETWK=[];render();}
+let MEETWKOPEN=false;
+function toggleMeetWkDD(e){if(e)e.stopPropagation();MEETWKOPEN=!MEETWKOPEN;render();}
+function closeMeetWkDD(){if(MEETWKOPEN){MEETWKOPEN=false;render();}}
+document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.cx-wkdd')))closeMeetWkDD();});
+/* 캘린더 상단의 주차 드롭다운 · 중복선택(체크박스) 가능 · 전역 주차(W)와는 무관 */
+function meetWeekDDHTML(){
+  const wks=calMonthWeeks(),pad=n=>String(n).padStart(2,'0');
+  const sel=MEETWK.slice().sort((a,b)=>a-b);
+  const label=sel.length?sel.map(k=>(k+1)+'주').join(', '):'주차 선택';
+  return `<div class="cx-wkdd${MEETWKOPEN?' open':''}">`
+    +`<button class="cx-wkdd-tg" onclick="toggleMeetWkDD(event)">📅 ${esc(label)} <span class="ar">▾</span></button>`
+    +(MEETWKOPEN?`<div class="cx-wkdd-pn" onclick="event.stopPropagation()">`
+      +wks.map(w=>`<label class="cx-wkdd-op"><input type="checkbox" ${MEETWK.includes(w.idx)?'checked':''} onchange="toggleMeetWk(${w.idx})"> ${w.idx+1}주</label>`).join('')
+      +(MEETWK.length?`<button class="cx-wkdd-clr" onclick="clearMeetWk()">✕ 선택 해제</button>`:'')
+      +`</div>`:'')
+    +`</div>`;
+}
+function meetWeekTableHTML(){
+  if(!MEETWK.length)return '';
+  const pad=n=>String(n).padStart(2,'0'),ym=`${YEAR}-${pad(MONTH)}`;
+  const wks=calMonthWeeks().filter(w=>MEETWK.includes(w.idx));
+  const inRange=d=>{const day=+String(d).slice(8,10);return wks.some(w=>day>=w.s&&day<=w.e);};
+  const rows=[];
+  if(fMeet())LEECAL.forEach(e=>{const d=e.sdate||e.date;if(d&&String(d).slice(0,7)===ym&&inRange(d))rows.push({type:'meet',date:d,time:e.start||'',title:e.title||'(제목 없음)'});});
+  (TRIPS||[]).filter(fTrip).forEach(t=>{const a=String(t.start||'').slice(0,10);if(a&&a.slice(0,7)===ym&&inRange(a))rows.push({type:'trip',date:a,time:'',title:(t.country?t.country+' · ':'')+(t.name||t.mgr||'출장')});});
+  calMilesFor&&(MILESTONES||[]).filter(fMile).forEach(x=>{calMileParseDaysForMonth(x,MONTH).forEach(d=>{const ds=`${YEAR}-${pad(MONTH)}-${pad(d)}`;if(inRange(ds))rows.push({type:'mile',date:ds,time:'',title:(x.country||'중국')+' · '+(x.name||'')});});});
+  rows.sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.time).localeCompare(String(b.time)));
+  const tlb={meet:'회의',trip:'출장',mile:'행사'};
+  let h=`<div class="cx-wktbl"><div class="ct-h">선택 주차 등록 일정 · ${MEETWK.slice().sort((a,b)=>a-b).map(k=>(k+1)+'주').join(', ')} · <b>${rows.length}건</b></div>`;
+  h+='<table class="ptable calevt"><thead><tr><th style="width:70px">일자</th><th style="width:70px">시간</th><th style="width:60px">구분</th><th style="text-align:left">내용</th></tr></thead><tbody>';
+  if(!rows.length)h+='<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px">선택한 주차에 등록된 일정이 없습니다.</td></tr>';
+  rows.forEach(r=>{h+=`<tr class="calevt-row" onclick="calPick('${r.date}')"><td>${esc(String(r.date).slice(5))}</td><td>${esc(r.time||'-')}</td><td>${esc(tlb[r.type]||'')}</td><td class="rl">${esc(r.title)}</td></tr>`;});
+  h+='</tbody></table></div>';
+  return h;
+}
+/* mileParseDays는 x.month가 현재 표시 월(M)과 다르면 빈 배열을 주므로, 주차표 전용으로 그대로 재사용 */
+function calMileParseDaysForMonth(x,M){return mileParseDays(x,M);}
 function calSidePanels(){
   const todo='<div class="cal-todo"><div class="ct-h">할 일 목록</div>'
     +'<div class="ct-add"><input id="ct_new" placeholder="할 일 추가" onkeydown="ctKey(event)"><button onclick="addCalTodo()">추가</button></div>'
@@ -8132,7 +8272,7 @@ function renderMGoals(){
 }
 function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고 접힘 · 팀장 전용 */
   if(LOGINUID!=='lee')return '<div style="padding:30px;color:var(--faint)">권한이 없습니다.</div>';
-  let h1=`<div class="sec-h"><h2>회의일정보고</h2><span class="hint">회의 캘린더 · 회의록(노션 연동) · PLAUD 요약</span><span class="line"></span></div>`;
+  let h1=`<div class="sec-h"><h2>G2일정관리(이유아)</h2><span class="hint">이유아 개인 일정 · 회의록(노션 연동) · PLAUD 요약 · 팀 캘린더와 분리된 비공개 화면</span><span class="line"></span></div>`;
     let h2='';
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
@@ -9099,6 +9239,91 @@ async function doSheetPull(silent){
 const KPI_SHEET_ID='1q3QY5DA4_kQ3zDuGMywIrvQ9bJIfeJuFII85S6Qk0wA'; // 마스터파일 「KPI지표」 탭
 const MREPORT_SHEET_ID='1q3QY5DA4_kQ3zDuGMywIrvQ9bJIfeJuFII85S6Qk0wA'; // 2026년도_G2중화팀_업무보고_마스터파일
 const MREPORT_SHEET_URL='https://docs.google.com/spreadsheets/d/'+MREPORT_SHEET_ID+'/edit';
+/* ===== 회의일정보고 전용 비공개 개인 시트 (이유아 계정 소유 · 팀 공유 마스터파일과 별개 · 팀원 접근 불가) ===== */
+const TRIPREP_SHEET_ID='1oOkUfvHAs97DW-Kschg_H9fZEmN_0ZlY3eUuKwqWY2I'; // G2중화팀_출장리포트_개인용(비공개)
+const MINUTES_SHEET_ID='126uC-Fv8ZnoHaJzNMf-tsGkAV_aGEXCGrdeVMgDprmA'; // G2중화팀_회의록_개인용(비공개)
+/* 출장리포트: 출발일+담당자로 기존 TRIPS 항목을 찾아 report만 덮어씀 (새 출장을 만들지 않음) */
+function importTripReportSheet(wb){
+  let matched=0;
+  wb.SheetNames.forEach(sn=>{
+    const A=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+    let hi=-1;
+    for(let i=0;i<Math.min(14,A.length);i++){const row=(A[i]||[]).map(x=>String(x).replace(/\s/g,''));
+      if(row.some(x=>x==='출발일')&&row.some(x=>x==='담당자')){hi=i;break;}}
+    if(hi<0)return;
+    const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
+    const body=A.slice(hi+1).filter(r=>(r||[]).some(x=>String(x).trim()!==''));
+    const ci=name=>hdr.findIndex(h=>h.includes(name));
+    const cS=ci('출발일'),cN=ci('담당자'),
+      cSCN=hdr.findIndex(h=>h.includes('중화팀출장자')),cSHQ=hdr.findIndex(h=>h.includes('본사출장자')),
+      cDraft=hdr.findIndex(h=>h.includes('출장기안서')),cTicket=hdr.findIndex(h=>h.includes('항공권')),
+      cContent=hdr.findIndex(h=>h.includes('출장내용')),
+      cResult=hdr.findIndex(h=>h.includes('성과')&&!h.includes('결과')),
+      cImprove=hdr.findIndex(h=>h.includes('아쉬')||h.includes('개선필요')),
+      cNext=hdr.findIndex(h=>h.includes('참고사항')||h.includes('다음출장'));
+    body.forEach(r=>{
+      const sd=g2date(r[cS]); const nm=String(cN>=0?r[cN]||'':'').trim();
+      if(!sd||!nm)return;
+      const t=TRIPS.find(x=>String(x.start||'')===sd&&String(x.mgr||'')===nm);
+      if(!t)return;
+      const rep={staffCN:String(cSCN>=0?r[cSCN]||'':'').trim(),staffHQ:String(cSHQ>=0?r[cSHQ]||'':'').trim(),
+        draftDoc:String(cDraft>=0?r[cDraft]||'':'').trim(),ticket:String(cTicket>=0?r[cTicket]||'':'').trim(),
+        body:String(cContent>=0?r[cContent]||'':'').trim(),
+        feelings:{result:String(cResult>=0?r[cResult]||'':'').trim(),improve:String(cImprove>=0?r[cImprove]||'':'').trim(),next:String(cNext>=0?r[cNext]||'':'').trim()}};
+      const hasRep=rep.staffCN||rep.staffHQ||rep.draftDoc||rep.ticket||rep.body||rep.feelings.result||rep.feelings.improve||rep.feelings.next;
+      if(hasRep){t.report=rep;matched++;}
+    });
+  });
+  if(matched)saveTrips();
+  return matched;
+}
+/* 회의록: 일자+제목이 같으면 summary 갱신, 없으면 새 회의록으로 추가 */
+function importMinutesSheet(wb){
+  let n=0;
+  wb.SheetNames.forEach(sn=>{
+    const A=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+    let hi=-1;
+    for(let i=0;i<Math.min(14,A.length);i++){const row=(A[i]||[]).map(x=>String(x).replace(/\s/g,''));
+      if(row.some(x=>x==='일자')&&row.some(x=>x==='제목')){hi=i;break;}}
+    if(hi<0)return;
+    const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
+    const body=A.slice(hi+1).filter(r=>(r||[]).some(x=>String(x).trim()!==''));
+    const ci=name=>hdr.findIndex(h=>h.includes(name));
+    const cD=ci('일자'),cT=ci('제목'),cS=hdr.findIndex(h=>h.includes('주요내용')||(h.includes('내용')&&!h.includes('출장')));
+    body.forEach(r=>{
+      const date=g2date(r[cD])||String(cD>=0?r[cD]||'':'').trim();
+      const title=String(cT>=0?r[cT]||'':'').trim();
+      if(!title)return;
+      const summary=String(cS>=0?r[cS]||'':'').trim();
+      let m=MINUTES.find(x=>String(x.title||'').trim()===title&&String(x.date||'').trim()===date);
+      if(!m){m={id:'mn'+Date.now()+Math.random().toString(36).slice(2,6),calId:'',title,date,summary:'',link:'',fileName:'',fileType:'',fileId:'',thumb:''};MINUTES.unshift(m);}
+      if(summary)m.summary=summary;
+      n++;
+    });
+  });
+  if(n)saveMinutes();
+  return n;
+}
+/* 개인용 비공개 시트 2종을 함께 불러온다 · 팀장(lee) 로그인일 때만 동작 · 다른 팀원 계정은 이 파일에 접근권한이 없어 어차피 실패함 */
+async function doPrivatePull(silent){
+  if(LOGINUID!=='lee')return;
+  const targets=[['출장리포트',TRIPREP_SHEET_ID,importTripReportSheet],['회의록',MINUTES_SHEET_ID,importMinutesSheet]];
+  const msgs=[];
+  for(const [label,id,fn] of targets){
+    if(!id)continue;
+    try{
+      const url=`https://www.googleapis.com/drive/v3/files/${id}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
+      const res=await fetch(url,{headers:{Authorization:'Bearer '+CLOUD.token}});
+      if(!res.ok){msgs.push(label+' 실패('+res.status+')');continue;}
+      const buf=new Uint8Array(await res.arrayBuffer());
+      const wb=XLSX.read(buf,{type:'array',cellDates:true});
+      const n=fn(wb);
+      if(n)msgs.push(label+' '+n+'건');
+    }catch(e){msgs.push(label+' 오류');}
+  }
+  render();
+  if(!silent&&msgs.length)toast('개인용 비공개 시트 반영 · '+msgs.join(' / '));
+}
 async function doSheetPullById(id,silent){
   setSyncBadge('sync');
   try{const url=`https://www.googleapis.com/drive/v3/files/${id}/export?mimeType=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
@@ -9328,7 +9553,7 @@ async function doMasterPull(scope,silent){
     if(!silent)toast((scope==='month'?'[월간만] ':scope==='week'?'[주간만] ':'[월간+주간] ')+'마스터 반영 · '+(done.length?done.join(' / '):'해당 데이터 없음'));
   }catch(e){if(!silent)toast('마스터 불러오기 오류: '+((e&&e.message)||e));setSyncErr('마스터 불러오기 오류: '+((e&&e.message)||e));}
 }
-function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doKpiPull(false);} else doMasterPull('all',false); });}
+function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doKpiPull(false);} else {doMasterPull('all',false); if(TAB==='meetrep'&&LOGINUID==='lee')doPrivatePull(false);} });}
 function loadKPISheet(){cloudAuth(()=>doKpiPull(false));}
 async function doKpiPull(silent){
   setSyncBadge('sync');
