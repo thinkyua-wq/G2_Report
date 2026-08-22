@@ -99,7 +99,7 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .asof b{color:var(--accent)}
 
 /* ---------- KPI ---------- */
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:22px}
 .kpi{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);padding:15px 16px;box-shadow:var(--sh);position:relative;overflow:hidden}
 .kpi .lb{font-size:11.5px;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:6px}
 .kpi .dot{width:7px;height:7px;border-radius:50%;flex:none}
@@ -349,8 +349,8 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .empty-body .add{margin-top:11px;display:inline-block;font-size:11.5px;font-weight:700;color:var(--accent);border:1px dashed var(--accent2);border-radius:7px;padding:6px 13px;background:var(--pn)}
 
 /* ---------- Kanban ---------- */
-.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
-.kanban.kb3{grid-template-columns:repeat(3,1fr)}
+.kanban{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}
+.kanban.kb3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .kcol{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);box-shadow:var(--sh);overflow:hidden}
 .kcol-h{padding:12px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--ln2)}
 .kcol-h .kdot{width:9px;height:9px;border-radius:50%;flex:none}
@@ -427,7 +427,7 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .perf-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
 .perf-pair .perf-block{min-width:0}
 .perf-pair .chartbox{padding:12px 12px;margin-bottom:12px}
-.perf-pair .scards{grid-template-columns:repeat(3,1fr)}
+.perf-pair .scards{grid-template-columns:repeat(3,minmax(0,1fr))}
 .pf-tag{display:inline-block;font-size:10.5px;font-weight:800;color:#fff;padding:2px 7px;margin-right:4px;vertical-align:middle}
 .pf-tag.corp{background:#2f6fb0}.pf-tag.hq{background:#5b8a6e}
 @media(max-width:1000px){.perf-pair{grid-template-columns:1fr}}
@@ -443,7 +443,7 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .rrow .rr-pct{margin-left:auto;font-size:12.5px;font-weight:800}
 .rrow .track{height:8px;background:var(--ln);border-radius:8px;overflow:hidden}
 .rrow .track i{display:block;height:100%;border-radius:8px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.mtr{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.mtr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .mcard{border:1px solid var(--ln2);border-radius:var(--rds);padding:12px 13px;background:var(--sf)}
 .mcard .m-lb{font-size:11px;color:var(--ink2);font-weight:600}
 .mcard .m-v{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
@@ -479,11 +479,11 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .calwrap{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);box-shadow:var(--sh);overflow:hidden}
 .calscroll{overflow-x:auto}
 .calgrid{min-width:940px}
-.calhead{display:grid;grid-template-columns:130px repeat(12,1fr);border-bottom:1px solid var(--ln);position:sticky;top:0;background:var(--sf);z-index:2}
+.calhead{display:grid;grid-template-columns:130px repeat(12,minmax(0,1fr));border-bottom:1px solid var(--ln);position:sticky;top:0;background:var(--sf);z-index:2}
 .calhead .ch{font-size:10.5px;font-weight:700;color:var(--dim);text-align:center;padding:9px 0;border-left:1px solid var(--ln2)}
 .calhead .ch.now{color:var(--accent);background:var(--accentSoft)}
 .calhead .ch0{padding:9px 12px;font-size:11px;font-weight:800;color:#000;text-align:left;background:#c8ccd2;border-right:1px solid var(--ln2)}
-.calrow{display:grid;grid-template-columns:130px repeat(12,1fr);border-bottom:1px solid var(--ln2);min-height:52px}
+.calrow{display:grid;grid-template-columns:130px repeat(12,minmax(0,1fr));border-bottom:1px solid var(--ln2);min-height:52px}
 .calrow:last-child{border-bottom:0}
 .calrow .rlab{padding:9px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-right:1px solid var(--ln2);background:#eceef1}
 .phase-tag{display:inline-block;padding:0;border-radius:0;background:transparent!important;color:#000;font-size:12.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
@@ -905,7 +905,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .smove button:hover{border-color:var(--accent);color:var(--accent)}
 .smove .slbl{font-size:14px;font-weight:800;color:var(--ink);min-width:120px;text-align:center}
 .sfb{font-size:11px;font-weight:700;color:var(--risk);background:var(--riskSoft);padding:5px 10px;border-radius:7px}
-.sstrip{display:grid;grid-template-columns:repeat(6,1fr);gap:11px}
+.sstrip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px}
 .scard{background:var(--bg);border:1px solid var(--ln);border-radius:12px;padding:13px 14px}
 .scard .sl{font-size:11px;font-weight:700;color:var(--dim);margin-bottom:5px}
 .scard .sv{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
@@ -922,15 +922,15 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.smatrix td.mx{border-radius:5px;font-weight:800;min-width:64px}
 .spaste{width:100%;min-height:80px;border:1px solid var(--ln);border-radius:9px;padding:10px 12px;font:inherit;font-size:12px;color:var(--ink);background:var(--pn);resize:vertical;line-height:1.5}
 .spaste:focus{outline:none;border-color:var(--accent)}
-@media(max-width:900px){.sstrip{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:560px){.sstrip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.sstrip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.sstrip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* 실적 현황 차트 리디자인 */
 .spview{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .sseg2{display:inline-flex;background:var(--sf);border:1px solid var(--ln);border-radius:9px;padding:3px}
 .sseg2 button{border:none;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--dim);padding:6px 18px;border-radius:7px;cursor:pointer}
 .sseg2 button.on{background:var(--accent);color:#fff}
 .spv-lb{font-size:13.5px;font-weight:800;color:var(--ink)}
-.skgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.skgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
 .skc{background:var(--pn);border:1px solid var(--ln);border-radius:13px;padding:15px 17px;box-shadow:var(--sh)}
 .skc-l{font-size:11.5px;font-weight:700;color:var(--dim);margin-bottom:7px}
 .skc-v{font-size:23px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
@@ -996,8 +996,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.rralltbl th{background:#c8ccd2;font-weight:800!important;font-size:14px;color:#000}
 /* 분기별 중점추진과제 4칸 */
 .rr-sec-h{font-size:14.5px;font-weight:800;color:#000;margin:6px 0 10px}
-.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
-@media(max-width:1100px){.qgrid{grid-template-columns:repeat(2,1fr)}}
+.qgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:8px}
+@media(max-width:1100px){.qgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.qgrid{grid-template-columns:1fr}}
 .qcard{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:12px 13px;box-shadow:var(--sh)}
 .qc-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -1019,7 +1019,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .xbtn{border:0;background:var(--riskSoft);color:var(--risk);border-radius:6px;padding:4px 8px;font-weight:800;cursor:pointer}
 /* 목표 달성율 */
 .fk-note{font-size:12px;color:#000;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:9px 12px;margin:0 0 14px}
-.fk-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:6px}
+.fk-pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:6px}
 .fk-pcard{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:14px 15px}
 .fk-ph{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:10px}
 .fk-flag{font-size:18px}
@@ -1092,9 +1092,9 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-sec{font-size:15px;font-weight:800;color:var(--accentInk);padding-left:11px;border-left:4px solid var(--accent);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
 .ov-sec:first-child{margin-top:2px}
 .ov-sub{font-size:11.5px;font-weight:600;color:var(--dim);border:0;padding:0}
-.ov-tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-.ov-tiles.ov-tiles4{grid-template-columns:repeat(4,1fr)}
-.ov-tiles.ov-tiles3{grid-template-columns:repeat(3,1fr)}
+.ov-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.ov-tiles.ov-tiles4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ov-tiles.ov-tiles3{grid-template-columns:repeat(3,minmax(0,1fr))}
 /* 당월 주요 행사 타일(컴팩트) */
 .ovev-tile{text-align:left;padding:11px 12px;justify-content:flex-start}
 .ovev-hd{font-size:11px;font-weight:800;color:var(--accentInk);margin-bottom:6px}
@@ -1150,7 +1150,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .fd-add{min-height:180px;border:1.5px dashed var(--ln);border-radius:12px;background:var(--sf);color:var(--dim);font-weight:700;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:.12s}
 .fd-add span{font-size:22px;color:var(--accent)}
 .fd-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accentSoft)}
-.ov-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ov-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .ov-card{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:15px 16px}
 .ov-ch{display:flex;align-items:center;gap:10px}
 .ov-av{width:30px;height:30px;border-radius:8px;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
@@ -1294,13 +1294,13 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .gs-kv .i{text-align:center}
 .gs-kv .i b{display:block;font-size:19px;font-weight:800}
 .gs-kv .i small{font-size:11px;opacity:.85;font-weight:600}
-.gs-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.gs-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .gs-fl{background:#fff;border:1px solid #dbe3de;border-radius:11px;padding:12px;text-align:center;position:relative}
 .gs-n{width:25px;height:25px;border-radius:50%;background:#5b8a6e;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px}
 .gs-fl b{font-size:14px;color:#1c5138}
 .gs-fl p{font-size:11.5px;color:#6b7c73;margin-top:3px;line-height:1.4}
 .gs-fl:not(:last-child):after{content:"→";position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:#9db3a7;font-weight:800;font-size:17px;z-index:2}
-.gs-cascade{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.gs-cascade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
 .gs-ccard{background:#fff;border:1px solid #dbe3de;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(24,40,32,.05)}
 .gs-chd{padding:13px 15px;color:#fff;display:flex;align-items:center;justify-content:space-between}
 .gs-chd.cn{background:#5b8a6e}.gs-chd.tw{background:#2f7d8f}.gs-chd.hk{background:#8a5a2b}
@@ -1320,12 +1320,12 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .gs-nm{font-size:13px;font-weight:700}.gs-nm span{font-weight:600;color:#6b7c73;font-size:11.5px}
 .gs-rr{font-size:11px;color:#6b7c73}
 .gs-kpi{margin-left:auto;font-size:10.5px;font-weight:700;color:#215c40;background:#eef4ef;border-radius:6px;padding:3px 8px;text-align:right;max-width:190px}
-.gs-rhythm{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.gs-rhythm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
 .gs-rc{background:#fff;border:1px solid #dbe3de;border-radius:12px;padding:14px 16px}
 .gs-tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:#5b8a6e;border-radius:6px;padding:2px 9px;margin-bottom:8px}
 .gs-rt{font-size:13.5px;font-weight:800;color:#1c5138;margin-bottom:4px}
 .gs-rp{font-size:11.8px;color:#5a6b62;line-height:1.5}
-.gs-props{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.gs-props{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .gs-pcard{background:#0f2d20;color:#eaf3ee;border-radius:13px;padding:16px 18px}
 .gs-pcard b{display:block;font-size:14.5px;color:#7fe0a8;margin-bottom:6px}
 .gs-pcard p{font-size:12.3px;line-height:1.6;color:#cfe2d7}
@@ -1396,9 +1396,9 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .kan-ctrl .kanwk{font-size:11px;padding:5px 10px}
 .kan-ctrl{gap:7px}
 /* 본사실적 · 누적 대시보드 */
-.om-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-.om-tiles5{grid-template-columns:repeat(5,1fr)}
-.om-tiles6{grid-template-columns:repeat(6,1fr)}
+.om-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.om-tiles5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.om-tiles6{grid-template-columns:repeat(6,minmax(0,1fr))}
 .om-tiles6 .om-tile{padding:11px 12px}
 .om-tiles6 .om-tv{font-size:22px}
 .om-tt{font-size:9.5px;color:var(--faint);font-weight:600}
@@ -1484,21 +1484,21 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .om-tile.ev2 .om-ev2{font-size:11.5px;color:var(--dim);margin-top:3px;font-weight:600}
 .om-tile.ev2 .om-ev3{font-size:11px;color:var(--faint);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mfw-3{color:#b23434}.mfw-2{color:#1e6f5c}.mfw-1{color:#5b6570}
-@media(max-width:1400px){.om-tiles6{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1400px){.om-tiles6{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .om-tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 16px 12px}
 .om-tl{font-size:12px;color:var(--dim);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .om-tv{font-size:26px;font-weight:900;color:var(--ink);margin-top:5px;letter-spacing:-.01em}
 .om-tu{font-size:12px;font-weight:700;color:var(--faint);margin-left:4px}
 .om-ts{font-size:11px;color:var(--faint);margin-top:4px}
-.om-charts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.om-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .omc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
 .omc-h{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .omc-h span{font-size:10.5px;font-weight:600;color:var(--faint)}
 .omc-b{display:flex;justify-content:flex-end;margin-top:2px}
 .omc-b span{background:var(--accentSoft,#e9f6f2);color:var(--accentInk,#1e5c4f);font-size:11px;font-weight:800;padding:3px 10px;border-radius:14px}
-@media(max-width:1100px){.om-charts{grid-template-columns:1fr}.om-tiles,.om-tiles5{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.om-charts{grid-template-columns:1fr}.om-tiles,.om-tiles5{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* 市场本部 重点KPI */
-.mk-charts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px}
+.mk-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:4px}
 .mkb-wrap{display:flex;flex-direction:column;gap:7px;padding:4px 0 2px}
 .mkb{display:grid;grid-template-columns:118px 1fr 46px 92px;align-items:center;gap:8px}
 .mkb-l{font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1520,7 +1520,7 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 td.mk-r{text-align:center;font-weight:800;background:#fdf6e3}
 td.mk-r.mr-g{color:#1e7a43}td.mk-r.mr-a{color:#a86412}td.mk-r.mr-r{color:#b23434}td.mk-r.mr-n{color:#8b93a0}
 @media(max-width:1100px){.mk-charts{grid-template-columns:1fr}}
-@media(max-width:900px){.ov-tiles{grid-template-columns:repeat(3,1fr)}.ov-cards{grid-template-columns:1fr}.ov-2col{grid-template-columns:1fr}}
+@media(max-width:900px){.ov-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.ov-cards{grid-template-columns:1fr}.ov-2col{grid-template-columns:1fr}}
 .schart2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .chbox{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:17px 19px;box-shadow:var(--sh)}
 .chbox-h{font-size:14px;font-weight:800;color:var(--ink)}
@@ -1550,7 +1550,7 @@ td.mk-r.mr-g{color:#1e7a43}td.mk-r.mr-a{color:#a86412}td.mk-r.mr-r{color:#b23434
 .tb-col{width:100%;max-width:46px;flex:1;display:flex;align-items:flex-end;background:linear-gradient(180deg,transparent,var(--sf));border-radius:8px 8px 0 0;overflow:hidden}
 .tb-fill{width:100%;background:linear-gradient(180deg,#3ba06a,var(--accent));border-radius:8px 8px 0 0;transition:height .5s cubic-bezier(.2,.8,.2,1);min-height:4px}
 .tb-l{font-size:11px;font-weight:700;color:var(--dim);margin-top:8px;white-space:nowrap}
-@media(max-width:900px){.skgrid{grid-template-columns:repeat(2,1fr)}.schart2{grid-template-columns:1fr}.hbar{grid-template-columns:108px 1fr 76px}}
+@media(max-width:900px){.skgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.schart2{grid-template-columns:1fr}.hbar{grid-template-columns:108px 1fr 76px}}
 .dw-save{margin-top:9px;display:flex;align-items:center;gap:10px}
 .dw-save button{background:var(--accent);color:#fff;font-weight:700;font-size:12.5px;padding:8px 16px;border-radius:8px;transition:.14s}
 .dw-save button:hover{background:var(--accentInk)}
@@ -1669,6 +1669,23 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .cxs-tag.t{background:#eaf2fc;color:#1c4e80}
 .cxs-emp{font-size:11.5px;color:#98a2b3;padding:6px 4px;text-align:center}
 .cxs-lb{font-size:9.5px;font-weight:800;color:#98a2b3;letter-spacing:.03em;padding:0 4px;margin-top:2px}
+.cxs-rep-tg{margin-top:6px;font-size:10.5px;font-weight:800;color:var(--tlD);background:#f4faf8;border:1px solid #cfe7de;border-radius:0;padding:3px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.cxs-rep-tg:hover{background:var(--tl);color:#fff;border-color:var(--tl)}
+.cxs-rep-tg .ar{font-size:9px;display:inline-block;transition:.15s}
+.cxs-rep-tg.open .ar{transform:rotate(90deg)}
+.cxs-rep{margin-top:7px;padding:10px 11px;background:#fbfdfc;border:1px solid #eaeef1;border-left:2px solid var(--tl);font-size:11.8px;line-height:1.65;color:#344054}
+.cxs-rep-h{font-size:11px;font-weight:800;color:var(--tlD);margin:9px 0 4px;display:flex;align-items:center;gap:5px}
+.cxs-rep-h:first-child{margin-top:0}
+.cxs-rep-g{display:grid;grid-template-columns:64px 1fr;row-gap:4px;font-size:11.5px;margin-bottom:2px}
+.cxs-rep-g .k{color:#98a2b3}
+.cxs-rep-ph{background:#f4f6f8;border:1px dashed #d7dde2;color:#98a2b3;font-size:11px;padding:6px 8px;margin-bottom:3px}
+.cxs-rep-day{margin-bottom:8px}
+.cxs-rep-day:last-child{margin-bottom:0}
+.cxs-rep-day b{display:block;font-size:11.5px;color:#101828;margin-bottom:2px}
+.cxs-rep-day p{margin:0;color:#475467}
+.cxs-rep-fl{font-size:11.5px;color:#475467}
+.cxs-rep-fl b{display:block;color:#101828;margin-top:6px}
+.cxs-rep-fl b:first-child{margin-top:0}
 .secbox{margin-top:18px}
 .secbox:first-child{margin-top:0}
 .secbox-h{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding:2px 2px 6px;background:none;border:0;transition:.12s}
@@ -1753,7 +1770,7 @@ body.rail-min .rail-calsec{display:none!important}
 .rcal-tt{flex:1;font-size:11.5px;font-weight:800;color:#fff;letter-spacing:.01em}
 .rcal-top button{width:20px;height:20px;border-radius:5px;background:var(--side2);color:var(--sideTx);font-size:10px;line-height:1;flex:none}
 .rcal-top button:hover{background:#3f444b;color:#fff}
-.rcal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.rcal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
 .rcal-g .dw{font-size:8.5px;font-weight:700;color:var(--sideDim);text-align:center;padding-bottom:2px}
 .rcal-g .dw.s0{color:#e78a8a}.rcal-g .dw.s6{color:#8ab4e7}
 .rcal-d{position:relative;height:19px;border-radius:4px;font-size:9.5px;font-weight:600;color:var(--sideTx);background:transparent;display:grid;place-items:center;cursor:pointer;padding:0}
@@ -1807,7 +1824,7 @@ body.rail-min .rnav button .ic{display:block;font-size:10.5px;font-weight:800;le
 .goals-hero .ght{font-size:10.5px;font-weight:800;letter-spacing:.06em;background:rgba(255,255,255,.2);padding:4px 11px;border-radius:20px;display:inline-block}
 .goals-hero h3{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:11px 0 8px}
 .goals-hero p{font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.9);max-width:680px}
-.gt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:8px}
+.gt-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:8px}
 .gt{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);padding:16px 17px;box-shadow:var(--sh)}
 .gt .gt-l{font-size:11px;color:var(--ink2);font-weight:700;display:flex;align-items:center;gap:6px}
 .gt .gt-v{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:7px 0 3px}
@@ -1845,7 +1862,7 @@ body.rail-min .rnav button .ic{display:block;font-size:10.5px;font-weight:800;le
 
 .pm-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
 .pm-ctl select{font-size:12.5px;padding:8px 12px;border:1px solid var(--ln);border-radius:8px;background:var(--pn);color:var(--ink);font-weight:600;cursor:pointer}
-.scards{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:18px}
+.scards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px;margin-bottom:18px}
 .scard{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);padding:14px 15px;box-shadow:var(--sh)}
 .scard .l{font-size:11px;color:var(--ink2);font-weight:600}
 .scard .v{font-size:21px;font-weight:800;letter-spacing:-.02em;margin-top:6px;line-height:1}
@@ -1905,7 +1922,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .kpis.compact .kpi .val{font-size:23px;margin-top:3px}
 .kpis.compact .kpi .foot{margin-top:3px;font-size:10.5px}
 .kpis.compact .kpi.hero .ring{width:64px;height:64px;right:-16px;top:-16px}
-.kpis.cal4{grid-template-columns:repeat(3,1fr);align-items:stretch}
+.kpis.cal4{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
 @media(max-width:1000px){.kpis.cal4{grid-template-columns:1fr}}
 .kli{margin-top:8px;border-top:1px solid var(--ln);padding-top:6px;display:flex;flex-direction:column;gap:2px}
 .kli.h{border-top-color:rgba(255,255,255,.28)}
@@ -1940,7 +1957,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .perf-month .pastebox button{font-size:14px}
 
 /* ---- 중화권 사업계획 (성과·매출) ---- */
-.mkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mkgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .mkcard{background:var(--pn);border:1px solid var(--ln);border-radius:var(--rd);padding:15px 16px;box-shadow:var(--sh)}
 .mkcard.big{background:linear-gradient(135deg,#eef2fb,#fff);border-color:#d3ddf4}
 .mkcard .mk-h{font-size:11.5px;font-weight:700;color:var(--ink2)}
@@ -1999,7 +2016,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .gym-sel select{font-size:13px;font-weight:700;color:#000;padding:5px 10px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;cursor:pointer}
 .gym-sel .gym-note{font-size:11px;color:#64748b;margin-left:4px}
 /* 성장 로드맵 국가 카드 */
-.rc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.rc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
 .rc-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
 .rc-head{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;color:#fff}
 .rc-title{font-size:16px;font-weight:800}
@@ -2044,7 +2061,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .frow textarea{resize:vertical;min-height:64px;line-height:1.5}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.fgrid5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.fgrid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
 .fgrid5 .frow>label{font-size:10px;text-align:center}
 .fgrid5 input{padding:7px 4px;text-align:center}
 .fhint{font-size:10.5px;color:var(--dim);font-weight:600;margin-top:1px}
@@ -2167,8 +2184,8 @@ body.vw-ro .lb-full{display:none}
 .tb-menu .dm-danger{color:#c0392b;border-top:1px solid var(--ln)}
 .tb-menu .dm-danger:hover{background:#fbeaea;color:#a5281f}
 @media(max-width:820px){.tbar-data{margin-left:0;width:100%}.tbar-per{width:100%}.per-sel{flex:1}}
-@media(max-width:1120px){.kpis{grid-template-columns:repeat(3,1fr)}.kanban{grid-template-columns:repeat(2,1fr)}.gt-grid{grid-template-columns:repeat(2,1fr)}.scards{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:640px){.scards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1120px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}.gt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.scards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.scards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:820px){
   .shell{grid-template-columns:1fr}
   .mtopbar{display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:60;background:var(--side);color:#fff;padding:10px 14px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
@@ -2180,9 +2197,16 @@ body.vw-ro .lb-full{display:none}
   body.rail-open .rail{transform:translateX(0)}
   .rail-ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.46);z-index:94;opacity:0;pointer-events:none;transition:opacity .2s}
   body.rail-open .rail-ov{opacity:1;pointer-events:auto}
-  .main{padding:16px 14px 60px}
+  .main{padding:16px 14px 60px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  html,body{overflow-x:hidden;max-width:100vw}
+  img,svg{max-width:100%}
+  .ptable{width:auto;min-width:100%}
 }
-@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:1fr}.rr{grid-template-columns:1fr}}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kanban{grid-template-columns:1fr}.rr{grid-template-columns:1fr}
+  .gt-grid,.om-tiles,.om-tiles5,.om-tiles6,.ov-tiles,.ov-tiles.ov-tiles4,.ov-tiles.ov-tiles3,.qgrid,.mkgrid,.fk-pillars,.rc-grid,.mtr{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){
+  .kpis,.kanban,.scards,.gt-grid,.om-tiles,.om-tiles5,.om-tiles6,.ov-tiles,.ov-tiles.ov-tiles4,.ov-tiles.ov-tiles3,.qgrid,.mkgrid,.fk-pillars,.sstrip,.skgrid,.rc-grid,.mtr{grid-template-columns:1fr}
+}
 /* R&R 4열(구분·담당·업무R&R·성과지표) 고정폭 */
 .rrtbl4{table-layout:fixed}
 .rrtbl4 th,.rrtbl4 td{vertical-align:top;word-break:break-word}
@@ -2290,7 +2314,7 @@ body.vw-ro .lb-full{display:none}
 .hm-people{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .hm-people.one{grid-template-columns:minmax(0,1fr)}
 @media(max-width:1400px){.hm-people{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:1100px){.hm-people{grid-template-columns:1fr}.hm-tiles{grid-template-columns:repeat(2,1fr)}.home{grid-template-columns:1fr}}
+@media(max-width:1100px){.hm-people{grid-template-columns:1fr}.hm-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.home{grid-template-columns:1fr}}
 .hm-p{border:1px solid var(--ln);border-radius:8px;overflow:hidden;background:#fff}
 .hm-p .ph{background:#fff;padding:10px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--ln);cursor:pointer}
 .hm-p .ph .av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
@@ -4454,7 +4478,7 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
       +`<td class="rl"><textarea class="trip-tx res" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'note',this.value,0,this)" placeholder="프로젝트 결과·성과">${esc(t.note||'')}</textarea></td>`
       +`<td>${tripStatusChip(tripAutoStatus(t))}</td></tr>`;});
   h+='</tbody></table></div>';
-  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적 · 연계 프로젝트 · 결과</b>는 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.</div>';
+  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적 · 연계 프로젝트 · 결과</b>는 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
   return h;
 }
 function renderRRSales(){
@@ -5248,10 +5272,43 @@ function ovDealTable(){
 }
 let TRIPS=[
  {name:"중국콕소출장",start:"2026-08-10",end:"2026-08-13",mgr:"이유아",with:"품질3명",country:"중국",city:"동관",cat:"영업출장",visit:"COXO",purpose:"바이오레이즈 중국 현지생산 프로젝트 · 생산라인 후보지 및 GMP 인증 협의",big:"바이오레이즈 OEM 프로젝트",status:"",book:"",cost:null,note:"생산라인 후보지 확인 · 부품 검수 기준 협의 완료"},
- {name:"중국영업출장",start:"2026-08-17",end:"2026-08-22",mgr:"서혜민",with:"",country:"중국",city:"서안/태원/북경",cat:"영업출장",visit:"대리점/북경법인",purpose:"대리점미팅",big:"담당 영업본부 실적 개선 (절강 / 화중 / 화서 / 화북)",status:"",book:"",cost:null,note:""}
+ {name:"중국영업출장",start:"2026-08-17",end:"2026-08-22",mgr:"서혜민",with:"",country:"중국",city:"서안/태원/북경",cat:"영업출장",visit:"대리점/북경법인",purpose:"대리점미팅",big:"담당 영업본부 실적 개선 (절강 / 화중 / 화서 / 화북)",status:"",book:"",cost:null,note:""},
+ {name:"홍콩·심천 출장",start:"2025-11-06",end:"2025-11-08",mgr:"이유아",with:"",country:"홍콩",city:"홍콩/심천",cat:"영업출장",visit:"홍콩 대리점·심천 교육센터",purpose:"홍콩 대리점 미팅, 심천 교육센터 방문 및 KOL 미팅, BD 브랜드 협력 논의",big:"",status:"완료",book:"",cost:null,note:"",
+  report:{
+    staffCN:"", staffHQ:"",
+    draftDoc:"PDF·이미지 첨부 예정", ticket:"PDF·이미지 첨부 예정",
+    days:[
+      {label:"11월 6일 (목) — 홍콩", text:"오전 인천에서 홍콩으로 이동, 입국 후 MegaGen Hong Kong 지사를 방문했다. 오후에는 홍콩 파트너사(Modern Dental, GBA Healthcare 등)와 미팅을 갖고 BD 마케팅 현황 및 협력방안을 논의했다. 저녁에는 현지 파트너와 환영 만찬을 진행했다."},
+      {label:"11월 7일 (금) — 심천", text:"홍콩 서구룡역에서 고속철로 심천 복전역까지 이동(통관 포함 약 1시간 소요). 오전에는 심천 메가젠 교육센터를 방문해 심천 지역 영업팀 및 KOL과 미팅했다. 오후에는 BD/ARi 제품 세미나와 현지 고객 간담회를 진행했고, 저녁에는 현지 협력 치과·파트너를 초청한 연회를 가졌다."},
+      {label:"11월 8일 (토) — 귀국", text:"오전 자유 일정 후 호텔 체크아웃, 오후에 심천에서 홍콩을 거쳐 귀국했다."}
+    ],
+    feelings:{result:"", improve:"", next:""}
+  }}
 ];
 try{const s=localStorage.getItem('wr_trips_v2');if(s){const o=JSON.parse(s);if(Array.isArray(o))TRIPS=o;}}catch(e){}
 function saveTrips(){try{localStorage.setItem('wr_trips_v2',JSON.stringify(TRIPS));}catch(e){}}
+let TRIPREP_OPEN={};
+function toggleTripRep(i){TRIPREP_OPEN[i]=!TRIPREP_OPEN[i];render();}
+function tripReportHTML(t){
+  const r=t.report||{};const days=r.days||[];const fl=r.feelings||{};
+  let h='';
+  h+='<div class="cxs-rep-h">📅 출장개요</div>';
+  h+='<div class="cxs-rep-g"><div class="k">중화팀</div><div>'+esc(r.staffCN||'-')+'</div><div class="k">본사</div><div>'+esc(r.staffHQ||'-')+'</div></div>';
+  h+='<div class="cxs-rep-ph">📎 출장기안서 — '+esc(r.draftDoc||'첨부 예정')+'</div>';
+  h+='<div class="cxs-rep-ph">📎 항공권 — '+esc(r.ticket||'첨부 예정')+'</div>';
+  h+='<div class="cxs-rep-h">📝 출장내용</div>';
+  if(days.length){
+    days.forEach(d=>{h+='<div class="cxs-rep-day"><b>'+esc(d.label||'')+'</b><p>'+esc(d.text||'')+'</p></div>';});
+  }else if(String(r.body||'').trim()){
+    h+='<div class="cxs-rep-day"><p style="white-space:pre-wrap">'+esc(r.body)+'</p></div>';
+  }else{
+    h+='<div class="cxs-rep-ph">작성된 내용이 없습니다.</div>';
+  }
+  h+='<div class="cxs-rep-h">📷 사진</div><div class="cxs-rep-ph">드래그 앤 드롭 또는 붙여넣기로 추가</div>';
+  h+='<div class="cxs-rep-h">💭 출장 후 느낀점</div>';
+  h+='<div class="cxs-rep-fl"><b>성과 및 소득</b>'+esc(fl.result||'-')+'<b>아쉬웠던 점 · 개선 필요</b>'+esc(fl.improve||'-')+'<b>다음 출장 시 참고사항</b>'+esc(fl.next||'-')+'</div>';
+  return h;
+}
 function tripIso(d){try{return +isoWeekNum(String(d).slice(0,10))||0;}catch(e){return 0;}}
 function tripsOfWeek(iso){return TRIPS.filter(t=>{
   const a=tripIso(t.start), b=t.end?tripIso(t.end):a;
@@ -6593,6 +6650,7 @@ function calDayPanel(mode){
       <textarea class="cxs-tx" placeholder="연계 프로젝트" oninput="autogrow(this);editTrip(${i},'big',this.value,0,this)">${esc(t.big||'')}</textarea>
       <div class="cxs-lb">프로젝트 결과</div>
       <textarea class="cxs-tx" style="color:#186b56;font-weight:600" placeholder="결과·성과" oninput="autogrow(this);editTrip(${i},'note',this.value,0,this)">${esc(t.note||'')}</textarea>
+      ${t.report?`<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${TRIPREP_OPEN[i]?'접기':'보기'}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t)+'</div>':''}`:''}
     </div>`;});
   /* 메모 */
   h+=`<div class="cxs-sec"><span class="bar" style="background:#98a2b3"></span>메모</div>`;
@@ -8606,7 +8664,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';MILECTRY='';CALKIND='';try{localStorage.setItem('wr_calkind','');}catch(e){}}document.body.classList.remove('rail-open');render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';MILECTRY='';CALKIND='';try{localStorage.setItem('wr_calkind','');}catch(e){}}render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -9125,10 +9183,26 @@ function importG2Master(wb,scope){
       const cS=ci('출발일'),cE=ci('종료일'),cN=ci('담당자'),cCo=ci('동행'),cC=ci('국가'),cR=ci('지역'),
             cG=ci('구분'),cV=ci('방문처'),cP=ci('목적'),cB=ci('연계'),cSt=ci('상태'),cBk=ci('항공'),
             cCt=ci('예상비용'),cNo=hdr.findIndex(h=>h.includes('결과')||h.includes('비고'));
+      /* 출장리포트(상세) 열 · 없어도 되지만 있으면 카드의 「출장리포트」 토글 내용을 채운다 */
+      const cSCN=hdr.findIndex(h=>h.includes('중화팀출장자')),
+            cSHQ=hdr.findIndex(h=>h.includes('본사출장자')),
+            cDraft=hdr.findIndex(h=>h.includes('출장기안서')),
+            cTicket=hdr.findIndex(h=>h.includes('항공권')),
+            cContent=hdr.findIndex(h=>h.includes('출장내용')),
+            cResult=hdr.findIndex(h=>h.includes('성과')&&!h.includes('결과')),
+            cImprove=hdr.findIndex(h=>h.includes('아쉬')||h.includes('개선필요')),
+            cNext=hdr.findIndex(h=>h.includes('참고사항')||h.includes('다음출장'));
       const out=[];
       body.forEach(r=>{
         const sd=g2date(r[cS]); const nm=String(r[cN]||'').trim();
         if(!sd||!nm)return;
+        const rep={
+          staffCN:String(cSCN>=0?r[cSCN]||'':'').trim(), staffHQ:String(cSHQ>=0?r[cSHQ]||'':'').trim(),
+          draftDoc:String(cDraft>=0?r[cDraft]||'':'').trim(), ticket:String(cTicket>=0?r[cTicket]||'':'').trim(),
+          body:String(cContent>=0?r[cContent]||'':'').trim(),
+          feelings:{result:String(cResult>=0?r[cResult]||'':'').trim(),improve:String(cImprove>=0?r[cImprove]||'':'').trim(),next:String(cNext>=0?r[cNext]||'':'').trim()}
+        };
+        const hasRep=rep.staffCN||rep.staffHQ||rep.draftDoc||rep.ticket||rep.body||rep.feelings.result||rep.feelings.improve||rep.feelings.next;
         out.push({name:String(cNm>=0?r[cNm]||'':'').trim(),start:sd,end:g2date(cE>=0?r[cE]:'')||sd,mgr:nm,with:String(cCo>=0?r[cCo]||'':'').trim(),
           country:String(cC>=0?r[cC]||'':'').trim()||'중국',city:String(cR>=0?r[cR]||'':'').trim(),
           cat:String(cG>=0?r[cG]||'':'').trim(),visit:String(cV>=0?r[cV]||'':'').trim(),
@@ -9136,16 +9210,18 @@ function importG2Master(wb,scope){
           status:(function(){const v=normStatus(cSt>=0?r[cSt]:'')||String(cSt>=0?r[cSt]||'':'').trim();
             if(v)return v;
             const sd=g2date(r[cS]), ed=g2date(cE>=0?r[cE]:'')||sd;
-            const t=new Date(todayStr()); 
+            const t=new Date(todayStr());
             if(ed&&new Date(ed)<t)return '완료';
             if(sd&&new Date(sd)>t)return '예정';
             return '진행중';})(),
           book:String(cBk>=0?r[cBk]||'':'').trim(),cost:g2num(cCt>=0?r[cCt]:''),
-          note:String(cNo>=0?r[cNo]||'':'').trim()});});
+          note:String(cNo>=0?r[cNo]||'':'').trim(),report:hasRep?rep:null});});
       if(out.length){
         const prev={};TRIPS.forEach(t=>{prev[String(t.start||'')+'|'+String(t.mgr||'')]=t;});
         out.forEach(t=>{const o=prev[String(t.start||'')+'|'+String(t.mgr||'')];if(!o)return;
-          ['name','purpose','big','note'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});});
+          ['name','purpose','big','note'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});
+          if(!t.report&&o.report)t.report=o.report; /* 시트에 리포트 열이 없으면 기존에 입력해둔 리포트를 그대로 보존 */
+        });
         out.forEach(t=>{if(!String(t.name||'').trim())t.name=[t.city||t.country,t.visit].filter(Boolean).join(' ')||(t.cat||'출장');});
         TRIPS=out;saveTrips();done.push('출장일정 '+out.length+'건');}
       return;
@@ -9796,6 +9872,7 @@ loadSPERF();
   try{saveSPHIST();}catch(e){}
 })();
 try{mergeWkIntoTasks();}catch(e){}
+try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e){}
 render();
 try{mileFixDates();}catch(e){}
 </script>
