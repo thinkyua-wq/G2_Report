@@ -1686,6 +1686,13 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .cxs-rep-fl{font-size:11.5px;color:#475467}
 .cxs-rep-fl b{display:block;color:#101828;margin-top:6px}
 .cxs-rep-fl b:first-child{margin-top:0}
+.cxs-rep-lb{font-size:9.5px;font-weight:800;color:#98a2b3;letter-spacing:.03em;margin-top:6px}
+.cxs-rep-lb:first-of-type{margin-top:0}
+.cxs-rep-in{width:100%;border:1px solid #eaeef1;background:#fff;font:inherit;font-size:11.8px;line-height:1.6;color:#344054;padding:4px 6px;border-radius:0;resize:none;overflow:hidden;box-sizing:border-box;min-height:22px}
+.cxs-rep-in:hover{border-color:#d7e0e6;background:#fbfdfd}
+.cxs-rep-in:focus{border-color:var(--tl);background:#fff;outline:none}
+.cxs-rep-in.cell-ok{background:#e8f7f0;border-color:#7dd0ae}
+.cxs-rep-g .cxs-rep-in{margin-bottom:0}
 .secbox{margin-top:18px}
 .secbox:first-child{margin-top:0}
 .secbox-h{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;padding:2px 2px 6px;background:none;border:0;transition:.12s}
@@ -5277,11 +5284,7 @@ let TRIPS=[
   report:{
     staffCN:"", staffHQ:"",
     draftDoc:"PDF·이미지 첨부 예정", ticket:"PDF·이미지 첨부 예정",
-    days:[
-      {label:"11월 6일 (목) — 홍콩", text:"오전 인천에서 홍콩으로 이동, 입국 후 MegaGen Hong Kong 지사를 방문했다. 오후에는 홍콩 파트너사(Modern Dental, GBA Healthcare 등)와 미팅을 갖고 BD 마케팅 현황 및 협력방안을 논의했다. 저녁에는 현지 파트너와 환영 만찬을 진행했다."},
-      {label:"11월 7일 (금) — 심천", text:"홍콩 서구룡역에서 고속철로 심천 복전역까지 이동(통관 포함 약 1시간 소요). 오전에는 심천 메가젠 교육센터를 방문해 심천 지역 영업팀 및 KOL과 미팅했다. 오후에는 BD/ARi 제품 세미나와 현지 고객 간담회를 진행했고, 저녁에는 현지 협력 치과·파트너를 초청한 연회를 가졌다."},
-      {label:"11월 8일 (토) — 귀국", text:"오전 자유 일정 후 호텔 체크아웃, 오후에 심천에서 홍콩을 거쳐 귀국했다."}
-    ],
+    body:"11월 6일 (목) — 홍콩\n오전 인천에서 홍콩으로 이동, 입국 후 MegaGen Hong Kong 지사를 방문했다. 오후에는 홍콩 파트너사(Modern Dental, GBA Healthcare 등)와 미팅을 갖고 BD 마케팅 현황 및 협력방안을 논의했다. 저녁에는 현지 파트너와 환영 만찬을 진행했다.\n\n11월 7일 (금) — 심천\n홍콩 서구룡역에서 고속철로 심천 복전역까지 이동(통관 포함 약 1시간 소요). 오전에는 심천 메가젠 교육센터를 방문해 심천 지역 영업팀 및 KOL과 미팅했다. 오후에는 BD/ARi 제품 세미나와 현지 고객 간담회를 진행했고, 저녁에는 현지 협력 치과·파트너를 초청한 연회를 가졌다.\n\n11월 8일 (토) — 귀국\n오전 자유 일정 후 호텔 체크아웃, 오후에 심천에서 홍콩을 거쳐 귀국했다.",
     feelings:{result:"", improve:"", next:""}
   }}
 ];
@@ -5289,24 +5292,32 @@ try{const s=localStorage.getItem('wr_trips_v2');if(s){const o=JSON.parse(s);if(A
 function saveTrips(){try{localStorage.setItem('wr_trips_v2',JSON.stringify(TRIPS));}catch(e){}}
 let TRIPREP_OPEN={};
 function toggleTripRep(i){TRIPREP_OPEN[i]=!TRIPREP_OPEN[i];render();}
-function tripReportHTML(t){
-  const r=t.report||{};const days=r.days||[];const fl=r.feelings||{};
+function hasTripRep(t){const r=t&&t.report;if(!r)return false;const fl=r.feelings||{};
+  return !!(String(r.staffCN||'').trim()||String(r.staffHQ||'').trim()||String(r.draftDoc||'').trim()||String(r.ticket||'').trim()||String(r.body||'').trim()||String(fl.result||'').trim()||String(fl.improve||'').trim()||String(fl.next||'').trim()||(r.days&&r.days.length));}
+/* 출장리포트 필드 편집 · report 객체가 없으면 즉석에서 만들어 저장 (기존 필드와 동일하게 입력하는 즉시 자동저장) */
+function editTripRep(i,f,v,el){
+  const t=TRIPS[i];if(!t)return;if(roBlock())return;
+  if(!t.report)t.report={staffCN:'',staffHQ:'',draftDoc:'',ticket:'',body:'',feelings:{result:'',improve:'',next:''}};
+  if(!t.report.feelings)t.report.feelings={result:'',improve:'',next:''};
+  if(f.indexOf('feelings.')===0)t.report.feelings[f.slice(9)]=v; else t.report[f]=v;
+  saveTrips();
+  if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);}
+}
+function tripReportHTML(t,i){
+  const r=t.report||{};const fl=r.feelings||{};
+  const ro=RO();
+  const ta=(val,ph,field)=>'<textarea class="cxs-rep-in"'+(ro?' readonly':'')+' placeholder="'+esc(ph)+'" oninput="autogrow(this);editTripRep('+i+',\''+field+'\',this.value,this)">'+esc(val||'')+'</textarea>';
   let h='';
   h+='<div class="cxs-rep-h">📅 출장개요</div>';
-  h+='<div class="cxs-rep-g"><div class="k">중화팀</div><div>'+esc(r.staffCN||'-')+'</div><div class="k">본사</div><div>'+esc(r.staffHQ||'-')+'</div></div>';
-  h+='<div class="cxs-rep-ph">📎 출장기안서 — '+esc(r.draftDoc||'첨부 예정')+'</div>';
-  h+='<div class="cxs-rep-ph">📎 항공권 — '+esc(r.ticket||'첨부 예정')+'</div>';
-  h+='<div class="cxs-rep-h">📝 출장내용</div>';
-  if(days.length){
-    days.forEach(d=>{h+='<div class="cxs-rep-day"><b>'+esc(d.label||'')+'</b><p>'+esc(d.text||'')+'</p></div>';});
-  }else if(String(r.body||'').trim()){
-    h+='<div class="cxs-rep-day"><p style="white-space:pre-wrap">'+esc(r.body)+'</p></div>';
-  }else{
-    h+='<div class="cxs-rep-ph">작성된 내용이 없습니다.</div>';
-  }
+  h+='<div class="cxs-rep-g"><div class="k">중화팀</div>'+ta(r.staffCN,'중화팀 출장자','staffCN')+'<div class="k">본사</div>'+ta(r.staffHQ,'본사 출장자','staffHQ')+'</div>';
+  h+='<div class="cxs-rep-lb">📎 출장기안서</div>'+ta(r.draftDoc,'PDF·이미지 링크 또는 메모','draftDoc');
+  h+='<div class="cxs-rep-lb">📎 항공권</div>'+ta(r.ticket,'PDF·이미지 링크 또는 메모','ticket');
+  h+='<div class="cxs-rep-h">📝 출장내용</div>'+ta(r.body,'일자별 출장 내용을 입력해주세요','body');
   h+='<div class="cxs-rep-h">📷 사진</div><div class="cxs-rep-ph">드래그 앤 드롭 또는 붙여넣기로 추가</div>';
   h+='<div class="cxs-rep-h">💭 출장 후 느낀점</div>';
-  h+='<div class="cxs-rep-fl"><b>성과 및 소득</b>'+esc(fl.result||'-')+'<b>아쉬웠던 점 · 개선 필요</b>'+esc(fl.improve||'-')+'<b>다음 출장 시 참고사항</b>'+esc(fl.next||'-')+'</div>';
+  h+='<div class="cxs-rep-lb">성과 및 소득</div>'+ta(fl.result,'성과 및 소득','feelings.result');
+  h+='<div class="cxs-rep-lb">아쉬웠던 점 · 개선 필요</div>'+ta(fl.improve,'아쉬웠던 점 · 개선 필요','feelings.improve');
+  h+='<div class="cxs-rep-lb">다음 출장 시 참고사항</div>'+ta(fl.next,'다음 출장 시 참고사항','feelings.next');
   return h;
 }
 function tripIso(d){try{return +isoWeekNum(String(d).slice(0,10))||0;}catch(e){return 0;}}
@@ -6650,7 +6661,8 @@ function calDayPanel(mode){
       <textarea class="cxs-tx" placeholder="연계 프로젝트" oninput="autogrow(this);editTrip(${i},'big',this.value,0,this)">${esc(t.big||'')}</textarea>
       <div class="cxs-lb">프로젝트 결과</div>
       <textarea class="cxs-tx" style="color:#186b56;font-weight:600" placeholder="결과·성과" oninput="autogrow(this);editTrip(${i},'note',this.value,0,this)">${esc(t.note||'')}</textarea>
-      ${t.report?`<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${TRIPREP_OPEN[i]?'접기':'보기'}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t)+'</div>':''}`:''}
+      ${(function(){const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
+        return `<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${lb}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t,i)+'</div>':''}`;})()}
     </div>`;});
   /* 메모 */
   h+=`<div class="cxs-sec"><span class="bar" style="background:#98a2b3"></span>메모</div>`;
