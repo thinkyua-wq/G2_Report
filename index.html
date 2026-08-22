@@ -5316,8 +5316,39 @@ function editTripRep(i,f,v,el){
   if(!t.report)t.report={staffCN:'',staffHQ:'',draftDoc:'',ticket:'',body:'',feelings:{result:'',improve:'',next:''}};
   if(!t.report.feelings)t.report.feelings={result:'',improve:'',next:''};
   if(f.indexOf('feelings.')===0)t.report.feelings[f.slice(9)]=v; else t.report[f]=v;
+  t.report.dirty=1;
   saveTrips();
+  scheduleTripSync(i);
   if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);}
+}
+/* 출장리포트 → 노션 자동 전송 · 입력을 멈춘 뒤 10초 후 1회 (회의록의 scheduleMinSync와 같은 방식) */
+let _tripSyncT={};
+function scheduleTripSync(i){
+  if(!NPROXY)return; clearTimeout(_tripSyncT[i]);
+  _tripSyncT[i]=setTimeout(()=>{notionPushTrip(i,true);},10000);
+}
+async function notionPushTrip(i,silent){
+  const t=TRIPS[i];if(!t)return;
+  const r=t.report||{};
+  if(!hasTripRep(t)){if(!silent)toast('먼저 출장리포트 내용을 입력하세요');return;}
+  if(!NPROXY){if(!silent)notionCopyTrip(i);return;}
+  if(!silent)toast('노션 전송 중…');
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({kind:'trip',nid:r.nid||'',oldBlocks:r.nblocks||[],
+        title:t.name||'(출장명 없음)',date:String(t.start||'').slice(0,10),
+        period:tripFmt(t.start,t.end),place:[t.country,t.city,t.visit].filter(Boolean).join(' · '),
+        rep:{staffCN:r.staffCN||'',staffHQ:r.staffHQ||'',draftDoc:r.draftDoc||'',ticket:r.ticket||'',
+             body:r.body||'',feelings:r.feelings||{}}})});
+    const j=await res.json().catch(()=>({}));
+    if(j&&j.ok&&j.nid){
+      r.nid=j.nid; r.nblocks=j.blocks||[]; r.nsync=todayStr(); delete r.dirty;
+      saveTrips();render();
+      if(!silent)toast(j.created?'노션에 출장리포트를 만들었습니다 · 사진·PDF는 노션에서 첨부하세요':'노션 출장리포트를 갱신했습니다');
+    }else{
+      if(!silent)toast('노션 전송 실패: '+((j&&j.error)||res.status)+' · 중계(val.town)를 v11로 교체했는지 확인하세요');
+    }
+  }catch(e){if(!silent)toast('노션 전송 오류 · 연동 주소/네트워크 확인');}
 }
 function tripReportHTML(t,i){
   const r=t.report||{};const fl=r.feelings||{};
@@ -5329,12 +5360,26 @@ function tripReportHTML(t,i){
   h+='<div class="cxs-rep-lb">📎 출장기안서</div>'+ta(r.draftDoc,'PDF·이미지 링크 또는 메모','draftDoc');
   h+='<div class="cxs-rep-lb">📎 항공권</div>'+ta(r.ticket,'PDF·이미지 링크 또는 메모','ticket');
   h+='<div class="cxs-rep-h">📝 출장내용</div>'+ta(r.body,'일자별 출장 내용을 입력해주세요','body');
-  h+='<div class="cxs-rep-h">📷 사진 · PDF</div><div class="cxs-rep-ph">이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계로 사진·PDF 파일 자체는 붙여넣을 수 없어요) · 구글 드라이브에 올린 뒤 공유 링크를 위 「출장기안서·항공권」 칸에 붙여넣거나, 아래 「노션으로 복사」로 노션에 옮겨 그 페이지에 파일을 첨부하세요.</div>';
+  h+='<div class="cxs-rep-h">📷 사진 · PDF</div><div class="cxs-rep-ph">'
+    +(NPROXY
+      ? '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 아래 「노션에서 열기」로 들어가 그 페이지에 사진·PDF를 첨부하세요. 첨부한 파일은 이후 자동 전송에도 지워지지 않습니다.'
+      : '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 구글 드라이브에 올린 뒤 공유 링크를 위 「출장기안서·항공권」 칸에 붙여넣거나, 아래 「노션으로 복사」로 노션에 옮겨 그 페이지에 파일을 첨부하세요.')
+    +'</div>';
   h+='<div class="cxs-rep-h">💭 출장 후 느낀점</div>';
   h+='<div class="cxs-rep-lb">성과 및 소득</div>'+ta(fl.result,'성과 및 소득','feelings.result');
   h+='<div class="cxs-rep-lb">아쉬웠던 점 · 개선 필요</div>'+ta(fl.improve,'아쉬웠던 점 · 개선 필요','feelings.improve');
   h+='<div class="cxs-rep-lb">다음 출장 시 참고사항</div>'+ta(fl.next,'다음 출장 시 참고사항','feelings.next');
-  h+=`<button class="mile-add mini" style="margin-top:8px" onclick="notionCopyTrip(${i})" title="출장리포트 내용을 복사해 노션에 붙여넣고, 거기서 사진·PDF를 첨부하세요">📋 노션으로 복사</button>`;
+  if(NPROXY){
+    const st=r.nid?(r.dirty?'수정됨 · 곧 자동 전송':'✅ 노션 저장됨'+(r.nsync?' · '+esc(r.nsync):'')):'아직 전송 전 · 입력 후 10초 뒤 자동 전송';
+    h+=`<div class="cxs-rep-lb" style="margin-top:8px">노션 <span style="font-weight:600;color:${r.nid&&!r.dirty?'#2f9e79':'#98a2b3'}">${st}</span></div>`;
+    h+=`<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">`
+      +`<button class="mile-add mini" onclick="notionPushTrip(${i})" title="지금 바로 노션에 전송합니다 (자동 전송을 기다리지 않음)">${r.nid?'↻ 노션 갱신':'↑ 노션 전송'}</button>`
+      +(r.nid?`<a class="mile-add mini" style="text-decoration:none;background:#fff;color:#2f6ea3;border:1px solid #cfe0ee" href="https://www.notion.so/${esc(String(r.nid).replace(/-/g,''))}" target="_blank" rel="noopener">🔗 노션에서 열기 (사진·PDF 첨부)</a>`:'')
+      +`</div>`;
+  }else{
+    h+=`<button class="mile-add mini" style="margin-top:8px" onclick="notionCopyTrip(${i})" title="출장리포트 내용을 복사해 노션에 붙여넣고, 거기서 사진·PDF를 첨부하세요">📋 노션으로 복사</button>`;
+    h+=`<div class="cxs-rep-ph" style="margin-top:4px">노션 중계 주소를 연결하면 입력만 해도 자동으로 노션에 등록됩니다 (회의록 탭 상단에서 연결).</div>`;
+  }
   return h;
 }
 function notionCopyTrip(i){
@@ -5603,7 +5648,9 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
 function addHour(t){const h=Math.min(23,(+String(t).slice(0,2))+1);return String(h).padStart(2,'0')+String(t).slice(2);}
 function nextDay(d){const x=new Date(d);x.setDate(x.getDate()+1);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;}
 let NPROXY=''; try{NPROXY=localStorage.getItem('wr_nproxy')||'';}catch(e){}
-function setNProxy(v){NPROXY=(v||'').trim();try{localStorage.setItem('wr_nproxy',NPROXY);}catch(e){}toast(NPROXY?'노션 연동 주소 저장 · 이제 회의록이 자동 전송됩니다':'노션 연동 주소를 비웠습니다');render();}
+let NPROXYEDIT=false;
+function toggleNProxyEdit(){NPROXYEDIT=!NPROXYEDIT;render();}
+function setNProxy(v){NPROXY=(v||'').trim();NPROXYEDIT=false;try{localStorage.setItem('wr_nproxy',NPROXY);}catch(e){}toast(NPROXY?'노션 연동 주소 저장 · 이제 회의록·출장리포트가 자동 전송됩니다':'노션 연동 주소를 비웠습니다');render();}
 let _minSyncT={};
 function scheduleMinSync(id){ /* 입력 멈춘 뒤 3초 후 노션 자동 전송 */
   if(!NPROXY)return; clearTimeout(_minSyncT[id]);
@@ -5766,8 +5813,8 @@ function renderMinutes(){
   const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
   if(MNPAGE>=pages)MNPAGE=pages-1; if(MNPAGE<0)MNPAGE=0;
   const list=all.slice(MNPAGE*PER,MNPAGE*PER+PER);
-  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?'<button class="reset" onclick="mnTranslateAll()" title="중국어로 들어온 회의록을 한국어로 번역합니다">🌐 한국어 번역</button>':''}<button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button><select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
-  if(!NPROXY)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?'<button class="reset" onclick="mnTranslateAll()" title="중국어로 들어온 회의록을 한국어로 번역합니다">🌐 한국어 번역</button>':''}<button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button>${NPROXY?`<button class="reset" onclick="toggleNProxyEdit()" title="현재 연결된 노션 중계 주소: ${esc(NPROXY)}">⚙ 중계주소</button>`:''}<select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
+  if(!NPROXY||NPROXYEDIT)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" value="${esc(NPROXY)}" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
   h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
   h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:230px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
   if(!list.length)h+=`<tr><td colspan="8" style="text-align:center;color:var(--faint);padding:20px">회의록이 없습니다. 캘린더에 회의를 등록하거나 「＋ 회의록 추가」를 누르세요.</td></tr>`;
@@ -9458,6 +9505,8 @@ function importG2Master(wb,scope){
         out.forEach(t=>{const o=prev[String(t.start||'')+'|'+String(t.mgr||'')];if(!o)return;
           ['name','purpose','big','note'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});
           if(!t.report&&o.report)t.report=o.report; /* 시트에 리포트 열이 없으면 기존에 입력해둔 리포트를 그대로 보존 */
+          /* 시트 값으로 리포트를 새로 채우더라도 노션 연결(페이지 id·블록 id)은 잃지 않게 이어붙임 */
+          else if(t.report&&o.report&&o.report.nid){t.report.nid=o.report.nid;t.report.nblocks=o.report.nblocks||[];t.report.nsync=o.report.nsync||'';t.report.dirty=1;}
         });
         out.forEach(t=>{if(!String(t.name||'').trim())t.name=[t.city||t.country,t.visit].filter(Boolean).join(' ')||(t.cat||'출장');});
         TRIPS=out;saveTrips();done.push('출장일정 '+out.length+'건');}
