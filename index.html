@@ -2433,7 +2433,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.21-M220</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.23-M230</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2851,9 +2851,9 @@ const MENU=[['home','팀 종합현황','홈'],
   ['mreport','업무현황','업무'],
   ['calmonth','중화팀 일정·행사','일정'],
   ['goals','팀업무','목표'],
-  ['meetrep','G2일정관리(이유아)','회의']
+  ['meetrep','G2업무일정관리(이유아)','회의']
 ];
-const MENULB={home:'팀 종합현황',meetrep:'G2일정관리(이유아)',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
+const MENULB={home:'팀 종합현황',meetrep:'G2업무일정관리(이유아)',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
 let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){}
@@ -5173,6 +5173,7 @@ function renderOverview(){
     else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban'].includes(k)); /* 개별 팀원 계정 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
+  if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'); /* 팀장 화면: 과제진행율은 팀업무 메뉴로 이동 (팀원은 팀업무 접근이 없어 여기 유지) */
   let CT=isMR?MRTAB:OVTAB;
   if(CT==='report')CT='month';
   if(!OVTABS.some(([k])=>k===CT))CT=(OVTABS[0]||['main'])[0];
@@ -5390,7 +5391,7 @@ function notionCopyTrip(i){
     +`출장기안서: ${r.draftDoc||'-'}\n항공권: ${r.ticket||'-'}\n\n`
     +`[출장내용]\n${r.body||'-'}\n\n`
     +`[출장 후 느낀점]\n성과 및 소득: ${fl.result||'-'}\n아쉬웠던 점 · 개선 필요: ${fl.improve||'-'}\n다음 출장 시 참고사항: ${fl.next||'-'}\n\n`
-    +`(G2일정관리(이유아) · 출장리포트에서 작성)`;
+    +`(G2업무일정관리(이유아) · 출장리포트에서 작성)`;
   try{navigator.clipboard.writeText(tx).then(()=>{toast('출장리포트를 복사했습니다 · 노션에 붙여넣고 사진·PDF를 첨부하세요');window.open('https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a','_blank');});}catch(e){toast('복사 실패');}
 }
 function tripIso(d){try{return +isoWeekNum(String(d).slice(0,10))||0;}catch(e){return 0;}}
@@ -5573,7 +5574,7 @@ function editLink_rep(i,v){REPORTS[i].link=v;saveReports();render();}
 /* ═ 회의록 (팀장 전용 · 캘린더 회의와 연동) ═ */
 let MINUTES=[];try{const s0=localStorage.getItem('wr_minutes_v1');if(s0)MINUTES=JSON.parse(s0)||[];}catch(e){}
 function saveMinutes(){try{localStorage.setItem('wr_minutes_v1',JSON.stringify(MINUTES));}catch(e){}}
-function minSyncFromCal(){ /* G2일정관리(이유아)의 회의·일정([지시] 제외) → 회의록 행 자동 생성 · 팀 캘린더(CALLIST)는 대상 아님 */
+function minSyncFromCal(){ /* G2업무일정관리(이유아)의 회의·일정([지시] 제외) → 회의록 행 자동 생성 · 팀 캘린더(CALLIST)는 대상 아님 */
   let n=0;(LEECAL||[]).forEach(ev=>{const t=String(ev.title||'').trim();if(!t||/^\[지시\]/.test(t))return;
     if(MINUTES.some(m=>m.calId===ev.id))return;
     MINUTES.push({id:'mn'+(ev.id||Date.now()),calId:ev.id,title:t.replace(/^\[(회의|일정)\]\s*/,''),date:ev.sdate||ev.date||todayStr(),summary:'',link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
@@ -5622,7 +5623,7 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
         if(!hit){LEECAL.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1});nNew++;}
         else{if(hit.title!==title||hit.sdate!==sd||hit.start!==st){hit.title=title;hit.sdate=sd;hit.edate=sd;hit.start=st;hit.end=en;nUpd++;}}
       });
-      /* ② G2일정관리(이유아) → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) · CALLIST(팀 캘린더)는 대상 아님 */
+      /* ② G2업무일정관리(이유아) → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) · CALLIST(팀 캘린더)는 대상 아님 */
       let nPush=0,nPatch=0;
       const ym=`${y}-${pad(m)}`;
       for(const x of (LEECAL||[])){
@@ -5778,7 +5779,7 @@ function mnFixDates(silent){
   (MINUTES||[]).forEach(m=>{
     let d=mnDateFromTitle(m.title,y);                       /* ① 제목의 날짜 */
     if(!d&&m.calId){const ev=(LEECAL||[]).find(x=>x.id===m.calId);if(ev)d=String(ev.sdate||ev.date||'').slice(0,10);}
-    if(!d){const tn=nrm(m.title);                            /* ② 같은 회의명 캘린더 일정 (G2일정관리) */
+    if(!d){const tn=nrm(m.title);                            /* ② 같은 회의명 캘린더 일정 (G2업무일정관리) */
       const hits=(LEECAL||[]).filter(x=>nrm(x.title)===tn&&(x.sdate||x.date));
       if(hits.length===1)d=String(hits[0].sdate||hits[0].date).slice(0,10);}
     if(d&&d!==m.date){m.date=d;m.dirty=1;n++;}
@@ -6056,8 +6057,8 @@ function renderCalKPI(){
   const nf=n=>(typeof fmt==='function')?fmt(n):n.toLocaleString();
   const fstat=`${MILECTRY||'전체 국가'} · ${MILEMGR?((mgrById(MILEMGR)||{}).name||'')+' 담당':'전체 담당자'}`;
   document.getElementById('kpis').innerHTML=`
-    <div class="kpi hero"><div class="ring"></div>
-      <div class="lb">${MONTH}월 일정 <span style="font-size:9px;color:rgba(255,255,255,.7)">전체 ${total}건 중</span></div><div class="val">${monthN}<small>건</small></div>
+    <div class="kpi">
+      <div class="lb"><span class="dot" style="background:#c9821a"></span>${MONTH}월 일정 <span style="font-size:9px;color:var(--faint)">전체 ${total}건 중</span></div><div class="val">${monthN}<small>건</small></div>
       <div class="foot">${esc(fstat)}</div></div>
     <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>참가인원</div>
       <div class="val">${nf(attnSum)}<small>명</small></div><div class="foot">${MONTH}월 합계</div></div>
@@ -6104,8 +6105,8 @@ function renderCalMonthKPI(){
   const upcoming=CALLIST.filter(e=>{const d=endOf(e);return d&&d>=today;}).length;
   const past=CALLIST.filter(e=>{const d=endOf(e);return d&&d<today;}).length;
   document.getElementById('kpis').innerHTML=`
-    <div class="kpi hero"><div class="ring"></div>
-      <div class="lb">전체 일정</div><div class="val">${total}<small>건</small></div>
+    <div class="kpi">
+      <div class="lb"><span class="dot" style="background:var(--accentInk)"></span>전체 일정</div><div class="val">${total}<small>건</small></div>
       <div class="foot">등록 일정 전체</div></div>
     <div class="kpi"><div class="lb"><span class="dot" style="background:var(--accentInk)"></span>${MONTH}월 일정</div>
       <div class="val">${inMonth}<small>건</small></div><div class="foot">선택한 달 기준</div></div>
@@ -6586,7 +6587,7 @@ try{const s=localStorage.getItem('wr_caltodo_v1');if(s)CALTODO=JSON.parse(s)||[]
   }
 })();
 function saveCal(){try{localStorage.setItem('wr_calev_v1',JSON.stringify(CALLIST));}catch(e){}}
-/* G2일정관리(이유아) 전용 개인 일정 · 중화팀 일정·행사(CALLIST)와 완전히 분리된 별도 저장소
+/* G2업무일정관리(이유아) 전용 개인 일정 · 중화팀 일정·행사(CALLIST)와 완전히 분리된 별도 저장소
    · 팀 공유 캘린더에는 절대 노출되지 않음 · 이 파일이 처음 실행될 때, 그동안 팀 캘린더(CALLIST)에
    섞여 있던 「내 구글캘린더(Mgg_회의일정) 동기화 항목(gc_)」만 명확히 개인 것이므로 이쪽으로 이관한다 */
 let LEECAL=[];
@@ -6599,7 +6600,7 @@ let LEECAL=[];
     saveCal();saveLeeCal();
   }
   /* 중화팀 일정·행사(CALLIST)에 손으로 직접 등록한 일정(id 'e…')은 팀 공유가 아니라 본인 일정이므로
-     G2일정관리로 옮긴다 · 루틴 시드('rt_')와 지시 일정('[지시] …')은 팀 공유이므로 그대로 둔다 · 1회만 실행 */
+     G2업무일정관리로 옮긴다 · 루틴 시드('rt_')와 지시 일정('[지시] …')은 팀 공유이므로 그대로 둔다 · 1회만 실행 */
   try{
     if(!localStorage.getItem('wr_leecal_mig_v2')){
       const mine=CALLIST.filter(e=>/^e\d/.test(String(e.id||''))&&!/^\[지시\]/.test(String(e.title||'')));
@@ -6613,7 +6614,7 @@ let LEECAL=[];
   }catch(e){}
 })();
 function saveLeeCal(){try{localStorage.setItem('wr_leecal_v1',JSON.stringify(LEECAL));}catch(e){}}
-/* 루틴업무(고정·기본업무) 표에서 「내(이유아)」로 등록한 정례회의를 G2일정관리 달력에 자동으로 깐다.
+/* 루틴업무(고정·기본업무) 표에서 「내(이유아)」로 등록한 정례회의를 G2업무일정관리 달력에 자동으로 깐다.
    FIXEDWORK 한 줄 = 회의 1개 · cycle(매주/격주/월례) · dow(요일) · time("09:30-11:00" / "3주차 14:00-17:00" / "매월말 17:00-18:00") */
 function leeRoutineParse(w){
   const t=String(w.time||'');
@@ -6622,20 +6623,26 @@ function leeRoutineParse(w){
   return {start:tm?tm[1]:'',end:tm?tm[2]:'',wk:wk?+wk[1]:0,eom:/매월\s*말|월말/.test(t),
     dow:['일','월','화','수','목','금','토'].indexOf(String(w.dow||'').trim())};
 }
-function seedLeeRoutine(){
+/* 루틴업무 → 달력 채우기 공통 엔진
+   who='lee' → G2업무일정관리(LEECAL)에 내 정례회의만 · who='' → 중화팀 일정·행사(CALLIST)에 담당자 전원 */
+function seedRoutineInto(who){
   if(roBlock())return;
   const y=YEAR,m=MONTH,pad=n=>String(n).padStart(2,'0'),ds=d=>`${y}-${pad(m)}-${pad(d)}`;
-  const dim=new Date(y,m,0).getDate(), firstDow=new Date(y,m-1,1).getDay();
-  const mine=(FIXEDWORK||[]).filter(w=>w.mgr==='lee'&&String(w.name||'').trim());
-  if(!mine.length){toast('루틴업무에 「이유아」로 등록된 회의가 없습니다 · 팀업무 → 루틴업무에서 먼저 등록하세요');return;}
-  /* 이 달에 이미 깔아둔 루틴만 걷어내고 다시 깐다 (손으로 넣은 일정은 건드리지 않음) */
-  const ym=`${y}-${pad(m)}`;
-  LEECAL=LEECAL.filter(e=>!(String(e.id||'').indexOf('rt_')===0&&String(e.sdate||'').slice(0,7)===ym));
+  const dim=new Date(y,m,0).getDate(), firstDow=new Date(y,m-1,1).getDay(), ym=`${y}-${pad(m)}`;
+  const src=(FIXEDWORK||[]).filter(w=>String(w.name||'').trim()&&(!who||w.mgr===who));
+  if(!src.length){toast(who?'루틴업무에 「이유아」로 등록된 회의가 없습니다 · 팀업무 → 루틴업무에서 먼저 등록하세요'
+                            :'루틴업무에 등록된 정례회의가 없습니다 · 팀업무 → 루틴업무에서 먼저 등록하세요');return;}
+  /* 담당자 순서(팀장→차장→대리)대로 깔아 같은 날 안에서도 담당자별로 묶여 보이게 한다 */
+  src.sort((a,b)=>mgrOrder(a.mgr)-mgrOrder(b.mgr)||String(a.name||'').localeCompare(String(b.name||''),'ko'));
+  const keep=e=>!(String(e.id||'').indexOf('rt_')===0&&String(e.sdate||'').slice(0,7)===ym);
+  if(who)LEECAL=LEECAL.filter(keep); else CALLIST=CALLIST.filter(keep);
   let n=0;
   const add=(d,w,p)=>{if(d<1||d>dim)return;
-    LEECAL.push({id:'rt_'+(CUID++),title:w.name,sdate:ds(d),edate:ds(d),start:p.start,end:p.end,
-      desc:'[루틴] '+(w.cycle||'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none'});n++;};
-  mine.forEach(w=>{
+    const ev={id:'rt_'+(CUID++),title:w.name,mgr:w.mgr||'',sdate:ds(d),edate:ds(d),start:p.start,end:p.end,
+      desc:'[루틴] '+(w.cycle||'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none'};
+    if(who)LEECAL.push(ev); else CALLIST.push(ev);
+    n++;};
+  src.forEach(w=>{
     const p=leeRoutineParse(w);
     if(p.eom){add(dim,w,p);return;}                                  /* 매월말 */
     if(p.dow<0){return;}                                             /* 요일 정보가 없으면 날짜를 정할 수 없음 */
@@ -6644,9 +6651,12 @@ function seedLeeRoutine(){
     const step=/격주/.test(w.cycle||'')?14:7;                         /* 매주 / 격주 */
     for(let d=1+((p.dow-firstDow+7)%7);d<=dim;d+=step)add(d,w,p);
   });
-  saveLeeCal();render();
-  toast(n?`루틴업무의 내 정례회의 ${n}건을 ${m}월 달력에 넣었습니다`:'날짜를 정할 수 있는 정례회의가 없습니다 (요일·시간을 채워주세요)');
+  if(who)saveLeeCal(); else saveCal();
+  render();
+  toast(n?`루틴업무 정례회의 ${n}건을 ${m}월 달력에 넣었습니다${who?'':' (담당자 전원)'}`
+        :'날짜를 정할 수 있는 정례회의가 없습니다 (요일·시간을 채워주세요)');
 }
+function seedLeeRoutine(){seedRoutineInto('lee');}
 /* 중화팀 R&R 관리표 기준 루틴 회의 → 8~12월 캘린더 자동 채우기 */
 function seedRoutineMeetings(){
   const Y=2026, pad=n=>String(n).padStart(2,'0'), dstr=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
@@ -6710,11 +6720,13 @@ function calModalSave(){
   let sdate=cmVal('cm_sdate')||CALMODAL.date||calDefaultDate();
   let edate=cmVal('cm_edate')||sdate;if(edate<sdate)edate=sdate;
   const ev={title,sdate,edate,start:cmVal('cm_start'),end:cmVal('cm_end'),desc:cmVal('cm_desc'),repeat:cmVal('cm_repeat')||'none'};
-  if(CALMODAL.idx>=0&&CALLIST[CALMODAL.idx])Object.assign(CALLIST[CALMODAL.idx],ev);
-  else CALLIST.push(Object.assign({id:'e'+(CUID++)},ev));
-  {const e0=CALLIST[CALMODAL.idx];if(e0&&e0.gid)e0._dirty=1;}saveCal();CALMODAL.open=false;render();toast('저장되었습니다');
+  let tgt;
+  if(CALMODAL.idx>=0&&CALLIST[CALMODAL.idx]){tgt=CALLIST[CALMODAL.idx];Object.assign(tgt,ev);}
+  else {tgt=Object.assign({id:'e'+(CUID++)},ev);CALLIST.push(tgt);}
+  if(tgt&&tgt.gid)tgt._dirty=1;
+  saveCal();mirrorToLee(tgt);CALMODAL.open=false;render();toast('저장되었습니다');
 }
-function calModalDelete(){if(CALMODAL.idx>=0)CALLIST.splice(CALMODAL.idx,1);saveCal();CALMODAL.open=false;render();toast('삭제되었습니다');}
+function calModalDelete(){if(CALMODAL.idx>=0){const e=CALLIST[CALMODAL.idx];if(e)unmirrorLee(e.id);CALLIST.splice(CALMODAL.idx,1);}saveCal();CALMODAL.open=false;render();toast('삭제되었습니다');}
 function addCalTodo(){const el=document.getElementById('ct_new');const t=(el.value||'').trim();if(!t)return;CALTODO.push({id:'t'+(CUID++),text:t,done:false});saveCalTodo();render();}
 function ctKey(e){if(e.key==='Enter'){e.preventDefault();addCalTodo();}}
 function toggleCalTodo(id){const t=CALTODO.find(x=>x.id===id);if(t){t.done=!t.done;saveCalTodo();render();}}
@@ -6755,14 +6767,33 @@ function calPickItem(d,kind,key){
 }
 function focCls(kind,key){return (CALFOCUS&&CALFOCUS.k===kind&&String(CALFOCUS.i)===String(key))?' foc':'';}
 function calDow(date){return ['일','월','화','수','목','금','토'][new Date(date+'T00:00:00').getDay()];}
+/* 담당자 정렬 순서 (MGRS 표 순서 = 팀장 → 차장 → 대리) · 담당자 없는 일정은 맨 뒤 */
+function mgrOrder(id){const i=(MGRS||[]).findIndex(m=>m.id===id);return i<0?99:i;}
+/* 담당자 필터(상단 「담당자」 드롭다운)를 회의·일정에도 적용 · 담당자가 없는 일정은 항상 표시 */
+function fMeetEv(e){return !MILEMGR||!e.mgr||e.mgr===MILEMGR;}
 function calEvsOn(date,list){list=list||CALLIST;return list.map((e,idx)=>({e,idx})).filter(o=>{const a=o.e.sdate||o.e.date;if(!a)return false;const b=o.e.edate||a;return a<=date&&date<=b;})
-  .sort((x,y)=>String(x.e.start||'').localeCompare(String(y.e.start||'')));}
+  .sort((x,y)=>mgrOrder(x.e.mgr)-mgrOrder(y.e.mgr)||String(x.e.start||'99').localeCompare(String(y.e.start||'99'))||String(x.e.title||'').localeCompare(String(y.e.title||''),'ko'));}
 /* 중화팀 일정·행사(CALLIST) 전용 · 계속 사용 */
 let NEWEVFOCUS=null;
-function calAddOn(date){if(roBlock())return;const id='e'+(CUID++);CALLIST.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'});saveCal();CALSEL=date;NEWEVFOCUS=id;render();}
-function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();
+/* ── 중화팀 일정·행사 → G2업무일정관리 단방향 반영 ──
+   팀 달력에 손으로 등록한 일정(id 'e…')은 내 G2업무일정관리에도 같이 보이게 복사본을 둔다.
+   복사본은 srcId로 원본과 묶여 있고 팀 달력이 원본이다(제목·시간 수정·삭제가 그대로 따라옴).
+   반대 방향은 없다 — G2업무일정관리에서 새로 만든 일정은 팀 달력에 절대 올라가지 않는다.
+   루틴 시드(rt_)와 지시([지시] …)는 팀 공유 항목이라 복사하지 않는다. */
+function isTeamOwn(e){return /^e\d/.test(String(e&&e.id||''))&&!/^\[지시\]/.test(String(e&&e.title||''));}
+function mirrorToLee(e){
+  if(!e||!isTeamOwn(e))return;
+  let m=LEECAL.find(x=>x.srcId===e.id);
+  if(!m){m={id:'tm_'+e.id,srcId:e.id,agenda:'',repeat:'none'};LEECAL.push(m);}
+  m.title=e.title||'';m.mgr=e.mgr||'';m.sdate=e.sdate||'';m.edate=e.edate||e.sdate||'';
+  m.start=e.start||'';m.end=e.end||'';m.desc=e.desc||'';
+  saveLeeCal();
+}
+function unmirrorLee(id){const n=LEECAL.length;LEECAL=LEECAL.filter(x=>x.srcId!==id);if(LEECAL.length!==n)saveLeeCal();}
+function calAddOn(date){if(roBlock())return;const id='e'+(CUID++);const ev={id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'};CALLIST.push(ev);saveCal();mirrorToLee(ev);CALSEL=date;NEWEVFOCUS=id;render();}
+function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();mirrorToLee(e);
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
-/* G2일정관리(이유아) 전용 · LEECAL에만 작용 · 회의일정보고(meetrep)에서만 호출됨 */
+/* G2업무일정관리(이유아) 전용 · LEECAL에만 작용 · 회의일정보고(meetrep)에서만 호출됨 */
 function calAddOnL(date){if(roBlock())return;const id='e'+(CUID++);LEECAL.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'});saveLeeCal();CALSEL=date;NEWEVFOCUS=id;render();}
 function calEditFieldL(idx,f,v,el){if(roBlock())return;const e=LEECAL[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveLeeCal();
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
@@ -6791,24 +6822,35 @@ function calDayPanel(mode){
   const M=mode||'cal';
   const date=calSelDate();
   const isMe=(TAB==='meetrep');
-  const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST):[], miles=calMilesFor(date).filter(fMile), trips=calTripsFor(date).filter(fTrip);
+  /* G2업무일정관리: 중화팀 행사·출장 섹션 없음 (내 일정·메모만) · 출장리포트는 하단 「출장리포트」 탭에서 작성 */
+  const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], miles=isMe?[]:calMilesFor(date).filter(fMile), trips=isMe?[]:calTripsFor(date).filter(fTrip);
   const n=evs.length+miles.length+trips.length;
   if(!CALSIDE)return '';
   let h=`<div class="calx-sw"><div class="calx-side"><div class="cxs-h"><span class="d">${+date.slice(5,7)}월 ${+date.slice(8,10)}일</span><span class="w">${calDow(date)}요일</span><span class="n">${n}건</span><button class="cxs-fold" onclick="toggleCalSide()" title="상세 숨기기">›</button></div><div class="cxs-b">`;
   if(M==='mile')h+=milePanelSec(date,miles);
-  /* 팀 일정 (meetrep=G2일정관리(이유아)는 LEECAL, 그 외에는 CALLIST) */
+  /* 팀 일정 (meetrep=G2업무일정관리(이유아)는 LEECAL, 그 외에는 CALLIST) */
   h+=`<div class="cxs-sec"><span class="bar" style="background:#2f9e79"></span>${isMe?'내 일정':'팀 일정'} <span style="color:#c3cbd2">${evs.length}</span>${RO()?'':`<button class="add" onclick="${isMe?'calAddOnL':'calAddOn'}('${date}')">＋ 추가</button>`}</div>`;
   if(!evs.length)h+='<div class="cxs-emp">등록된 일정이 없습니다.</div>';
   evs.forEach(o=>{const e=o.e,i=o.idx;const ef=isMe?'calEditFieldL':'calEditField',df=isMe?'calDelIdxL':'calDelIdx';
+    if(isMe&&e.srcId){ /* 중화팀 일정·행사에서 넘어온 복사본 — 내용은 팀 달력이 원본이라 읽기 전용, 기준사항만 내가 적는다 */
+      const g=e.mgr?(mgrById(e.mgr)||null):null;
+      h+=`<div class="cxs-card c${focCls('meet',i)}" style="border-left-color:#98a2b3">
+        <div class="cxs-r"><b style="flex:1;min-width:0;font-size:12.5px;color:#344054">${esc(e.title||'(제목 없음)')}</b><span class="cxs-tag t" style="background:#eef1f4;color:#667085">팀</span><button class="cxs-x" title="내 달력에서만 숨기기 (팀 일정은 그대로)" onclick="${df}(${i})">×</button></div>
+        <div class="cxs-lb">${g?esc(g.name)+' · ':''}${e.start?esc(e.start)+(e.end?'~'+esc(e.end):''):'종일'} · 중화팀 일정·행사에서 등록됨 (여기서는 수정 불가)</div>
+        <div class="cxs-lb">기준사항 (안건·체크리스트)</div>
+        <textarea class="cxs-tx" placeholder="이 회의에서 확인·논의할 기준사항을 적어두세요" oninput="autogrow(this);${ef}(${i},'agenda',this.value,this)">${esc(e.agenda||'')}</textarea>
+      </div>`;return;}
     h+=`<div class="cxs-card c${focCls('meet',i)}">
       <div class="cxs-r"><input id="cev_title_${e.id}" class="cxs-in" value="${esc(e.title||'')}" placeholder="일정 제목부터 입력하세요" oninput="${ef}(${i},'title',this.value,this)"><button class="cxs-x" title="삭제" onclick="${df}(${i})">×</button></div>
+      ${isMe?'':`<div class="cxs-r"><span class="cxs-lb" style="padding:0">담당</span><select class="cxs-in sm" style="width:auto;flex:1;min-width:0" onchange="${ef}(${i},'mgr',this.value,this)"><option value="">미지정</option>${MGRS.map(g=>`<option value="${g.id}" ${e.mgr===g.id?'selected':''}>${esc(g.name)}</option>`).join('')}</select></div>`}
       <div class="cxs-r"><input class="cxs-in sm" type="time" value="${esc(e.start||'')}" oninput="${ef}(${i},'start',this.value,this)"><span style="color:#c3cbd2;font-size:11px">~</span><input class="cxs-in sm" type="time" value="${esc(e.end||'')}" oninput="${ef}(${i},'end',this.value,this)"><input class="cxs-in sm" style="width:auto;flex:1;min-width:0" type="date" value="${esc(e.sdate||date)}" oninput="${ef}(${i},'sdate',this.value,this)"></div>
       ${!isMe?'':`<div class="cxs-lb">기준사항 (안건·체크리스트)</div><textarea class="cxs-tx" placeholder="이 회의에서 확인·논의할 기준사항을 적어두세요" oninput="autogrow(this);${ef}(${i},'agenda',this.value,this)">${esc(e.agenda||'')}</textarea>`}
       <textarea class="cxs-tx" placeholder="설명·메모" oninput="autogrow(this);${ef}(${i},'desc',this.value,this)">${esc(e.desc||'')}</textarea>
     </div>`;});
-  /* 행사 */
-  if(M!=='mile')h+=milePanelSec(date,miles);
-  /* 출장 */
+  /* 행사 (G2업무일정관리에서는 표시 안 함) */
+  if(M!=='mile'&&!isMe)h+=milePanelSec(date,miles);
+  /* 출장 (G2업무일정관리에서는 표시 안 함 · 출장리포트는 하단 탭) */
+  if(!isMe){
   h+=`<div class="cxs-sec"><span class="bar" style="background:#4a90d9"></span>출장 <span style="color:#c3cbd2">${trips.length}</span></div>`;
   if(!trips.length)h+='<div class="cxs-emp">해당 출장이 없습니다.</div>';
   trips.forEach(t=>{const i=TRIPS.indexOf(t);
@@ -6820,9 +6862,8 @@ function calDayPanel(mode){
       <textarea class="cxs-tx" placeholder="연계 프로젝트" oninput="autogrow(this);editTrip(${i},'big',this.value,0,this)">${esc(t.big||'')}</textarea>
       <div class="cxs-lb">프로젝트 결과</div>
       <textarea class="cxs-tx" style="color:#186b56;font-weight:600" placeholder="결과·성과" oninput="autogrow(this);editTrip(${i},'note',this.value,0,this)">${esc(t.note||'')}</textarea>
-      ${TAB!=='meetrep'?'':(function(){const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
-        return `<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${lb}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t,i)+'</div>':''}`;})()}
     </div>`;});
+  }
   /* 메모 */
   h+=`<div class="cxs-sec"><span class="bar" style="background:#98a2b3"></span>메모</div>`;
   h+=`<textarea class="cxs-memo" placeholder="${esc(+date.slice(5,7))}월 ${esc(+date.slice(8,10))}일 메모 · 회의 내용, 확인할 것, 특이사항" oninput="editCalDMemo('${date}',this.value,this)">${esc(CALDMEMO[date]||'')}</textarea>`;
@@ -6837,14 +6878,15 @@ function monthCalendarBody(){
   let g='<div class="calx-hd">'+['일','월','화','수','목','금','토'].map((l,i)=>`<div class="calx-dw s${i}">${l}</div>`).join('')+'</div><div class="calx-g">';
   const dayBtn=(d)=>{
     const date=`${y}-${pad(m)}-${pad(d)}`, dw=new Date(y,m-1,d).getDay();
-    const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST):[], ml=calMilesFor(date).filter(fMile), tp=calTripsFor(date).filter(fTrip);
+    const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], ml=isMe?[]:calMilesFor(date).filter(fMile), tp=isMe?[]:calTripsFor(date).filter(fTrip);
     let chips=[];
     ml.forEach(x=>{const col=MCAT[x.cat]||'#c9821a';const mi=MILESTONES.indexOf(x);
       chips.push(`<span class="cx-ev e" onclick="event.stopPropagation();calPickItem('${date}','mile',${mi})" title="행사 · ${esc(x.country||'중국')} · ${esc(x.name||'')}${x.info?' · '+esc(x.info):''}"><i class="cxk" style="background:${col}">행사</i>${esc(x.country||'중국')} · ${esc(x.name||'')}</span>`);});
     tp.forEach(t=>{const ti=TRIPS.indexOf(t);
       chips.push(`<span class="cx-ev t" onclick="event.stopPropagation();calPickItem('${date}','trip',${ti})" title="출장 · ${esc(t.country||'')} · ${esc(t.name||'')} · ${esc(t.mgr||'')}"><i class="cxk" style="background:#4a90d9">출장</i>${esc(t.country||'')}${t.country?' · ':''}${esc(t.name||t.mgr||'출장')}</span>`);});
     evs.forEach(o=>{const tmTx=o.e.start?esc(o.e.start)+(o.e.end?'~'+esc(o.e.end):''):'종일';
-      chips.push(`<span class="cx-ev c" onclick="event.stopPropagation();calPickItem('${date}','meet',${o.idx})" title="회의 · ${tmTx} · ${esc(o.e.title||'')}"><i class="cxk" style="background:#2f9e79">회의</i>${esc(o.e.title||'(제목 없음)')} <span class="cx-tm">${tmTx}</span></span>`);});
+      const g=o.e.mgr?(mgrById(o.e.mgr)||null):null;                 /* 담당자가 있으면 그 사람 색·이니셜로 표시 */
+      chips.push(`<span class="cx-ev c" onclick="event.stopPropagation();calPickItem('${date}','meet',${o.idx})" title="${g?esc(g.name)+' · ':''}회의 · ${tmTx} · ${esc(o.e.title||'')}"><i class="cxk" style="background:${g?esc(g.color):'#2f9e79'}">${g?esc(g.ini):'회의'}</i>${esc(o.e.title||'(제목 없음)')} <span class="cx-tm">${tmTx}</span></span>`);});
     if(CALDMEMO[date])chips.push(`<span class="cx-ev m" title="메모">📝 ${esc(String(CALDMEMO[date]).slice(0,18))}</span>`);
     return `<button class="calx-d s${dw}${date===td?' tod':''}${date===sel?' sel':''}" onclick="calPick('${date}')"><span class="calx-dn">${d}</span>${chips.join('')}</button>`;
   };
@@ -6867,11 +6909,11 @@ function monthCalendarBody(){
   const cal='<div class="calx-cal"><div class="calx-top"><div class="calx-tt">'+y+'년 '+m+'월</div>'
     +'<div class="calx-nv"><button onclick="calMonthStep(-1)" title="이전달">‹</button><button onclick="calMonthStep(1)" title="다음달">›</button></div>'
     +'<button class="calx-today" onclick="railCalToday()">오늘</button>'
-    +calFilterBarX()
+    +(TAB==='meetrep'?'':calFilterBarX())  /* G2업무일정관리: 행사·출장이 없으니 구분·국가·담당자 필터도 숨김 */
     +(TAB==='meetrep'?meetWeekDDHTML():'')
     +(RO()?'':(TAB==='meetrep'
         ? '<button class="calx-today mini" onclick="seedLeeRoutine()" title="팀업무 → 루틴업무에 「이유아」로 등록해둔 정례회의를 이 달 달력에 자동으로 넣습니다">＋ 내 루틴 회의</button>'
-        : '<button class="calx-today mini" onclick="seedRoutineMeetings()">＋ 루틴 회의</button>'))
+        : '<button class="calx-today mini" onclick="seedRoutineInto(\'\')" title="팀업무 → 루틴업무 표의 담당자별 정례회의를 이 달 달력에 전원 분량으로 넣습니다">＋ 루틴 회의 (담당자 전원)</button>'))
     +(CALSIDE?'':'<button class="calx-today op" onclick="toggleCalSide()" title="상세 보기">‹ 상세</button>')
     +'</div>'+(TAB==='meetrep'?calLegendHTML():'')+g+'</div>';
   const dups=calMileDups();
@@ -6881,13 +6923,11 @@ function monthCalendarBody(){
 /* 달력 옆 색상 범례 · 회의일정보고 전용 */
 function calLegendHTML(){
   return '<div class="cx-legend">'
-    +'<span><i style="background:#2f9e79"></i>회의</span>'
-    +'<span><i style="background:#4a90d9"></i>출장</span>'
-    +'<span><i style="background:#c9821a"></i>행사</span>'
+    +'<span><i style="background:#2f9e79"></i>회의·일정</span>'
     +'<span>📝 메모</span>'
     +'</div>';
 }
-/* 회의일정보고(G2일정관리) 전용 주차별 다중선택 보기 · 전역 주차(W)와는 별개 ·
+/* 회의일정보고(G2업무일정관리) 전용 주차별 다중선택 보기 · 전역 주차(W)와는 별개 ·
    실제 달력 행(일~토) 기준으로 그 달의 주차를 나눔 · 선택 시 달력도 그 주(행)만 표시 */
 let MEETWK=[];
 function calMonthWeeks(){
@@ -6924,9 +6964,8 @@ function meetWeekTableHTML(){
   const wks=calMonthWeeks().filter(w=>MEETWK.includes(w.idx));
   const inRange=d=>{const day=+String(d).slice(8,10);return wks.some(w=>day>=w.s&&day<=w.e);};
   const rows=[];
+  /* G2업무일정관리 전용 — 내 일정(LEECAL)만 · 행사·출장은 이 화면에서 다루지 않음 */
   if(fMeet())LEECAL.forEach(e=>{const d=e.sdate||e.date;if(d&&String(d).slice(0,7)===ym&&inRange(d))rows.push({type:'meet',date:d,time:e.start||'',title:e.title||'(제목 없음)'});});
-  (TRIPS||[]).filter(fTrip).forEach(t=>{const a=String(t.start||'').slice(0,10);if(a&&a.slice(0,7)===ym&&inRange(a))rows.push({type:'trip',date:a,time:'',title:(t.country?t.country+' · ':'')+(t.name||t.mgr||'출장')});});
-  calMilesFor&&(MILESTONES||[]).filter(fMile).forEach(x=>{calMileParseDaysForMonth(x,MONTH).forEach(d=>{const ds=`${YEAR}-${pad(MONTH)}-${pad(d)}`;if(inRange(ds))rows.push({type:'mile',date:ds,time:'',title:(x.country||'중국')+' · '+(x.name||'')});});});
   rows.sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.time).localeCompare(String(b.time)));
   const tlb={meet:'회의',trip:'출장',mile:'행사'};
   let h=`<div class="cx-wktbl"><div class="ct-h">선택 주차 등록 일정 · ${MEETWK.slice().sort((a,b)=>a-b).map(k=>(k+1)+'주').join(', ')} · <b>${rows.length}건</b></div>`;
@@ -6979,7 +7018,7 @@ function calWeekEventsTable(){
   return h;
 }
 function calEditIdx(i){if(CALLIST[i])CALMODAL={open:true,idx:i,date:CALLIST[i].sdate||calDefaultDate(),prefill:''};render();}
-function calDelIdx(i){if(CALLIST[i]){CALLIST.splice(i,1);saveCal();render();}}
+function calDelIdx(i){if(CALLIST[i]){unmirrorLee(CALLIST[i].id);CALLIST.splice(i,1);saveCal();render();}}
 function calModalHTML(){
   if(!CALMODAL.open)return '';
   const e=CALMODAL.idx>=0?CALLIST[CALMODAL.idx]:null;
@@ -7334,7 +7373,7 @@ let CALKIND=''; try{CALKIND=localStorage.getItem('wr_calkind')||'';}catch(e){}
 function setCalKind(v){CALKIND=v;try{localStorage.setItem('wr_calkind',v);}catch(e){}render();}
 function fMile(x){return (!CALKIND||CALKIND==='mile')&&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR);}
 function fTrip(t){const g=MGRS.find(m=>m.name===t.mgr);return (!CALKIND||CALKIND==='trip')&&(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(g&&g.id===MILEMGR));}
-function fMeet(){return (!CALKIND||CALKIND==='meet');}
+function fMeet(){return TAB==='meetrep'||(!CALKIND||CALKIND==='meet');} /* G2업무일정관리는 회의뿐이라 구분 필터의 영향을 받지 않음 */
 function calFilterBarX(){
   const mgrIds=MGRS.filter(m=>m.id!=='jang').map(m=>m.id);
   const kinds=[['','구분 전체'],['mile','행사'],['trip','출장'],['meet','회의']];
@@ -7355,7 +7394,7 @@ let MEETTAB='min'; try{MEETTAB=localStorage.getItem('wr_meettab')||'min';}catch(
 let MRCUM='sum'; try{MRCUM=localStorage.getItem('wr_mrcum')||'sum';}catch(e){}
 function setMrCum(v){MRCUM=v;try{localStorage.setItem('wr_mrcum',v);}catch(e){}render();}
 function setMeetTab(k){MEETTAB=k;try{localStorage.setItem('wr_meettab',k);}catch(e){}render();}
-function setMeetMine(v){MEETMINE=!!v;try{localStorage.setItem('wr_meetmine',MEETMINE?'1':'0');}catch(e){}if(!MEETMINE)MILEMGR='';render();}
+function setMeetMine(v){MEETMINE=!!v;try{localStorage.setItem('wr_meetmine',MEETMINE?'1':'0');}catch(e){}render();} /* 주요보고 필터 전용 · 전역 담당자 필터는 건드리지 않음 */
 function calMileMatrix(){
   const nowM=7, months=Array.from({length:12},(_,i)=>i+1);
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
@@ -8035,7 +8074,7 @@ function renderRR(){
     </tr>`;});
   return h+'</tbody></table></div></div>';
 }
-function setGoalSub(s){GOALSUB=s;render();}
+function setGoalSub(s){GOALSUB=s;if(s==='kanban'){try{kanSyncWeekMonth();}catch(e){}}render();}
 /* ===== 중화팀 R&R (원본: ★중화 영업본부__RnR — 본사 인원 R&R) ===== */
 const RRTEAM_SEED=[
   {grp:'팀장 · PM·영업', who:'이유아 부장', role:'팀 운영 총괄 · 화동·화남 영업 · 임플란트/바이오레이져 PM · 일·주·월간/수시',
@@ -8367,9 +8406,25 @@ function renderMGoals(){
     </div>`;});
   return h+'</div>';
 }
+/* G2업무일정관리 · 출장리포트 탭 — 내(이유아) 출장만 최신순으로 나열, 카드마다 리포트 편집기 */
+function renderTripReports(){
+  const list=(TRIPS||[]).map((t,i)=>({t,i})).filter(o=>String(o.t.mgr||'')==='이유아'&&String(o.t.start||'').trim())
+    .sort((a,b)=>String(b.t.start||'').localeCompare(String(a.t.start||'')));
+  let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:14px">✈ 출장리포트 <span style="font-size:11px;color:var(--dim);font-weight:600">· 내 출장 ${list.length}건 · 입력 후 10초 뒤 노션 자동 전송${NPROXY?'':' (중계 미연결 · 복사 방식)'}</span></h3></div>`;
+  if(!list.length)h+='<div class="cxs-emp" style="padding:18px">내(이유아) 출장이 없습니다 · 출장 등록은 「중화팀 일정·행사」에서 합니다.</div>';
+  list.forEach(({t,i})=>{
+    const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
+    h+=`<div class="cxs-card t" style="max-width:820px;margin-bottom:10px">
+      <div class="cxs-r"><b style="flex:1;min-width:0;font-size:13px;color:#1f2a37">${esc(t.name||'(출장명 없음)')}</b><span class="cxs-tag t">${esc(t.cat||'출장')}</span></div>
+      <div class="cxs-lb">${esc(tripFmt(t.start,t.end))} · ${esc(t.country||'')} ${esc(t.city||'')} · ${esc(t.visit||'')}</div>
+      <button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${lb}</button>
+      ${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t,i)+'</div>':''}
+    </div>`;});
+  return h+'</div>';
+}
 function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고 접힘 · 팀장 전용 */
   if(LOGINUID!=='lee')return '<div style="padding:30px;color:var(--faint)">권한이 없습니다.</div>';
-  let h1=`<div class="sec-h"><h2>G2일정관리(이유아)</h2><span class="hint">이유아 개인 일정 · 회의록(노션 연동) · PLAUD 요약 · 팀 캘린더와 분리된 비공개 화면</span><span class="line"></span></div>`;
+  let h1=`<div class="sec-h"><h2>G2업무일정관리(이유아)</h2><span class="hint">이유아 개인 일정 · 회의록(노션 연동) · PLAUD 요약 · 팀 캘린더와 분리된 비공개 화면</span><span class="line"></span></div>`;
     let h2='';
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
@@ -8377,20 +8432,22 @@ function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) 
       <button class="mile-add mini" onclick="gcalPull(false)" style="margin-left:10px" title="구글 「Mgg_회의일정」 캘린더와 이번 달 회의를 서로 반영합니다 (가져오기+올리기)">⇄ 구글 캘린더 동기화 (Mgg_회의일정)</button>
       <button class="mile-add mini" onclick="privPushNow()" title="회의록·출장리포트를 개인용 비공개 구글시트 2개에 지금 바로 기록합니다 (배포 https 주소에서만 동작)">☁ 개인시트 저장 (회의록·출장리포트)</button>
       <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_gcal_last');return d?('마지막 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
-    if(MEETMINE){MILEMGR='lee';}
-    h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 행사 · 출장 · 회의`,()=>monthCalendarBody())+calModalHTML();
-    {const MT=[['min','회의록'],['ev','중화팀 행사·출장'],['rep','주요보고']];
-     if(!['min','ev','rep'].includes(MEETTAB))MEETTAB='min';
+    /* (구버전 잔재 제거) 예전엔 이 화면이 팀 데이터를 공유해 MEETMINE이 전역 담당자 필터(MILEMGR)를 'lee'로 바꿨지만,
+       지금은 개인 저장소(LEECAL)를 쓰므로 그 부작용(중화팀 일정·행사가 이유아 것만 보이게 됨)만 남아 삭제 */
+    h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 내 회의·일정`,()=>monthCalendarBody())+calModalHTML();
+    {const MT=[['min','회의록'],['trip','출장리포트'],['rep','주요보고']];
+     if(!['min','trip','rep'].includes(MEETTAB))MEETTAB='min';
      h2+='<div class="pm-tabs" style="margin:18px 0 12px">'+MT.map(([k,l])=>`<button class="${MEETTAB===k?'on':''}" onclick="setMeetTab('${k}')">${esc(l)}</button>`).join('')+'</div>';
-     h2+=(MEETTAB==='min')?renderMinutes():(MEETTAB==='ev')?calListTabs():renderReports(MEETMINE?'lee':'');}
+     h2+=(MEETTAB==='min')?renderMinutes():(MEETTAB==='trip')?renderTripReports():renderReports(MEETMINE?'lee':'');}
     return h1+h2;
 }
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합']];
+  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합']];
   if(GOALSUB==='meet'||GOALSUB==='report'||GOALSUB==='sched')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정=업무현황 끝 */
   html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
+  if(GOALSUB==='kanban')return html+viewKanban(activeRows());
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
   if(GOALSUB==='mgoal')return html+renderMGoals();
   if(GOALSUB==='rr')return html+renderRR();
@@ -9447,8 +9504,8 @@ async function privSheetWrite(id,lastCol,rows){
   if(!ru.ok){let t='';try{t=await ru.text();}catch(e){}throw new Error('기록 실패 HTTP '+ru.status+' '+t.slice(0,160));}
   return rows.length-2;
 }
-const PRIV_NOTE_TRIP='⚠ 이유아 개인용 비공개 시트 · 팀 공유 금지 · 웹앱(G2일정관리)에서 저장할 때마다 아래 내용이 통째로 덮어써집니다.';
-const PRIV_NOTE_MIN ='⚠ 이유아 개인용 비공개 시트 · 팀 공유 금지 · 웹앱(G2일정관리)에서 저장할 때마다 아래 내용이 통째로 덮어써집니다.';
+const PRIV_NOTE_TRIP='⚠ 이유아 개인용 비공개 시트 · 팀 공유 금지 · 웹앱(G2업무일정관리)에서 저장할 때마다 아래 내용이 통째로 덮어써집니다.';
+const PRIV_NOTE_MIN ='⚠ 이유아 개인용 비공개 시트 · 팀 공유 금지 · 웹앱(G2업무일정관리)에서 저장할 때마다 아래 내용이 통째로 덮어써집니다.';
 function privTripRows(){
   const hdr=['출발일','담당자','중화팀출장자','본사출장자','출장기안서','항공권','출장내용','성과및소득','아쉬운점','참고사항'];
   const body=(TRIPS||[]).filter(t=>String(t.start||'').trim()).map(t=>{
