@@ -5310,7 +5310,8 @@ function saveTrips(){try{localStorage.setItem('wr_trips_v2',JSON.stringify(TRIPS
 let TRIPREP_OPEN={};
 function toggleTripRep(i){TRIPREP_OPEN[i]=!TRIPREP_OPEN[i];render();}
 function hasTripRep(t){const r=t&&t.report;if(!r)return false;const fl=r.feelings||{};
-  return !!(String(r.staffCN||'').trim()||String(r.staffHQ||'').trim()||String(r.draftDoc||'').trim()||String(r.ticket||'').trim()||String(r.body||'').trim()||String(fl.result||'').trim()||String(fl.improve||'').trim()||String(fl.next||'').trim()||(r.days&&r.days.length));}
+  const hasFl=(r.flights||[]).some(f=>String(f.no||'').trim()||String(f.date||'').trim());
+  return !!(String(r.staffCN||'').trim()||String(r.staffHQ||'').trim()||String(r.draftDoc||'').trim()||String(r.ticket||'').trim()||String(r.body||'').trim()||String(fl.result||'').trim()||String(fl.improve||'').trim()||String(fl.next||'').trim()||hasFl||(r.days&&r.days.length));}
 /* 출장리포트 필드 편집 · report 객체가 없으면 즉석에서 만들어 저장 (기존 필드와 동일하게 입력하는 즉시 자동저장) */
 function editTripRep(i,f,v,el){
   const t=TRIPS[i];if(!t)return;if(roBlock())return;
@@ -5322,6 +5323,23 @@ function editTripRep(i,f,v,el){
   scheduleTripSync(i);
   try{schedulePrivPush();}catch(e){}
   if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);}
+}
+/* 항공편(출국·귀국 등) 편집 · report.flights 배열 */
+function editTripFlight(i,fi,key,v,el){
+  const t=TRIPS[i];if(!t||roBlock())return;
+  if(!t.report)t.report={staffCN:'',staffHQ:'',draftDoc:'',ticket:'',body:'',feelings:{result:'',improve:'',next:''}};
+  if(!t.report.flights||!t.report.flights.length)t.report.flights=[{dir:'출국',no:'',date:'',dep:'',arr:''},{dir:'귀국',no:'',date:'',dep:'',arr:''}];
+  if(!t.report.flights[fi])t.report.flights[fi]={dir:'이동',no:'',date:'',dep:'',arr:''};
+  t.report.flights[fi][key]=v;
+  t.report.dirty=1;saveTrips();scheduleTripSync(i);try{schedulePrivPush();}catch(e){}
+  if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);}
+}
+function addTripFlight(i){
+  const t=TRIPS[i];if(!t||roBlock())return;
+  if(!t.report)t.report={staffCN:'',staffHQ:'',draftDoc:'',ticket:'',body:'',feelings:{result:'',improve:'',next:''}};
+  if(!t.report.flights||!t.report.flights.length)t.report.flights=[{dir:'출국',no:'',date:'',dep:'',arr:''},{dir:'귀국',no:'',date:'',dep:'',arr:''}];
+  t.report.flights.push({dir:'이동',no:'',date:'',dep:'',arr:''});
+  saveTrips();render();
 }
 /* 출장리포트 → 노션 자동 전송 · 입력을 멈춘 뒤 10초 후 1회 (회의록의 scheduleMinSync와 같은 방식) */
 let _tripSyncT={};
@@ -5341,7 +5359,7 @@ async function notionPushTrip(i,silent){
         title:t.name||'(출장명 없음)',date:String(t.start||'').slice(0,10),
         period:tripFmt(t.start,t.end),place:[t.country,t.city,t.visit].filter(Boolean).join(' · '),
         rep:{staffCN:r.staffCN||'',staffHQ:r.staffHQ||'',draftDoc:r.draftDoc||'',ticket:r.ticket||'',
-             body:r.body||'',feelings:r.feelings||{}}})});
+             flights:r.flights||[],body:r.body||'',feelings:r.feelings||{}}})});
     const j=await res.json().catch(()=>({}));
     if(j&&j.ok&&j.nid){
       r.nid=j.nid; r.nblocks=j.blocks||[]; r.nsync=todayStr(); delete r.dirty;
@@ -5356,21 +5374,36 @@ function tripReportHTML(t,i){
   const r=t.report||{};const fl=r.feelings||{};
   const ro=RO();
   const ta=(val,ph,field)=>'<textarea class="cxs-rep-in"'+(ro?' readonly':'')+' placeholder="'+esc(ph)+'" oninput="autogrow(this);editTripRep('+i+',\''+field+'\',this.value,this)">'+esc(val||'')+'</textarea>';
+  const flights=(r.flights&&r.flights.length)?r.flights:[{dir:'출국',no:'',date:'',dep:'',arr:''},{dir:'귀국',no:'',date:'',dep:'',arr:''}];
   let h='';
   h+='<div class="cxs-rep-h">📅 출장개요</div>';
   h+='<div class="cxs-rep-g"><div class="k">중화팀</div>'+ta(r.staffCN,'중화팀 출장자','staffCN')+'<div class="k">본사</div>'+ta(r.staffHQ,'본사 출장자','staffHQ')+'</div>';
-  h+='<div class="cxs-rep-lb">📎 출장기안서</div>'+ta(r.draftDoc,'PDF·이미지 링크 또는 메모','draftDoc');
-  h+='<div class="cxs-rep-lb">📎 항공권</div>'+ta(r.ticket,'PDF·이미지 링크 또는 메모','ticket');
+  h+='<div class="cxs-rep-h">✈ 항공편</div>';
+  flights.forEach((f,fi)=>{
+    const fld=(v,ph,key,w)=>`<input class="cxs-rep-in" style="width:${w};flex:none"${ro?' readonly':''} placeholder="${esc(ph)}" value="${esc(v||'')}" oninput="editTripFlight(${i},${fi},'${key}',this.value,this)">`;
+    h+=`<div class="cxs-r" style="gap:4px;margin-top:${fi?'4px':'0'}">`
+      +`<select class="cxs-rep-in" style="width:64px;flex:none"${ro?' disabled':''} onchange="editTripFlight(${i},${fi},'dir',this.value,this)">${['출국','귀국','이동'].map(d=>`<option ${f.dir===d?'selected':''}>${d}</option>`).join('')}</select>`
+      +fld(f.no,'편명 OZ333','no','86px')
+      +`<input class="cxs-rep-in" type="date" style="width:120px;flex:none"${ro?' readonly':''} value="${esc(f.date||'')}" oninput="editTripFlight(${i},${fi},'date',this.value,this)">`
+      +fld(f.dep,'출발 09:30','dep','80px')
+      +fld(f.arr,'도착 12:10','arr','80px')
+      +`</div>`;
+  });
+  if(!ro)h+=`<button class="mn-more" style="margin-top:3px" onclick="addTripFlight(${i})">＋ 항공편 추가</button>`;
   h+='<div class="cxs-rep-h">📝 출장내용</div>'+ta(r.body,'일자별 출장 내용을 입력해주세요','body');
-  h+='<div class="cxs-rep-h">📷 사진 · PDF</div><div class="cxs-rep-ph">'
-    +(NPROXY
-      ? '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 아래 「노션에서 열기」로 들어가 그 페이지에 사진·PDF를 첨부하세요. 첨부한 파일은 이후 자동 전송에도 지워지지 않습니다.'
-      : '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 구글 드라이브에 올린 뒤 공유 링크를 위 「출장기안서·항공권」 칸에 붙여넣거나, 아래 「노션으로 복사」로 노션에 옮겨 그 페이지에 파일을 첨부하세요.')
-    +'</div>';
   h+='<div class="cxs-rep-h">💭 출장 후 느낀점</div>';
   h+='<div class="cxs-rep-lb">성과 및 소득</div>'+ta(fl.result,'성과 및 소득','feelings.result');
   h+='<div class="cxs-rep-lb">아쉬웠던 점 · 개선 필요</div>'+ta(fl.improve,'아쉬웠던 점 · 개선 필요','feelings.improve');
   h+='<div class="cxs-rep-lb">다음 출장 시 참고사항</div>'+ta(fl.next,'다음 출장 시 참고사항','feelings.next');
+  /* 첨부류는 맨 끝으로 */
+  h+='<div class="cxs-rep-h">📎 첨부</div>';
+  h+='<div class="cxs-rep-lb">출장기안서</div>'+ta(r.draftDoc,'PDF·이미지 링크 또는 메모','draftDoc');
+  h+='<div class="cxs-rep-lb">항공권</div>'+ta(r.ticket,'PDF·이미지 링크 또는 메모','ticket');
+  h+='<div class="cxs-rep-lb">사진 · PDF</div><div class="cxs-rep-ph">'
+    +(NPROXY
+      ? '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 아래 「노션에서 열기」로 들어가 그 페이지에 사진·PDF를 첨부하세요. 첨부한 파일은 이후 자동 전송에도 지워지지 않습니다.'
+      : '이 화면은 텍스트만 저장됩니다 (브라우저 저장 용량 한계) · 구글 드라이브에 올린 뒤 공유 링크를 위 「출장기안서·항공권」 칸에 붙여넣거나, 아래 「노션으로 복사」로 노션에 옮겨 그 페이지에 파일을 첨부하세요.')
+    +'</div>';
   if(NPROXY){
     const st=r.nid?(r.dirty?'수정됨 · 곧 자동 전송':'✅ 노션 저장됨'+(r.nsync?' · '+esc(r.nsync):'')):'아직 전송 전 · 입력 후 10초 뒤 자동 전송';
     h+=`<div class="cxs-rep-lb" style="margin-top:8px">노션 <span style="font-weight:600;color:${r.nid&&!r.dirty?'#2f9e79':'#98a2b3'}">${st}</span></div>`;
@@ -5386,9 +5419,12 @@ function tripReportHTML(t,i){
 }
 function notionCopyTrip(i){
   const t=TRIPS[i];if(!t)return;const r=t.report||{};const fl=r.feelings||{};
+  const fls=(r.flights||[]).filter(f=>String(f.no||'').trim()||String(f.date||'').trim())
+    .map(f=>`${f.dir||''} ${f.no||''} · ${f.date||''} ${f.dep||''}${f.arr?'→'+f.arr:''}`).join('\n');
   const tx=`[출장리포트] ${t.name||''} · ${tripFmt(t.start,t.end)}\n\n`
-    +`중화팀 출장자: ${r.staffCN||'-'}\n본사 출장자: ${r.staffHQ||'-'}\n\n`
-    +`출장기안서: ${r.draftDoc||'-'}\n항공권: ${r.ticket||'-'}\n\n`
+    +`중화팀 출장자: ${r.staffCN||'-'}\n본사 출장자: ${r.staffHQ||'-'}\n`
+    +(fls?`\n[항공편]\n${fls}\n`:'')
+    +`\n출장기안서: ${r.draftDoc||'-'}\n항공권: ${r.ticket||'-'}\n\n`
     +`[출장내용]\n${r.body||'-'}\n\n`
     +`[출장 후 느낀점]\n성과 및 소득: ${fl.result||'-'}\n아쉬웠던 점 · 개선 필요: ${fl.improve||'-'}\n다음 출장 시 참고사항: ${fl.next||'-'}\n\n`
     +`(G2업무일정관리(이유아) · 출장리포트에서 작성)`;
@@ -6629,17 +6665,25 @@ function seedRoutineInto(who){
   if(roBlock())return;
   const y=YEAR,m=MONTH,pad=n=>String(n).padStart(2,'0'),ds=d=>`${y}-${pad(m)}-${pad(d)}`;
   const dim=new Date(y,m,0).getDate(), firstDow=new Date(y,m-1,1).getDay(), ym=`${y}-${pad(m)}`;
-  const src=(FIXEDWORK||[]).filter(w=>String(w.name||'').trim()&&(!who||w.mgr===who));
+  let src=(FIXEDWORK||[]).filter(w=>String(w.name||'').trim()&&(!who||w.mgr===who));
   if(!src.length){toast(who?'루틴업무에 「이유아」로 등록된 회의가 없습니다 · 팀업무 → 루틴업무에서 먼저 등록하세요'
                             :'루틴업무에 등록된 정례회의가 없습니다 · 팀업무 → 루틴업무에서 먼저 등록하세요');return;}
-  /* 담당자 순서(팀장→차장→대리)대로 깔아 같은 날 안에서도 담당자별로 묶여 보이게 한다 */
-  src.sort((a,b)=>mgrOrder(a.mgr)-mgrOrder(b.mgr)||String(a.name||'').localeCompare(String(b.name||''),'ko'));
+  /* 같은 회의가 담당자마다 한 줄씩 있어(참석자 기준) 그대로 깔면 사람 수만큼 중복 → 회의명·요일·시간 기준으로 1건으로 합침 */
+  const uniq={};
+  src.forEach(w=>{
+    const key=[String(w.name||'').replace(/\s+/g,''),String(w.dow||''),String(w.time||'').replace(/\s+/g,''),String(w.cycle||'')].join('|');
+    if(!uniq[key])uniq[key]={...w,attds:[]};
+    if(w.mgr&&!uniq[key].attds.includes(w.mgr))uniq[key].attds.push(w.mgr);
+  });
+  src=Object.values(uniq);
+  src.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ko'));
   const keep=e=>!(String(e.id||'').indexOf('rt_')===0&&String(e.sdate||'').slice(0,7)===ym);
   if(who)LEECAL=LEECAL.filter(keep); else CALLIST=CALLIST.filter(keep);
   let n=0;
   const add=(d,w,p)=>{if(d<1||d>dim)return;
-    const ev={id:'rt_'+(CUID++),title:w.name,mgr:w.mgr||'',sdate:ds(d),edate:ds(d),start:p.start,end:p.end,
-      desc:'[루틴] '+(w.cycle||'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none'};
+    const att=(w.attds||[]).map(id=>(mgrById(id)||{}).name||id).join('·');
+    const ev={id:'rt_'+(CUID++),title:w.name,mgr:'',attds:(w.attds||[]).slice(),sdate:ds(d),edate:ds(d),start:p.start,end:p.end,
+      desc:'[루틴] '+(w.cycle||'')+(att?' · 참석 '+att:'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none'};
     if(who)LEECAL.push(ev); else CALLIST.push(ev);
     n++;};
   src.forEach(w=>{
@@ -6769,10 +6813,21 @@ function focCls(kind,key){return (CALFOCUS&&CALFOCUS.k===kind&&String(CALFOCUS.i
 function calDow(date){return ['일','월','화','수','목','금','토'][new Date(date+'T00:00:00').getDay()];}
 /* 담당자 정렬 순서 (MGRS 표 순서 = 팀장 → 차장 → 대리) · 담당자 없는 일정은 맨 뒤 */
 function mgrOrder(id){const i=(MGRS||[]).findIndex(m=>m.id===id);return i<0?99:i;}
-/* 담당자 필터(상단 「담당자」 드롭다운)를 회의·일정에도 적용 · 담당자가 없는 일정은 항상 표시 */
-function fMeetEv(e){return !MILEMGR||!e.mgr||e.mgr===MILEMGR;}
+function evMgrKey(e){return e.mgr||((e.attds||[])[0])||'';} /* 루틴은 참석자 첫 사람 기준으로 정렬 */
+/* 달력 전용 담당자 다중선택 필터 · 여러 명을 동시에 켤 수 있고, 루틴 회의는 참석자에 포함되면 통과 */
+let MGRSELCAL=[];
+function toggleCalMgr(id){const i=MGRSELCAL.indexOf(id);if(i>=0)MGRSELCAL.splice(i,1);else MGRSELCAL.push(id);render();}
+function clearCalMgr(){MGRSELCAL=[];render();}
+function calMgrPass(id){return !MGRSELCAL.length||MGRSELCAL.includes(id||'');}
+/* 담당자(다중)·국가 필터를 회의·일정에도 적용 · 필터가 꺼져 있으면 전부 표시 */
+function fMeetEv(e){
+  if(MILEMGR&&e.mgr&&e.mgr!==MILEMGR)return false;
+  if(MGRSELCAL.length&&!(MGRSELCAL.includes(e.mgr||'')||(e.attds||[]).some(a=>MGRSELCAL.includes(a))))return false;
+  if(MILECTRY&&e.ctry&&e.ctry!==MILECTRY)return false;
+  return true;
+}
 function calEvsOn(date,list){list=list||CALLIST;return list.map((e,idx)=>({e,idx})).filter(o=>{const a=o.e.sdate||o.e.date;if(!a)return false;const b=o.e.edate||a;return a<=date&&date<=b;})
-  .sort((x,y)=>mgrOrder(x.e.mgr)-mgrOrder(y.e.mgr)||String(x.e.start||'99').localeCompare(String(y.e.start||'99'))||String(x.e.title||'').localeCompare(String(y.e.title||''),'ko'));}
+  .sort((x,y)=>mgrOrder(evMgrKey(x.e))-mgrOrder(evMgrKey(y.e))||String(x.e.start||'99').localeCompare(String(y.e.start||'99'))||String(x.e.title||'').localeCompare(String(y.e.title||''),'ko'));}
 /* 중화팀 일정·행사(CALLIST) 전용 · 계속 사용 */
 let NEWEVFOCUS=null;
 /* ── 중화팀 일정·행사 → G2업무일정관리 단방향 반영 ──
@@ -6822,8 +6877,8 @@ function calDayPanel(mode){
   const M=mode||'cal';
   const date=calSelDate();
   const isMe=(TAB==='meetrep');
-  /* G2업무일정관리: 중화팀 행사·출장 섹션 없음 (내 일정·메모만) · 출장리포트는 하단 「출장리포트」 탭에서 작성 */
-  const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], miles=isMe?[]:calMilesFor(date).filter(fMile), trips=isMe?[]:calTripsFor(date).filter(fTrip);
+  /* G2업무일정관리: 중화팀 행사 없음 · 출장은 내(이유아) 것만 (내 일정이므로) */
+  const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], miles=isMe?[]:calMilesFor(date).filter(fMile), trips=isMe?calTripsFor(date).filter(t=>String(t.mgr||'')==='이유아'):calTripsFor(date).filter(fTrip);
   const n=evs.length+miles.length+trips.length;
   if(!CALSIDE)return '';
   let h=`<div class="calx-sw"><div class="calx-side"><div class="cxs-h"><span class="d">${+date.slice(5,7)}월 ${+date.slice(8,10)}일</span><span class="w">${calDow(date)}요일</span><span class="n">${n}건</span><button class="cxs-fold" onclick="toggleCalSide()" title="상세 숨기기">›</button></div><div class="cxs-b">`;
@@ -6842,16 +6897,15 @@ function calDayPanel(mode){
       </div>`;return;}
     h+=`<div class="cxs-card c${focCls('meet',i)}">
       <div class="cxs-r"><input id="cev_title_${e.id}" class="cxs-in" value="${esc(e.title||'')}" placeholder="일정 제목부터 입력하세요" oninput="${ef}(${i},'title',this.value,this)"><button class="cxs-x" title="삭제" onclick="${df}(${i})">×</button></div>
-      ${isMe?'':`<div class="cxs-r"><span class="cxs-lb" style="padding:0">담당</span><select class="cxs-in sm" style="width:auto;flex:1;min-width:0" onchange="${ef}(${i},'mgr',this.value,this)"><option value="">미지정</option>${MGRS.map(g=>`<option value="${g.id}" ${e.mgr===g.id?'selected':''}>${esc(g.name)}</option>`).join('')}</select></div>`}
+      <div class="cxs-r">${isMe?'':`<span class="cxs-lb" style="padding:0">담당</span><select class="cxs-in sm" style="width:auto;flex:1;min-width:0" onchange="${ef}(${i},'mgr',this.value,this)"><option value="">미지정</option>${MGRS.map(g=>`<option value="${g.id}" ${e.mgr===g.id?'selected':''}>${esc(g.name)}</option>`).join('')}</select>`}<span class="cxs-lb" style="padding:0">국가</span><select class="cxs-in sm" style="width:auto;flex:1;min-width:0" onchange="${ef}(${i},'ctry',this.value,this)"><option value="">구분 없음</option>${['중국','대만','홍콩','본사'].map(c=>`<option value="${c}" ${e.ctry===c?'selected':''}>${c}</option>`).join('')}</select></div>
       <div class="cxs-r"><input class="cxs-in sm" type="time" value="${esc(e.start||'')}" oninput="${ef}(${i},'start',this.value,this)"><span style="color:#c3cbd2;font-size:11px">~</span><input class="cxs-in sm" type="time" value="${esc(e.end||'')}" oninput="${ef}(${i},'end',this.value,this)"><input class="cxs-in sm" style="width:auto;flex:1;min-width:0" type="date" value="${esc(e.sdate||date)}" oninput="${ef}(${i},'sdate',this.value,this)"></div>
       ${!isMe?'':`<div class="cxs-lb">기준사항 (안건·체크리스트)</div><textarea class="cxs-tx" placeholder="이 회의에서 확인·논의할 기준사항을 적어두세요" oninput="autogrow(this);${ef}(${i},'agenda',this.value,this)">${esc(e.agenda||'')}</textarea>`}
       <textarea class="cxs-tx" placeholder="설명·메모" oninput="autogrow(this);${ef}(${i},'desc',this.value,this)">${esc(e.desc||'')}</textarea>
     </div>`;});
   /* 행사 (G2업무일정관리에서는 표시 안 함) */
   if(M!=='mile'&&!isMe)h+=milePanelSec(date,miles);
-  /* 출장 (G2업무일정관리에서는 표시 안 함 · 출장리포트는 하단 탭) */
-  if(!isMe){
-  h+=`<div class="cxs-sec"><span class="bar" style="background:#4a90d9"></span>출장 <span style="color:#c3cbd2">${trips.length}</span></div>`;
+  /* 출장 · G2업무일정관리에서는 내(이유아) 출장만 + 출장리포트 편집 */
+  h+=`<div class="cxs-sec"><span class="bar" style="background:#4a90d9"></span>${isMe?'내 출장':'출장'} <span style="color:#c3cbd2">${trips.length}</span></div>`;
   if(!trips.length)h+='<div class="cxs-emp">해당 출장이 없습니다.</div>';
   trips.forEach(t=>{const i=TRIPS.indexOf(t);
     h+=`<div class="cxs-card t${focCls('trip',i)}">
@@ -6862,8 +6916,9 @@ function calDayPanel(mode){
       <textarea class="cxs-tx" placeholder="연계 프로젝트" oninput="autogrow(this);editTrip(${i},'big',this.value,0,this)">${esc(t.big||'')}</textarea>
       <div class="cxs-lb">프로젝트 결과</div>
       <textarea class="cxs-tx" style="color:#186b56;font-weight:600" placeholder="결과·성과" oninput="autogrow(this);editTrip(${i},'note',this.value,0,this)">${esc(t.note||'')}</textarea>
+      ${!isMe?'':(function(){const has=hasTripRep(t);const lb=TRIPREP_OPEN[i]?'접기':(has?'보기':'작성');
+        return `<button class="cxs-rep-tg${TRIPREP_OPEN[i]?' open':''}" onclick="toggleTripRep(${i})"><span class="ar">▸</span> 출장리포트 ${lb}</button>${TRIPREP_OPEN[i]?'<div class="cxs-rep">'+tripReportHTML(t,i)+'</div>':''}`;})()}
     </div>`;});
-  }
   /* 메모 */
   h+=`<div class="cxs-sec"><span class="bar" style="background:#98a2b3"></span>메모</div>`;
   h+=`<textarea class="cxs-memo" placeholder="${esc(+date.slice(5,7))}월 ${esc(+date.slice(8,10))}일 메모 · 회의 내용, 확인할 것, 특이사항" oninput="editCalDMemo('${date}',this.value,this)">${esc(CALDMEMO[date]||'')}</textarea>`;
@@ -6878,7 +6933,7 @@ function monthCalendarBody(){
   let g='<div class="calx-hd">'+['일','월','화','수','목','금','토'].map((l,i)=>`<div class="calx-dw s${i}">${l}</div>`).join('')+'</div><div class="calx-g">';
   const dayBtn=(d)=>{
     const date=`${y}-${pad(m)}-${pad(d)}`, dw=new Date(y,m-1,d).getDay();
-    const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], ml=isMe?[]:calMilesFor(date).filter(fMile), tp=isMe?[]:calTripsFor(date).filter(fTrip);
+    const evs=fMeet()?calEvsOn(date,isMe?LEECAL:CALLIST).filter(o=>isMe||fMeetEv(o.e)):[], ml=isMe?[]:calMilesFor(date).filter(fMile), tp=isMe?calTripsFor(date).filter(t=>String(t.mgr||'')==='이유아'):calTripsFor(date).filter(fTrip);
     let chips=[];
     ml.forEach(x=>{const col=MCAT[x.cat]||'#c9821a';const mi=MILESTONES.indexOf(x);
       chips.push(`<span class="cx-ev e" onclick="event.stopPropagation();calPickItem('${date}','mile',${mi})" title="행사 · ${esc(x.country||'중국')} · ${esc(x.name||'')}${x.info?' · '+esc(x.info):''}"><i class="cxk" style="background:${col}">행사</i>${esc(x.country||'중국')} · ${esc(x.name||'')}</span>`);});
@@ -6924,6 +6979,7 @@ function monthCalendarBody(){
 function calLegendHTML(){
   return '<div class="cx-legend">'
     +'<span><i style="background:#2f9e79"></i>회의·일정</span>'
+    +'<span><i style="background:#4a90d9"></i>내 출장</span>'
     +'<span>📝 메모</span>'
     +'</div>';
 }
@@ -6945,11 +7001,26 @@ let MEETWKOPEN=false;
 function toggleMeetWkDD(e){if(e)e.stopPropagation();MEETWKOPEN=!MEETWKOPEN;render();}
 function closeMeetWkDD(){if(MEETWKOPEN){MEETWKOPEN=false;render();}}
 document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.cx-wkdd')))closeMeetWkDD();});
+/* 달력 상단 담당자 다중선택 드롭다운 (주차 드롭다운과 같은 방식) */
+let MGRDDOPEN=false;
+function toggleCalMgrDD(e){if(e)e.stopPropagation();MGRDDOPEN=!MGRDDOPEN;render();}
+document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.cx-mgrdd'))&&MGRDDOPEN){MGRDDOPEN=false;render();}});
+function calMgrDDHTML(mgrIds){
+  const sel=MGRSELCAL.filter(id=>mgrIds.includes(id));
+  const label=!sel.length?'담당자 전체':(sel.length===1?((mgrById(sel[0])||{}).name||sel[0]):sel.length+'명 선택');
+  return `<div class="cx-wkdd cx-mgrdd${MGRDDOPEN?' open':''}">`
+    +`<button class="cx-wkdd-tg" onclick="toggleCalMgrDD(event)">👤 ${esc(label)} <span class="ar">▾</span></button>`
+    +(MGRDDOPEN?`<div class="cx-wkdd-pn" onclick="event.stopPropagation()">`
+      +MGRS.filter(m=>mgrIds.includes(m.id)).map(m=>`<label class="cx-wkdd-op"><input type="checkbox" ${MGRSELCAL.includes(m.id)?'checked':''} onchange="toggleCalMgr('${m.id}')"> ${esc(m.name)}</label>`).join('')
+      +(MGRSELCAL.length?`<button class="cx-wkdd-clr" onclick="clearCalMgr()">✕ 선택 해제</button>`:'')
+      +`</div>`:'')
+    +`</div>`;
+}
 /* 캘린더 상단의 주차 드롭다운 · 중복선택(체크박스) 가능 · 전역 주차(W)와는 무관 */
 function meetWeekDDHTML(){
   const wks=calMonthWeeks(),pad=n=>String(n).padStart(2,'0');
   const sel=MEETWK.slice().sort((a,b)=>a-b);
-  const label=sel.length?sel.map(k=>(k+1)+'주').join(', '):'주차 선택';
+  const label=!sel.length?'주차 선택':(sel.length===1?(sel[0]+1)+'주':(sel.length>=wks.length?'전체 주':sel.length+'개 주차'));
   return `<div class="cx-wkdd${MEETWKOPEN?' open':''}">`
     +`<button class="cx-wkdd-tg" onclick="toggleMeetWkDD(event)">📅 ${esc(label)} <span class="ar">▾</span></button>`
     +(MEETWKOPEN?`<div class="cx-wkdd-pn" onclick="event.stopPropagation()">`
@@ -6958,21 +7029,28 @@ function meetWeekDDHTML(){
       +`</div>`:'')
     +`</div>`;
 }
+let MEETWKTBL=true; try{MEETWKTBL=localStorage.getItem('wr_mwktbl')!=='0';}catch(e){}
+function toggleMeetWkTbl(){MEETWKTBL=!MEETWKTBL;try{localStorage.setItem('wr_mwktbl',MEETWKTBL?'1':'0');}catch(e){}render();}
 function meetWeekTableHTML(){
   if(!MEETWK.length)return '';
   const pad=n=>String(n).padStart(2,'0'),ym=`${YEAR}-${pad(MONTH)}`;
   const wks=calMonthWeeks().filter(w=>MEETWK.includes(w.idx));
   const inRange=d=>{const day=+String(d).slice(8,10);return wks.some(w=>day>=w.s&&day<=w.e);};
   const rows=[];
-  /* G2업무일정관리 전용 — 내 일정(LEECAL)만 · 행사·출장은 이 화면에서 다루지 않음 */
+  /* G2업무일정관리 전용 — 내 일정(LEECAL) + 내(이유아) 출장 */
   if(fMeet())LEECAL.forEach(e=>{const d=e.sdate||e.date;if(d&&String(d).slice(0,7)===ym&&inRange(d))rows.push({type:'meet',date:d,time:e.start||'',title:e.title||'(제목 없음)'});});
+  (TRIPS||[]).filter(t=>String(t.mgr||'')==='이유아').forEach(t=>{const a=String(t.start||'').slice(0,10);if(a&&a.slice(0,7)===ym&&inRange(a))rows.push({type:'trip',date:a,time:'',title:(t.country?t.country+' · ':'')+(t.name||'출장')});});
   rows.sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.time).localeCompare(String(b.time)));
-  const tlb={meet:'회의',trip:'출장',mile:'행사'};
-  let h=`<div class="cx-wktbl"><div class="ct-h">선택 주차 등록 일정 · ${MEETWK.slice().sort((a,b)=>a-b).map(k=>(k+1)+'주').join(', ')} · <b>${rows.length}건</b></div>`;
-  h+='<table class="ptable calevt"><thead><tr><th style="width:70px">일자</th><th style="width:70px">시간</th><th style="width:60px">구분</th><th style="text-align:left">내용</th></tr></thead><tbody>';
-  if(!rows.length)h+='<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px">선택한 주차에 등록된 일정이 없습니다.</td></tr>';
-  rows.forEach(r=>{h+=`<tr class="calevt-row" onclick="calPick('${r.date}')"><td>${esc(String(r.date).slice(5))}</td><td>${esc(r.time||'-')}</td><td>${esc(tlb[r.type]||'')}</td><td class="rl">${esc(r.title)}</td></tr>`;});
-  h+='</tbody></table></div>';
+  const tlb={meet:'회의',trip:'출장'};
+  const lbl=MEETWK.slice().sort((a,b)=>a-b).map(k=>(k+1)+'주').join(', ');
+  let h=`<div class="cx-wktbl"><div class="ct-h" style="display:flex;align-items:center;gap:8px">선택 주차 등록 일정 · ${lbl} · <b>${rows.length}건</b><button class="cx-wkbtn" style="margin-left:auto" onclick="toggleMeetWkTbl()">${MEETWKTBL?'▲ 숨기기':'▼ 펼치기 ('+rows.length+'건)'}</button></div>`;
+  if(MEETWKTBL){
+    h+='<table class="ptable calevt"><thead><tr><th style="width:70px">일자</th><th style="width:70px">시간</th><th style="width:60px">구분</th><th style="text-align:left">내용</th></tr></thead><tbody>';
+    if(!rows.length)h+='<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:16px">선택한 주차에 등록된 일정이 없습니다.</td></tr>';
+    rows.forEach(r=>{h+=`<tr class="calevt-row" onclick="calPick('${r.date}')"><td>${esc(String(r.date).slice(5))}</td><td>${esc(r.time||'-')}</td><td>${esc(tlb[r.type]||'')}</td><td class="rl">${esc(r.title)}</td></tr>`;});
+    h+='</tbody></table>';
+  }
+  h+='</div>';
   return h;
 }
 /* mileParseDays는 x.month가 현재 표시 월(M)과 다르면 빈 배열을 주므로, 주차표 전용으로 그대로 재사용 */
@@ -7371,8 +7449,8 @@ function editMileTbl(i,k,val,re,el){
 }
 let CALKIND=''; try{CALKIND=localStorage.getItem('wr_calkind')||'';}catch(e){}
 function setCalKind(v){CALKIND=v;try{localStorage.setItem('wr_calkind',v);}catch(e){}render();}
-function fMile(x){return (!CALKIND||CALKIND==='mile')&&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR);}
-function fTrip(t){const g=MGRS.find(m=>m.name===t.mgr);return (!CALKIND||CALKIND==='trip')&&(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(g&&g.id===MILEMGR));}
+function fMile(x){return (!CALKIND||CALKIND==='mile')&&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)&&calMgrPass(ownerOf(x));}
+function fTrip(t){const g=MGRS.find(m=>m.name===t.mgr);return (!CALKIND||CALKIND==='trip')&&(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(g&&g.id===MILEMGR))&&calMgrPass(g?g.id:'');}
 function fMeet(){return TAB==='meetrep'||(!CALKIND||CALKIND==='meet');} /* G2업무일정관리는 회의뿐이라 구분 필터의 영향을 받지 않음 */
 function calFilterBarX(){
   const mgrIds=MGRS.filter(m=>m.id!=='jang').map(m=>m.id);
@@ -7382,9 +7460,7 @@ function calFilterBarX(){
     +'<select class="calx-dd" title="국가" onchange="setMileCtry(this.value)">'
     +`<option value="" ${MILECTRY===''?'selected':''}>국가 전체</option>`
     +['중국','대만','홍콩'].map(c=>`<option value="${c}" ${MILECTRY===c?'selected':''}>${c}</option>`).join('')+'</select>'
-    +'<select class="calx-dd" title="담당자" onchange="setMileMgr(this.value)">'
-    +`<option value="" ${MILEMGR===''?'selected':''}>담당자 전체</option>`
-    +MGRS.filter(m=>mgrIds.includes(m.id)).map(m=>`<option value="${m.id}" ${MILEMGR===m.id?'selected':''}>${esc(m.name)}</option>`).join('')+'</select>';
+    +calMgrDDHTML(mgrIds);
 }
 function setMileCtry(c){MILECTRY=c;render();}
 function setMileMgr(id){MILEMGR=id;if(GOALSUB==='meet'&&TAB==='goals'&&id!=='lee')MEETMINE=false;render();}
