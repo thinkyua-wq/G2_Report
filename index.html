@@ -1623,6 +1623,7 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .cx-ev.e{background:#fdf3e2;color:#8a5a00}
 .cx-ev.t{background:#eaf2fc;color:#1c4e80}
 .cx-ev.m{background:#f2f4f6;color:#5a6672}
+.cx-ev.d{background:#f1e9fd;color:#000}
 .cxk{display:inline-block;font-style:normal;font-size:8.5px;font-weight:800;color:#fff;border-radius:0;padding:0 3px;margin-right:3px;line-height:1.5;vertical-align:1px}
 .cx-more{font-size:9.5px;color:#98a2b3;font-weight:700;padding-left:5px}
 /* 우측 상세 패널 */
@@ -2444,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.23-M237</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.24-M239</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5645,6 +5646,58 @@ async function notionPushAllRep(){
   for(const o of t){try{await notionPushRep(o.i,true);if(REPORTS[o.i].nid&&!REPORTS[o.i].dirty)ok++;}catch(e){}}
   render();toast(`노션 전송 완료 ${ok}/${t.length}건`);
 }
+/* ═══ 일일보고 (중국법인·대만·홍콩·중화팀) ═══
+   양식은 주요보고와 완전히 동일(일자·지역·제목·내용·노션상태) · AI 요약 없음, 본인이 직접 기입
+   · 중화팀 일정·행사(MILESTONES/CALLIST)와는 완전히 분리된 별도 저장소 — 서로 데이터가 섞이지 않는다 */
+let DAILYREP=[];try{const s=localStorage.getItem('wr_dailyrep_v1');if(s)DAILYREP=JSON.parse(s)||[];}catch(e){}
+function saveDaily(){try{localStorage.setItem('wr_dailyrep_v1',JSON.stringify(DAILYREP));}catch(e){}}
+function addDaily(){DAILYREP.unshift({id:'dr'+Date.now(),title:'',date:todayStr(),region:'',summary:''});saveDaily();render();}
+function editDaily(i,f,v){if(!DAILYREP[i])return;DAILYREP[i][f]=v;DAILYREP[i].dirty=1;saveDaily();try{scheduleDailySync(DAILYREP[i].id);}catch(e){}if(f==='date')render();}
+function delDaily(i){const d=DAILYREP[i];if(!d)return;if((String(d.title||'').trim()||String(d.summary||'').trim())&&!confirm('이 일일보고를 삭제할까요?'))return;DAILYREP.splice(i,1);saveDaily();render();}
+let _dailySyncT={};
+function scheduleDailySync(id){
+  if(!NPROXY)return;clearTimeout(_dailySyncT[id]);
+  _dailySyncT[id]=setTimeout(()=>{const i=DAILYREP.findIndex(d=>d.id===id);if(i>=0)notionPushDaily(i,true);},5000);
+}
+function dailyPendingCnt(){return DAILYREP.filter(d=>(String(d.title||'').trim()||String(d.summary||'').trim())&&(!d.nid||d.dirty)).length;}
+async function notionPushDaily(i,silent){
+  const d=DAILYREP[i];if(!d)return;
+  if(!String(d.title||'').trim()&&!String(d.summary||'').trim()){if(!silent)toast('제목 또는 내용을 먼저 입력하세요');return;}
+  if(!NPROXY){if(!silent)toast('노션 중계 주소를 먼저 연결하세요 (회의록 탭 상단)');return;}
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({kind:'daily',nid:d.nid||'',oldBlocks:d.nblocks||[],title:d.title||'(제목 없음)',date:d.date||'',region:d.region||'',summary:d.summary||'-'})});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j&&j.ok){
+      d.nid=j.nid||d.nid;if(j.blocks)d.nblocks=j.blocks;d.nsync=todayStr();d.dirty=0;saveDaily();
+      if(!silent){toast('노션에 저장했습니다');render();}
+      else{try{const cell=document.querySelector('tr[data-drid="'+CSS.escape(d.id)+'"] td.rp-nt');
+        if(cell)cell.innerHTML='<span class="mn-ok" title="노션 저장됨 · '+esc(d.nsync)+'">✅</span>';}catch(e){}}
+    }else{if(!silent)toast('노션 전송 실패: '+((j&&j.error)||res.status));}
+  }catch(e){if(!silent)toast('노션 전송 오류 · 연동 주소/네트워크 확인');}
+}
+async function notionPushAllDaily(){
+  const t=DAILYREP.map((d,i)=>({d,i})).filter(o=>(String(o.d.title||'').trim()||String(o.d.summary||'').trim())&&(!o.d.nid||o.d.dirty));
+  if(!t.length){toast('전송할 변경분이 없습니다 (모두 최신)');return;}
+  toast(`노션 전송 중… ${t.length}건`);let ok=0;
+  for(const o of t){try{await notionPushDaily(o.i,true);if(DAILYREP[o.i].nid&&!DAILYREP[o.i].dirty)ok++;}catch(e){}}
+  render();toast(`노션 전송 완료 ${ok}/${t.length}건`);
+}
+function renderDaily(){
+  let h=`<div class="ptable-wrap"><div class="pm-head mn-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗓 일일보고 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${DAILYREP.length}건 · 중국법인·대만·홍콩·중화팀 종합 · 첨부는 노션 페이지에 직접 업로드</span></h3><span class="mn-btns"><button class="reset" onclick="addDaily()">＋ 일일보고 추가</button><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?`<button class="reset" onclick="notionPushAllDaily()" title="미전송·수정된 일일보고만 노션에 전송">↑ 노션 전송${dailyPendingCnt()?' ('+dailyPendingCnt()+')':''}</button>`:''}</span></div>`;
+  h+='<div style="overflow-x:auto"><table class="ptable rept" style="table-layout:auto"><thead><tr><th style="width:26px">No</th><th style="text-align:left;width:1%;min-width:110px">제목</th><th style="width:1%">일자</th><th style="width:1%;min-width:64px">지역</th><th style="text-align:left">내용</th><th style="width:1%">노션</th><th style="width:28px"></th></tr></thead><tbody>';
+  if(!DAILYREP.length)h+=`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:20px">등록된 일일보고가 없습니다. 「＋ 일일보고 추가」로 등록하세요.</td></tr>`;
+  DAILYREP.forEach((d,i)=>{h+=`<tr data-drid="${esc(d.id)}">
+    <td class="mut">${i+1}</td>
+    <td class="rl"><textarea class="rep-ti" rows="1" oninput="autogrow(this)" onchange="editDaily(${i},'title',this.value)" placeholder="">${esc(d.title||'')}</textarea></td>
+    <td><input type="date" style="width:118px" value="${esc(d.date||'')}" onchange="editDaily(${i},'date',this.value)"></td>
+    <td><input style="width:64px" value="${esc(d.region||'')}" onchange="editDaily(${i},'region',this.value)" placeholder="지역"></td>
+    <td class="rl"><textarea class="rep-sum" oninput="autogrow(this)" onchange="editDaily(${i},'summary',this.value)" placeholder="">${esc(d.summary||'')}</textarea></td>
+    <td class="rp-nt" style="text-align:center;white-space:nowrap">${(d.nid&&!d.dirty)?`<span class="mn-ok" title="노션 저장됨${d.nsync?' · '+esc(d.nsync):''}">✅</span>`:`<button class="mn-send${d.nid?' upd':''}" onclick="notionPushDaily(${i})" title="${d.nid?'수정됨 · 노션 갱신':'노션에 전송'}">${d.nid?'↻':'↑'}</button>`}${d.nid?` <a href="https://www.notion.so/${esc(String(d.nid).replace(/-/g,''))}" target="_blank" rel="noopener" title="노션에서 열기 · 첨부 업로드" style="font-size:11px;text-decoration:none">🔗</a>`:''}</td>
+    <td style="text-align:center"><button class="mile-del" onclick="delDaily(${i})" title="삭제">🗑</button></td></tr>`;});
+  h+='</tbody></table></div></div>';
+  return h;
+}
 /* ── 노션 → 앱 복원 (구글시트 없이 노션만으로 백업·복원) ──
    노션 DB의 회의록·주요보고·출장리포트 페이지 중 이 앱에 없는 것만 가져와 추가한다.
    이미 있는 항목은 절대 덮어쓰지 않는다 — 평소엔 앱이 원본, 노션 불러오기는 새 기기·캐시 삭제 후 복원용. */
@@ -5737,8 +5790,8 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
         const en=(ev.end&&ev.end.dateTime)?String(ev.end.dateTime).slice(11,16):'';
         const title=String(ev.summary||'(제목 없음)').trim();
         let hit=LEECAL.find(x=>x.gid===ev.id);
-        if(!hit){LEECAL.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1});nNew++;}
-        else{if(hit.title!==title||hit.sdate!==sd||hit.start!==st){hit.title=title;hit.sdate=sd;hit.edate=sd;hit.start=st;hit.end=en;nUpd++;}}
+        if(!hit){LEECAL.push({id:'gc_'+ev.id,gid:ev.id,title,sdate:sd,edate:sd,start:st,end:en,desc:(ev.location?('장소 '+ev.location+' · '):'')+'Mgg_회의일정 연동',repeat:'none',gcal:1,_uts:Date.now()});nNew++;}
+        else{if(hit.title!==title||hit.sdate!==sd||hit.start!==st){hit.title=title;hit.sdate=sd;hit.edate=sd;hit.start=st;hit.end=en;hit._uts=Date.now();nUpd++;}}
       });
       /* ② G2업무일정관리(이유아) → 구글 : 이 달의 회의([지시] 제외 · 아직 안 올라간 것) · CALLIST(팀 캘린더)는 대상 아님 */
       let nPush=0,nPatch=0;
@@ -5758,7 +5811,7 @@ async function gcalPull(silent){ /* ⇄ 양방향: Mgg_회의일정만 대상 */
           }
         }catch(e){}
       }
-      if(nNew||nUpd||nPush||nPatch){saveLeeCal();try{minSyncFromCal();}catch(e){}render();}
+      if(nNew||nUpd||nPush||nPatch){saveLeeCal();try{minSyncFromCal();}catch(e){}try{scheduleCalSync();}catch(e){}render();}
       if(!silent)toast(`⇄ Mgg_회의일정 동기화 · 가져옴 ${nNew}건${nUpd?'·갱신 '+nUpd:''} / 올림 ${nPush}건${nPatch?'·수정 '+nPatch:''}`);
       try{localStorage.setItem('wr_gcal_last',todayStr());}catch(e){}
     }catch(e){gcalErrHandle((e&&e.message)||String(e),silent);}
@@ -5770,6 +5823,80 @@ let NPROXY=''; try{NPROXY=localStorage.getItem('wr_nproxy')||'';}catch(e){}
 let NPROXYEDIT=false;
 function toggleNProxyEdit(){NPROXYEDIT=!NPROXYEDIT;render();}
 function setNProxy(v){NPROXY=(v||'').trim();NPROXYEDIT=false;try{localStorage.setItem('wr_nproxy',NPROXY);}catch(e){}toast(NPROXY?'노션 연동 주소 저장 · 이제 회의록·출장리포트가 자동 전송됩니다':'노션 연동 주소를 비웠습니다');render();}
+/* ═ G2업무일정관리(이유아) 개인 캘린더(LEECAL) ⇄ 노션 「캘린더」 페이지 동기화 ═
+   localStorage는 브라우저별로 따로 놀기 때문에, 한 브라우저에서 추가한 회의가 다른 브라우저에
+   그대로 안 보이는 문제를 풀기 위해 노션의 전용 페이지 하나를 "원본 저장소"로 두고 오간다.
+   각 일정에 수정시각(_uts)을 찍어 최신 것이 이기게(last-write-wins) 하고, 삭제는 LEECALDEL에
+   삭제기록(id+시각)으로 남겨 다른 브라우저가 불러올 때 되살아나지 않게 한다. */
+let NCALNID=''; try{NCALNID=localStorage.getItem('wr_ncal_nid')||'';}catch(e){}
+let NCALBLOCKS=[]; try{const s=localStorage.getItem('wr_ncal_blocks');if(s)NCALBLOCKS=JSON.parse(s)||[];}catch(e){}
+function calPayloadStr(){return JSON.stringify({events:LEECAL,deleted:LEECALDEL});}
+function calChunks(str){const out=[];for(let i=0;i<str.length;i+=1800)out.push(str.slice(i,i+1800));return out.length?out:[''];}
+function calMergeRemote(remote){
+  const rEv=Array.isArray(remote&&remote.events)?remote.events:[];
+  const rDel=Array.isArray(remote&&remote.deleted)?remote.deleted:[];
+  const delMap={};LEECALDEL.forEach(d=>{if(d&&d.id)delMap[d.id]=Math.max(delMap[d.id]||0,d.ts||0);});
+  rDel.forEach(d=>{if(d&&d.id)delMap[d.id]=Math.max(delMap[d.id]||0,d.ts||0);});
+  LEECALDEL=Object.keys(delMap).map(id=>({id,ts:delMap[id]}));
+  LEECAL=LEECAL.filter(e=>!(delMap[e.id]!==undefined&&delMap[e.id]>=(e._uts||0)));
+  let added=0,updated=0;
+  rEv.forEach(r=>{
+    if(!r||!r.id)return;
+    if(delMap[r.id]!==undefined&&delMap[r.id]>=(r._uts||0))return;
+    const l=LEECAL.find(x=>x.id===r.id);
+    if(!l){LEECAL.push({...r});added++;}
+    else if((r._uts||0)>(l._uts||0)){Object.assign(l,r);updated++;}
+  });
+  if(added||updated||rDel.length)saveLeeCal();
+  saveLeeCalDel();
+  return {added,updated};
+}
+async function notionPushCal(silent){
+  if(LOGINUID!=='lee')return false;
+  if(!NPROXY){if(!silent)toast('노션 연동 주소를 먼저 연결하세요');return false;}
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'calpush',nid:NCALNID||'',oldBlocks:NCALBLOCKS||[],chunks:calChunks(calPayloadStr())})});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j&&j.ok){
+      NCALNID=j.nid||NCALNID;NCALBLOCKS=j.blocks||[];
+      try{localStorage.setItem('wr_ncal_nid',NCALNID);localStorage.setItem('wr_ncal_blocks',JSON.stringify(NCALBLOCKS));localStorage.setItem('wr_ncal_last',new Date().toLocaleString('ko-KR'));}catch(e){}
+      return true;
+    }
+    if(!silent)toast('캘린더 노션 전송 실패: '+((j&&j.error)||res.status)+' · 중계(val.town)를 최신 버전으로 교체했는지 확인');
+    return false;
+  }catch(e){if(!silent)toast('캘린더 노션 전송 오류 · 연동 주소/네트워크 확인');return false;}
+}
+async function notionPullCal(silent){
+  if(!NPROXY){if(!silent)toast('노션 연동 주소를 먼저 연결하세요');return false;}
+  try{
+    const res=await fetch(NPROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'calpull',nid:NCALNID||''})});
+    const j=await res.json().catch(()=>({}));
+    if(!res.ok||!j||!j.ok){if(!silent&&j&&j.error)toast('노션에서 캘린더 불러오기 실패: '+j.error);return false;}
+    if(j.nid){NCALNID=j.nid;try{localStorage.setItem('wr_ncal_nid',NCALNID);}catch(e){}}
+    if(j.blocks){NCALBLOCKS=j.blocks;try{localStorage.setItem('wr_ncal_blocks',JSON.stringify(NCALBLOCKS));}catch(e){}}
+    let remote=null;try{remote=j.json?JSON.parse(j.json):null;}catch(e){}
+    let m={added:0,updated:0};
+    if(remote)m=calMergeRemote(remote);
+    try{localStorage.setItem('wr_ncal_last',new Date().toLocaleString('ko-KR'));}catch(e){}
+    return m;
+  }catch(e){if(!silent)toast('노션에서 캘린더 불러오기 오류 · 연동 주소/네트워크 확인');return false;}
+}
+let _calSyncT=null;
+function scheduleCalSync(){ /* 입력 멈춘 뒤 8초 후: 먼저 노션의 최신 상태를 받아 병합하고, 그 다음 합쳐진 결과를 다시 올린다 */
+  if(LOGINUID!=='lee'||!NPROXY)return;
+  clearTimeout(_calSyncT);
+  _calSyncT=setTimeout(()=>{calSyncRound(true);},8000);
+}
+async function calSyncRound(silent){
+  await notionPullCal(true);
+  await notionPushCal(true);
+  if(!silent)render();
+}
+function calSyncNow(){
+  if(!NPROXY){toast('노션 연동 주소를 먼저 연결하세요');return;}
+  toast('캘린더 동기화 중…');
+  calSyncRound(false).then(()=>{toast('캘린더 동기화 완료');render();});
+}
 let _minSyncT={};
 function scheduleMinSync(id){ /* 입력 멈춘 뒤 3초 후 노션 자동 전송 */
   if(!NPROXY)return; clearTimeout(_minSyncT[id]);
@@ -6707,8 +6834,12 @@ try{const s=localStorage.getItem('wr_caltodo_v1');if(s)CALTODO=JSON.parse(s)||[]
 function saveCal(){try{localStorage.setItem('wr_calev_v1',JSON.stringify(CALLIST));}catch(e){}}
 /* G2업무일정관리(이유아) 전용 개인 일정 · 중화팀 일정·행사(CALLIST)와 완전히 분리된 별도 저장소
    · 팀 공유 캘린더에는 절대 노출되지 않음 · 이 파일이 처음 실행될 때, 그동안 팀 캘린더(CALLIST)에
-   섞여 있던 「내 구글캘린더(Mgg_회의일정) 동기화 항목(gc_)」만 명확히 개인 것이므로 이쪽으로 이관한다 */
+   섞여 있던 「내 구글캘린더(Mgg_회의일정) 동기화 항목(gc_)」만 명확히 개인 것이므로 이쪽으로 이관한다
+   · LEECAL은 브라우저별 localStorage라 브라우저를 바꾸면 안 보임 → 노션의 전용 페이지를 원본 저장소로 삼아
+     항목별 수정시각(_uts)·삭제기록(LEECALDEL)을 함께 실어 최신 상태 기준으로 병합한다 (아래 「노션 캘린더 동기화」) */
 let LEECAL=[];
+let LEECALDEL=[]; try{const sd=localStorage.getItem('wr_leecal_del_v1');if(sd){const rd=JSON.parse(sd);if(Array.isArray(rd))LEECALDEL=rd;}}catch(e){}
+function saveLeeCalDel(){try{localStorage.setItem('wr_leecal_del_v1',JSON.stringify(LEECALDEL.slice(-300)));}catch(e){}}
 (function loadLeeCal(){
   try{const s=localStorage.getItem('wr_leecal_v1');if(s){const raw=JSON.parse(s);if(Array.isArray(raw))LEECAL=raw;}}catch(e){}
   const moved=CALLIST.filter(e=>String(e.id||'').indexOf('gc_')===0);
@@ -6760,12 +6891,14 @@ function seedRoutineInto(who){
   src=Object.values(uniq);
   src.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ko'));
   const keep=e=>!(String(e.id||'').indexOf('rt_')===0&&String(e.sdate||'').slice(0,7)===ym);
-  if(who)LEECAL=LEECAL.filter(keep); else CALLIST=CALLIST.filter(keep);
+  if(who){const removed=LEECAL.filter(e=>!keep(e));LEECAL=LEECAL.filter(keep);
+    if(removed.length){removed.forEach(e=>LEECALDEL.push({id:e.id,ts:Date.now()}));saveLeeCalDel();} /* 재생성마다 새 id를 쓰므로, 옛 id는 지운 것으로 남겨야 노션 쪽에서 되살아나지 않는다 */
+  } else CALLIST=CALLIST.filter(keep);
   let n=0;
   const add=(d,w,p)=>{if(d<1||d>dim)return;
     const att=(w.attds||[]).map(id=>(mgrById(id)||{}).name||id).join('·');
     const ev={id:'rt_'+(CUID++),title:w.name,mgr:'',attds:(w.attds||[]).slice(),sdate:ds(d),edate:ds(d),start:p.start,end:p.end,
-      desc:'[루틴] '+(w.cycle||'')+(att?' · 참석 '+att:'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none'};
+      desc:'[루틴] '+(w.cycle||'')+(att?' · 참석 '+att:'')+(w.note?' · '+w.note:''),agenda:'',repeat:'none',_uts:Date.now()};
     if(who)LEECAL.push(ev); else CALLIST.push(ev);
     n++;};
   src.forEach(w=>{
@@ -6777,7 +6910,7 @@ function seedRoutineInto(who){
     const step=/격주/.test(w.cycle||'')?14:7;                         /* 매주 / 격주 */
     for(let d=1+((p.dow-firstDow+7)%7);d<=dim;d+=step)add(d,w,p);
   });
-  if(who)saveLeeCal(); else saveCal();
+  if(who){saveLeeCal();try{scheduleCalSync();}catch(err){}} else saveCal();
   render();
   toast(n?`루틴업무 정례회의 ${n}건을 ${m}월 달력에 넣었습니다${who?'':' (담당자 전원)'}`
         :'날짜를 정할 수 있는 정례회의가 없습니다 (요일·시간을 채워주세요)');
@@ -6924,18 +7057,21 @@ function mirrorToLee(e){
   if(!m){m={id:'tm_'+e.id,srcId:e.id,agenda:'',repeat:'none'};LEECAL.push(m);}
   m.title=e.title||'';m.mgr=e.mgr||'';m.sdate=e.sdate||'';m.edate=e.edate||e.sdate||'';
   m.start=e.start||'';m.end=e.end||'';m.desc=e.desc||'';
-  saveLeeCal();
+  m._uts=Date.now();
+  saveLeeCal();try{scheduleCalSync();}catch(err){}
 }
-function unmirrorLee(id){const n=LEECAL.length;LEECAL=LEECAL.filter(x=>x.srcId!==id);if(LEECAL.length!==n)saveLeeCal();}
+function unmirrorLee(id){const n=LEECAL.length;const gone=LEECAL.filter(x=>x.srcId===id);LEECAL=LEECAL.filter(x=>x.srcId!==id);
+  if(LEECAL.length!==n){gone.forEach(g=>LEECALDEL.push({id:g.id,ts:Date.now()}));saveLeeCalDel();saveLeeCal();try{scheduleCalSync();}catch(err){}}}
 function calAddOn(date){if(roBlock())return;const id='e'+(CUID++);const ev={id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'};CALLIST.push(ev);saveCal();mirrorToLee(ev);CALSEL=date;NEWEVFOCUS=id;render();}
 function calEditField(idx,f,v,el){if(roBlock())return;const e=CALLIST[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveCal();mirrorToLee(e);
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
-/* G2업무일정관리(이유아) 전용 · LEECAL에만 작용 · 회의일정보고(meetrep)에서만 호출됨 */
-function calAddOnL(date){if(roBlock())return;const id='e'+(CUID++);LEECAL.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none'});saveLeeCal();CALSEL=date;NEWEVFOCUS=id;render();}
-function calEditFieldL(idx,f,v,el){if(roBlock())return;const e=LEECAL[idx];if(!e)return;e[f]=v;if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveLeeCal();
+/* G2업무일정관리(이유아) 전용 · LEECAL에만 작용 · 회의일정보고(meetrep)에서만 호출됨
+   · 브라우저마다 localStorage가 따로 놀기 때문에, 바뀔 때마다 노션의 개인 캘린더 저장소로 자동 전송 예약(scheduleCalSync) */
+function calAddOnL(date){if(roBlock())return;const id='e'+(CUID++);LEECAL.push({id,title:'',sdate:date,edate:date,start:'09:00',end:'',desc:'',repeat:'none',_uts:Date.now()});saveLeeCal();try{scheduleCalSync();}catch(err){}CALSEL=date;NEWEVFOCUS=id;render();}
+function calEditFieldL(idx,f,v,el){if(roBlock())return;const e=LEECAL[idx];if(!e)return;e[f]=v;e._uts=Date.now();if(e.gid)e._dirty=1;if(f==='sdate'){if(!e.edate||e.edate<v)e.edate=v;}saveLeeCal();try{scheduleCalSync();}catch(err){}
   if(f==='agenda'){try{schedulePrivPush();}catch(err){}} /* 기준사항은 개인 회의록 시트에도 실리므로 자동 저장 예약 */
   if(el){el.classList.add('ok');setTimeout(()=>el.classList.remove('ok'),700);}}
-function calDelIdxL(i){if(LEECAL[i]){LEECAL.splice(i,1);saveLeeCal();render();}}
+function calDelIdxL(i){if(LEECAL[i]){LEECALDEL.push({id:LEECAL[i].id,ts:Date.now()});saveLeeCalDel();LEECAL.splice(i,1);saveLeeCal();try{scheduleCalSync();}catch(err){}render();}}
 function milePanelSec(date,miles){
   let h=`<div class="cxs-sec"><span class="bar" style="background:#f0a500"></span>중화팀 행사 <span style="color:#c3cbd2">${miles.length}</span>${RO()?'':`<button class="add" onclick="mileAddOn('${date}')">＋ 추가</button>`}</div>`;
   if(!miles.length)h+='<div class="cxs-emp">해당 행사가 없습니다.</div>';
@@ -7028,6 +7164,9 @@ function monthCalendarBody(){
     evs.filter(o=>String(o.e.id||'').indexOf('rt_')!==0).forEach(evChip);   /* 그 외 회의·일정 */
     ml.forEach(x=>{const col=MCAT[x.cat]||'#c9821a';const mi=MILESTONES.indexOf(x);
       chips.push(`<span class="cx-ev e" onclick="event.stopPropagation();calPickItem('${date}','mile',${mi})" title="행사 · ${esc(x.country||'중국')} · ${esc(x.name||'')}${x.info?' · '+esc(x.info):''}"><i class="cxk" style="background:${col}">행사</i>${esc(x.country||'중국')} · ${esc(x.name||'')}</span>`);});
+    if(isMe)(DAILYREP||[]).filter(dr=>dr.date===date).forEach(dr=>{
+      chips.push(`<span class="cx-ev d" onclick="event.stopPropagation();setMeetTab('daily')" title="일일보고 · ${esc(dr.region||'')}${dr.title?' · '+esc(dr.title):''}"><i class="cxk" style="background:#7c3aed">${esc((dr.region||'일보').slice(0,2))}</i>${esc(dr.title||dr.region||'일일보고')}</span>`);
+    });
     if(CALDMEMO[date])chips.push(`<span class="cx-ev m" title="메모">📝 ${esc(String(CALDMEMO[date]).slice(0,18))}</span>`);
     return `<button class="calx-d s${dw}${date===td?' tod':''}${date===sel?' sel':''}" onclick="calPick('${date}')"><span class="calx-dn">${d}</span>${chips.join('')}</button>`;
   };
@@ -7066,6 +7205,7 @@ function calLegendHTML(){
   return '<div class="cx-legend">'
     +'<span><i style="background:#2f9e79"></i>회의·일정</span>'
     +'<span><i style="background:#4a90d9"></i>내 출장</span>'
+    +'<span><i style="background:#7c3aed"></i>일일보고</span>'
     +'<span>📝 메모</span>'
     +'</div>';
 }
@@ -8591,17 +8731,18 @@ function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) 
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
       <button class="mile-add mini" onclick="setMeetMine(false)" style="${MEETMINE?'':'background:var(--accent);color:#fff'}">전체 보기</button>
-      <button class="mile-add mini" onclick="gcalPull(false)" style="margin-left:10px" title="구글 「Mgg_회의일정」 캘린더와 이번 달 회의를 서로 반영합니다 (가져오기+올리기)">⇄ 구글 캘린더 동기화 (Mgg_회의일정)</button>
+      ${NPROXY?`<button class="mile-add mini" onclick="calSyncNow()" style="margin-left:10px" title="이 달력(내 일정)을 노션의 개인 캘린더 저장소와 맞춥니다 · 다른 브라우저에서 추가한 일정도 이걸로 받아옵니다">⇄ 노션 캘린더 동기화</button>`:'<span class="hint" style="margin-left:10px;color:var(--faint)">노션 연동 주소를 연결하면 브라우저 간 캘린더 동기화가 켜집니다 (아래 회의록 탭 · ⚙ 중계주소)</span>'}
+      <button class="mile-add mini" onclick="gcalPull(false)" title="구글 「Mgg_회의일정」 캘린더와 이번 달 회의를 서로 반영합니다 (가져오기+올리기)">⇄ 구글 캘린더 동기화 (Mgg_회의일정)</button>
       ${NPROXY?'<button class="mile-add mini" onclick="notionPullAll()" title="노션 아카이브에 있는 회의록·주요보고·출장리포트 중 이 앱에 없는 것만 가져와 복원합니다 (기존 항목은 건드리지 않음)">⇩ 노션에서 불러오기</button>':''}
       <button class="mile-add mini" onclick="privPushNow()" title="회의록·출장리포트를 개인용 비공개 구글시트 2개에 지금 바로 기록합니다 (선택 · 노션과 별개의 백업)">☁ 개인시트 저장</button>
-      <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_gcal_last');return d?('마지막 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
+      <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_ncal_last');return d?('캘린더 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
     /* (구버전 잔재 제거) 예전엔 이 화면이 팀 데이터를 공유해 MEETMINE이 전역 담당자 필터(MILEMGR)를 'lee'로 바꿨지만,
        지금은 개인 저장소(LEECAL)를 쓰므로 그 부작용(중화팀 일정·행사가 이유아 것만 보이게 됨)만 남아 삭제 */
     h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 내 회의·일정`,()=>monthCalendarBody())+calModalHTML();
-    {const MT=[['min','회의록'],['trip','출장리포트'],['rep','주요보고']];
-     if(!['min','trip','rep'].includes(MEETTAB))MEETTAB='min';
+    {const MT=[['min','회의록'],['trip','출장리포트'],['rep','주요보고'],['daily','일일보고']];
+     if(!['min','trip','rep','daily'].includes(MEETTAB))MEETTAB='min';
      h2+='<div class="pm-tabs" style="margin:18px 0 12px">'+MT.map(([k,l])=>`<button class="${MEETTAB===k?'on':''}" onclick="setMeetTab('${k}')">${esc(l)}</button>`).join('')+'</div>';
-     h2+=(MEETTAB==='min')?renderMinutes():(MEETTAB==='trip')?renderTripReports():renderReports(MEETMINE?'lee':'');}
+     h2+=(MEETTAB==='min')?renderMinutes():(MEETTAB==='trip')?renderTripReports():(MEETTAB==='daily')?renderDaily():renderReports(MEETMINE?'lee':'');}
     return h1+h2;
 }
 function viewGoals(){
@@ -10498,6 +10639,7 @@ try{mergeWkIntoTasks();}catch(e){}
 try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e){}
 render();
 try{mileFixDates();}catch(e){}
+try{if(LOGINUID==='lee'&&NPROXY)setTimeout(()=>{notionPullCal(true).then(m=>{if(m&&(m.added||m.updated))render();});},1200);}catch(e){} /* 새로고침/재접속 시 노션 캘린더 저장소와 조용히 맞춰본다 */
 </script>
 </body>
 </html>
