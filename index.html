@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.24-M239</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.28-M242</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5902,21 +5902,7 @@ function scheduleMinSync(id){ /* 입력 멈춘 뒤 3초 후 노션 자동 전송
   if(!NPROXY)return; clearTimeout(_minSyncT[id]);
   _minSyncT[id]=setTimeout(()=>{const i=MINUTES.findIndex(m=>m.id===id);if(i>=0)notionPushMin(i,true);},3000);
 }
-async function plaudPull(silent){ /* PLAUD(Zapier) 요약 가져오기 → 회의록 행 추가 */
-  if(!NPROXY){if(!silent)toast('먼저 노션 연동 주소를 연결하세요');return;}
-  try{
-    const res=await fetch(NPROXY+(NPROXY.includes('?')?'&':'?')+'clear=1');
-    const j=await res.json().catch(()=>({}));
-    if(!res.ok||!j.ok){if(!silent)toast('PLAUD 가져오기 실패'+(j&&j.error?': '+j.error:''));return;}
-    const items=j.items||[];let n=0;
-    items.forEach(it=>{
-      const key='pl:'+(it.nid||it.id);
-      if(MINUTES.some(m=>m.plaud===key))return;
-      MINUTES.unshift({id:'mn'+(it.id||Date.now()),calId:'',plaud:key,title:'[PLAUD] '+(it.title||'회의'),date:(mnDateFromTitle(it.title,String(YEAR||2026))||(it.date||todayStr()).slice(0,10)),summary:(it.brief||it.summary||''),full:(it.summary||''),nid:it.nid||'',nsync:todayStr(),link:'',fileName:'',fileType:'',fileId:'',thumb:''});n++;});
-    if(n){saveMinutes();render();}
-    if(!silent)toast(n?`PLAUD 회의요약 ${n}건을 회의록에 추가했습니다 (노션에도 이미 저장됨)`:'새로 들어온 PLAUD 요약이 없습니다');
-  }catch(e){if(!silent)toast('PLAUD 가져오기 오류 · 연동 주소 확인');}
-}
+/* PLAUD 요약은 이제 Zapier의 노션 직접연동(Create Page)으로만 처리 · 대시보드로는 가져오지 않음 */
 async function notionPushMin(i,silent){
   const m=MINUTES[i];if(!m)return;
   if(!String(m.title||'').trim()&&!String(m.summary||'').trim()){if(!silent)toast('제목 또는 내용을 먼저 입력하세요');return;}
@@ -6059,7 +6045,7 @@ function renderMinutes(){
   const PER=10, pages=Math.max(1,Math.ceil(all.length/PER));
   if(MNPAGE>=pages)MNPAGE=pages-1; if(MNPAGE<0)MNPAGE=0;
   const list=all.slice(MNPAGE*PER,MNPAGE*PER+PER);
-  let h=`<div class="ptable-wrap"><div class="pm-head mn-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a>${NPROXY?'<button class="reset" onclick="plaudPull(false)" title="PLAUD가 만든 회의 요약을 가져옵니다 (Zapier 연동 시)">🎙 PLAUD 요약</button>':''}<button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?'<button class="reset" onclick="mnTranslateAll()" title="중국어로 들어온 회의록을 한국어로 번역합니다">🌐 한국어 번역</button>':''}<button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button>${NPROXY?`<button class="reset" onclick="toggleNProxyEdit()" title="현재 연결된 노션 중계 주소: ${esc(NPROXY)}">⚙ 중계주소</button>`:''}<select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
+  let h=`<div class="ptable-wrap"><div class="pm-head mn-head" style="margin-bottom:8px"><h3 style="font-size:14px">🗒 회의록 <span style="font-size:11px;color:var(--dim);font-weight:600">· ${MINUTES.length}건</span></h3><span class="mn-btns"><a class="reset" href="https://app.notion.com/p/a7466f828d214388b8f315dc111ec49a" target="_blank" rel="noopener" style="text-decoration:none">🔗 노션 아카이브</a><button class="reset" onclick="addMinute()">＋ 회의록 추가</button>${NPROXY?'<button class="reset" onclick="mnTranslateAll()" title="중국어로 들어온 회의록을 한국어로 번역합니다">🌐 한국어 번역</button>':''}<button class="reset" onclick="mnFixDates(false)" title="제목의 날짜(08-12 등)와 달력 일정에 맞춰 일자를 보정합니다">📅 일자 맞추기</button>${NPROXY?`<button class="reset" onclick="toggleNProxyEdit()" title="현재 연결된 노션 중계 주소: ${esc(NPROXY)}">⚙ 중계주소</button>`:''}<select class="mn-sort" title="정렬" onchange="setMnSort(this.value)"><option value="date" ${MNSORT==='date'?'selected':''}>최신일자순</option><option value="date_a" ${MNSORT==='date_a'?'selected':''}>오래된순</option><option value="title" ${MNSORT==='title'?'selected':''}>제목 ㄱ→ㅎ</option><option value="title_d" ${MNSORT==='title_d'?'selected':''}>제목 ㅎ→ㄱ</option>${minTitles().map(t=>`<option value="t:${esc(t)}" ${MNSORT==='t:'+t?'selected':''}>▸ ${esc(t.length>18?t.slice(0,18)+'…':t)}</option>`).join('')}</select>${NPROXY?`<button class="reset" onclick="notionPushAll()" title="미전송·수정된 회의록만 노션에 전송">↑ 노션 전송${mnPendingCnt()?' ('+mnPendingCnt()+')':''}</button>`:''}</span></div>`;
   if(!NPROXY||NPROXYEDIT)h+=`<div class="set-hint" style="margin:0 0 8px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;color:var(--dim)"><b>노션 자동 전송 연결 안내.</b> 노션은 보안상 브라우저에서 직접 쓸 수 없어 <b>중계 주소(프록시)</b>가 1회 필요합니다 — 함께 보낸 「회의록_노션연동_설정.md」 3단계(약 5분)를 마친 뒤 아래에 주소를 붙여넣으세요. 그 전까지는 「↑ 지금 전송」이 복사+노션 열기로 동작합니다.<br><input class="dw-edit-i" style="margin-top:6px;width:70%" value="${esc(NPROXY)}" placeholder="https://…(중계 주소)" onchange="setNProxy(this.value)"><button class="mile-add mini" onclick="setNProxy(this.previousElementSibling.value)" style="margin-left:6px">연결</button></div>`;
   h+='<datalist id="mnTitles">'+minTitles().map(t=>`<option value="${esc(t)}">`).join('')+'</datalist>';
   h+='<div style="overflow-x:auto"><table class="ptable rept mintbl"><thead><tr><th style="width:28px">No</th><th style="text-align:left;width:230px">제목</th><th style="width:56px">일자</th><th>주요내용</th><th style="width:52px">노션</th><th style="width:28px"></th></tr></thead><tbody>';
@@ -8726,7 +8712,7 @@ function renderTripReports(){
 }
 function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) · 행사목록/주요보고 접힘 · 팀장 전용 */
   if(LOGINUID!=='lee')return '<div style="padding:30px;color:var(--faint)">권한이 없습니다.</div>';
-  let h1=`<div class="sec-h"><h2>G2업무일정관리(이유아)</h2><span class="hint">이유아 개인 일정 · 회의록(노션 연동) · PLAUD 요약 · 팀 캘린더와 분리된 비공개 화면</span><span class="line"></span></div>`;
+  let h1=`<div class="sec-h"><h2>G2업무일정관리(이유아)</h2><span class="hint">이유아 개인 일정 · 회의록(노션 연동) · 팀 캘린더와 분리된 비공개 화면</span><span class="line"></span></div>`;
     let h2='';
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
@@ -9863,6 +9849,11 @@ async function doSheetPullById(id,silent){
 /* ═══ 마스터파일 연동 (2026년도_G2중화팀_업무보고_마스터파일) — 월간/주간 엄격 분리 ═══ */
 const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':'kim','탁종민':'tak'};
 function g2num(v){if(v==null)return null;const t=String(v).replace(/[,\s]/g,'');if(t===''||t==='-'||t==='—'||t==='–')return null;const n=parseFloat(t);return isNaN(n)?null:n;}
+/* 구글시트 진행율(%) 열이 "퍼센트 서식" 셀이면 XLSX가 0.93처럼 소수(비율)로 내려준다(표시상 93%로 보여도 실제값은 0.93).
+   문자열로 "93%"·"93"을 직접 입력한 값과 섞여 들어오므로, 0~1 사이 소수만 ×100 해 통일된 "정수%" 문자열로 반환한다. */
+function g2pct(v){const n=g2num(v);if(n==null)return String(v||'').trim();const p=(n>0&&n<=1)?n*100:n;return String(Math.max(0,Math.min(100,Math.round(p))));}
+/* 달성률처럼 원래 "93%" 텍스트로 화면에 그대로 표시되는 열용: 숫자면 %서식 통일, 숫자가 아니면(예:"완료","-") 원문 유지 */
+function g2pctTxt(v){const n=g2num(v);if(n==null)return String(v||'').trim();const p=(n>0&&n<=1)?n*100:n;return Math.max(0,Math.min(150,Math.round(p)))+'%';}
 function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:null;}
 function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
 function g2date(v){
@@ -10016,7 +10007,7 @@ function importG2Master(wb,scope){
       const byM={};
       body.forEach(r=>{const mo=g2mon(r[cM]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
         if(!mo||!nm||!t)return;
-        (byM[mo]=byM[mo]||[]).push({m:nm,gb:String(r[cG]||'').trim(),g:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),r:String(r[cRt]||'').trim(),j:String(r[cJ]||'').trim(),a:String(r[cA]||'').trim(),kl:(cKL2>=0?String(r[cKL2]||'').trim():'')});});
+        (byM[mo]=byM[mo]||[]).push({m:nm,gb:String(r[cG]||'').trim(),g:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),r:g2pctTxt(r[cRt]),j:String(r[cJ]||'').trim(),a:String(r[cA]||'').trim(),kl:(cKL2>=0?String(r[cKL2]||'').trim():'')});});
       Object.keys(byM).forEach(mo=>{MREPORTS[String(mo)]=byM[mo];try{mfSyncFromMReports(mo);}catch(e){}});
       if(Object.keys(byM).length){saveMReport();done.push('월말보고 '+Object.keys(byM).map(m=>m+'월('+byM[m].length+')').join('·'));}
       return;
@@ -10030,7 +10021,7 @@ function importG2Master(wb,scope){
         if(!w||!nm||!t)return;
         let due=g2mmdd(r[cD]);
         let st0=(cSt>=0?g2mmdd(r[cSt]):'');
-        (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:String(r[cPr]||'').trim(),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
+        (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:g2pct(r[cPr]),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
       if(Object.keys(byW).length){saveWKREPORT();mergeWeeklyTasks(true);saveTasks();done.push('주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·'));}
       return;
@@ -10631,12 +10622,25 @@ loadSPERF();
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:225837,suT:18636056,suTm:1397705,suA:556641},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:41094,suT:5032559,suTm:402605,suA:0},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:0,suT:205000,suTm:42000,suA:0},
-    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:0,suT:1370000,suTm:150000,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:0,suT:1370000,suTm:150000,suA:17133},
     {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:0,suT:280000,suTm:null,suA:0}]);
+  put(34,[
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:4282,suT:18636056,suTm:1397705,suA:0},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:0,suT:5032559,suTm:402605,suA:0},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:4123,suT:205000,suTm:42000,suA:0},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:null,suT:1370000,suTm:150000,suA:0},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:40996,suT:280000,suTm:null,suA:null}]);
+  put(35,[
+    {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:58327,suT:18636056,suTm:1397705,suA:225838},
+    {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:1168,suT:5032559,suTm:402605,suA:150000},
+    {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:863,suT:205000,suTm:42000,suA:11309},
+    {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:52803,suT:1370000,suTm:150000,suA:null},
+    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:282,suT:280000,suTm:null,suA:null}]);
   try{saveSPHIST();}catch(e){}
 })();
 try{mergeWkIntoTasks();}catch(e){}
 try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e){}
+try{TAB='mreport';MRTAB='week';gotoLastUpWeek();}catch(e){} /* 첫 화면 = 주간과제(최신 업로드 주차) */
 render();
 try{mileFixDates();}catch(e){}
 try{if(LOGINUID==='lee'&&NPROXY)setTimeout(()=>{notionPullCal(true).then(m=>{if(m&&(m.added||m.updated))render();});},1200);}catch(e){} /* 새로고침/재접속 시 노션 캘린더 저장소와 조용히 맞춰본다 */
