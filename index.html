@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.28-M243</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.30-M248</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2612,9 +2612,55 @@ let MREPORT26=[
 {m:"kim",gb:"세미나/교육",g:"교육·마케팅 활동지원",big:"활동지원",t:"방한 고객 대응",pri:"하",k:"연구소 소개 통역 및 고객 대응",r:"100%",j:"메이야, 동북 DSO 고객 방한 대응 / TASK 고객 방한 대응",a:"방한 고객 통역·현장대응"}
 ];
 try{const s=localStorage.getItem('wr_mreport26_v3');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)MREPORT26=o;}}catch(e){}
-/* 월별 월보고 저장소 — 키=결과 월 (현재 데이터는 7월 보고: 7월 결과+8월 계획) · 다른 달은 해당 월 보고 입력/불러오기 전까지 빈 상태 */
-let MREPORTS={'7':MREPORT26};
-try{const s=localStorage.getItem('wr_mreports_v5');if(s){const o=JSON.parse(s);if(o&&typeof o==='object'&&!Array.isArray(o))MREPORTS=Object.assign({'7':MREPORT26},o);}}catch(e){}
+/* 8월 월말보고 (2026-08-30 마스터 「월말보고」 탭 기준 · 42행) */
+let MREPORT26_8=[
+{m:"lee",gb:"영업",g:"영업 Infra 구축 · KPI 목표달성 (화동·화남)",big:"영업활성화",t:"화남본부 활성화 및 신규고객 개발",pri:"상",k:"월별 KPI 목표달성",j:"월말 178만위안·달성률 93% 예상 / AO 재고소진 정책과 이루·펑성 활성화방안 협의",r:"93%",a:"잔여매출 확정 및 대리상별 목표 재설정 / AO 패키지 실적과 신규고객 개발현황 관리"},
+{m:"lee",gb:"영업",g:"영업 Infra 구축 · KPI 목표달성 (화동·화남)",big:"영업활성화",t:"화동본부 실적 및 산동지역 개선",pri:"중",k:"월별 KPI 목표달성",j:"월말 551만위안·달성률 97% 예상 / 산동지역 패키지 판매와 AO 재고소진방안 협의",r:"97%",a:"고객별 발주·재고소진 조건 확정 / 세미나 이후 상담·초도·재구매 현황 관리"},
+{m:"lee",gb:"제품PM",g:"제품 PM 및 제품 경쟁력 강화",big:"Evidence BLTⅡ",t:"Evidence DSO 진입 프로젝트",pri:"상",k:"NMPA 인증 완료 / 10월 운영 개시",j:"8/24 NMPA 인허가 획득 / 가격·환율·DSO 운영안 수립 및 샘플 6EA 발송",r:"80%",a:"공급계약·기준환율 확정 / 대리인 변경·라벨·초도주문 및 지정 DSO 승인절차 정립"},
+{m:"lee",gb:"제품PM",g:"제품 PM 및 제품 경쟁력 강화",big:"BDC",t:"BDC 런칭전략 수립",pri:"중",k:"런칭전략 1차안 확정",j:"제품·시장 기초자료 취합 및 런칭전략 수립을 위한 사전조사 진행",r:"30%",a:"시장·경쟁·USP·타깃·가격 및 단계별 전환 KPI를 포함한 런칭전략 1차안 작성"},
+{m:"lee",gb:"제품PM",g:"제품 PM 및 제품 경쟁력 강화",big:"가오펑 AXA",t:"가오펑 AXA 생산체계 확정",pri:"중",k:"검사기준서 완료 / 발주·납품 일정 확정",j:"Temporary Ti-base 1등급 운영, Cylinder 제외 및 EZ Post 가공방식 확정",r:"85%",a:"9월 초 생산 후 본사 품질검사 진행 / 추석 전 검수·납품 완료 추진"},
+{m:"lee",gb:"제품PM",g:"제품 PM 및 제품 경쟁력 강화",big:"바이오레이즈",t:"바이오레이즈 OEM 프로젝트",pri:"상",k:"중국 현지 생산기반 구축 · 2028년 판매 준비",j:"COXO 생산라인과 WATERLASE 브랜드·모델 검토 / 비용처리 및 OEM 계약구조 미확정으로 SETUP 지연",r:"30%",a:"닝보–COXO OEM 계약과 인허가권·상표사용권·비용부담 확정 / 생산·인허가 일정 재수립"},
+{m:"lee",gb:"팀업무",g:"팀 운영 및 본부장 업무 지원",big:"인력 운영",t:"인력 운영 및 업무 인수인계",pri:"하",k:"담당인원 채용 / 업무 인수인계 완료",j:"수출입·법인지원 업무 인수인계 1차 정리 / 8/31 신규인력 면접자 3명 일정 확정",r:"50%",a:"채용대상 선정 및 R&R·교육계획 확정 / 인수인계 목록·완료일 관리"},
+{m:"lee",gb:"팀업무",g:"팀 운영 및 본부장 업무 지원",big:"G2 주간보고",t:"G2 대시보드 및 주간보고 체계화",pri:"중",k:"담당자·진행률·완료일 100% 반영 / 주간보고 정례 운영",j:"닝보·북경 주간회의 및 중화팀 주간보고 취합·본부보고 정례 운영",r:"100%",a:"담당자·기한·진행률 중심의 주간보고 및 주요 과제 점검체계 운영"},
+{m:"kim",gb:"법인관리",g:"수출·법인 / 운영관리",big:"",t:"대만 법인 수출 준비",pri:"상",k:"초도물량 3,000set 출고",j:"FX3,000ea, ABUT3,431ea 초도물량 수주 등록, 재고 점유 수량(FX2,765ea, ABUT 3,431ea) 패킹 진행중. 9월 첫째주 선적 예정",r:"90%",a:""},
+{m:"kim",gb:"법인관리",g:"재고·교환 및 VOC 대응관리",big:"",t:"Failed FX 교환",pri:"상",k:"닝보, 북경 Failed FX 교환",j:"닝보 Failed FX 4,582EA 수주 등록 완료 > 8/31 픽업 북경 Failed FX 1,414EA 접수 완료 CS 1차 986개 확인",r:"80%",a:""},
+{m:"kim",gb:"법인관리",g:"재고·교환 및 VOC 대응관리",big:"",t:"제품/상품 VOC 대응 및 해결",pri:"중",k:"VOC 접수 / 대응 관리",j:"외부 박스 파손 3건 및 출고 FX 제품 불량 2건 CS 전달, FX 제품 회수 후 품질팀 검사 예정",r:"70%",a:""},
+{m:"kim",gb:"법인관리",g:"수출·법인 / 운영관리",big:"",t:"법인 영업 운영 지원",pri:"하",k:"북경 의료기기 영업 허가증 연장 지원",j:"북경 의료기기 영업허가증 연장 서류(수권서 2종, 공급계약서, 품질 보증 협약서)",r:"100%",a:""},
+{m:"kim",gb:"법인관리",g:"마케팅 물품 지원",big:"",t:"MKT 물품 발송",pri:"중",k:"신청 물품 적시 발송",j:"Ari AXA 추가 신청분까지 총 508ea 수주 완료. 258ea수량 수령 완료/ 출장자 핸드캐리 면장 신청 완료 플라즈마 우회 통관 건 패킹 완료 대기중 > 차주 출고 예정",r:"95%",a:""},
+{m:"tak",gb:"세미나/교육",g:"교육-마케팅 활동지원",big:"",t:"교육/세미나 대시보드 구축",pri:"상",k:"교육 횟수, 전환율",j:"교육/세미나 실적 취합 Excel 구조 개선 및 대시보드 데이터 오류 검증 진행, KOL/BD/ARi 실적과 마케팅/PKG 관리지표 웹 대시보드 연동",r:"80%",a:"9월 실적 대시보드 연동 및 유지보수"},
+{m:"tak",gb:"세미나/교육",g:"교육-마케팅 활동지원",big:"",t:"9월 서울대 교육 준비",pri:"중",k:"참가인원",j:"참가자 39명 명단 MINEC 공유, 실제 교육생 32명 교육비(1,760만 원) 송금 완료, 호텔 21객실(17,835,000원) 예약 기안 상신",r:"70%",a:"9월 서울대 교육행사 실제 운영 지원"},
+{m:"tak",gb:"세미나/교육",g:"교육-마케팅 활동지원",big:"",t:"MegaSchool 로드쇼 기획 및 사내 교육",pri:"상",k:"교육 횟수(개최지역 및 운영방안 정리보고)",j:"MegaSchool 로드쇼 방안 보고(창동욱 원장 11/24-25 일정 가능)",r:"20%",a:"로드쇼 세부계획 확정"},
+{m:"tak",gb:"마케팅/브랜딩",g:"브랜드 전략-마케팅",big:"",t:"상해 심포지엄 연자",pri:"중",k:"진행 횟수",j:"2027 상하이 심포지엄 연자/심사위원 후보 MINEC 제출",r:"10%",a:"행사별 세부 일정까지 파악 후 법인/본사 협업"},
+{m:"tak",gb:"마케팅/브랜딩",g:"브랜드 전략-마케팅",big:"",t:"정주CEO Salon",pri:"상",k:"진행 횟수",j:"정주 즈더 CEO Salon 세부 일정 협의",r:"70%",a:"진행 세부 일정 점검"},
+{m:"tak",gb:"마케팅/브랜딩",g:"브랜드 전략-마케팅",big:"",t:"시드니 심포지엄",pri:"중",k:"진행 횟수",j:"시드니 심포지엄 호주/중국 연자 프로필 전달",r:"10%",a:"행사별 세부 일정 업데이트"},
+{m:"tak",gb:"마케팅/브랜딩",g:"브랜드 전략-마케팅",big:"",t:"DSO 방한행사 운영",pri:"중",k:"진행 횟수, 3개월 매출 성과",j:"마오쥐 방한 Full Mouth Hands-on 준비(패키지 19세트 신청, 엑스코인터불고 호텔 변경)",r:"60%",a:"마오쥐 방한 준비 : 핸즈온외"},
+{m:"tak",gb:"마케팅/브랜딩",g:"브랜드 전략-마케팅",big:"",t:"DSO 방한행사 운영",pri:"중",k:"진행 횟수, 3개월 매출 성과",j:"모커얼(8명) 방한 본사 투어 및 협약식 세팅",r:"60%",a:"모커얼 방한 준비 : 협약식외"},
+{m:"tak",gb:"제품PM",g:"PM-디지털·장비",big:"",t:"디지털 제품 실적·VOC 관리",pri:"중",k:"R2Gate 목표달성",j:"8월 디지털 컨센서스 미팅 진행 및 실적 마감, 라이브러리 공차 수정 요청 및 R2SA Connector 개선사항 개발팀 접수 완료",r:"50%",a:"QVD 모듈 사용법 및 업데이트 교육 (9/3,목)"},
+{m:"tak",gb:"제품PM",g:"PM-디지털·장비",big:"",t:"디지털 제품 실적·VOC 관리",pri:"중",k:"디지털 이슈 대응",j:"디카이얼 라이브러리 등록 검토 요청",r:"20%",a:"디카이얼 라이브러리 등록 확인"},
+{m:"seo",gb:"전략",g:"전략",big:"시장분석",t:"시장 분석 및 대응방안 수립",pri:"중",k:"3C 분석·STP/4P 전략 업데이트",j:"가격 경쟁력 강화방안 수립 수출가 인하 및 격려정책 시행",r:"진행중",a:"시장·경쟁사 동향 수시 점검"},
+{m:"seo",gb:"전략",g:"전략",big:"보고",t:"전략 실행 정기보고",pri:"상",k:"정기보고(일일·주간·월간)",j:"Daily Report 지속 수행 주간회의·영업회의 자료 보고",r:"100%",a:"정기보고 자료 지속 시행"},
+{m:"seo",gb:"법인관리",g:"법인 관리",big:"보고",t:"회의체 운영",pri:"하",k:"주간·월간 회의 진행",j:"주간: 법인 주간회의 월간: 경영회의·마케팅회의",r:"100%",a:"주간: 법인 주간회의 월간: 경영회의·마케팅회의"},
+{m:"seo",gb:"법인관리",g:"법인 관리",big:"KPI",t:"KPI 관리",pri:"하",k:"법인 3.3억 RMB·115만대 본사 2,270만 달러·115만대",j:"법인 실적현황 수시 점검 8월 KPI 달성 관리",r:"금액 84% 수량 85%",a:"9월 KPI 달성 관리"},
+{m:"seo",gb:"영업",g:"영업 Infra 구축·KPI 목표 달성",big:"M/S",t:"지역별 M/S 목표 달성",pri:"상",k:"중국 전체 M/S 8.5% 부진지역 M/S 6% 이상 개선",j:"절강·화중·화서·화북 전담 관리 세부 실행계획 진행현황 관리",r:"87% (M/S 7.4%)",a:"부진지역 개선 프로젝트 지속 관리"},
+{m:"seo",gb:"영업",g:"영업 Infra 구축·KPI 목표 달성",big:"DSO",t:"DSO 진입 및 판매 확대",pri:"중",k:"250점 진입·60만대 판매 S/A급 60점 진입 목표",j:"월 목표 판매량 달성 관리 절강 모커얼·동북 더리 진입 확정",r:"236점/94% 45점/75%",a:"摩尔·弗莱堡·美奥·皓呀·天牙·牙加美·首口附一 진입 추진"},
+{m:"seo",gb:"영업",g:"영업 Infra 구축·KPI 목표 달성",big:"하부고객",t:"하부고객 진입 및 판매 확대",pri:"중",k:"8,500점 확보 미출하 고객 30% 이하",j:"신규 발굴 83점·유실 8점 비활성화 고객 데이터 관리",r:"7,946점/94% 미출하 21%",a:"9월 신규 진입 목표 달성 추진 미출하 고객 20% 이하 유지 관리"},
+{m:"seo",gb:"영업",g:"영업 Infra 구축·KPI 목표 달성",big:"BD",t:"BD 진입 및 판매 확대",pri:"중",k:"1,500점 진입 8만대 이상 판매",j:"8월 신규 진입 36점 누적 하부고객 판매 2.2만대 돌파",r:"781점/52% 22,365대/28%",a:"9월 신규 진입 목표 달성 관리 재구매 촉진 세부 진행현황 관리"},
+{m:"seo",gb:"영업",g:"영업 Infra 구축·KPI 목표 달성",big:"ARi",t:"ARi 성공 런칭",pri:"중",k:"500점 진입 8,000대 이상 판매",j:"8월 신규 진입 22점 중대형 DSO 샘플 제공 및 진입 협의",r:"42점/8% 1,558대/19%",a:"ARi 선진입 후 BD·AR 확대전략 지역별 목표고객 영업진도 관리"},
+{m:"seo",gb:"전략",g:"VBP 업무 진행",big:"전략수립",t:"정책·동향 분석 및 전략 수립",pri:"상",k:"VBP 시행 관련 정보 수집 경쟁사 VBP 대응전략 점검",j:"시장·경쟁사 동향 점검 지속",r:"진행중",a:"가격 비딩전략 수립 경쟁사 입찰가 전략 파악"},
+{m:"seo",gb:"전략",g:"VBP 업무 진행",big:"VBP입찰",t:"국공립 조사 및 타깃 영업",pri:"중",k:"VBP 수요량 증대",j:"국공립 진입 및 판매목표 설정 사전영업 개시 및 진도관리",r:"50%",a:"사전영업에 필요한 판촉정책 수립 수요량 목표 12만대 달성 추진"},
+{m:"yu",gb:"영업",g:"대만·홍콩 사업전략 및 영업관리",big:"사업전략",t:"대만향 사업 기반 구축",pri:"상",k:"기본 영업정책 수립 대만법인 사업 개시 준수",j:"초도 안전재고 준비",r:"40%",a:"임플란트 딜러십 계약 체결"},
+{m:"yu",gb:"영업",g:"대만·홍콩 사업전략 및 영업관리",big:"사업전략",t:"홍콩향 영업 채널 재구조화",pri:"상",k:"신규 딜러십 구축 및 영업 정상화 신규 KOL 네트워크 구축",j:"딜러 대상 임플란트 교육 지원",r:"55%",a:"본사 방한 교육 프로그램 기획"},
+{m:"yu",gb:"영업",g:"대만·홍콩 사업전략 및 영업관리",big:"사업전략",t:"지역별 영업 성과 모니터링",pri:"하",k:"수출실적 상시 관리 수금관리 현황 점검",j:"수출실적·수금현황 일일 관리",r:"40%",a:"CRM 영업관리 프로세스 구축"},
+{m:"yu",gb:"마케팅/브랜딩",g:"브랜드·마케팅 및 교육 운영",big:"핵심제품",t:"BD/BDC 중심 포트폴리오 전환",pri:"중",k:"상반기 홍보자료·임상자료 지원 하반기 BD 수출비중 20% 달성",j:"제품 교육·마케팅 자료 준비",r:"15%",a:"제품 교육·마케팅 자료 준비"},
+{m:"yu",gb:"영업",g:"대만·홍콩 사업전략 및 영업관리",big:"핵심제품",t:"바이오레이즈 사업목표 달성",pri:"중",k:"대만 iPlus 60대·Diode 30대 홍콩 iPlus 5대",j:"대만향 Trade-In 정책안 검토",r:"60%",a:"WCLI 연계 프로모션 지원"},
+{m:"yu",gb:"영업",g:"대만·홍콩 사업전략 및 영업관리",big:"핵심제품",t:"장비 비즈니스 기반 구축",pri:"상",k:"상반기 대형장비 라인업 구축 하반기 장비 복합정책 수립",j:"N2 수출 준비 및 쇼룸 구축 작업",r:"25%",a:"체어 딜러십 계약 체결"},
+{m:"yu",gb:"법인관리",g:"로컬 운영 실행력 강화",big:"로컬운영",t:"가격 경쟁력 및 수익성 관리",pri:"중",k:"월 1개 개선과제 도출 및 제안",j:"대만향 Trade-In 정책안 검토",r:"30%",a:"스캐너 판매정책 검토"},
+{m:"yu",gb:"법인관리",g:"로컬 운영 실행력 강화",big:"로컬운영",t:"법인·딜러 정례 화상회의",pri:"하",k:"법인 주 단위 실적 분석 딜러 월 단위 실적 분석",j:"Sunriser·TBMS 현지 미팅",r:"50%",a:"딜러 정례 화상회의 실시"}
+];
+try{const s=localStorage.getItem('wr_mreport26_8_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)MREPORT26_8=o;}}catch(e){}
+/* 월별 월보고 저장소 — 키=결과 월 (7월 보고: 7월 결과+8월 계획 / 8월 보고: 8월 결과+9월 계획) · 다른 달은 해당 월 보고 입력/불러오기 전까지 빈 상태 */
+let MREPORTS={'7':MREPORT26,'8':MREPORT26_8};
+try{const s=localStorage.getItem('wr_mreports_v5');if(s){const o=JSON.parse(s);if(o&&typeof o==='object'&&!Array.isArray(o))MREPORTS=Object.assign({'7':MREPORT26,'8':MREPORT26_8},o);}}catch(e){}
 function mrLastMonth(){let mx=0;Object.keys(MREPORTS||{}).forEach(k=>{const m=+k;if(m&&(MREPORTS[k]||[]).length&&m>mx)mx=m;});return mx||null;}
 function mrEffMonth2(){if((MREPORTS[String(MONTH)]||[]).length)return MONTH;return mrLastMonth()||MONTH;}
 function mrData(){return MREPORTS[String(MONTH)]||[];}
@@ -2660,14 +2706,23 @@ try{const s0=localStorage.getItem('wr_wkreport_v3');if(s0){const o=JSON.parse(s0
 function saveWKREPORT(){try{localStorage.setItem('wr_wkreport_v3',JSON.stringify(WKREPORT));}catch(e){}}
 function wkData(){const iso=(WEEKS[W]&&WEEKS[W].iso)||0;return (typeof WKREPORT!=='undefined'&&WKREPORT[String(iso)])||[];}
 /* ═ 월간 거래처실적 (마스터 「거래처실적_월간」 탭 · 보고월별 누적) ═ */
+/* 홍콩 킨월드·대만 TBMS는 1~7월 시드 데이터가 비어있는 달이 많아(수집 공백) 실제 누적과 어긋났음.
+   2026-08-30 김유진 담당자의 「08월 업무결과 및 9월 업무 중점추진과제」 PPT(공식 보고자료)의 누적실적을 기준으로,
+   부족분을 '1'월 항목에 'adj' 표시와 함께 이월조정 형태로 채워 누적 합계를 일치시켰다.
+   (실제 1월 실적이 아니라 조정값이므로, 이후 월별 상세를 볼 때 착오 없도록 adj 필드로 표시해둠) */
 let MDEAL={
- '1':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1211345,exA:705710,suT:18636056,suTm:1211345,suA:705710},{dealer:'북경',grp:'중국',exT:4088480,exTm:265750,exA:285472,suT:5032559,suTm:301953,suA:230000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:35000,exA:47357,suT:280000,suTm:30000,suA:34987}],
+ '1':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1211345,exA:705710,suT:18636056,suTm:1211345,suA:705710},{dealer:'북경',grp:'중국',exT:4088480,exTm:265750,exA:285472,suT:5032559,suTm:301953,suA:230000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:37899,suT:110000,suTm:0,suA:50563,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:187017,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:35000,exA:47357,suT:280000,suTm:30000,suA:34987}],
  '2':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:745440,exA:778492,suT:18636056,suTm:745440,suA:778492},{dealer:'북경',grp:'중국',exT:4088480,exTm:163540,exA:125190,suT:5032559,suTm:251628,suA:100000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:20000,exA:14520,suT:280000,suTm:35000,suA:26537}],
  '3':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1770425,exA:1613055,suT:18636056,suTm:1770425,suA:1602530},{dealer:'북경',grp:'중국',exT:4088480,exTm:388405,exA:305419,suT:5032559,suTm:402605,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:430000,exA:559696,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:36000,exA:22296,suT:280000,suTm:20000,suA:14520}],
  '4':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1599190,suT:18636056,suTm:1677245,suA:1374511},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:257459,suT:5032559,suTm:402605,suA:310000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:5000,exA:5378,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:59853,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:43000,exA:54321,suT:280000,suTm:36000,suA:22926}],
  '5':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1445076,suT:18636056,suTm:1677245,suA:1107568},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:289086,suT:5032559,suTm:452930,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:220842,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:38000,exA:33415,suT:280000,suTm:43000,suA:54321}],
  '6':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1703635,suT:18636056,suTm:1677245,suA:1175482},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:251058,suT:5032559,suTm:452930,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:55000,exA:40944,suT:110000,suTm:5000,suA:5378},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:321150,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:28000,exA:42690,suT:280000,suTm:38000,suA:33415}],
- '7':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},{dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:110000,suTm:0,suA:40944},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362797,suT:1370000,suTm:150000,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}]};
+ '7':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},{dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:110000,suTm:0,suA:40944},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362797,suT:1370000,suTm:150000,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}],
+ '8':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:345576,suT:18636056,suTm:1397705,suA:782479},{dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:221491,suT:5032559,suTm:402605,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:5644,suT:110000,suTm:42000,suA:11309},{dealer:'대만 법인',grp:'해외',exT:250000,exTm:25000,exA:18035,suT:280000,suTm:25000,suA:null},{dealer:'대만 Sunriser',grp:'해외',exT:250000,exTm:25000,exA:41278,suT:280000,suTm:25000,suA:null},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:52803,suT:1370000,suTm:150000,suA:17133}]};
+/* 대만법인·Sunriser 수출목표(전체)는 시트 원본이 1,000,000으로 되어 있으나(Sunriser 값 복사 오류로 추정),
+   김유진 담당자의 실제 9월 보고 PPT(누적달성율 7.21%·121.53%)로 역산하면 250,000이 맞음 → 여기서 보정.
+   시트 자체는 아직 1,000,000으로 남아있으니 다음 구글시트 동기화 때 되돌아가지 않도록 시트도 고쳐야 함 */
+/* 8월 「거래처실적_월간」 탭 원본(2026-08-30 확인) — 이 달 이후는 [구글시트 불러오기]가 이 값을 덮어씀 */
 try{const s1=localStorage.getItem('wr_mdeal_v2');if(s1){const o=JSON.parse(s1);if(o&&typeof o==='object'&&!Array.isArray(o))MDEAL=Object.assign({},MDEAL,o);}}catch(e){}
 function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v2',JSON.stringify(MDEAL));}catch(e){}}
 function mdealRows(m){return MDEAL[String(m)]||[];}
@@ -3579,6 +3634,13 @@ function mfSyncFromMReports(mo,opts){ /* 마스터 「월말보고」 → 중점
 }
 function ensureMFocusSeeds(){
   if((!MFOCUS['8']||!MFOCUS['8'].length)&&typeof PTASKS_SEED!=='undefined'){MFOCUS['8']=PTASKS_SEED.map(x=>({...x}));saveMFocus();}
+  /* 기존에 저장된 8월 중점추진과제에 중요도(w)가 비어있으면 시트 원본(PTASKS_SEED) 기준으로만 채워넣는다 · 담당자·진행률·메모 등 직접 수정한 값은 건드리지 않음 */
+  if(MFOCUS['8']&&MFOCUS['8'].length&&typeof PTASKS_SEED!=='undefined'){
+    const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()·,\/]/g,'').toLowerCase();
+    let patched=false;
+    MFOCUS['8'].forEach(t=>{if(t.w)return;const tn=norm(t.task);const hit=PTASKS_SEED.find(s=>norm(s.task)===tn);if(hit&&hit.w){t.w=hit.w;patched=true;}});
+    if(patched)saveMFocus();
+  }
   if((!MFOCUS['7']||!MFOCUS['7'].length)&&typeof MF7_SEED!=='undefined'){MFOCUS['7']=MF7_SEED.map(x=>({...x}));saveMFocus();}
   if((!MFOCUS['6']||!MFOCUS['6'].length)&&typeof MF6_SEED!=='undefined'){MFOCUS['6']=MF6_SEED.map(x=>({...x}));saveMFocus();}
   if((!MFOCUS['5']||!MFOCUS['5'].length)&&typeof MF5_SEED!=='undefined'){MFOCUS['5']=MF5_SEED.map(x=>({...x}));saveMFocus();}
@@ -4911,15 +4973,15 @@ function mrDealTable0(){
   const cumOf=(dl,f)=>{let c=0,any=false;const upToM=fromWeek?MONTH-1:MONTH;for(let m=1;m<=upToM;m++){(MDEAL[String(m)]||[]).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=x[f];any=true;}});}
     if(fromWeek&&wkExtra[dl]){const add2=f==='exA'?wkExtra[dl].ex:(f==='suA'?wkExtra[dl].su:0);if(add2){c+=add2;any=true;}}
     return any?c:null;};
-  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
-    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월)</th><th>달성율</th><th>누적실적</th><th>누적달성율</th>'
-    +'<th>수금목표<br>(전체)</th><th>수금실적<br>(당월)</th><th>누적수금</th><th>수금<br>누적달성율</th></tr></thead><tbody>';
-  if(!D.length){h+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
+  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:110px">거래처</th><th style="width:36px">단위</th>'
+    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월누적)</th><th>달성율</th><th>수출전체<br>누적실적</th><th>누적달성율</th>'
+    +'<th>수금목표<br>(전체)</th><th>수금실적<br>(당월누적)</th><th>수금전체<br>누적실적</th><th>수금<br>누적달성율</th></tr></thead><tbody>';
+  if(!D.length){h+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
   const acc={exT:0,exTm:null,exA:0,suT:0,suA:0,cA:0,cS:0};
   const accCn={...acc};const accAll={...acc};
   const row=(cls,g,d)=>{
     const cA=cumOf(d.dealer,'exA'),cS=cumOf(d.dealer,'suA');
-    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td class="rl">${esc(d.owner||'—')}</td><td>천$</td>`
+    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td>천$</td>`
       +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct((d.exTm&&d.exA!=null)?d.exA/d.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct((d.exT&&cA!=null)?cA/d.exT:null)}</td>`
       +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct((d.suT&&cS!=null)?cS/d.suT:null)}</td></tr>`;};
   D.forEach(d=>{const g=/닝보|북경/.test(d.dealer)?'중국':(/대만/.test(d.dealer)?'대만':'홍콩');h+=row('',g,d);});
@@ -4928,10 +4990,10 @@ function mrDealTable0(){
   const cn=D.filter(d=>/닝보|북경/.test(d.dealer));
   if(cn.length){const cA=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
     const sc={dealer:'소계',exT:sum(cn,'exT'),exTm:sum(cn,'exTm'),exA:sum(cn,'exA'),suT:sum(cn,'suT'),suA:sum(cn,'suA')};
-    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td class="rl"></td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;}
+    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;}
   if(D.length){const cA=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
     const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
-    h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td class="rl"></td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
+    h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
   h+='</tbody></table>';
   h+=fromWeek?`<div class="ov-foot">※ ${MONTH}월 「거래처실적_월간」 미입력 → 「거래처실적_주간」 W${uptoWeek?uptoWeek.iso:''}까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · 달성율 = 당월 실적 ÷ 당월 목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:'<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
   return h;
@@ -8591,21 +8653,21 @@ function renderPersonRR(){
 }
 /* ===== 중화팀 중점 추진과제 관리표 (지역·핵심과제·목표·대응방안·담당자·일정·진행률) ===== */
 const PTASKS_SEED=[
-  {region:'중국',task:'2차 VBP 입찰 준비',goal:'AO/AR 중심 입찰 준비 및 100개 업체 참여 대응',plan:'국공립 진입 확대 사전 영업, 제품 비딩 전략 수립, 경쟁사 입찰가 분석 후 진입 가능 입찰가 선정',owner:'',due:'~9월',prog:''},
-  {region:'중국',task:'ARi / BD 진입 확대',goal:'ARi 500점, BD 1,500점 진입 / ARi 8,000대, BD 80,000대 판매',plan:'ARi & BD 진입 확대, KOL 교육·세미나 지속 운영, 핵심점 육성 및 장려 정책 운영',owner:'',due:'지속',prog:''},
-  {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확보',plan:'In-active 고객 20% 이상 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:''},
-  {region:'중국',task:'DSO 확대 및 대응 강화',goal:'DSO 250점 진입, 60만대 판매',plan:'S/A급 중소형 DSO 신규 개발, 경쟁사 대응 방어, 신규 개발 병원과 파트너십 강화',owner:'',due:'지속',prog:''},
-  {region:'중국',task:'대리상 협업 및 지원 강화',goal:'대리상 재고·수금·매출 이슈 관리',plan:'2차 VBP 영향 재고 조정 및 DSO 수금 지연 자금난 대응, 매출·수금 이슈 관리 강화',owner:'',due:'지속',prog:''},
-  {region:'중국',task:'패키지 판매 확대',goal:'9월 패키지 판매 신청 및 매출 확대',plan:'패키지 판매 255봉, 19.8M 위안 추진 및 판매 정책 운영',owner:'',due:'9월',prog:''},
-  {region:'중국',task:'에비던스 런칭 준비',goal:'4Q 런칭 준비 및 중대형 DSO 사전 협의',plan:'중대형 DSO 중심 운영 대리상 사전 협의 진행',owner:'',due:'~9월',prog:''},
-  {region:'대만',task:'법인 조직 및 영업 Infra 구축',goal:'대만 법인 운영 기반 구축',plan:'임플란트·체어사업 본격화, 초도 물량 준비',owner:'',due:'지속',prog:''},
-  {region:'대만',task:'대리상 전환 및 계약 추진',goal:'Sunriser 및 신규 대리상 계약 추진',plan:'TBMS 대리상 계약 추진, 법인 설립 심포지엄 준비',owner:'',due:'지속',prog:''},
-  {region:'대만',task:'신궁병원 세미나 운영',goal:'대만 주요 병원 기반 고객 확대',plan:'신궁병원 세미나 준비 및 운영',owner:'',due:'8/29',prog:''},
-  {region:'홍콩',task:'B/L 고객 활용 신규 고객 개발',goal:'홍콩 임플란트 신규 고객 개발',plan:'B/L 고객 기반으로 임플란트 고객 전환 및 신규 고객 확보',owner:'',due:'8월~',prog:''},
-  {region:'대만',task:'iPlus SG2 변경허가 취득 후속 조치',goal:'26년 8월 변경허가 취득 후 공급계획 및 제품 포장·라벨링 사양 확정',plan:'iPlus 공급 계획 확인, 제품 포장 및 라벨링 사양 점검',owner:'',due:'~8월',prog:''},
-  {region:'홍콩',task:'iPlus SG2 초도 판매 후속 관리',goal:'홍콩 시장 내 초도 판매 가능성 확인',plan:'iPlus SG2 사용 안정성 및 EPIC 판매 가능성 협의',owner:'',due:'~9월',prog:''},
-  {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상, 판매 시작 2028년 6월 예상',plan:'인허가 진행상황 관리, 판매 개시 일정 기준으로 사전 준비',owner:'',due:'~2028.2',prog:''},
-  {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 2028년 판매 준비',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 발송, 현지 공장 방문 통한 제품 해체·교육·생산라인 SETUP 준비',owner:'',due:'~2028.3',prog:''}
+  {region:'중국',task:'2차 VBP 입찰 준비',goal:'AO/AR 중심 입찰 준비 및 100개 업체 참여 대응',plan:'국공립 진입 확대 사전 영업, 제품 비딩 전략 수립, 경쟁사 입찰가 분석 후 진입 가능 입찰가 선정',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'중국',task:'ARi / BD 진입 확대',goal:'ARi 500점, BD 1,500점 진입 / ARi 8,000대, BD 80,000대 판매',plan:'ARi & BD 진입 확대, KOL 교육·세미나 지속 운영, 핵심점 육성 및 장려 정책 운영',owner:'',due:'지속',prog:'',w:'핵심'},
+  {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확보',plan:'In-active 고객 20% 이상 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'중국',task:'DSO 확대 및 대응 강화',goal:'DSO 250점 진입, 60만대 판매',plan:'S/A급 중소형 DSO 신규 개발, 경쟁사 대응 방어, 신규 개발 병원과 파트너십 강화',owner:'',due:'지속',prog:'',w:'핵심'},
+  {region:'중국',task:'대리상 협업 및 지원 강화',goal:'대리상 재고·수금·매출 이슈 관리',plan:'2차 VBP 영향 재고 조정 및 DSO 수금 지연 자금난 대응, 매출·수금 이슈 관리 강화',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'중국',task:'패키지 판매 확대',goal:'9월 패키지 판매 신청 및 매출 확대',plan:'패키지 판매 255봉, 19.8M 위안 추진 및 판매 정책 운영',owner:'',due:'9월',prog:'',w:'주요'},
+  {region:'중국',task:'에비던스 런칭 준비',goal:'4Q 런칭 준비 및 중대형 DSO 사전 협의',plan:'중대형 DSO 중심 운영 대리상 사전 협의 진행',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'대만',task:'법인 조직 및 영업 Infra 구축',goal:'대만 법인 운영 기반 구축',plan:'임플란트·체어사업 본격화, 초도 물량 준비',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'대만',task:'대리상 전환 및 계약 추진',goal:'Sunriser 및 신규 대리상 계약 추진',plan:'TBMS 대리상 계약 추진, 법인 설립 심포지엄 준비',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'대만',task:'신궁병원 세미나 운영',goal:'대만 주요 병원 기반 고객 확대',plan:'신궁병원 세미나 준비 및 운영',owner:'',due:'8/29',prog:'',w:'주요'},
+  {region:'홍콩',task:'B/L 고객 활용 신규 고객 개발',goal:'홍콩 임플란트 신규 고객 개발',plan:'B/L 고객 기반으로 임플란트 고객 전환 및 신규 고객 확보',owner:'',due:'8월~',prog:'',w:'주요'},
+  {region:'대만',task:'iPlus SG2 변경허가 취득 후속 조치',goal:'26년 8월 변경허가 취득 후 공급계획 및 제품 포장·라벨링 사양 확정',plan:'iPlus 공급 계획 확인, 제품 포장 및 라벨링 사양 점검',owner:'',due:'~8월',prog:'',w:'주요'},
+  {region:'홍콩',task:'iPlus SG2 초도 판매 후속 관리',goal:'홍콩 시장 내 초도 판매 가능성 확인',plan:'iPlus SG2 사용 안정성 및 EPIC 판매 가능성 협의',owner:'',due:'~9월',prog:'',w:'주요'},
+  {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상, 판매 시작 2028년 6월 예상',plan:'인허가 진행상황 관리, 판매 개시 일정 기준으로 사전 준비',owner:'',due:'~2028.2',prog:'',w:'핵심'},
+  {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 2028년 판매 준비',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 발송, 현지 공장 방문 통한 제품 해체·교육·생산라인 SETUP 준비',owner:'',due:'~2028.3',prog:'',w:'핵심'}
 ];
 let PTASKS=PTASKS_SEED.map(x=>({...x}));
 try{const s=localStorage.getItem('wr_ptasks_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)PTASKS=o;}}catch(e){}
