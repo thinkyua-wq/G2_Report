@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.30-M248</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.08.31-M255</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2983,10 +2983,10 @@ function setUserPw(uid,pw){
 function pwHash(local,pw){return sha256hex('G2CH|'+local+'|'+pw);}
 const USERS={
   lee:{name:'이유아',title:'팀장',email:'intl.china17@imegagen.com',h:'8f3360db49b5b0a4ad04f87ad99a399f7787379da002a993258355ddd1b7fdd7',role:'lead'},
-  seo:{name:'서혜민',title:'차장',email:'intl.china19@imegagen.com',h:'0544a6e6decb63f8b7deac96856ffc704f4ca47679251aeb55e0020ba83913c8',role:'member'},
-  tak:{name:'탁종민',title:'차장',email:'intl.china20@imegagen.com',h:'4bd1c964cd1340447508cd9c383c72bbbef4a65d45dca0287f4462e8288428b3',role:'member'},
-  yu:{name:'유훈종',title:'차장',email:'intl.china29@imegagen.com',h:'b136286f18da324b52886c266759e2c301ff24bff038bcb29d1c27fac758d846',role:'member'},
-  kim:{name:'김유진',title:'대리',email:'intl.china32@imegagen.com',h:'60d51de28a6b2e1db56f3b46ca2ba5a23fcfd337e995950ef1d206ee87e46617',role:'member'},
+  seo:{name:'서혜민',title:'차장',email:'intl.china19@imegagen.com',h:'cbe627e89ba957258bc36af5b689e817aa738d8261e05f5e6cbe1a2a9329c7f0',role:'member'},
+  tak:{name:'탁종민',title:'차장',email:'intl.china20@imegagen.com',h:'5729247795e781976649b60b8fb73f3d66fd57a247b8e5e2180bf6d897945686',role:'member'},
+  yu:{name:'유훈종',title:'차장',email:'intl.china29@imegagen.com',h:'e4ada410ead952b3ff7c63cf7cc076c59bd57dbb40411c365b44b43ac234bc5b',role:'member'},
+  kim:{name:'김유진',title:'대리',email:'intl.china32@imegagen.com',h:'3037cce71c81bc4a3fdda608f69e68aee7fe2353e0d628b796ecb5b8b82e7ea1',role:'member'},
   team:{name:'중화팀',title:'공용',email:'intl.china17@imegagen.com',h:'60cab0e7bbc42b264e446d5ead183a78042e94f7b5915ce97b26f98b15ed04ae',role:'member'}
 };
 
@@ -3633,6 +3633,7 @@ function mfSyncFromMReports(mo,opts){ /* 마스터 「월말보고」 → 중점
   saveMFocus();return added+upd;
 }
 function ensureMFocusSeeds(){
+  if((!MFOCUS['9']||!MFOCUS['9'].length)&&typeof MF9_SEED!=='undefined'){MFOCUS['9']=MF9_SEED.map(x=>({...x}));saveMFocus();}
   if((!MFOCUS['8']||!MFOCUS['8'].length)&&typeof PTASKS_SEED!=='undefined'){MFOCUS['8']=PTASKS_SEED.map(x=>({...x}));saveMFocus();}
   /* 기존에 저장된 8월 중점추진과제에 중요도(w)가 비어있으면 시트 원본(PTASKS_SEED) 기준으로만 채워넣는다 · 담당자·진행률·메모 등 직접 수정한 값은 건드리지 않음 */
   if(MFOCUS['8']&&MFOCUS['8'].length&&typeof PTASKS_SEED!=='undefined'){
@@ -5244,7 +5245,7 @@ function renderOverview(){
                  :[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
   if(isMR&&RO()){
     if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별과제·주간과제만 */
-    else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban'].includes(k)); /* 개별 팀원 계정 */
+    else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U 포함 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
   if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'); /* 팀장 화면: 과제진행율은 팀업무 메뉴로 이동 (팀원은 팀업무 접근이 없어 여기 유지) */
@@ -5341,31 +5342,49 @@ function ovDealTable(){
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
   const pct=r=>r==null?'\u2014':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n=>n==null?'\u2014':n.toLocaleString('en-US');
+  /* 당월 누적실적 = 이번 달 1주차부터 현재 선택한 주차까지 「거래처실적_주간」(SPHIST) 실적 합산
+     · DEALER RESULT 표(mrDealTable0)의 당월누적과 같은 원천·같은 계산방식을 써서 두 표가 서로 어긋나지 않게 한다 */
+  const cumOfWk=(dealer,field)=>{let c=0;
+    for(let i=0;i<=W;i++){const iso=(WEEKS[i]&&WEEKS[i].iso);if(!iso)continue;const dl=(SPHIST['W'+iso]&&SPHIST['W'+iso].deal)||[];
+      dl.forEach(x=>{if(x.dealer===dealer&&x[field]!=null)c+=(+x[field]||0);});}
+    return c;};
   let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
-    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적</th><th>달성율</th>'
-    +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적</th><th>달성율</th></tr></thead><tbody>';
-  const mrate=(a,tm)=>(tm!=null&&tm>0&&a!=null)?a/tm:null; // 달성율 = 실적 ÷ 당월목표
-  const row=(cls,g,nm,d)=>{
+    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(해당주)</th><th>당월 누적<br>수출실적</th><th>당월누적수출<br>달성율</th>'
+    +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적<br>(해당주)</th><th>당월 누적<br>수금실적</th><th>당월누적수금<br>달성율</th></tr></thead><tbody>';
+  const mrate=(cum,tm)=>(tm!=null&&tm>0)?cum/tm:null; // 당월누적달성율 = 당월 누적실적 ÷ 당월목표
+  const row=(cls,g,nm,d,cumEx,cumSu)=>{
     return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(nm)}</td><td class="rl">${esc(d.owner||(nm==='소계'||nm==='중국·대만·홍콩'?'':'—'))}</td><td>천$</td>`
-      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct(mrate(d.exA,d.exTm))}</td>`
-      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc">${pct(mrate(d.suA,d.suTm))}</td></tr>`;
+      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc"><b>${num(k(cumEx))}</b></td><td class="ov-pc">${pct(mrate(cumEx,d.exTm))}</td>`
+      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suTm))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc"><b>${num(k(cumSu))}</b></td><td class="ov-pc">${pct(mrate(cumSu,d.suTm))}</td></tr>`;
   };
-  const acc=()=>({exT:0,exTm:null,exA:0,suT:0,suTm:null,suA:0,exY:0,suY:0});
-  const add=(s2,d)=>{s2.exT+=(+d.exT||0);s2.exA+=(+d.exA||0);s2.suT+=(+d.suT||0);s2.suA+=(+d.suA||0);{const y=ytdOf(d);s2.exY+=y.exY;s2.suY+=y.suY;}
+  const acc=()=>({exT:0,exTm:null,exA:0,suT:0,suTm:null,suA:0,exY:0,suY:0,cumEx:0,cumSu:0});
+  const add=(s2,d,cumEx,cumSu)=>{s2.exT+=(+d.exT||0);s2.exA+=(+d.exA||0);s2.suT+=(+d.suT||0);s2.suA+=(+d.suA||0);{const y=ytdOf(d);s2.exY+=y.exY;s2.suY+=y.suY;}
+    s2.cumEx+=(cumEx||0);s2.cumSu+=(cumSu||0);
     if(d.exTm!=null&&d.exTm!=='')s2.exTm=(s2.exTm||0)+(+d.exTm||0);
     if(d.suTm!=null&&d.suTm!=='')s2.suTm=(s2.suTm||0)+(+d.suTm||0);};
   const cn=(D||[]).filter(d=>d.grp==='중국'), ov=(D||[]).filter(d=>d.grp!=='중국');
   const sCN=acc(), sTW=acc(), sHK=acc();
-  cn.forEach(d=>{add(sCN,d);h+=row('','중국',d.dealer,d);});
-  if(cn.length)h+=row('ov-sub-row','중국','소계',sCN);
+  cn.forEach(d=>{const cumEx=cumOfWk(d.dealer,'exA'),cumSu=cumOfWk(d.dealer,'suA');add(sCN,d,cumEx,cumSu);h+=row('','중국',d.dealer,d,cumEx,cumSu);});
+  if(cn.length)h+=row('ov-sub-row','중국','소계',sCN,sCN.cumEx,sCN.cumSu);
   ov.forEach(d=>{const isHk=/홍콩/.test(d.dealer);const g=isHk?'홍콩':(/대만/.test(d.dealer)?'대만':d.grp);const nm=d.dealer.replace(/^(홍콩|대만)\s*/,'');
-    add(isHk?sHK:sTW,d);h+=row('',g,nm,d);});
+    const cumEx=cumOfWk(d.dealer,'exA'),cumSu=cumOfWk(d.dealer,'suA');
+    add(isHk?sHK:sTW,d,cumEx,cumSu);h+=row('',g,nm,d,cumEx,cumSu);});
   // 합계: 목표·실적=합 · 달성율은 합 기준
-  const tot=acc();[sCN,sTW,sHK].forEach(x=>{tot.exT+=x.exT;tot.exA+=x.exA;tot.suT+=x.suT;tot.suA+=x.suA;tot.exY+=x.exY;tot.suY+=x.suY;
+  const tot=acc();[sCN,sTW,sHK].forEach(x=>{tot.exT+=x.exT;tot.exA+=x.exA;tot.suT+=x.suT;tot.suA+=x.suA;tot.exY+=x.exY;tot.suY+=x.suY;tot.cumEx+=x.cumEx;tot.cumSu+=x.cumSu;
     if(x.exTm!=null)tot.exTm=(tot.exTm||0)+x.exTm; if(x.suTm!=null)tot.suTm=(tot.suTm||0)+x.suTm;});
-  h+=row('ov-tot-row','합계','중국·대만·홍콩',tot);
+  h+=row('ov-tot-row','합계','중국·대만·홍콩',tot,tot.cumEx,tot.cumSu);
   h+='</tbody></table>';
-  h+='<div class="ov-foot">※ 이 표는 <b>선택한 주차('+esc(ovWeekKey())+') 시점</b>의 값만 표시 · 달성율 = 실적 ÷ 당월 목표 · 상단 카드·그래프는 당월 누적 기준</div>';
+  h+=`<div style="margin-top:10px;padding:10px 14px;background:var(--sf);border:1px solid var(--ln);border-radius:var(--rds);font-size:13px;color:var(--ink);line-height:1.85">`
+    +`<b>수금조건</b><br>`
+    +`중국닝보법인 T/T120days · 월 2회 송금<br>`
+    +`중국북경법인 T/T180days · 월 2회 송금<br>`
+    +`대만법인 T/T90days<br>`
+    +`홍콩킨월드(임플) T/T30days<br>`
+    +`홍콩킨월드(B/L) T/T60days<br>`
+    +`대만TBMS(B/L) T/T60days<br>`
+    +`<span style="color:var(--dim)">※ 수금일자 기준 — 대만TBMS는 인보이스 발행일 기준, 그 외 거래처는 출하일 기준</span>`
+    +`</div>`;
+  h+=`<div class="ov-foot">※ <b>수출실적·수금실적</b>은 선택한 주차(${esc(ovWeekKey())}) <b>해당 주</b>의 실적 · <b>당월 누적실적</b>은 ${MONTH}월 1주차~${esc(ovWeekKey())} 합산(위 DEALER RESULT 표의 당월 누적과 같은 방식) · 달성율 = 당월 누적실적 ÷ 당월 목표</div>`;
   return h;
 }
 let TRIPS=[
@@ -5944,10 +5963,8 @@ async function notionPullCal(silent){
   }catch(e){if(!silent)toast('노션에서 캘린더 불러오기 오류 · 연동 주소/네트워크 확인');return false;}
 }
 let _calSyncT=null;
-function scheduleCalSync(){ /* 입력 멈춘 뒤 8초 후: 먼저 노션의 최신 상태를 받아 병합하고, 그 다음 합쳐진 결과를 다시 올린다 */
-  if(LOGINUID!=='lee'||!NPROXY)return;
-  clearTimeout(_calSyncT);
-  _calSyncT=setTimeout(()=>{calSyncRound(true);},8000);
+function scheduleCalSync(){ /* (정리됨) 캘린더는 이제 구글시트 「일정」 탭 기반 · 노션 자동 동기화 예약은 더 이상 실행하지 않음 */
+  return;
 }
 async function calSyncRound(silent){
   await notionPullCal(true);
@@ -8669,6 +8686,31 @@ const PTASKS_SEED=[
   {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상, 판매 시작 2028년 6월 예상',plan:'인허가 진행상황 관리, 판매 개시 일정 기준으로 사전 준비',owner:'',due:'~2028.2',prog:'',w:'핵심'},
   {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 2028년 판매 준비',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 발송, 현지 공장 방문 통한 제품 해체·교육·생산라인 SETUP 준비',owner:'',due:'~2028.3',prog:'',w:'핵심'}
 ];
+/* 「중점추진과제」 탭 · 보고월=9월로 실제 반영된 실측 데이터(22건) · 마스터 구글시트에서 그대로 읽어와 transcribe */
+const MF9_SEED=[
+  {region:'중국',task:'2차 VBP 입찰 준비',goal:'AO/AR 중심 입찰 준비 및 100개 업체 참여 대응',plan:'국공립 진입 확대 사전 영업, 제품 비딩 전략 수립, 경쟁사 입찰가 분석 후 진입 가능 입찰가 선정',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'중국',task:'ARi / BD 진입 확대',goal:'ARi 500점, BD 1,500점 진입 / ARi 8,000대, BD 80,000대 판매',plan:'ARi & BD 진입 확대, KOL 교육·세미나 지속 운영, 핵심점 육성 및 장려 정책 운영',owner:'',due:'지속',prog:'',w:'핵심'},
+  {region:'중국',task:'하부고객 확대',goal:'하부고객 8,500점 확보',plan:'In-active 고객 20% 이상 관리, 신규고객 월 100점 개발, M/S 부진지역 개선',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'중국',task:'DSO 확대 및 대응 강화',goal:'DSO 250점 진입, 60만대 판매',plan:'S/A급 중소형 DSO 신규 개발, 경쟁사 대응 방어, 신규 개발 병원과 파트너십 강화',owner:'',due:'지속',prog:'',w:'핵심'},
+  {region:'중국',task:'대리상 협업 및 지원 강화',goal:'대리상 재고·수금·매출 이슈 관리',plan:'2차 VBP 영향 재고 조정 및 DSO 수금 지연 자금난 대응, 매출·수금 이슈 관리 강화',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'중국',task:'패키지 판매 확대',goal:'9월 패키지 판매 신청 및 매출 확대',plan:'패키지 판매 255명, 19.8M 위안 추진 및 판매 정책 운영',owner:'',due:'9월',prog:'',w:'주요'},
+  {region:'중국',task:'에비던스 런칭 준비',goal:'4Q 런칭 준비 및 중대형 DSO 사전 협의',plan:'중대형 DSO 중심 운영 대리상 사전 협의 진행',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'대만',task:'법인 조직 및 영업 Infra 구축',goal:'대만 법인 운영 기반 구축',plan:'임플란트·체어사업 본격화, 초도 물량 준비',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'대만',task:'대리상 전환 및 계약 추진',goal:'Sunriser 및 신규 대리상 계약 추진',plan:'TBMS 대리상 계약 추진, 법인 설립 심포지엄 준비',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'대만',task:'신궁병원 세미나 운영',goal:'대만 주요 병원 기반 고객 확대',plan:'신궁병원 세미나 준비 및 운영',owner:'',due:'8/29',prog:'',w:'주요'},
+  {region:'홍콩',task:'B/L 고객 활용 신규 고객 개발',goal:'홍콩 임플란트 신규 고객 개발',plan:'B/L 고객 기반으로 임플란트 고객 전환 및 신규 고객 확보',owner:'',due:'8월~',prog:'',w:'주요'},
+  {region:'대만',task:'iPlus SG2 변경허가 취득 후속 조치',goal:'26년 8월 변경허가 취득 후 공급계획 및 제품 포장·라벨링 사양 확정',plan:'iPlus 공급 계획 확인, 제품 포장 및 라벨링 사양 점검',owner:'',due:'~8월',prog:'',w:'주요'},
+  {region:'홍콩',task:'iPlus SG2 초도 판매 후속 관리',goal:'홍콩 시장 내 초도 판매 가능성 확인',plan:'iPlus SG2 사용 안정성 및 EPIC 판매 가능성 협의',owner:'',due:'~9월',prog:'',w:'주요'},
+  {region:'중국',task:'수입산 인허가 진행',goal:'NMPA 제품허가 2028년 2월 예상, 판매 시작 2028년 6월 예상',plan:'인허가 진행상황 관리, 판매 개시 일정 기준으로 사전 준비',owner:'',due:'~2028.2',prog:'',w:'핵심'},
+  {region:'중국',task:'현지 생산 OEM 프로젝트',goal:'중국 현지 생산 기반 구축 및 2028년 판매 준비',plan:'OEM 계약서 및 인허가 권리 계약 검토, 샘플 발송, 현지 공장 방문 통한 제품 해체·교육·생산라인 SETUP 준비',owner:'',due:'~2028.3',prog:'',w:'핵심'},
+  {region:'중국',task:'2차 VBP 입찰 준비',goal:'AO·AR 차별화 및 물량 확보, 100개 업체 입찰 참여 대응',plan:'국공립 진입 확대 사전 영업, 경쟁사 입찰가 분석 및 진입 가능한 비딩가격 선정',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'중국',task:'유통 Coverage 확대 및 M/S 확대',goal:'ARi 500점·8,000대, BD 1,500점·80,000대, 하부고객 8,500점, DSO 250점·60만대',plan:'ARi·BD 판매 활성화와 KOL·핵심점 육성, 신규고객 월 100점 개발, DSO 방어·공략, 대리상 매출·수금관리 및 255봉 패키지 판매 추진',owner:'',due:'지속',prog:'',w:'핵심'},
+  {region:'중국',task:'Evidence 런칭 준비',goal:'4Q 런칭 및 중대형 DSO 중심 운영체계 구축',plan:'MegaGen 분리 운영을 전제로 대리상 사전 협의 및 타깃 DSO 진입 준비',owner:'',due:'~9월',prog:'',w:'핵심'},
+  {region:'대만',task:'법인 영업 및 대리상 전환 준비',goal:'9월 임플란트·체어사업 본격화 및 초도물량 준비',plan:'Sunriser·TBMS 대리상 계약, 10/25 법인설립 심포지엄 및 대만 신궁병원 세미나 후속관리',owner:'',due:'지속',prog:'',w:'주요'},
+  {region:'홍콩',task:'B/L 고객 활용 임플란트 신규고객 개발',goal:'B/L 고객 기반 임플란트 신규고객 확대',plan:'기존 B/L 고객 대상 임플란트 연계 제안 및 신규고객 전환활동 진행',owner:'',due:'8월~',prog:'',w:'주요'},
+  {region:'바이오레이즈',task:'중국 수입산 인허가 진행',goal:'NMPA 제품허가 2028년 8월, 판매 개시 2028년 9월 목표',plan:'중화팀·연구소 협업으로 중국 수입산 인허가 일정 및 제출자료 진행상황 관리',owner:'',due:'~2028년 8월',prog:'',w:'핵심'},
+  {region:'바이오레이즈',task:'중국 현지 생산(OEM) 프로젝트',goal:'NMPA 제품허가·생산허가 2028년 7월 및 판매 개시 2028년 7월 목표',plan:'3자 합의서·인허가 권리 계약 검토, 샘플·자료 준비, 현지 조립·시험·교육 및 생산라인 SETUP 추진',owner:'',due:'~2028년 6월',prog:'',w:'핵심'}
+];
 let PTASKS=PTASKS_SEED.map(x=>({...x}));
 try{const s=localStorage.getItem('wr_ptasks_v1');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length)PTASKS=o;}}catch(e){}
 function savePTasks(){try{localStorage.setItem('wr_ptasks_v1',JSON.stringify(PTASKS));}catch(e){}}
@@ -8779,11 +8821,9 @@ function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) 
     h2+=`<div class="rr-ctrlbar" style="margin-bottom:10px"><span class="pl">보기</span>
       <button class="mile-add mini" onclick="setMeetMine(true)" style="${MEETMINE?'background:var(--accent);color:#fff':''}">내 것만 (이유아)</button>
       <button class="mile-add mini" onclick="setMeetMine(false)" style="${MEETMINE?'':'background:var(--accent);color:#fff'}">전체 보기</button>
-      ${NPROXY?`<button class="mile-add mini" onclick="calSyncNow()" style="margin-left:10px" title="이 달력(내 일정)을 노션의 개인 캘린더 저장소와 맞춥니다 · 다른 브라우저에서 추가한 일정도 이걸로 받아옵니다">⇄ 노션 캘린더 동기화</button>`:'<span class="hint" style="margin-left:10px;color:var(--faint)">노션 연동 주소를 연결하면 브라우저 간 캘린더 동기화가 켜집니다 (아래 회의록 탭 · ⚙ 중계주소)</span>'}
-      <button class="mile-add mini" onclick="gcalPull(false)" title="구글 「Mgg_회의일정」 캘린더와 이번 달 회의를 서로 반영합니다 (가져오기+올리기)">⇄ 구글 캘린더 동기화 (Mgg_회의일정)</button>
       ${NPROXY?'<button class="mile-add mini" onclick="notionPullAll()" title="노션 아카이브에 있는 회의록·주요보고·출장리포트 중 이 앱에 없는 것만 가져와 복원합니다 (기존 항목은 건드리지 않음)">⇩ 노션에서 불러오기</button>':''}
-      <button class="mile-add mini" onclick="privPushNow()" title="회의록·출장리포트를 개인용 비공개 구글시트 2개에 지금 바로 기록합니다 (선택 · 노션과 별개의 백업)">☁ 개인시트 저장</button>
-      <span class="hint" style="font-size:11px;color:var(--faint)">${(function(){try{const d=localStorage.getItem('wr_ncal_last');return d?('캘린더 동기화 '+d):'';}catch(e){return '';}})()}</span></div>`;
+      <button class="mile-add mini" onclick="privPushNow()" title="회의록·출장리포트를 개인용 비공개 구글시트 2개에 지금 바로 기록합니다 (선택 · 노션과 별개의 백업)">☁ 개인시트 저장</button></div>`;
+    h2+=`<div class="hint" style="margin:-2px 0 10px;color:var(--dim)">※ 이 캘린더(내 일정)는 마스터 구글시트의 <b>「일정」</b> 탭(열: 날짜·종료일·시작시간·종료시간·제목·설명)으로 관리합니다 · 채운 뒤 [구글시트 불러오기]를 누르면 그대로 반영되고, 시트에서 지운 일정은 여기서도 자동으로 사라지며, 여기서 직접 추가한 일정은 시트와 무관하게 유지됩니다 (예전 노션·구글캘린더 자동 동기화는 정리했습니다)</div>`;
     /* (구버전 잔재 제거) 예전엔 이 화면이 팀 데이터를 공유해 MEETMINE이 전역 담당자 필터(MILEMGR)를 'lee'로 바꿨지만,
        지금은 개인 저장소(LEECAL)를 쓰므로 그 부작용(중화팀 일정·행사가 이유아 것만 보이게 됨)만 남아 삭제 */
     h2+=secBox('cal_cal','달력',`${YEAR}년 ${MONTH}월 · 내 회의·일정`,()=>monthCalendarBody())+calModalHTML();
@@ -9944,7 +9984,7 @@ function importG2Master(wb,scope){
     /* 셀 자체가 "담당자" 같은 짧은 열 제목인 경우만 인정 · 긴 안내문(예: "노란 칸만 입력·담당자/국가/구분은 드롭다운...")에 열 이름 단어가 우연히 포함돼 안내문 행을 헤더로 잘못 인식하는 것을 방지 */
     const hHas=(row,kw)=>row.some(x=>x.includes(kw)&&x.length<=kw.length+6);
     for(let i=0;i<Math.min(14,A.length);i++){const row=(A[i]||[]).map(x=>String(x).replace(/\s/g,''));
-      if(hHas(row,'거래처')||hHas(row,'담당자')||hHas(row,'일정명')||hHas(row,'출발일')||(hHas(row,'KPI항목')&&(hHas(row,'연간목표')||hHas(row,'26년목표')))){hi=i;break;}}
+      if(hHas(row,'거래처')||hHas(row,'담당자')||hHas(row,'일정명')||hHas(row,'출발일')||(hHas(row,'날짜')&&hHas(row,'제목'))||(hHas(row,'KPI항목')&&(hHas(row,'연간목표')||hHas(row,'26년목표')))){hi=i;break;}}
     if(hi<0)return;
     const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
     const ci=name=>hdr.findIndex(h=>h.includes(name));
@@ -9972,6 +10012,29 @@ function importG2Master(wb,scope){
         const prev={}; MILESTONES.forEach(x=>{prev[(x.name||'').trim()+'|'+x.month]=x;});
         out.forEach(x=>{const p=prev[x.name+'|'+x.month]; if(p){ if(p.link)x.link=p.link; if(p.owners&&p.owners.length)x.owners=p.owners; if(p.date&&!x.date)x.date=p.date; }});
         MILESTONES=out; saveMile(); done.push('중화팀 행사 '+out.length+'건');
+      }
+      return;
+    }
+    // ⓪-1b 개인 일정(G2업무일정관리): 날짜+제목 (마스터 「일정」 탭) · 노션·구글캘린더 OAuth 동기화 대신 시트 기반으로 관리
+    if(has('날짜')&&has('제목')){
+      const cD=ci('날짜'),cD2=ci('종료일'),cS=ci('시작시간'),cE=ci('종료시간'),cT=ci('제목'),cDs=ci('설명');
+      const out=[];
+      body.forEach(r=>{
+        const sd=g2date(r[cD]); const title=String(cT>=0?r[cT]||'':'').trim();
+        if(!sd||!title)return;
+        const ed=g2date(cD2>=0?r[cD2]:'')||sd;
+        out.push({title,sdate:sd,edate:ed,start:String(cS>=0?r[cS]||'':'').trim(),end:String(cE>=0?r[cE]||'':'').trim(),desc:String(cDs>=0?r[cDs]||'':'').trim()});
+      });
+      if(out.length){
+        /* 시트에서 온 일정(src:'sheet')만 매번 시트 기준으로 다시 맞추고, 화면에서 직접 추가한 개인 일정(src 없음)은 그대로 둔다 ·
+           같은 날짜+제목이면 기존 항목을 갱신, 시트에서 없어진 항목은 자동 삭제(원본이 곧 정답이라는 원칙) */
+        const key=x=>String(x.sdate)+'|'+String(x.title);
+        const prevManual=(LEECAL||[]).filter(x=>x.src!=='sheet');
+        const prevSheet={}; (LEECAL||[]).filter(x=>x.src==='sheet').forEach(x=>{prevSheet[key(x)]=x;});
+        const merged=out.map(x=>{const old=prevSheet[key(x)];
+          return old?Object.assign({},old,x,{src:'sheet',_uts:Date.now()}):Object.assign({id:'gs_ev'+(CUID++),src:'sheet',repeat:'none',_uts:Date.now()},x);});
+        LEECAL=prevManual.concat(merged);
+        saveLeeCal();done.push('일정 '+merged.length+'건');
       }
       return;
     }
@@ -10134,6 +10197,53 @@ async function doMasterPull(scope,silent){
   }catch(e){if(!silent)toast('마스터 불러오기 오류: '+((e&&e.message)||e));setSyncErr('마스터 불러오기 오류: '+((e&&e.message)||e));}
 }
 function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doKpiPull(false);} else {doMasterPull('all',false); if(TAB==='meetrep'&&LOGINUID==='lee')doPrivatePull(false);} });}
+/* ═══ 공개(비로그인) 자동 동기화 ═══
+   마스터 구글시트가 "링크가 있는 모든 사용자·뷰어"로 공개돼 있으면, 구글 로그인(OAuth) 없이도
+   gviz CSV 엔드포인트로 각 탭을 읽어와 반영한다. 폰·게스트·팀원 계정처럼 [구글시트 불러오기]를
+   한 번도 누르지 않은 기기가 코드에 미리 박혀있는 오래된 기본값(예: 주간업무 W33까지)만 보던 문제를
+   해결하기 위한 것 — 로그인 여부와 무관하게 페이지를 열 때마다 조용히 1회 시도하고,
+   시트가 아직 비공개(제한됨)라 실패해도 화면엔 기존 기본값이 그대로 유지된다(에러 노출 없음). */
+const PUBLIC_SYNC_TABS=['주간업무','거래처실적_월간','거래처실적_주간','월말보고','KPI지표','일정'];
+function csvParseG2(text){
+  const rows=[];let row=[],cur='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else inQ=false; } else cur+=c; }
+    else{
+      if(c==='"')inQ=true;
+      else if(c===','){row.push(cur);cur='';}
+      else if(c==='\r'){/* skip */}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}
+      else cur+=c;
+    }
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+async function fetchPublicTab(name){
+  const url=`https://docs.google.com/spreadsheets/d/${MREPORT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+  const res=await fetch(url,{credentials:'omit'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const text=await res.text();
+  if(/^\s*<(!DOCTYPE|html)/i.test(text))throw new Error('비공개(로그인 필요) 또는 탭 없음'); // 비공개 시트는 로그인 페이지 HTML을 돌려줌
+  return csvParseG2(text);
+}
+async function publicSyncMaster(silent){
+  try{
+    const wb={SheetNames:[],Sheets:{}};
+    for(const name of PUBLIC_SYNC_TABS){
+      try{const rows=await fetchPublicTab(name);
+        if(rows&&rows.length){wb.SheetNames.push(name);wb.Sheets[name]=XLSX.utils.aoa_to_sheet(rows);}
+      }catch(e){/* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */}
+    }
+    if(!wb.SheetNames.length){if(!silent)toast('공개 동기화 실패 · 마스터 구글시트 공유설정을 "링크가 있는 모든 사용자·뷰어"로 확인하세요');return false;}
+    const done=(importG2Master(wb,'month')||[]).concat(importG2Master(wb,'week')||[]);
+    try{if(Object.keys(WKREPORT||{}).length&&TAB==='mreport'&&PERIOD==='week')gotoLastUpWeek();}catch(e){}
+    render();
+    if(!silent)toast('공개 동기화 완료 · '+(done.length?done.join(' / '):'해당 데이터 없음'));
+    return true;
+  }catch(e){if(!silent)toast('공개 동기화 오류: '+((e&&e.message)||e));return false;}
+}
 function loadKPISheet(){cloudAuth(()=>doKpiPull(false));}
 async function doKpiPull(silent){
   setSyncBadge('sync');
@@ -10705,7 +10815,8 @@ try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e)
 try{TAB='mreport';MRTAB='week';gotoLastUpWeek();}catch(e){} /* 첫 화면 = 주간과제(최신 업로드 주차) */
 render();
 try{mileFixDates();}catch(e){}
-try{if(LOGINUID==='lee'&&NPROXY)setTimeout(()=>{notionPullCal(true).then(m=>{if(m&&(m.added||m.updated))render();});},1200);}catch(e){} /* 새로고침/재접속 시 노션 캘린더 저장소와 조용히 맞춰본다 */
+setTimeout(()=>{publicSyncMaster(true).catch(()=>{});},50); /* 로그인·게스트 구분 없이 구글시트가 공개돼 있으면 조용히 최신 데이터로 맞춘다 */
+/* (정리됨) 캘린더는 이제 마스터 구글시트 「일정」 탭 기반으로 관리 · 노션 캘린더 저장소 자동 동기화는 더 이상 실행하지 않음 */
 </script>
 </body>
 </html>
