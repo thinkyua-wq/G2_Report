@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.02-M256</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M258</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3092,6 +3092,12 @@ function renderRailRole(){
   el.innerHTML=h;
 }
 let GOALSUB='goal', MILECTRY='', MILEMGR='', MILESORT={col:'',dir:1};
+/* 중화팀 행사 목록 · 월 필터(중복선택 가능) · 기본값 = 이번달만 */
+let MILEMONS=[new Date().getMonth()+1];
+function setMileMon(m){const i=MILEMONS.indexOf(m);if(i>=0)MILEMONS.splice(i,1);else MILEMONS.push(m);render();}
+function setMileMonAll(){MILEMONS=[1,2,3,4,5,6,7,8,9,10,11,12];render();}
+function setMileMonNone(){MILEMONS=[];render();}
+function setMileMonOnly(m){MILEMONS=[m];render();}
 let GYM={y:2026,m:Math.max(7,Math.min(12,new Date().getMonth()+1))}; try{const s=localStorage.getItem('wr_goalym_v1');if(s){const o=JSON.parse(s);if(o&&o.y)GYM=o;}}catch(e){}
 function setGYM(k,v){GYM[k]=+v;try{localStorage.setItem('wr_goalym_v1',JSON.stringify(GYM));}catch(e){}render();}
 function gymSel(){
@@ -7511,9 +7517,17 @@ function secBox(k,title,sub,bodyFn){
 }
 let CALLTAB='mile'; try{CALLTAB=localStorage.getItem('wr_calltab')||'mile';}catch(e){}
 function setCalLTab(t){CALLTAB=t;try{localStorage.setItem('wr_calltab',t);}catch(e){}render();}
+function mileMonBar(){
+  const chip=m=>{const on=MILEMONS.includes(m);return `<button class="mile-add mini${on?' on':''}" style="${on?'background:var(--accent);color:#fff;border-color:var(--accent)':''}" onclick="setMileMon(${m})" title="더블클릭하면 이 달만 봅니다" ondblclick="setMileMonOnly(${m})">${m}월</button>`;};
+  return `<div class="milefilt" style="flex-wrap:wrap;row-gap:6px;margin:10px 0 0"><span class="fl">월</span>`
+    +Array.from({length:12},(_,i)=>i+1).map(chip).join('')
+    +`<button class="mile-add mini" onclick="setMileMonAll()" style="margin-left:6px">전체</button>`
+    +`<button class="mile-add mini" onclick="setMileMonNone()">해제</button>`
+    +`</div>`;
+}
 function calListTabs(){
   if(CALLTAB==='proj')CALLTAB='mile'; /* 프로젝트별 출장·결과 탭 삭제됨 */
-  const mm=MILESTONES.filter(x=>(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)).length;
+  const mm=MILESTONES.filter(x=>(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)&&(MILEMONS.includes(+x.month))).length;
   const tp=TRIPS.filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR)).length;
   const TABS=[['mile','중화팀 행사',mm],['trip',YEAR+'년 출장일정(전체)',tp]];
   let h='<div class="seccard" style="padding-top:10px"><div class="cltabs">'
@@ -7521,7 +7535,9 @@ function calListTabs(){
     +'<div class="cltab-act">'+(CALLTAB==='mile'
         ? `<button class="mile-add mini" onclick="exportMileXlsx()">⬇ 엑셀 내보내기</button>${RO()?'':'<button class="mile-add mini" onclick="addMile()" style="margin-left:5px">＋ 행사 추가</button>'}`
         : '<span class="cltab-sub">마스터시트 「출장일정」 탭 연동 · 완료 여부 관계없이 연간 전체 표시 · 목적·연계 프로젝트·결과 편집</span>')
-    +'</div></div><div class="cltab-b">'
+    +'</div></div>'
+    +(CALLTAB==='mile'?mileMonBar():'')
+    +'<div class="cltab-b">'
     +(CALLTAB==='mile'?mileTable():tripPanel('year'))
     +'</div></div>';
   return h;
@@ -7552,7 +7568,7 @@ function mileMD(s,e){const md=d=>{if(!d||d.length<10)return '';return (+d.slice(
 function mileTableHead(){
   const q=((document.getElementById('fQ')||{}).value||'').trim().toLowerCase();
   const n=MILESTONES.filter(x=>(!q||String(x.name||'').toLowerCase().includes(q)||String(x.info||'').toLowerCase().includes(q))
-    &&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)).length;
+    &&(!MILECTRY||(x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(x)===MILEMGR)&&(MILEMONS.includes(+x.month))).length;
   return `<div class="pm-head" style="margin:0"><h3 style="font-size:15px">📋 중화팀 행사 <span style="font-size:12px;color:#64748b;font-weight:600">· 2026 중점시장활동</span></h3><span class="unit">${n}건</span><button class="mile-add mini" onclick="event.stopPropagation();exportMileXlsx()" style="margin-left:5px">⬇ 엑셀 내보내기</button>${RO()?'':`<button class="mile-add mini" onclick="event.stopPropagation();addMile()" style="margin-left:5px">＋ 행사 추가</button>`}</div>`;
 }
 function mileDayNorm(v,mo){ /* 일자 정규화: Date/ISO/시리얼/'8/21'/'21~23' → '21' 또는 '21~23' */
@@ -7573,10 +7589,29 @@ function mileDayNorm(v,mo){ /* 일자 정규화: Date/ISO/시리얼/'8/21'/'21~2
 }
 function fmtThou(v){const t=String(v==null?'':v).trim();if(!t)return '';const n=Number(t.replace(/,/g,''));if(t.replace(/,/g,'')!==''&&!isNaN(n)&&/^-?\d+(\.\d+)?$/.test(t.replace(/,/g,'')))return n.toLocaleString('en-US',{maximumFractionDigits:2});return t;}
 function mileFixDates(){let n=0;(MILESTONES||[]).forEach(x=>{const d=String(x.date||'');if(!d)return;if(/GMT|T\d\d:|[A-Za-z]{3}\s|\d{4}[-./]\d{1,2}[-./]\d{1,2}|^\d{5}$/.test(d)){const mo=+x.month||'';const raw=d.replace(/^\d{1,2}\s*\/\s*(?=\S)/,'');const nd=mileDayNorm(raw,mo);if(nd&&nd!==d){x.date=(mo?mo+'/':'')+nd;n++;}}});if(n){try{saveMile();}catch(e){}}return n;}
+/* 일자(문자열, "21" 또는 "21~23")를 시작일·종료일 숫자로 분해/재조합 · 달력(date input)으로 편집하기 위함 */
+function mileDayBounds(x){
+  const s=mileDayNorm(String(x.date||'').replace(/^\d+\s*\/\s*/,''),x.month);
+  const parts=String(s||'').split('~').map(p=>parseInt(p)).filter(n=>!isNaN(n));
+  const d1=parts[0]||null, d2=parts[1]||parts[0]||null;
+  return {d1,d2};
+}
+function mileDaysToStr(d1,d2){if(!d1)return '';return (d2&&d2!==d1)?`${d1}~${d2}`:String(d1);}
+function editMileTblDate(i,which,v){
+  if(roBlock())return;
+  const x=MILESTONES[i];if(!x)return;
+  if(!v){ if(which==='start')x.date=''; saveMile();render();return; }
+  const [yy,mm,dd]=v.split('-').map(Number);
+  let {d1,d2}=mileDayBounds(x);
+  if(which==='start'){ x.month=mm; d1=dd; if(!d2||d2<d1)d2=d1; }
+  else{ d2=dd; if(!d1)d1=dd; }
+  x.date=mileDaysToStr(d1,d2);
+  saveMile();render();
+}
 function mileTable(){
   const q=(document.getElementById('fQ').value||'').trim().toLowerCase();
   let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
-    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR));
+    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR)&&(MILEMONS.includes(+o.x.month)));
   const sc=MILESORT.col, dir=MILESORT.dir;
   if(sc){list.sort((a,b)=>{let va,vb;if(sc==='month'){va=+a.x.month||0;vb=+b.x.month||0;}else if(sc==='cat'){va=MCATLB[a.x.cat]||'';vb=MCATLB[b.x.cat]||'';}else{va=String(a.x[sc]||'');vb=String(b.x[sc]||'');}return (va<vb?-1:va>vb?1:0)*dir;});}
   else list.sort((a,b)=>(a.x.month-b.x.month)||String(a.x.date).localeCompare(String(b.x.date)));
@@ -7585,15 +7620,20 @@ function mileTable(){
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
   let html=`<div class="ptable-wrap" style="margin:0">
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}<th style="text-align:center;width:8%">일자</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:10%')}<th style="text-align:center;width:16%">일정명</th><th style="text-align:center;width:7%">참가인원</th><th style="text-align:center;width:7%">신규고객</th><th style="text-align:center;width:10%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:10%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:10%">담당자</th><th style="text-align:center;width:5%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
-  if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.</td></tr>`;}
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}<th style="text-align:center;width:7%">시작일</th><th style="text-align:center;width:7%">종료일</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:12%')}<th style="text-align:center;width:14%">일정명</th><th style="text-align:center;width:6%">참가인원</th><th style="text-align:center;width:6%">신규고객</th><th style="text-align:center;width:9%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">담당자</th><th style="text-align:center;width:4%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
+  if(!list.length){html+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MILEMONS.length?'해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.':'선택된 월이 없습니다 · 위에서 월을 선택하세요.'}</td></tr>`;}
+  const pad2=v=>String(v).padStart(2,'0');
   list.forEach((o,n)=>{const x=o.x,i=o.i;
+    const {d1,d2}=mileDayBounds(x);
+    const iso1=d1?`${YEAR}-${pad2(x.month)}-${pad2(d1)}`:'';
+    const iso2=d2?`${YEAR}-${pad2(x.month)}-${pad2(d2)}`:'';
     html+=`<tr>
       <td class="mut">${n+1}</td>
       <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" oninput="editMileTbl(${i},'month',this.value,0,this)" onchange="editMileTbl(${i},'month',this.value,1)" class="mile-mnum"></td>
-      <td class="mile-day"><input value="${esc(mileDayNorm((x.date||'').replace(/^\d+\s*\/\s*/,''),x.month).replace(/~/g,'-'))}" oninput="editMileTbl(${i},'date',this.value,0,this)" placeholder="일자"></td>
+      <td class="mile-day"><input type="date" value="${iso1}" onchange="editMileTblDate(${i},'start',this.value)"></td>
+      <td class="mile-day"><input type="date" value="${iso2}" onchange="editMileTblDate(${i},'end',this.value)"></td>
       <td style="text-align:center"><select onchange="editMileTbl(${i},'country',this.value,1)">${ctryOpts(x.country)}</select></td>
-      <td><select onchange="editMileTbl(${i},'cat',this.value,1)">${catOpts(x.cat)}</select></td>
+      <td><select onchange="editMileTbl(${i},'cat',this.value,1)" style="width:100%">${catOpts(x.cat)}</select></td>
       <td class="infc">${x.link?`<span class="mile-infotext">${esc(x.info||x.name||'(내용 없음)')}</span>`:`<textarea class="rep-sum" oninput="autogrow(this);editMileTbl(${i},'info',this.value,0,this)" placeholder="일정명">${esc(x.info||x.name||'')}</textarea>`}</td>
       <td class="mile-attn"><input value="${esc(fmtThou(x.attn))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'attn',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
       <td class="mile-attn"><input value="${esc(fmtThou(x.newcust))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'newcust',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
@@ -7698,7 +7738,7 @@ function exportKpiXlsx(){
 function exportMileXlsx(){
   const q=((document.getElementById('fQ')||{}).value||'').trim().toLowerCase();
   let list=MILESTONES.map((x,i)=>({x,i})).filter(o=>(!q||o.x.name.toLowerCase().includes(q)||(o.x.info||'').toLowerCase().includes(q))
-    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR));
+    &&(!MILECTRY||(o.x.country||'중국')===MILECTRY)&&(!MILEMGR||ownerOf(o.x)===MILEMGR)&&(MILEMONS.includes(+o.x.month)));
   const sc=MILESORT.col, dir=MILESORT.dir;
   if(sc){list.sort((a,b)=>{let va,vb;if(sc==='month'){va=+a.x.month||0;vb=+b.x.month||0;}else if(sc==='cat'){va=MCATLB[a.x.cat]||'';vb=MCATLB[b.x.cat]||'';}else{va=String(a.x[sc]||'');vb=String(b.x[sc]||'');}return (va<vb?-1:va>vb?1:0)*dir;});}
   else list.sort((a,b)=>(a.x.month-b.x.month)||String(a.x.date).localeCompare(String(b.x.date)));
@@ -10150,9 +10190,11 @@ function importG2Master(wb,scope){
       return;
     }
     // ② 주간업무: 주차+담당자 (거래처실적_주간 탭에 담당자 열이 추가되며 이 조건과 겹치므로 !has('거래처')로 배타 처리)
-    if(has('주차')&&has('담당자')&&!has('거래처')){
+    // · 마스터시트 「주간업무」 탭의 A열(주차값 W29·W30…)에 "주차" 라벨이 비어있는 경우가 있어(병합·서식 문제로 헤더 텍스트 소실)
+    //   주차 헤더가 없어도 이 탭 특유의 조합(담당자+R&R+이번주업무결과, 거래처 없음)이면 같은 탭으로 인식해 A열을 주차값으로 폴백한다.
+    if(((has('주차'))||(has('R&R')&&has('이번주업무결과')))&&has('담당자')&&!has('거래처')){
       if(scope!=='week')return;
-      const cW=ci('주차'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
+      const cW=ci('주차')>=0?ci('주차'):0,cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
         if(!w||!nm||!t)return;
@@ -10187,7 +10229,7 @@ function importG2Master(wb,scope){
         (byW[w]=byW[w]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
       Object.keys(byW).forEach(w=>{const k='W'+w;const ex=SPHIST[k]||{};
         SPHIST[k]=Object.assign({},ex,{week:'W'+w,_key:k,wk:+w,month:(function(){for(let m=7;m<=12;m++){if(buildWeeks(m).some(x=>x.iso===+w))return m;}return 7;})(),kpi:ex.kpi||[],rev:ex.rev||[],deal:byW[w],_src:'sheet'});});
-      if(Object.keys(byW).length){saveSPHIST();done.push('거래처실적(주간) '+Object.keys(byW).map(w=>'W'+w).join('·'));}
+      if(Object.keys(byW).length){saveSPHIST();try{refreshSPERFtoLatest();}catch(e){}done.push('거래처실적(주간) '+Object.keys(byW).map(w=>'W'+w).join('·'));}
       return;
     }
   });
@@ -10482,8 +10524,20 @@ function loadSPERF(){try{const s=localStorage.getItem('wr_sperf_v1');if(s){const
   loadSPHIST();
   const cm=spMeta(SPERF); if(!SPERF._key){SPERF._key=cm.key;SPERF.wk=cm.wk;SPERF.month=cm.month;}
   if(!Object.keys(SPHIST).length){SPHIST[SPERF._key]=SPERF;saveSPHIST();}
-  const ws=Object.values(SPHIST).sort((a,b)=>(a.wk||0)-(b.wk||0)); if(ws.length)SPERF=ws[ws.length-1];
+  refreshSPERFtoLatest();
   SPCUR=SPERF;}
+/* SPHIST 중 "오늘 ISO 주차를 넘지 않는" 가장 최근 주차를 고른다(latestUpWeekIso와 동일한 원칙) ·
+   구글시트 불러오기 직후에도 호출해서 SPERF(실적 현황 화면 기본 주차)가 항상 최신 동기화 데이터를 가리키게 한다 */
+function refreshSPERFtoLatest(){
+  try{
+    const ws=Object.values(SPHIST).filter(w=>w&&w.wk);
+    if(!ws.length)return;
+    const tIso=+isoWeekNum(todayStr())||0;
+    const past=ws.filter(w=>w.wk<=tIso);
+    const pick=(past.length?past:ws).sort((a,b)=>a.wk-b.wk).pop();
+    if(pick){SPERF=pick;SPCUR=pick;SPMOSEL=null;}
+  }catch(e){}
+}
 function selSPweek(key){if(SPHIST[key]){SPERF=SPHIST[key];SPERF._key=key;}render();}
 function selSPmonth(m){SPMOSEL=+m;render();}
 function saveSPcur(){try{if(SPCUR&&SPCUR._key)SPHIST[SPCUR._key]=SPCUR;if(SPERF&&SPERF._key)localStorage.setItem('wr_sperf_v1',JSON.stringify(SPERF));saveSPHIST();}catch(e){}}
