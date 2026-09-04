@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M262</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M263</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2711,17 +2711,20 @@ function wkData(){const iso=(WEEKS[W]&&WEEKS[W].iso)||0;return (typeof WKREPORT!
    부족분을 '1'월 항목에 'adj' 표시와 함께 이월조정 형태로 채워 누적 합계를 일치시켰다.
    (실제 1월 실적이 아니라 조정값이므로, 이후 월별 상세를 볼 때 착오 없도록 adj 필드로 표시해둠) */
 let MDEAL={
- '1':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1211345,exA:705710,suT:18636056,suTm:1211345,suA:705710},{dealer:'북경',grp:'중국',exT:4088480,exTm:265750,exA:285472,suT:5032559,suTm:301953,suA:230000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:37899,suT:110000,suTm:0,suA:50563,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:187017,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:35000,exA:47357,suT:280000,suTm:30000,suA:34987}],
- '2':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:745440,exA:778492,suT:18636056,suTm:745440,suA:778492},{dealer:'북경',grp:'중국',exT:4088480,exTm:163540,exA:125190,suT:5032559,suTm:251628,suA:100000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:20000,exA:14520,suT:280000,suTm:35000,suA:26537}],
- '3':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1770425,exA:1613055,suT:18636056,suTm:1770425,suA:1602530},{dealer:'북경',grp:'중국',exT:4088480,exTm:388405,exA:305419,suT:5032559,suTm:402605,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:430000,exA:559696,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:36000,exA:22296,suT:280000,suTm:20000,suA:14520}],
- '4':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1599190,suT:18636056,suTm:1677245,suA:1374511},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:257459,suT:5032559,suTm:402605,suA:310000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:5000,exA:5378,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:59853,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:43000,exA:54321,suT:280000,suTm:36000,suA:22926}],
- '5':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1445076,suT:18636056,suTm:1677245,suA:1107568},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:289086,suT:5032559,suTm:452930,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:220842,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:38000,exA:33415,suT:280000,suTm:43000,suA:54321}],
- '6':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1703635,suT:18636056,suTm:1677245,suA:1175482},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:251058,suT:5032559,suTm:452930,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:55000,exA:40944,suT:110000,suTm:5000,suA:5378},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:321150,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:28000,exA:42690,suT:280000,suTm:38000,suA:33415}],
- '7':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},{dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:110000,suTm:0,suA:40944},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362797,suT:1370000,suTm:150000,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}],
- '8':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:345576,suT:18636056,suTm:1397705,suA:782479},{dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:221491,suT:5032559,suTm:402605,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:5644,suT:110000,suTm:42000,suA:11309},{dealer:'대만 법인',grp:'해외',exT:250000,exTm:25000,exA:18035,suT:280000,suTm:25000,suA:null},{dealer:'대만 Sunriser',grp:'해외',exT:250000,exTm:25000,exA:41278,suT:280000,suTm:25000,suA:null},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:52803,suT:1370000,suTm:150000,suA:17133}]};
-/* 대만법인·Sunriser 수출목표(전체)는 시트 원본이 1,000,000으로 되어 있으나(Sunriser 값 복사 오류로 추정),
-   김유진 담당자의 실제 9월 보고 PPT(누적달성율 7.21%·121.53%)로 역산하면 250,000이 맞음 → 여기서 보정.
-   시트 자체는 아직 1,000,000으로 남아있으니 다음 구글시트 동기화 때 되돌아가지 않도록 시트도 고쳐야 함 */
+ '1':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1211345,exA:705710,suT:18636056,suTm:1211345,suA:705710},{dealer:'북경',grp:'중국',exT:4088480,exTm:265750,exA:285472,suT:5032559,suTm:301953,suA:230000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:37899,suT:110000,suTm:0,suA:50563,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:187017,adj:'1~7월 누적 공백분 이월조정(8월 김유진 보고 PPT 누적실적 기준 역산 · 실제 1월 실적 아님)'},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:35000,exA:47357,suT:280000,suTm:30000,suA:34987}],
+ '2':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:745440,exA:778492,suT:18636056,suTm:745440,suA:778492},{dealer:'북경',grp:'중국',exT:4088480,exTm:163540,exA:125190,suT:5032559,suTm:251628,suA:100000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:0,exA:0,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:20000,exA:14520,suT:280000,suTm:35000,suA:26537}],
+ '3':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1770425,exA:1613055,suT:18636056,suTm:1770425,suA:1602530},{dealer:'북경',grp:'중국',exT:4088480,exTm:388405,exA:305419,suT:5032559,suTm:402605,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:430000,exA:559696,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:36000,exA:22296,suT:280000,suTm:20000,suA:14520}],
+ '4':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1599190,suT:18636056,suTm:1677245,suA:1374511},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:257459,suT:5032559,suTm:402605,suA:310000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:5000,exA:5378,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:59853,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:43000,exA:54321,suT:280000,suTm:36000,suA:22926}],
+ '5':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1445076,suT:18636056,suTm:1677245,suA:1107568},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:289086,suT:5032559,suTm:452930,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:180000,exTm:0,exA:0,suT:110000,suTm:0,suA:0},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:220842,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:38000,exA:33415,suT:280000,suTm:43000,suA:54321}],
+ '6':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1677245,exA:1703635,suT:18636056,suTm:1677245,suA:1175482},{dealer:'북경',grp:'중국',exT:4088480,exTm:367963,exA:251058,suT:5032559,suTm:452930,suA:400000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:55000,exA:40944,suT:110000,suTm:5000,suA:5378},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:150000,exA:321150,suT:1370000,suTm:0,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:28000,exA:42690,suT:280000,suTm:38000,suA:33415}],
+ '7':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},{dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:110000,suTm:0,suA:40944},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362797,suT:1370000,suTm:150000,suA:0},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}],
+ '8':[{dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:345576,suT:18636056,suTm:1397705,suA:782479},{dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:221491,suT:5032559,suTm:402605,suA:150000},{dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:5644,suT:110000,suTm:42000,suA:11309},{dealer:'대만 법인',grp:'해외',exT:770000,exTm:25000,exA:18035,suT:280000,suTm:25000,suA:null},{dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:41278,suT:280000,suTm:25000,suA:null},{dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:52803,suT:1370000,suTm:150000,suA:17133}]};
+/* 대만법인·Sunriser 수출목표(전체)는 「거래처실적_주간」시트 원본에 두 거래처 모두 1,000,000으로
+   되어 있으나, 같은 시점의 「거래처실적_월간」시트 값(대만 Sunriser=230,000 · 대만법인=770,000,
+   1~8월 내내 일관)이 맞다고 2026-09-04 이유아 팀장이 확인 → 여기서 그 값으로 보정.
+   (과거엔 9월 PPT 달성율 역산으로 "둘 다 250,000"이라고 잘못 추정했었음 → 정정)
+   시트 자체(「거래처실적_주간」)는 아직 1,000,000으로 남아있으니 다음 구글시트 동기화 때
+   되돌아가지 않도록 시트도 고쳐야 함 — importG2Master의 fixSheetExT()가 동일 보정을 적용함 */
 /* 8월 「거래처실적_월간」 탭 원본(2026-08-30 확인) — 이 달 이후는 [구글시트 불러오기]가 이 값을 덮어씀 */
 try{const s1=localStorage.getItem('wr_mdeal_v2');if(s1){const o=JSON.parse(s1);if(o&&typeof o==='object'&&!Array.isArray(o))MDEAL=Object.assign({},MDEAL,o);}}catch(e){}
 function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v2',JSON.stringify(MDEAL));}catch(e){}}
@@ -4592,22 +4595,22 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
   let h='';
   if(!sorted.length)return `<div class="om-tile"><div class="om-ts">등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.</div></div>`;
   h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%"><thead><tr>'
-    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:150px">출장명</th><th style="width:72px">담당자</th><th style="width:60px">국가</th>'
-    +'<th style="width:110px">지역/도시</th><th style="width:130px">방문처</th>'
-    +'<th style="text-align:left;width:22%">출장 목적</th><th style="text-align:left;width:15%">연계 프로젝트</th><th style="text-align:left;width:18%">프로젝트 결과</th><th style="width:70px">상태</th></tr></thead><tbody>';
+    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:170px">출장명</th><th style="width:80px">담당자</th>'
+    +'<th style="width:140px">지역/도시</th><th style="width:150px">방문처</th>'
+    +'<th style="text-align:left;width:38%">출장 목적</th></tr></thead><tbody>';
   sorted.forEach(t=>{
     const days=(t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1;
     const g=MGRS.find(m=>m.name===t.mgr);
+    /* 지역/도시 칸에 국가를 함께 표기(예: "중국 · 정주") — 국가·지역/도시가 따로 좁은 열로 나뉘어 있던 것을
+       사용자 요청으로 한 칸에 합침. 국가가 비어 있으면(시트 미입력) 도시만 표시 */
+    const loc=[t.country,t.city].filter(Boolean).join(' · ');
     h+=`<tr><td><b>${esc(tripFmt(t.start,t.end))}</b></td><td>${days}일</td>`
       +`<td class="rl"><textarea class="trip-tx" style="font-weight:700" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'name',this.value,0,this)" placeholder="출장명">${esc(t.name||'')}</textarea></td>`
       +`<td>${g?`<span class="av" style="width:18px;height:18px;font-size:9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:10px">+${esc(t.with)}</div>`:''}</td>`
-      +`<td>${esc(t.country||'')}</td><td>${esc(t.city||'')}</td><td>${esc(t.visit||'')}</td>`
-      +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td>`
-      +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'big',this.value,0,this)" placeholder="연계 프로젝트">${esc(t.big||'')}</textarea>${(function(){const L=tripLinks(t);return [L.mile?`<span class="tp-lk mile">🏷 ${esc(L.mile.name)}</span>`:'',L.task?`<span class="tp-lk task">📌 ${esc(L.task.t)}</span>`:''].filter(Boolean).join('');})()}</td>`
-      +`<td class="rl"><textarea class="trip-tx res" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'note',this.value,0,this)" placeholder="프로젝트 결과·성과">${esc(t.note||'')}</textarea></td>`
-      +`<td>${tripStatusChip(tripAutoStatus(t))}</td></tr>`;});
+      +`<td>${esc(loc)}</td><td>${esc(t.visit||'')}</td>`
+      +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td></tr>`;});
   h+='</tbody></table></div>';
-  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적 · 연계 프로젝트 · 결과</b>는 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
+  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적</b>은 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
   return h;
 }
 function renderRRSales(){
@@ -10029,16 +10032,23 @@ function g2pctTxt(v){const n=g2num(v);if(n==null)return String(v||'').trim();con
 function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:null;}
 function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
 /* 대만법인·대만 Sunriser 「수출목표(전체)」 시트 원본 데이터 입력 오류 보정.
-   실제 마스터 시트에는 두 거래처 모두 1,000,000으로 입력돼 있으나(Sunriser 값을 복사해
-   대만법인 칸에도 그대로 붙여넣은 것으로 추정), 담당자(김유진)의 실제 9월 보고 PPT
-   누적달성율(7.21%·121.53%)로 역산하면 올바른 값은 250,000이다. 과거 세션에서 하드코딩
-   MDEAL['8'] 스냅샷에는 이미 250,000으로 고쳐뒀지만, 「거래처실적_월간」·「거래처실적_주간」
-   시트를 그대로 불러오는 이 함수(importG2Master)에는 반영돼 있지 않아, 9월 W36 데이터가
-   라이브 시트에서 들어오는 순간 다시 1,000,000(오류값)이 KPI 전체목표에 섞여 들어가는
-   문제가 있었다 → 시트에서 읽는 시점에 동일하게 보정. 시트 자체가 250,000으로 고쳐지면
-   이 보정은 조건(===1000000)에 안 걸려 자동으로 무해해진다. */
+   「거래처실적_주간」탭에는 두 거래처 모두 전 주차(W29~W36)에 걸쳐 1,000,000으로 동일하게
+   입력돼 있으나, 같은 시점의 「거래처실적_월간」탭(1~8월 내내 일관된 값)에는 대만 Sunriser=
+   230,000 · 대만법인=770,000으로 되어 있다. 2026-09-04 이유아 팀장 확인: 월간 탭 값이 맞음.
+   (과거 세션에서 9월 PPT 달성율 역산으로 "250,000"이 맞다고 잘못 추정해 MDEAL['8']에
+   반영했던 적이 있는데, 실제로는 두 거래처 값이 다르고 250,000도 아니었음 → 아래처럼 정정)
+   「거래처실적_주간」시트를 그대로 불러오는 이 함수(importG2Master)에는 이 보정이 없어서,
+   주간 데이터가 라이브 시트에서 들어오는 순간 1,000,000(오류값)이 KPI 전체목표에 섞여
+   들어가는 문제가 있었다 → 시트에서 읽는 시점에 동일하게 보정. 시트 자체가 고쳐지면
+   이 보정은 조건(===1000000)에 안 걸려 자동으로 무해해진다.
+   * 시트 원본도 고쳐야 재발하지 않음: 「거래처실적_주간」탭 E열(수출 목표(전체))의
+     대만 Sunriser 행(전 주차) → 230,000 / 대만법인 행(W34~) → 770,000 으로 직접 수정 필요
+     (이 세션은 라이브 시트 편집 권한이 막혀 있어 코드 쪽에서만 보정함) */
 function fixSheetExT(dealer,exT){
-  if(exT===1000000&&/대만\s*법인|대만\s*sunriser/i.test(String(dealer||'')))return 250000;
+  if(exT!==1000000)return exT;
+  const dl=String(dealer||'');
+  if(/대만\s*sunriser/i.test(dl))return 230000;
+  if(/대만\s*법인/.test(dl))return 770000;
   return exT;
 }
 function g2date(v){
@@ -10168,7 +10178,9 @@ function importG2Master(wb,scope){
         };
         const hasRep=rep.staffCN||rep.staffHQ||rep.draftDoc||rep.ticket||rep.body||rep.feelings.result||rep.feelings.improve||rep.feelings.next;
         out.push({name:String(cNm>=0?r[cNm]||'':'').trim(),start:sd,end:g2date(cE>=0?r[cE]:'')||sd,mgr:nm,with:String(cCo>=0?r[cCo]||'':'').trim(),
-          country:String(cC>=0?r[cC]||'':'').trim()||'중국',city:String(cR>=0?r[cR]||'':'').trim(),
+          /* 국가 칸이 비어 있으면 무조건 '중국'으로 채워버리던 기본값을 제거 — 9월 이후 방한(한국) ·
+             대만·홍콩 출장까지 전부 '중국'으로 잘못 표시되는 원인이었음. 시트 값이 없으면 빈 값 그대로 둔다 */
+          country:String(cC>=0?r[cC]||'':'').trim(),city:String(cR>=0?r[cR]||'':'').trim(),
           cat:String(cG>=0?r[cG]||'':'').trim(),visit:String(cV>=0?r[cV]||'':'').trim(),
           purpose:String(cP>=0?r[cP]||'':'').trim(),big:String(cB>=0?r[cB]||'':'').trim(),
           status:(function(){const v=normStatus(cSt>=0?r[cSt]:'')||String(cSt>=0?r[cSt]||'':'').trim();
@@ -10871,43 +10883,43 @@ loadSPERF();
     {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:200000},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:4003,suT:205000,suTm:7000,suA:0},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:68346,suT:1370000,suTm:150000,suA:0},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
   put(30,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:650269,suT:18636056,suTm:1304525,suA:1100867},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:200000},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:4003,suT:205000,suTm:7000,suA:0},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:68346,suT:1370000,suTm:150000,suA:0},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:22480,suT:280000,suTm:28000,suA:0}]);
   put(31,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1304525,exA:1149596,suT:18636056,suTm:1304525,suA:1751135},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:286195,exA:267946,suT:5032559,suTm:402605,suA:300085},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:17000,exA:11309,suT:205000,suTm:7000,suA:40944},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:220000,exA:362798,suT:1370000,suTm:150000,suA:null},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:47323,suT:280000,suTm:28000,suA:42690}]);
   put(32,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:57313,suT:18636056,suTm:1397705,suA:0},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:179229,suT:5032559,suTm:402605,suA:0},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:0,suT:205000,suTm:43000,suA:0},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:0,suT:1370000,suTm:150000,suA:0},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:0,suT:280000,suTm:25000,suA:0}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:0,suT:280000,suTm:25000,suA:0}]);
   put(33,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:225837,suT:18636056,suTm:1397705,suA:556641},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:41094,suT:5032559,suTm:402605,suA:0},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:0,suT:205000,suTm:42000,suA:0},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:0,suT:1370000,suTm:150000,suA:17133},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:0,suT:280000,suTm:null,suA:0}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:0,suT:280000,suTm:null,suA:0}]);
   put(34,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:4282,suT:18636056,suTm:1397705,suA:0},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:0,suT:5032559,suTm:402605,suA:0},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:4123,suT:205000,suTm:42000,suA:0},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:null,suT:1370000,suTm:150000,suA:0},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:40996,suT:280000,suTm:null,suA:null}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:40996,suT:280000,suTm:null,suA:null}]);
   put(35,[
     {dealer:'닝보',grp:'중국',exT:18636055,exTm:1397705,exA:58327,suT:18636056,suTm:1397705,suA:225838},
     {dealer:'북경',grp:'중국',exT:4088480,exTm:306636,exA:1168,suT:5032559,suTm:402605,suA:150000},
     {dealer:'홍콩 킨월드',grp:'해외',exT:255000,exTm:18000,exA:863,suT:205000,suTm:42000,suA:11309},
     {dealer:'대만 TBMS',grp:'해외',exT:2500000,exTm:250000,exA:52803,suT:1370000,suTm:150000,suA:null},
-    {dealer:'대만 Sunriser',grp:'해외',exT:1000000,exTm:25000,exA:282,suT:280000,suTm:null,suA:null}]);
+    {dealer:'대만 Sunriser',grp:'해외',exT:230000,exTm:25000,exA:282,suT:280000,suTm:null,suA:null}]);
   try{saveSPHIST();}catch(e){}
 })();
 try{mergeWkIntoTasks();}catch(e){}
