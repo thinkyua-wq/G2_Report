@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M261</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M262</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -10028,6 +10028,19 @@ function g2pct(v){const n=g2num(v);if(n==null)return String(v||'').trim();const 
 function g2pctTxt(v){const n=g2num(v);if(n==null)return String(v||'').trim();const p=(n>0&&n<=1)?n*100:n;return Math.max(0,Math.min(150,Math.round(p)))+'%';}
 function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:null;}
 function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
+/* 대만법인·대만 Sunriser 「수출목표(전체)」 시트 원본 데이터 입력 오류 보정.
+   실제 마스터 시트에는 두 거래처 모두 1,000,000으로 입력돼 있으나(Sunriser 값을 복사해
+   대만법인 칸에도 그대로 붙여넣은 것으로 추정), 담당자(김유진)의 실제 9월 보고 PPT
+   누적달성율(7.21%·121.53%)로 역산하면 올바른 값은 250,000이다. 과거 세션에서 하드코딩
+   MDEAL['8'] 스냅샷에는 이미 250,000으로 고쳐뒀지만, 「거래처실적_월간」·「거래처실적_주간」
+   시트를 그대로 불러오는 이 함수(importG2Master)에는 반영돼 있지 않아, 9월 W36 데이터가
+   라이브 시트에서 들어오는 순간 다시 1,000,000(오류값)이 KPI 전체목표에 섞여 들어가는
+   문제가 있었다 → 시트에서 읽는 시점에 동일하게 보정. 시트 자체가 250,000으로 고쳐지면
+   이 보정은 조건(===1000000)에 안 걸려 자동으로 무해해진다. */
+function fixSheetExT(dealer,exT){
+  if(exT===1000000&&/대만\s*법인|대만\s*sunriser/i.test(String(dealer||'')))return 250000;
+  return exT;
+}
 function g2date(v){
   if(v==null||v==='')return '';
   /* XLSX(cellDates:true)가 만드는 Date 객체는 시트의 날짜를 "UTC 자정" 기준으로 저장한다(SheetJS 표준 동작).
@@ -10232,7 +10245,7 @@ function importG2Master(wb,scope){
       const cM=ci('보고월'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자');
       const byM={};
       body.forEach(r=>{const mo=g2mon(r[cM]);const dl=String(r[cD2]||'').trim();if(!mo||!dl||/소계|합계/.test(dl))return;
-        const exT=g2num(r[cT1]),exA=g2num(r[cA1]);
+        const exT=fixSheetExT(dl,g2num(r[cT1])),exA=g2num(r[cA1]);
         if(exT==null&&exA==null)return; // 빈 달 스킵
         (byM[mo]=byM[mo]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
       Object.keys(byM).forEach(mo=>{MDEAL[String(mo)]=byM[mo];});
@@ -10245,7 +10258,7 @@ function importG2Master(wb,scope){
       const cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자');
       const byW={};
       body.forEach(r=>{const w=g2wk(r[cW]);const dl=String(r[cD2]||'').trim();if(!w||!dl||/소계|합계/.test(dl))return;
-        const exT=g2num(r[cT1]),exA=g2num(r[cA1]);
+        const exT=fixSheetExT(dl,g2num(r[cT1])),exA=g2num(r[cA1]);
         if(exT==null&&exA==null)return;
         (byW[w]=byW[w]||[]).push({dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA])});});
       Object.keys(byW).forEach(w=>{const k='W'+w;const ex=SPHIST[k]||{};
