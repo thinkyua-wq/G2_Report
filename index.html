@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M258</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M259</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2727,16 +2727,18 @@ try{const s1=localStorage.getItem('wr_mdeal_v2');if(s1){const o=JSON.parse(s1);i
 function saveMDEAL(){try{localStorage.setItem('wr_mdeal_v2',JSON.stringify(MDEAL));}catch(e){}}
 function mdealRows(m){return MDEAL[String(m)]||[];}
 function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 합산 · 목표=최근 달 전체목표)
-  /* upto월(보통 당월) 자체는 「거래처실적_월간」이 아직 없으면 「거래처실적_주간」을 선택 주차까지 잠정 합산해 반영 · 그 외 과거 월은 그대로 건너뜀 */
-  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null;
+  /* 「거래처실적_월간」이 아직 없는 달은 (당월뿐 아니라 그 이전 어느 달이든) 「거래처실적_주간」을 그 달 주차만큼
+     잠정 합산해 반영한다 · 예전에는 "당월(upto)"에만 이 대체를 적용해서, 월간탭 입력이 한두 달 밀리면 그 달 실적이
+     누적에서 통째로 빠지는(예: 8월 누락) 문제가 있었다 → 그냥 「거래처실적_주간」 누적을 그대로 불러오도록 수정 */
+  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null,liveMonths=[];
   for(let m=1;m<=upto;m++){
     let D=MDEAL[String(m)];
-    if((!D||!D.length)&&m===upto){const mr=mrDealMonthRows(m);if(mr.rows.length){D=mr.rows;liveUpto=mr.uptoWeek;}}
+    if(!D||!D.length){const mr=mrDealMonthRows(m);if(mr.rows.length){D=mr.rows;liveUpto=mr.uptoWeek;liveMonths.push(m);}}
     if(!D||!D.length)continue;
     const g=ovScopeAggFrom(D,scope);
     if(g.exA)cumA+=g.exA; if(g.suA)cumSu+=g.suA;
     if(g.exT)T=g.exT; if(g.suT)S=g.suT; any=true; months.push(m);}
-  return {cumA,cumSu,T,S,any,months,liveUpto};
+  return {cumA,cumSu,T,S,any,months,liveUpto,liveMonths};
 }
 function saveMReport(){try{localStorage.setItem('wr_mreports_v5',JSON.stringify(MREPORTS));}catch(e){}}
 /* ===== 市场本部 重点KPI (summary 시트 · 8월/1~8월 누적) ===== */
@@ -3136,7 +3138,18 @@ function gotoLastUpWeek(){
       PERIOD='week';EOMSEL=false;MEND='';return;}}catch(e){}
   gotoThisWeek();
 }
-function gotoCurMonthDefault(){MONTH=TODAY.getMonth()+1;YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;
+/* 오늘이 속한 "ISO 주차가 실제로 배정된 달"을 반환 · buildWeeks()는 주차를 그 주 "금요일" 기준으로 달에 배정하므로,
+   월말 며칠(예: 8/31)이 실제로는 다음달(9월) 소속 주차(W36)에 걸치는 경우가 생긴다. 이때 달력월(TODAY.getMonth()+1,
+   여기서는 8월)을 그대로 MONTH로 쓰면 WEEKS 배열에 그 ISO 주차가 아예 없어, 화면에는 "36주차인데 35주차"처럼
+   전달의 마지막 주차가 잘못 표시된다 · 이 함수는 그 어긋남을 없애기 위해 실제 주차가 배정된 달을 직접 찾는다 */
+function curWeekMonth(){
+  try{
+    const tIso=+isoWeekNum(todayStr())||0;
+    if(tIso){for(let m=1;m<=12;m++){if(buildWeeks(m).some(w=>w.iso===tIso))return m;}}
+  }catch(e){}
+  return TODAY.getMonth()+1;
+}
+function gotoCurMonthDefault(){MONTH=curWeekMonth();YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;
   try{const mx=latestUpWeekIso();const i=WEEKS.findIndex(x=>x.iso===mx);W=(i>=0)?i:todayWeekIdx();}catch(e){W=Math.max(0,WEEKS.length-1);}
   try{MFMON=String(MONTH);}catch(e){}}
 function gotoPrevMonthDefault(){let pm=(TODAY.getMonth()+1)-1;MONTH=Math.max(7,Math.min(12,pm<1?1:pm));YEAR=TODAY.getFullYear();WEEKS=buildWeeks(MONTH);PERIOD='month';MEND='';EOMSEL=false;W=Math.max(0,WEEKS.length-1);try{MFMON=String(MONTH);}catch(e){}}
@@ -3149,7 +3162,7 @@ function gotoPrevWeekDefault(){
   for(let m=7;m<=12;m++){const ws=buildWeeks(m);const idx=ws.findIndex(x=>x.iso===tw);
     if(idx>=0){MONTH=m;WEEKS=ws;W=idx;PERIOD='week';MEND='';EOMSEL=false;try{MFMON=String(m);}catch(e){}return;}}
 }
-MONTH=TODAY.getMonth()+1; YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
+MONTH=curWeekMonth(); YEAR=TODAY.getFullYear(); WEEKS=buildWeeks(MONTH);
 gotoThisWeek(); /* 주간 기준값 준비 */
 try{gotoCurMonthDefault();TAB='home';}catch(e){} /* 첫 화면 = 팀 종합현황 */
 try{MFMON=String(MONTH);}catch(e){}
@@ -4862,7 +4875,7 @@ function mrMonthTiles(extra){
   h+=tile('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`전체목표 ${n(C.T)} · 비중 ${A.cumA?Math.round(C.cumA/A.cumA*100):0}%`);
   h+=tile('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`전체목표 ${n(T.T)} · 비중 ${A.cumA?Math.round(T.cumA/A.cumA*100):0}%`);
   h+=tile('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`전체목표 ${n(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`);
-  return h+(extra||'')+(A.liveUpto?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:11px;color:var(--risk);margin-top:2px">※ ${MONTH}월 「거래처실적_월간」 데이터가 아직 없어 「거래처실적_주간」 W${A.liveUpto.iso}까지 잠정 합산한 값입니다</div>`:'')+'</div>';
+  return h+(extra||'')+(A.liveUpto?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:11px;color:var(--risk);margin-top:2px">※ ${(A.liveMonths||[]).join('·')}월은 「거래처실적_월간」 데이터가 아직 없어 「거래처실적_주간」(최근 W${A.liveUpto.iso})까지 잠정 합산한 값입니다</div>`:'')+'</div>';
 }
 function mrMonthChart(label,scope){
   const upto=12, k=v=>Math.round((v||0)/1000);
@@ -4988,9 +5001,14 @@ function mrDealTable0(){
   const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
   const pct=r=>r==null?'—':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n2=>n2==null?'—':n2.toLocaleString('en-US');
-  const wkExtra={}; if(fromWeek)D.forEach(d=>{wkExtra[d.dealer]={ex:d.exA||0,su:d.suA||0};});
-  const cumOf=(dl,f)=>{let c=0,any=false;const upToM=fromWeek?MONTH-1:MONTH;for(let m=1;m<=upToM;m++){(MDEAL[String(m)]||[]).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=x[f];any=true;}});}
-    if(fromWeek&&wkExtra[dl]){const add2=f==='exA'?wkExtra[dl].ex:(f==='suA'?wkExtra[dl].su:0);if(add2){c+=add2;any=true;}}
+  /* 누적(1~당월) 계산 · 「거래처실적_월간」이 없는 달은 (당월뿐 아니라 그 이전 어느 달이든) 그냥 「거래처실적_주간」을
+     그 달 주차만큼 합산해 대체한다 — 월간탭 입력이 밀린 달이 누적에서 통째로 빠지는 걸 막기 위함(mdAggUpto와 동일 규칙) */
+  const monthRowsCache={};
+  const rowsForMonth=m=>{if(monthRowsCache[m])return monthRowsCache[m];
+    let D2=MDEAL[String(m)];if(!D2||!D2.length){D2=(m===MONTH?D:mrDealMonthRows(m).rows)||[];}
+    return monthRowsCache[m]=D2;};
+  const liveMonths=[];for(let m=1;m<=MONTH;m++){const d2=MDEAL[String(m)];if(!d2||!d2.length)liveMonths.push(m);}
+  const cumOf=(dl,f)=>{let c=0,any=false;for(let m=1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=(+x[f]||0);any=true;}});}
     return any?c:null;};
   let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:110px">거래처</th><th style="width:36px">단위</th>'
     +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월누적)</th><th>달성율</th><th>수출전체<br>누적실적</th><th>누적달성율</th>'
@@ -5014,7 +5032,7 @@ function mrDealTable0(){
     const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
     h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
   h+='</tbody></table>';
-  h+=fromWeek?`<div class="ov-foot">※ ${MONTH}월 「거래처실적_월간」 미입력 → 「거래처실적_주간」 W${uptoWeek?uptoWeek.iso:''}까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · 달성율 = 당월 실적 ÷ 당월 목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:'<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
+  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · 달성율 = 당월 실적 ÷ 당월 목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:'<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
   return h;
 }
 function renderTeamWeekCards(wk){
@@ -6290,7 +6308,7 @@ function kanSyncWeekMonth(){   /* 과제진행율: 선택한 주차가 속한 �
   const mo=(mt&&mt.m)||MONTH;
   if(!(KANMONTHS.length===1&&KANMONTHS[0]===mo))KANMONTHS=[mo];
 }
-function gotoThisWeek(){const m=TODAY.getMonth()+1;if(m>=7&&m<=12&&MONTH!==m){MONTH=m;WEEKS=buildWeeks(MONTH);}W=Math.max(0,Math.min(WEEKS.length-1,todayWeekIdx()));PERIOD='week';EOMSEL=false;MEND='';}
+function gotoThisWeek(){const m=curWeekMonth();if(m>=7&&m<=12&&MONTH!==m){MONTH=m;WEEKS=buildWeeks(MONTH);}W=Math.max(0,Math.min(WEEKS.length-1,todayWeekIdx()));PERIOD='week';EOMSEL=false;MEND='';}
 function setRRTab(t){if(t==='focus'){TAB='mreport';MRTAB='focus';setMFMon(String(MONTH));return;}
   if(t==='ops')OPSTAB='assign';
   if(RO()&&!MEMBER_RRTABS.includes(t))t='wsales';RRTAB=t;if(t==='wsales'||t==='tcards'||t==='work'||t==='kanban'){gotoThisWeek();if(t==='kanban')kanSyncWeekMonth();}render();}
@@ -10878,7 +10896,10 @@ loadSPERF();
 })();
 try{mergeWkIntoTasks();}catch(e){}
 try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e){}
-try{TAB='mreport';MRTAB='week';gotoLastUpWeek();}catch(e){} /* 첫 화면 = 주간과제(최신 업로드 주차) */
+/* 예전엔 여기서 TAB='mreport'(주간과제·최신 업로드 주차)로 다시 덮어써서, 위쪽(3165행 부근)에서 이미
+   정해둔 "첫 화면 = 팀종합현황(home)" 설정이 매번 조용히 무시되고 있었다 · 게다가 그 최신 업로드 주차 기준이
+   「주간업무」(WKREPORT) 동기화 현황에 좌우돼, 정작 오늘 날짜의 ISO 주차보다 뒤처진 주(예: 36주차인데 35주차)가
+   첫 화면에 그대로 노출되는 원인이었다 · 첫 화면은 위에서 정한 팀종합현황(오늘 기준 정확한 월/주차) 그대로 둔다 */
 render();
 try{mileFixDates();}catch(e){}
 setTimeout(()=>{publicSyncMaster(true).catch(()=>{});},50); /* 로그인·게스트 구분 없이 구글시트가 공개돼 있으면 조용히 최신 데이터로 맞춘다 */
