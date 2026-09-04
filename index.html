@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M259</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M261</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5317,14 +5317,14 @@ function renderOverview(){
     h+=renderTeamMonthCards(isMR);
   } else {
     if(TAB==='mreport'){
-      h+=`<div class="ov-sec">본사 실적 · 월별 목표대비실적 <span class="ov-sub">단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란</span></div>`;
-      h+=`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`;
-      {const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);h+=`<div class="ov-sec" style="margin-top:18px">${MONTH}월 거래처별 실적 요약 <span class="ov-sub">${em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:''}당월 실적 + 1~${MONTH}월 누적</span></div>`;}
-      h+=mrDealTable();
-      h+=`<div class="ov-sec" style="margin-top:18px">본사 실적 · 주간 수출·수금 <span class="ov-sub">단위 천불 USD · 기준 주차 ${esc(ovWeekKey())} · 최근 주차 스냅샷</span></div>`;
-      h+=`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`;
-      h+=`<div class="ov-sec" style="margin-top:18px">${esc(ovWeekKey())} 거래처별 실적 요약</div>`;
-      h+=ovDealTable();
+      h+=secBox('mr_monthchart','본사 실적 · 월별 목표대비실적','단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
+        ()=>`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`);
+      {const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
+        const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
+        h+=secBox('mr_dealmonth',`${MONTH}월 거래처별 실적 요약`,dealSub,()=>mrDealTable());}
+      h+=secBox('mr_weekchart','본사 실적 · 주간 수출·수금',`단위 천불 USD · 기준 주차 ${ovWeekKey()} · 최근 주차 스냅샷`,
+        ()=>`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`);
+      h+=secBox('mr_dealweek',`${ovWeekKey()} 거래처별 실적 요약`,'',()=>ovDealTable());
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
       h+=ovMainTrendGrid();
@@ -7592,7 +7592,7 @@ function mileTableHead(){
 function mileDayNorm(v,mo){ /* 일자 정규화: Date/ISO/시리얼/'8/21'/'21~23' → '21' 또는 '21~23' */
   if(v==null||v==='')return '';
   const one=x=>{
-    if(x instanceof Date&&!isNaN(x)){const M=x.getMonth()+1,D=x.getDate();return (M<D?M+'~'+D:(M===D||+mo===M?String(D):M+'~'+D));}
+    if(x instanceof Date&&!isNaN(x)){const M=x.getUTCMonth()+1,D=x.getUTCDate();return (M<D?M+'~'+D:(M===D||+mo===M?String(D):M+'~'+D));} /* UTC 기준 · g2date 주석 참조 */
     let t=String(x).trim();
     if(/^\d{4,5}(\.\d+)?$/.test(t)){const n=+t;if(n>20000&&n<80000){const d=new Date(Date.UTC(1899,11,30)+n*86400000);const M=d.getUTCMonth()+1,D=d.getUTCDate();return M<D?M+'~'+D:String(D);}}
     let m=t.match(/^\d{4}[-./](\d{1,2})[-./](\d{1,2})/);if(m){const M=+m[1],D=+m[2];return M<D?M+'~'+D:String(D);}
@@ -9449,7 +9449,7 @@ function exportXlsx(){
 
 /* ============ 주간 엑셀 불러오기 (파일명에서 월·주차 인식 · 과제+실적 한 파일) ============ */
 function toDateStr(v){
-  if(v instanceof Date&&!isNaN(v))return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}-${String(v.getDate()).padStart(2,'0')}`;
+  if(v instanceof Date&&!isNaN(v))return `${v.getUTCFullYear()}-${String(v.getUTCMonth()+1).padStart(2,'0')}-${String(v.getUTCDate()).padStart(2,'0')}`; /* UTC 기준 · g2date 주석 참조 */
   const m=String(v==null?'':v).match(/(\d{4})[-.\/](\d{1,2})[-.\/](\d{1,2})/);
   if(m)return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
   return String(v==null?'':v).trim();
@@ -10030,7 +10030,10 @@ function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:
 function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
 function g2date(v){
   if(v==null||v==='')return '';
-  if(v instanceof Date){const p=n=>String(n).padStart(2,'0');return v.getFullYear()+'-'+p(v.getMonth()+1)+'-'+p(v.getDate());}
+  /* XLSX(cellDates:true)가 만드는 Date 객체는 시트의 날짜를 "UTC 자정" 기준으로 저장한다(SheetJS 표준 동작).
+     그래서 getFullYear()/getMonth()/getDate() 같은 "로컬 시간" getter로 읽으면, UTC보다 시간이 느린
+     지역(예: 미주)의 PC·브라우저에서는 하루 전 날짜로 밀려 보인다(예: 9/9→9/8) — 반드시 UTC getter로 읽는다 */
+  if(v instanceof Date){const p=n=>String(n).padStart(2,'0');return v.getUTCFullYear()+'-'+p(v.getUTCMonth()+1)+'-'+p(v.getUTCDate());}
   const s=String(v).trim();
   let m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
   if(m)return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
@@ -10040,7 +10043,7 @@ function g2date(v){
 }
 /* 구글시트 날짜형 셀(Date 객체) 또는 "2026-MM-DD"/"MM-DD" 텍스트를 "MM-DD"로 통일 · 그 외 텍스트("상시" 등)는 그대로 유지 */
 function g2mmdd(v){
-  if(v instanceof Date&&!isNaN(v)){const p=n=>String(n).padStart(2,'0');return p(v.getMonth()+1)+'-'+p(v.getDate());}
+  if(v instanceof Date&&!isNaN(v)){const p=n=>String(n).padStart(2,'0');return p(v.getUTCMonth()+1)+'-'+p(v.getUTCDate());} /* UTC 기준 · g2date 주석 참조 */
   const s=String(v||'').trim();
   const m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
   if(m)return String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
@@ -10275,7 +10278,7 @@ function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doK
    한 번도 누르지 않은 기기가 코드에 미리 박혀있는 오래된 기본값(예: 주간업무 W33까지)만 보던 문제를
    해결하기 위한 것 — 로그인 여부와 무관하게 페이지를 열 때마다 조용히 1회 시도하고,
    시트가 아직 비공개(제한됨)라 실패해도 화면엔 기존 기본값이 그대로 유지된다(에러 노출 없음). */
-const PUBLIC_SYNC_TABS=['주간업무','거래처실적_월간','거래처실적_주간','월말보고','KPI지표','일정'];
+const PUBLIC_SYNC_TABS=['주간업무','거래처실적_월간','거래처실적_주간','월말보고','KPI지표','일정','출장일정']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정 */
 function csvParseG2(text){
   const rows=[];let row=[],cur='',inQ=false;
   for(let i=0;i<text.length;i++){
