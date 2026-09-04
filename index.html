@@ -1568,7 +1568,7 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .rail-sec h4{font-size:10px;letter-spacing:.1em;color:var(--sideDim);font-weight:700;margin-bottom:8px}
 .rnav{display:flex;flex-direction:column;gap:3px}
 .rnav button{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500;color:var(--sideTx);background:transparent;padding:6px 10px;border-radius:6px;text-align:left;transition:.12s;width:100%}
-.trip-tx{width:100%;border:1px solid transparent;background:transparent;font:inherit;font-size:11.5px;line-height:1.45;resize:none;overflow:hidden;padding:3px 5px;border-radius:5px;color:inherit;text-align:left}
+.trip-tx{width:100%;border:1px solid transparent;background:transparent;font:inherit;font-size:12.4px;line-height:1.45;resize:none;overflow:hidden;padding:3px 5px;border-radius:5px;color:inherit;text-align:left} /* 표의 다른 칸(.ptable.triptbl td 12.4px)과 글자 크기 통일 — 이전엔 11.5px로 더 작게 나왔음 */
 .trip-tx:hover{border-color:#dbe4ea;background:#fbfdfe}
 .trip-tx:focus{border-color:var(--tl);background:#fff;outline:none}
 .trip-tx.res{color:#1e6f5c;font-weight:600}
@@ -2445,7 +2445,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M263</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M264</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4594,20 +4594,23 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
   const sorted=list.slice().sort((a,b)=>String(a.start).localeCompare(String(b.start)));
   let h='';
   if(!sorted.length)return `<div class="om-tile"><div class="om-ts">등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.</div></div>`;
+  /* 표 항목을 마스터시트 「출장일정」(입력 시트) 화면에 현재 실제로 보이는 열 구성에 맞춤:
+     출발일·종료일·담당자·국가·출장명·출장 목적 6개뿐 (동행자·구분·방문처·연계 과제·결과·상태는
+     이유아 팀장이 시트에서도 숨겨 쓰는 열이라 여기서도 제외) */
   h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%"><thead><tr>'
     +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:170px">출장명</th><th style="width:80px">담당자</th>'
-    +'<th style="width:140px">지역/도시</th><th style="width:150px">방문처</th>'
-    +'<th style="text-align:left;width:38%">출장 목적</th></tr></thead><tbody>';
+    +'<th style="width:140px">국가</th>'
+    +'<th style="text-align:left;width:44%">출장 목적</th></tr></thead><tbody>';
   sorted.forEach(t=>{
     const days=(t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1;
     const g=MGRS.find(m=>m.name===t.mgr);
-    /* 지역/도시 칸에 국가를 함께 표기(예: "중국 · 정주") — 국가·지역/도시가 따로 좁은 열로 나뉘어 있던 것을
-       사용자 요청으로 한 칸에 합침. 국가가 비어 있으면(시트 미입력) 도시만 표시 */
-    const loc=[t.country,t.city].filter(Boolean).join(' · ');
+    /* 국가 칸 = 시트의 「국가」열 원문 그대로(예: "중국동관") · 필터용으로 국가만 따로 뽑아 t.country에,
+       나머지 지역은 t.city에 저장해두지만(마일스톤 국가 필터 등에서 사용), 표에는 시트에 적힌 그대로 다시 합쳐 보여준다 */
+    const loc=String(t.country||'')+String(t.city||'');
     h+=`<tr><td><b>${esc(tripFmt(t.start,t.end))}</b></td><td>${days}일</td>`
       +`<td class="rl"><textarea class="trip-tx" style="font-weight:700" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'name',this.value,0,this)" placeholder="출장명">${esc(t.name||'')}</textarea></td>`
       +`<td>${g?`<span class="av" style="width:18px;height:18px;font-size:9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:10px">+${esc(t.with)}</div>`:''}</td>`
-      +`<td>${esc(loc)}</td><td>${esc(t.visit||'')}</td>`
+      +`<td>${esc(loc)}</td>`
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td></tr>`;});
   h+='</tbody></table></div>';
   h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적</b>은 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
@@ -10177,10 +10180,16 @@ function importG2Master(wb,scope){
           feelings:{result:String(cResult>=0?r[cResult]||'':'').trim(),improve:String(cImprove>=0?r[cImprove]||'':'').trim(),next:String(cNext>=0?r[cNext]||'':'').trim()}
         };
         const hasRep=rep.staffCN||rep.staffHQ||rep.draftDoc||rep.ticket||rep.body||rep.feelings.result||rep.feelings.improve||rep.feelings.next;
+        /* 마스터시트 「출장일정」이 "국가" 한 칸에 국가+지역을 붙여서 쓰는 형태로 바뀜(예: "중국동관", "한국대구/부산").
+           별도 「지역」열이 있는 옛 형식이면 그대로 쓰고, 없으면(현재 형식) 앞부분의 국가명만 잘라내 국가 필터가
+           계속 정확히 동작하게 하고, 나머지는 지역으로 저장한다 — 표에는 다시 이어붙여 시트와 동일하게 보여준다.
+           국가 칸이 비어 있으면 예전처럼 무조건 '중국'으로 채우지 않고 빈 값 그대로 둔다(9월 이후 방한(한국)·
+           대만·홍콩 출장까지 전부 '중국'으로 잘못 표시되던 원인이었음) */
+        const ctryRaw=String(cC>=0?r[cC]||'':'').trim();
+        const ctryHit=['중국','대만','홍콩','한국'].find(c=>ctryRaw.startsWith(c));
         out.push({name:String(cNm>=0?r[cNm]||'':'').trim(),start:sd,end:g2date(cE>=0?r[cE]:'')||sd,mgr:nm,with:String(cCo>=0?r[cCo]||'':'').trim(),
-          /* 국가 칸이 비어 있으면 무조건 '중국'으로 채워버리던 기본값을 제거 — 9월 이후 방한(한국) ·
-             대만·홍콩 출장까지 전부 '중국'으로 잘못 표시되는 원인이었음. 시트 값이 없으면 빈 값 그대로 둔다 */
-          country:String(cC>=0?r[cC]||'':'').trim(),city:String(cR>=0?r[cR]||'':'').trim(),
+          country:cR>=0?ctryRaw:(ctryHit||ctryRaw),
+          city:cR>=0?String(r[cR]||'').trim():(ctryHit?ctryRaw.slice(ctryHit.length):''),
           cat:String(cG>=0?r[cG]||'':'').trim(),visit:String(cV>=0?r[cV]||'':'').trim(),
           purpose:String(cP>=0?r[cP]||'':'').trim(),big:String(cB>=0?r[cB]||'':'').trim(),
           status:(function(){const v=normStatus(cSt>=0?r[cSt]:'')||String(cSt>=0?r[cSt]||'':'').trim();
@@ -10923,11 +10932,16 @@ loadSPERF();
   try{saveSPHIST();}catch(e){}
 })();
 try{mergeWkIntoTasks();}catch(e){}
-try{if(window.innerWidth<=820)document.body.classList.add('rail-open');}catch(e){}
+/* 예전엔 여기서 모바일이면 메뉴(rail)를 강제로 열어둔 채 시작했는데, 이유아 팀장 요청으로 제거 —
+   모바일에서는 처음엔 메뉴가 접혀 있고 ☰ 버튼을 눌러야 열리는 것이 맞는 동작이다.
+   (아래 rail-open 강제 추가 줄은 삭제함 — toggleRail()로 사용자가 직접 열 때만 열리게 둔다) */
 /* 예전엔 여기서 TAB='mreport'(주간과제·최신 업로드 주차)로 다시 덮어써서, 위쪽(3165행 부근)에서 이미
    정해둔 "첫 화면 = 팀종합현황(home)" 설정이 매번 조용히 무시되고 있었다 · 게다가 그 최신 업로드 주차 기준이
    「주간업무」(WKREPORT) 동기화 현황에 좌우돼, 정작 오늘 날짜의 ISO 주차보다 뒤처진 주(예: 36주차인데 35주차)가
-   첫 화면에 그대로 노출되는 원인이었다 · 첫 화면은 위에서 정한 팀종합현황(오늘 기준 정확한 월/주차) 그대로 둔다 */
+   첫 화면에 그대로 노출되는 원인이었다 · PC 첫 화면은 팀종합현황(오늘 기준 정확한 월/주차)을 그대로 두되,
+   모바일(폭 820px 이하)에서는 이유아 팀장 요청으로 주간과제(이번 주, curWeekMonth·gotoThisWeek 기준 —
+   위 버그를 일으켰던 gotoLastUpWeek()이 아니라 이미 고쳐진 최신 로직 사용)를 첫 화면으로 보여준다 */
+try{if(window.innerWidth<=820){TAB='mreport';MRTAB='week';gotoThisWeek();}}catch(e){}
 render();
 try{mileFixDates();}catch(e){}
 setTimeout(()=>{publicSyncMaster(true).catch(()=>{});},50); /* 로그인·게스트 구분 없이 구글시트가 공개돼 있으면 조용히 최신 데이터로 맞춘다 */
