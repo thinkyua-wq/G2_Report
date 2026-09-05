@@ -2451,7 +2451,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M278</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M279</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -10111,11 +10111,16 @@ async function doSheetPullById(id,silent){
 }
 /* ═══ 마스터파일 연동 (2026년도_G2중화팀_업무보고_마스터파일) — 월간/주간 엄격 분리 ═══ */
 const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':'kim','탁종민':'tak','장민훈':'jang'};
-/* 시트 담당자 열에 "이유아 팀장"처럼 직급이 붙어 있어도 매칭되게 직급을 뗀 이름으로도 한 번 더 찾는다.
-   (원래 「지시」 탭 동기화에서만 이렇게 하고 있었는데, 「주간업무」·「월말보고」 탭은 정확히 이름만
-   있을 때만 매칭되던 불일치가 있어 통일 — 2026-09-05, "구글시트에 5개 넣었는데 3개만 반영" 조사) */
+/* 시트 담당자 열에 "이유아 팀장"·"이유아 팀장님"·"이유아님"처럼 직급·존칭이 붙어 있어도 매칭되게
+   직급·존칭을 뗀 이름으로도 한 번 더 찾는다. (원래 「지시」 탭 동기화에서만 이렇게 하고 있었는데,
+   「주간업무」·「월말보고」 탭은 정확히 이름만 있을 때만 매칭되던 불일치가 있어 통일 — 2026-09-05,
+   "구글시트에 5개 넣었는데 3개만 반영" 조사). "님"과 직급을 각각 떼어봐서(둘 다 있어도·하나만
+   있어도·둘 다 없어도) 매칭을 시도 — 팀원별로 표기 방식이 달라 일부만 반영되던 문제 보강. */
 function nm2id(raw){const s=String(raw||'').trim();if(!s)return null;
-  return NAME2ID[s.replace(/\s*(팀장|부팀장|본부장|부사장|이사|부장|차장|과장|대리|사원)$/,'').trim()]||NAME2ID[s]||null;}
+  if(NAME2ID[s])return NAME2ID[s];
+  let t=s.replace(/님$/,'').trim();
+  t=t.replace(/\s*(팀장|부팀장|본부장|부사장|사장|이사|부장|차장|과장|대리|사원|실장|책임|매니저|주임|연구원|팀원)$/,'').trim();
+  return NAME2ID[t]||null;}
 function g2num(v){if(v==null)return null;const t=String(v).replace(/[,\s]/g,'');if(t===''||t==='-'||t==='—'||t==='–')return null;const n=parseFloat(t);return isNaN(n)?null:n;}
 /* 구글시트 진행율(%) 열이 "퍼센트 서식" 셀이면 XLSX가 0.93처럼 소수(비율)로 내려준다(표시상 93%로 보여도 실제값은 0.93).
    문자열로 "93%"·"93"을 직접 입력한 값과 섞여 들어오므로, 0~1 사이 소수만 ×100 해 통일된 "정수%" 문자열로 반환한다. */
@@ -11016,7 +11021,25 @@ function mergeWeeklyTasks(force){
   Object.keys(WKREPORT).forEach(wkk=>{
     const loc=isoIdx(wkk); if(!loc)return;
     (WKREPORT[wkk]||[]).forEach(r=>{
-      let t=TASKS.find(x=>x.mgr===r.m&&(norm(x.name)===norm(r.t)||norm(x.name).includes(norm(r.t))||norm(r.t).includes(norm(x.name))));
+      /* 근본원인 수정(2026-09-05, "팀원별로 일부가 안 들어오거나 안 맞아"): 기존엔 이름이 서로
+         "부분포함"만 되면(예: "화남본부 활성화"가 "화남본부 활성화 및 신규고객 개발"에 포함) 같은
+         과제로 취급해 병합했다. 그런데 실제로는 담당자가 그 주에 새로 추가한, 진짜 다른 과제인
+         경우가 있어 — 그러면 새 과제가 "안 들어오고"(기존 과제에 흡수됨) 기존 과제 값이 그 새
+         행 값으로 "안 맞게"(엉뚱하게 덮어써짐) 바뀌는 두 증상이 동시에 난다. 이제는 이름이 정확히
+         같을 때만 매칭하고, 부분포함은 두 이름의 길이 차이가 크지 않을 때(짧은 쪽이 긴 쪽의 80%
+         이상 · 최소 4자 이상)만 "같은 과제의 사소한 표기 차이"로 보고 매칭한다. */
+      const nrt=norm(r.t);
+      let t=TASKS.find(x=>x.mgr===r.m&&norm(x.name)===nrt);
+      if(!t&&nrt.length>=4){
+        t=TASKS.find(x=>{
+          if(x.mgr!==r.m)return false;
+          const nx=norm(x.name);
+          if(nx.length<4)return false;
+          const shorter=Math.min(nrt.length,nx.length),longer=Math.max(nrt.length,nx.length);
+          if(shorter/longer<0.8)return false;
+          return nx.includes(nrt)||nrt.includes(nx);
+        });
+      }
       if(!t){
         t={mgr:r.m,country:(r.c||'중국'),name:r.t,
            start:(/^\d\d-\d\d$/.test(r.st||'')?('2026-'+r.st):(r.st||'2026-0'+Math.min(9,loc.m)+'-01')),
