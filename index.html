@@ -282,6 +282,7 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .tm-r:not(.open) .tm-f{padding-top:0;padding-bottom:8px}
 /* 주간업무현황 표·타일 직사각형 */
 body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable th,body.vw-rr .ptable td,body.vw-rr .ptable-wrap,body.vw-rr .om-tile,body.vw-rr .omc,body.vw-rr .kpi,body.vw-rr .ov-tbl,body.vw-rr .ov-card,body.vw-rr .pcol,body.vw-rr .seccard,body.vw-rr .card,body.vw-rr .om-tiles>*{border-radius:0!important}
+.rr.rr-solo{grid-template-columns:minmax(0,1fr)} /* 주간과제: 담당자 카드 한 줄에 하나씩(2026-09-05) */
 .rr.rr2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .rr.rr2.rr1{grid-template-columns:minmax(0,1fr)}
 /* 1인 보기: 주요활동을 오른쪽으로 */
@@ -313,6 +314,9 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .pmile .pmc:hover{box-shadow:var(--sh2)}
 .pmile .pmc b{color:var(--ink2);font-weight:700}
 .pmile .pmc.more{border-left-color:var(--faint);color:var(--dim);font-weight:700}
+
+/* 담당자별 카드(주간과제) — 기존 .pcol 카드·rr 그리드 그대로 사용(2026-09-05) */
+.area-chip{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px;color:#fff;white-space:nowrap;display:inline-block}
 
 /* task card */
 .card{background:var(--sf);border:1px solid var(--ln2);border-radius:var(--rds);padding:11px 12px;transition:.14s;cursor:pointer;position:relative}
@@ -2447,7 +2451,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M267</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M273</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2549,14 +2553,15 @@ function todayWeekIdx(){
 }
 let WEEKS=buildWeeks(7);
 const MGRS=[
-  {id:'lee', name:'이유아', title:'팀장', region:'팀장 · 영업확대 · PM(임플·레이저)', color:'#1e3a8a', ini:'이', empty:true},
-  {id:'seo', name:'서혜민', title:'차장', region:'전략 · 영업확대 · 법인관리', color:'#c0392b', ini:'서'},
-  {id:'tak', name:'탁종민', title:'차장', region:'교육 · 마케팅 · PM(디지털)', color:'#5b8a6e', ini:'탁'},
-  {id:'yu',  name:'유훈종', title:'차장', region:'영업(대리점) · 법인관리', color:'#0d9488', ini:'유'},
-  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김'}
+  {id:'lee', name:'이유아', title:'팀장', region:'팀장 · 영업확대 · PM(임플·레이저)', color:'#1e3a8a', ini:'이', empty:true, area:'중국'},
+  {id:'seo', name:'서혜민', title:'차장', region:'전략 · 영업확대 · 법인관리', color:'#c0392b', ini:'서', area:'중국'},
+  {id:'tak', name:'탁종민', title:'차장', region:'교육 · 마케팅 · PM(디지털)', color:'#5b8a6e', ini:'탁', area:'중국'},
+  {id:'yu',  name:'유훈종', title:'차장', region:'영업(대리점) · 법인관리', color:'#0d9488', ini:'유', area:'대만·홍콩'},
+  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김', area:'중국'},
+  {id:'jang', name:'장민훈', title:'이사', region:'대만법인장 · 재무·인허가', color:'#7c5cbf', ini:'장', area:'대만'}
 ];
-/* 표시 제외 담당자 (장민훈 이사 · 대만법인장) */
-const MGR_HIDE=['jang'];
+/* 2026-09-05: 장민훈 이사(대만법인장)를 팀 화면에 다시 노출 — 더 이상 아무도 숨기지 않음 */
+const MGR_HIDE=[];
 /* 지시 업무(ASSIGN) 담당자 선택란 전용 추가 인원 · 팀 과제·실적 화면(mgrsOrdered 등)에는 노출되지 않음 */
 const ASSIGN_EXTRA_MGRS=[{id:'jung', name:'정대영', title:'부사장', region:'경영지원', color:'#6b4c9a', ini:'정'}];
 /* ===== 월간 성과/실행현황 (G2중화 월보고) · PPTX·구글시트 연동 데이터 2026-08 ===== */
@@ -2917,7 +2922,7 @@ function perfSeries(metKey,bumon){
 }
 
 /* ============ STATE / HELPERS ============ */
-let W=2, TAB='mreport', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
+let W=2, TAB='mreport', CALGRP='mgr', CALSUB='mile', PERFSUB='kpi', PERIOD='week', MONTH=7, HIDEDONE=true, MGRSEL=[], KANSUB='sched', RRGROUP='mgr', CATSEL=[], PRIOSEL=[], AREASEL=[], KANMGRSEL=[], KANMONTHS=[], KANWEEK=false;
 let SUNIT='month', SMKT='', SY=2026, SI=7, SMATK='newc';  // 담당자별 실적: 집계단위·시장·연·기간index·매트릭스지표
 let YEAR=2026;  // 상단 기간: 연도
 let PMET='법인매출', PBUMON='전체', PMON=6;
@@ -3196,6 +3201,10 @@ function pickAt(t){
     const c=wkAt(t,W); const carried=false;   // 이월 없음: 해당 주차에 값이 없으면 표시 안 함(비움)
     if(!c)return null;
     const due=(c.due)||t.due;
+    if(isDate(due)){ // 기한이 지난 주차(해당 월·주차)까지만 노출, 그 이후 주차부터는 자동 숨김(2026-09-05)
+      const dueIso=isoWeekNum(due), curIso=(WEEKS[W]&&WEEKS[W].iso)||0;
+      if(dueIso&&curIso&&dueIso<curIso)return null;
+    }
     return {p:c.p,sx:c.sx||'',note:c.note,label:c.label||t.name,due,risk:(c.p<100&&isDate(due)&&new Date(due)<TODAY),prev:(W>0&&wkAt(t,W-1))?wkAt(t,W-1).p:null,carried};}
   // 월/연 : 최신 기록값
   let idx=-1,c=null; for(let k=WEEKS.length-1;k>=0;k--){const cc=wkAt(t,k);if(cc){idx=k;c=cc;break;}}
@@ -4017,8 +4026,6 @@ const KPI_SEED=[
  ['제품PM','이유아','제품PM - AXA','중국','일정','9/30','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - B/L현지생산','중국','일정','28/03/31','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - B/L중국인허가','중국','일정','28/02/28',''],
- ['제품PM','이유아','제품 경쟁력 강화','중국','회수','월1회',''],
- ['팀업무','이유아','주간회의','중국','회수','월4회',''],
  ['영업','서혜민','부진상권 M/S 개선(↑) 윈난','중국','%','5%',''],
  ['영업','서혜민','DSO 진입점','중국','점','250','해당월 최종실적'],
  ['영업','서혜민','DSO 판매수량','중국','만대','60','해당월 최종실적'],
@@ -4026,6 +4033,7 @@ const KPI_SEED=[
 ].map(a=>({cat:a[0],owner:a[1],item:a[2],country:a[3],unit:a[4],y25:'',yt:a[5],method:a[6]||'',ya:null,mt:Array(12).fill(null),ma:Array(12).fill(null)}));
 let KPIDATA=[]; try{const s=localStorage.getItem('wr_kpi_v4');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length&&o[0].owner!==undefined)KPIDATA=o;}}catch(e){}
 if(!KPIDATA.length)KPIDATA=JSON.parse(JSON.stringify(KPI_SEED));
+KPIDATA=KPIDATA.filter(r=>!(r.item==='제품 경쟁력 강화'||r.item==='주간회의')); /* 회의체 항목=KPI 아님(2026-09-05 삭제 요청) */
 function saveKPI(){try{localStorage.setItem('wr_kpi_v4',JSON.stringify(KPIDATA));}catch(e){}}
 let KPIVIEW='cur'; try{KPIVIEW=localStorage.getItem('wr_kpiview')||'cur';}catch(e){}
 function setKpiView(v){KPIVIEW=v;try{localStorage.setItem('wr_kpiview',v);}catch(e){}render();}
@@ -4097,15 +4105,21 @@ function kpiAll(){return KPIDATA.concat(kpiDealRows());}
 function kpiRowsFor(name){return kpiAll().filter(r=>String(r.owner||'').split(',').map(x=>x.trim()).includes(name));}
 /* ── 담당자 카드 「내 KPI」 스트립 ── */
 function kpiMatch(item,link){const n=x=>String(x||'').replace(/\s+/g,'').toLowerCase();const a=n(item),b=n(link);return !!a&&!!b&&(a===b||a.includes(b)||b.includes(a));}
-let KSTRIP_OPEN=false; try{KSTRIP_OPEN=localStorage.getItem('wr_kstrip')==='1';}catch(e){}
-function toggleKStrip(){KSTRIP_OPEN=!KSTRIP_OPEN;try{localStorage.setItem('wr_kstrip',KSTRIP_OPEN?'1':'0');}catch(e){}render();}
-function kpiStripFor(name,links){
+function kpiRowsForLinked(name,links){
   let rows=kpiRowsFor(name);
   if(links&&links.length){const lk=rows.filter(r=>links.some(l=>kpiMatch(r.item,l)));if(lk.length)rows=lk;}
+  return rows;
+}
+let KSTRIP_OPEN=false; try{KSTRIP_OPEN=localStorage.getItem('wr_kstrip')==='1';}catch(e){}
+function toggleKStrip(){KSTRIP_OPEN=!KSTRIP_OPEN;try{localStorage.setItem('wr_kstrip',KSTRIP_OPEN?'1':'0');}catch(e){}render();}
+function kpiStripFor(name,links,forceOpen){
+  let rows=kpiRowsForLinked(name,links);
   if(!rows.length)return '';
   const mi=MONTH-1;
-  const open=!!KSTRIP_OPEN;
-  let h=`<div class="kstrip${open?'':' kstrip-min'}"><div class="kstrip-h" onclick="toggleKStrip()" style="cursor:pointer" title="누르면 KPI 항목 ${open?'숨김':'표시'}"><i></i>내 KPI · ${MONTH}월 <span>· ${rows.length}개 항목 · 마스터 「KPI지표」 연동 ${rows.some(r=>r._auto)?'· 수출입=거래처실적 자동':''}</span><b class="ks-arr">${open?'▾ 숨기기':'▸ 펼치기'}</b></div>`;
+  const forced=(forceOpen!=null);
+  const open=forced?!!forceOpen:!!KSTRIP_OPEN;
+  const hAttrs=forced?'':` onclick="toggleKStrip()" style="cursor:pointer" title="누르면 KPI 항목 ${open?'숨김':'표시'}"`;
+  let h=`<div class="kstrip${open?'':' kstrip-min'}"><div class="kstrip-h"${hAttrs}><i></i>내 KPI · ${MONTH}월 <span>· ${rows.length}개 항목 · 마스터 「KPI지표」 연동 ${rows.some(r=>r._auto)?'· 수출입=거래처실적 자동':''}</span>${forced?'':`<b class="ks-arr">${open?'▾ 숨기기':'▸ 펼치기'}</b>`}</div>`;
   if(!open)return h+'</div>';
   h+=`<table class="kt"><tr><th style="text-align:left">KPI 항목</th><th>단위</th><th>${MONTH}월 목표</th><th>${MONTH}월 실적</th><th>${MONTH}월 달성율</th><th>누적 실적</th><th>26년목표</th><th>연간 달성율</th></tr>`;
   rows.forEach(r=>{
@@ -5297,7 +5311,7 @@ function renderOverview(){
     else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U 포함 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
-  if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'); /* 팀장 화면: 과제진행율은 팀업무 메뉴로 이동 (팀원은 팀업무 접근이 없어 여기 유지) */
+  if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'&&k!=='sched'); /* 팀장 화면: 과제진행율·업무일정은 팀업무 메뉴(통합 옆)로 이동 (팀원·공용계정은 팀업무 접근이 없어 여기 유지) */
   let CT=isMR?MRTAB:OVTAB;
   if(CT==='report')CT='month';
   if(!OVTABS.some(([k])=>k===CT))CT=(OVTABS[0]||['main'])[0];
@@ -6361,12 +6375,14 @@ function viewRR(rows){
   if(RRTAB==='table'){RRTAB='work';}
   if(RRTAB==='kanban')return html+viewKanban(rows);
   if(RRTAB==='report'){RRTAB='work';}
-  const grpSel=`<span class="pl">보기</span><select class="per-dd" onchange="setRRgroup(this.value)">`+[['mgr','이름별'],['cat','R&R별'],['prio','중요도별']].map(([k,l])=>`<option value="${k}" ${RRGROUP===k?'selected':''}>${l}</option>`).join('')+'</select>';
+  const grpSel=`<span class="pl">보기</span><select class="per-dd" onchange="setRRgroup(this.value)">`+[['mgr','이름별'],['area','지역별'],['cat','R&R별'],['prio','중요도별']].map(([k,l])=>`<option value="${k}" ${RRGROUP===k?'selected':''}>${l}</option>`).join('')+'</select>';
   let rrtabs='';
   if(RRGROUP==='cat'){const order=[...new Set([].concat(...Object.values(MGRCATS)))];const present=order.filter(c=>rows.some(r=>(r.cat||'')===c));const hasMisc=rows.some(r=>!r.cat);
     rrtabs=`<button class="${CATSEL.length?'':'on'}" onclick="toggleCatTab('')">전체</button>`+present.map(c=>`<button class="${CATSEL.includes(c)?'on':''}" onclick="toggleCatTab('${esc(c)}')">${esc(c)}</button>`).join('')+(hasMisc?`<button class="${CATSEL.includes('__misc')?'on':''}" onclick="toggleCatTab('__misc')">미분류</button>`:'');
   }else if(RRGROUP==='prio'){const pk_present=['상','중','하'].filter(pk=>rows.some(r=>prioKo(r.prio)===pk));
     rrtabs=`<button class="${PRIOSEL.length?'':'on'}" onclick="togglePrioTab('')">전체</button>`+pk_present.map(pk=>`<button class="${PRIOSEL.includes(pk)?'on':''}" onclick="togglePrioTab('${pk}')">${pk} 중요도</button>`).join('');
+  }else if(RRGROUP==='area'){const ar_present=AREA_ORDER.filter(a=>rows.some(r=>rowArea(r)===a));
+    rrtabs=`<button class="${AREASEL.length?'':'on'}" onclick="toggleAreaTab('')">전체</button>`+ar_present.map(a=>`<button class="${AREASEL.includes(a)?'on':''}" onclick="toggleAreaTab('${esc(a)}')">${esc(a)}</button>`).join('');
   }else{rrtabs=`<button class="${MGRSEL.length?'':'on'}" onclick="toggleMgrTab('')">전체</button>`+mgrsOrdered().map(m=>{const n=rows.filter(r=>r.mgr===m.id).length;return `<button class="${MGRSEL.includes(m.id)?'on':''}" onclick="toggleMgrTab('${m.id}')"><span class="mtav" style="background:${m.color}">${esc(m.ini)}</span>${esc(m.name)}${n?`<span class="mtn">${n}</span>`:''}</button>`;}).join('');}
   html+=`<div class="rr-ctrlbar">${grpSel}<div class="nametabs inline">${rrtabs}</div></div>`;
   if(PERIOD==='week'&&!rows.length)return html+weekEmptyNote();
@@ -6385,7 +6401,13 @@ function viewRR(rows){
     html+='<div class="rr rr2">'+['상','중','하'].filter(showP).map(pk=>{const rs=rows.filter(r=>prioKo(r.prio)===pk);return rs.length?rrGroupCol(pk+' 중요도',meta[pk],'중요도',rs):'';}).join('')+'</div>';
     return html;
   }
-  html+=`<div class="rr rr2${MGRSEL.length===1?' rr1':''}">`;
+  if(RRGROUP==='area'){
+    const showA=a=>!AREASEL.length||AREASEL.includes(a);
+    html+='<div class="rr rr2">'+AREA_ORDER.filter(showA).map(a=>{const rs=rows.filter(r=>rowArea(r)===a);return rs.length?rrGroupCol(a,AREACOLOR[a]||'#6b7280','지역',rs):'';}).join('')+'</div>';
+    return html;
+  }
+  /* 담당자별 카드(네모칸) — 기존 「통합」·지역별 보기와 동일한 .pcol 카드 그리드 재사용(2026-09-05) · 내 KPI 표는 접힌 채로, 과제는 기존 cardFold 상세 형식 그대로 */
+  html+='<div class="rr rr-solo">';
   mgrsOrdered().forEach(m=>{
     if(MGRSEL.length){if(!MGRSEL.includes(m.id))return;}else if(fm&&m.id!==fm)return;
     const all=rows.filter(r=>r.mgr===m.id);
@@ -6395,15 +6417,16 @@ function viewRR(rows){
     const avg=Math.round(all.reduce((s,r)=>s+r.p,0)/all.length);
     const shown=HIDEDONE?all.filter(r=>r.p<100):all;
     const body=shown.length?shown.map(r=>cardFold(r)).join(''):'';
-    const tag=catsOf(m.id).slice(0,4).join(' · ');
+    const lks=[...new Set(all.map(r=>{const c=wkAt(r.t,W);return (c&&c.kl)||r.t.kl||'';}).filter(Boolean))];
     html+=`<div class="pcol" draggable="true" ondragstart="mgrDragStart(event,'${m.id}')" ondragover="mgrDragOver(event)" ondragleave="mgrDragLeave(event)" ondrop="mgrDrop(event,'${m.id}')">
       <div class="pcol-h"><span class="drag-h" title="드래그해서 순서 변경">⠿</span><div class="av" style="background:${m.color}">${m.ini}</div>
-        <div style="min-width:0"><div class="nm">${m.name}<span>${m.title}</span></div><div class="meta">${esc(tag)}</div></div>
-        <div class="pavg"><div class="n" style="color:${m.color}">${avg}%</div><div class="t">과제 ${all.length} · 완료 ${doneN}${riskN?` · <span style="color:var(--risk)">주의 ${riskN}</span>`:''}</div></div></div>
+        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div>
+          <div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}${m.area?` · <span class="area-chip" style="background:${AREACOLOR[m.area]||'#6b7280'}">${esc(m.area)}</span>`:''}</div></div>
+        <div class="pavg"><div class="n" style="color:${m.color}">${avg}%</div><div class="t">과제 ${all.length} · 완료 ${doneN}${riskN?` · 주의 ${riskN}`:''}</div></div></div>
       ${mgrAssignStrip(m.id)}
-      ${(()=>{const lks=[...new Set(all.map(r=>{const c=wkAt(r.t,W);return (c&&c.kl)||r.t.kl||'';}).filter(Boolean))];return kpiStripFor(m.name,lks);})()}
+      ${kpiStripFor(m.name,lks)}
       <div class="pcol-body">${body}${mfBlock(m)}</div>
-      ${MGRSEL.length===1?actPanel(m):''}</div>`;
+    </div>`;
   });
   html+='</div>';
   return html;
@@ -6550,7 +6573,7 @@ function renderTaskMerge(rows){
 }
 let MGRORDER=[]; try{const s=localStorage.getItem('wr_mgrorder_v2');if(s)MGRORDER=JSON.parse(s)||[];}catch(e){}
 function mgrsOrdered(){
-  const base=MGRS.filter(m=>m.id!=='jang');
+  const base=MGRS.slice();
   if(!MGRORDER.length)return base;
   const map={};base.forEach(m=>map[m.id]=m);
   const out=[];MGRORDER.forEach(id=>{if(map[id]){out.push(map[id]);delete map[id];}});
@@ -7600,7 +7623,7 @@ function toggleBigoEdit(i){MILEBIGO=(MILEBIGO===i?null:i);render();}
 function mileOwners(x){return Array.isArray(x.owners)?x.owners:(x.owners?String(x.owners).split(',').map(s=>s.trim()).filter(Boolean):[]);}
 function toggleMileOwnMenu(i){if(RO())return;MILEOWN=(MILEOWN===i?null:i);render();}
 function toggleMileOwner(i,name){const x=MILESTONES[i];if(!x)return;const arr=mileOwners(x);const k=arr.indexOf(name);if(k>=0)arr.splice(k,1);else arr.push(name);x.owners=arr;saveMile();render();}
-function mileOwnerOpts(){return MGRS.filter(m=>m.id!=='jang').map(m=>({name:m.name,label:m.name+' '+m.title})).concat([{name:'중국법인',label:'중국법인'}]);}
+function mileOwnerOpts(){return MGRS.map(m=>({name:m.name,label:m.name+' '+m.title})).concat([{name:'중국법인',label:'중국법인'}]);}
 /* 담당자 후보 = 이유아·서혜민·유훈종·김유진·탁종민 + 중국법인 */
 function ownerCellMile(x,i){const own=mileOwners(x);const OPT=mileOwnerOpts();
   const av=n=>{const g=MGRS.find(m=>m.name===n);return g?`<span class="mf-av" style="background:${g.color}">${esc(g.ini)}</span>`:`<span class="mf-av" style="background:#8a99a4">${esc(String(n).slice(0,1))}</span>`;};
@@ -7840,7 +7863,7 @@ function fMile(x){return (!CALKIND||CALKIND==='mile')&&(!MILECTRY||(x.country||'
 function fTrip(t){const g=MGRS.find(m=>m.name===t.mgr);return (!CALKIND||CALKIND==='trip')&&(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(g&&g.id===MILEMGR))&&calMgrPass(g?g.id:'');}
 function fMeet(){return TAB==='meetrep'||(!CALKIND||CALKIND==='meet');} /* G2업무일정관리는 회의뿐이라 구분 필터의 영향을 받지 않음 */
 function calFilterBarX(){
-  const mgrIds=MGRS.filter(m=>m.id!=='jang').map(m=>m.id);
+  const mgrIds=MGRS.map(m=>m.id);
   const kinds=[['','구분 전체'],['mile','행사'],['trip','출장'],['meet','회의']];
   return '<select class="calx-dd" title="구분" onchange="setCalKind(this.value)">'
     +kinds.map(([v,l])=>`<option value="${v}" ${CALKIND===v?'selected':''}>${l}</option>`).join('')+'</select>'
@@ -8132,7 +8155,15 @@ function personTabs(sel,fn,counts){const isOn=id=>Array.isArray(sel)?sel.include
 function toggleMgrTab(id){if(id===''){MGRSEL=[];}else{MGRSEL=(MGRSEL.length===1&&MGRSEL[0]===id)?[]:[id];}const el=document.getElementById('fMgr');if(el)el.value='';render();}
 function toggleCatTab(c){if(c===''){CATSEL=[];}else{const i=CATSEL.indexOf(c);if(i>=0)CATSEL.splice(i,1);else CATSEL.push(c);}render();}
 function togglePrioTab(p){if(p===''){PRIOSEL=[];}else{const i=PRIOSEL.indexOf(p);if(i>=0)PRIOSEL.splice(i,1);else PRIOSEL.push(p);}render();}
-
+/* 담당자의 기본 지역(국가) — 과제 행에 country가 없을 때만 쓰는 폴백 */
+function areaOf(mgrId){return (mgrById(mgrId)||{}).area||'중국';}
+/* 「업무현황」 보기를 지역별로 묶을 때는 담당자 1명 = 1지역이 아니라, 과제 행 자체의 country(중국/대만/홍콩/대만·홍콩)로 나눈다.
+   그래야 유훈종처럼 대만·홍콩을 함께 맡는 담당자의 업무도 실제 업무 내용대로 대만/홍콩/대만·홍콩에 각각 갈리고,
+   장민훈 이사의 대만 업무도 같은 '대만' 그룹에 함께 보인다(2026-09-05) */
+function rowArea(r){return r.country||areaOf(r.mgr);}
+const AREA_ORDER=['중국','대만·홍콩','대만','홍콩'];
+const AREACOLOR={'중국':'#c0392b','대만·홍콩':'#7a5cc0','대만':'#2f8f9d','홍콩':'#d99429'};
+function toggleAreaTab(a){if(a===''){AREASEL=[];}else{const i=AREASEL.indexOf(a);if(i>=0)AREASEL.splice(i,1);else AREASEL.push(a);}render();}
 /* ---- Detail drawer ---- */
 function openDetail(ti){
   const t=TASKS[ti], m=mgrById(t.mgr);
@@ -8743,10 +8774,10 @@ function delPRRRow(i){PRR.splice(i,1);savePRR();render();}
 function resetPRR(){PRR=PRR_SEED.map(x=>({...x}));savePRR();render();toast('담당자 R&R을 원본(관리표) 기준으로 되돌렸습니다');}
 function renderPersonRR(){
   const nm=id=>{const m=MGRS.find(x=>x.id===id);return m?m.name:id;};
-  const mgrOpt=(sel)=>MGRS.filter(m=>m.id!=='jang').map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)}</option>`).join('');
+  const mgrOpt=(sel)=>MGRS.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)}</option>`).join('');
   let h=`<div class="ptable-wrap" style="margin-top:20px"><div class="pm-head" style="margin-bottom:6px"><h3 style="font-size:15px">담당자 R&R · 업무리스트</h3><span class="unit">인원별 업무·프로젝트 · 담당영역·기간·목표·주요 업무 · 셀 클릭해 직접 수정(자동저장)</span><button class="mile-add" onclick="addPRRRow()">＋ 업무 추가</button><button class="mile-add" style="margin-left:6px" onclick="resetPRR()">원본으로 되돌리기</button></div>`;
   h+=`<div class="nametabs" style="margin-bottom:10px"><button class="${PRRSEL===''?'on':''}" onclick="setPRRSel('')">전체</button>`
-    +MGRS.filter(m=>m.id!=='jang').map(m=>`<button class="${PRRSEL===m.id?'on':''}" onclick="setPRRSel('${m.id}')">${esc(m.name)}</button>`).join('')+'</div>';
+    +MGRS.map(m=>`<button class="${PRRSEL===m.id?'on':''}" onclick="setPRRSel('${m.id}')">${esc(m.name)}</button>`).join('')+'</div>';
   h+=`<div style="overflow-x:auto"><table class="ptable rrtbl prrtbl"><thead><tr><th style="width:8%">담당자</th><th style="width:9%;text-align:left">업무 구분</th><th style="width:16%;text-align:left">업무·프로젝트</th><th style="width:8%;text-align:left">담당영역</th><th style="width:8%;text-align:center">기간</th><th style="width:22%;text-align:left">목표</th><th style="text-align:left">주요 업무</th><th style="width:30px"></th></tr></thead><tbody>`;
   let shown=0;
   PRR.forEach((r,i)=>{
@@ -8932,8 +8963,8 @@ function renderMeetRep(){ /* 회의일정보고 = 캘린더 + 회의록(연동) 
 function viewGoals(){
   let html=`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합']];
-  if(GOALSUB==='meet'||GOALSUB==='report'||GOALSUB==='sched')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정=업무현황 끝 */
+  {let gtabs=[['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합'],['sched','업무일정']];
+  if(GOALSUB==='meet'||GOALSUB==='report')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정은 팀업무(통합 옆)로 이동(2026-09-05) */
   html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
   if(GOALSUB==='kanban')return html+viewKanban(activeRows());
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
@@ -10045,7 +10076,7 @@ async function doSheetPullById(id,silent){
   }catch(e){if(!silent)toast('월보고 시트 불러오기 오류: '+((e&&e.message)||e));setSyncBadge('err');}
 }
 /* ═══ 마스터파일 연동 (2026년도_G2중화팀_업무보고_마스터파일) — 월간/주간 엄격 분리 ═══ */
-const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':'kim','탁종민':'tak'};
+const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':'kim','탁종민':'tak','장민훈':'jang'};
 function g2num(v){if(v==null)return null;const t=String(v).replace(/[,\s]/g,'');if(t===''||t==='-'||t==='—'||t==='–')return null;const n=parseFloat(t);return isNaN(n)?null:n;}
 /* 구글시트 진행율(%) 열이 "퍼센트 서식" 셀이면 XLSX가 0.93처럼 소수(비율)로 내려준다(표시상 93%로 보여도 실제값은 0.93).
    문자열로 "93%"·"93"을 직접 입력한 값과 섞여 들어오므로, 0~1 사이 소수만 ×100 해 통일된 "정수%" 문자열로 반환한다. */
