@@ -2444,7 +2444,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M265</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M266</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4970,7 +4970,7 @@ function mrMonthChart(label,scope){
   const line=lp.length>1?`<polyline points="${lp.join(' ')}" fill="none" stroke="#1e6f5c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:'';
   let lastData=null; for(let i=view.length-1;i>=0;i--){if(view[i].t!=null||view[i].a!=null){lastData=view[i];break;}}
   const cLast=lastIdx>=0?(view[lastIdx].c||0):0;
-  return `<div class="omc"><div class="omc-h">${esc(label)} 월별 목표대비실적 · 누적 <span>목표(회색)·실적(초록) 막대 + 누적선(우측축) · ${rangeLb}</span></div>
+  return `<div class="omc"><div class="omc-h" style="flex-direction:column;align-items:flex-start;gap:2px">${esc(label)} 월별 목표대비실적<span>누적 · 목표(회색)·실적(초록) 막대 + 누적선(우측축) · ${rangeLb}</span></div>
     <svg viewBox="0 0 ${W2} ${H}" style="width:100%;height:auto;display:block">${grid}${yl}${bars}${goal}${line}${dots}${xl}</svg>
     <div class="omc-b"><span>${lastData?`${lastData.lb} 목표 ${(lastData.t||0).toLocaleString('en-US')} · 실적 ${(lastData.a||0).toLocaleString('en-US')}`:'실적 입력 대기'} │ 누적 ${cLast.toLocaleString('en-US')} / 연간목표 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b></span></div></div>`;
 }
@@ -5321,14 +5321,23 @@ function renderOverview(){
     h+=renderTeamMonthCards(isMR);
   } else {
     if(TAB==='mreport'){
-      h+=secBox('mr_monthchart','본사 실적 · 월별 목표대비실적','단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
-        ()=>`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`);
-      {const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
-        const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
-        h+=secBox('mr_dealmonth',`${MONTH}월 거래처별 실적 요약`,dealSub,()=>mrDealTable());}
-      h+=secBox('mr_weekchart','본사 실적 · 주간 수출·수금',`단위 천불 USD · 기준 주차 ${ovWeekKey()} · 최근 주차 스냅샷`,
-        ()=>`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`);
-      h+=secBox('mr_dealweek',`${ovWeekKey()} 거래처별 실적 요약`,'',()=>ovDealTable());
+      /* 본사실적 4개 섹션(월별 목표대비실적·당월 거래처별 실적·주간 수출수금·주간 거래처별 실적)을
+         숨김/펼치기 토글 4묶음 대신 탭 1개로 통합(요청: "본사실적에서 4개의 섹션은 탭으로 수정").
+         탭 UI는 「중화팀 행사/출장일정」에서 쓰던 것과 동일한 .cltabs 서식을 그대로 재사용해 통일감 유지. */
+      const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
+      const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
+      const MRTABS=[['monthchart','본사 실적 · 월별 목표대비실적'],['dealmonth',`${MONTH}월 거래처별 실적 요약`],['weekchart','본사 실적 · 주간 수출·수금'],['dealweek',`${ovWeekKey()} 거래처별 실적 요약`]];
+      const MRSUB={monthchart:'단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
+        dealmonth:dealSub,weekchart:`단위 천불 USD · 기준 주차 ${ovWeekKey()} · 최근 주차 스냅샷`,dealweek:''};
+      h+='<div class="seccard" style="padding-top:10px"><div class="cltabs">'
+        +MRTABS.map(([k,l])=>`<button class="cltab${MRSECTAB===k?' on':''}" onclick="setMrSecTab('${k}')">${esc(l)}</button>`).join('')
+        +(MRSUB[MRSECTAB]?`<div class="cltab-act"><span class="cltab-sub">${esc(MRSUB[MRSECTAB])}</span></div>`:'')
+        +'</div><div class="cltab-b">'
+        +(MRSECTAB==='monthchart'?`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`
+          :MRSECTAB==='dealmonth'?mrDealTable()
+          :MRSECTAB==='weekchart'?`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`
+          :ovDealTable())
+        +'</div></div>';
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
       h+=ovMainTrendGrid();
@@ -7539,6 +7548,8 @@ function secBox(k,title,sub,bodyFn){
 }
 let CALLTAB='mile'; try{CALLTAB=localStorage.getItem('wr_calltab')||'mile';}catch(e){}
 function setCalLTab(t){CALLTAB=t;try{localStorage.setItem('wr_calltab',t);}catch(e){}render();}
+let MRSECTAB='monthchart'; try{MRSECTAB=localStorage.getItem('wr_mrsectab')||'monthchart';}catch(e){}
+function setMrSecTab(t){MRSECTAB=t;try{localStorage.setItem('wr_mrsectab',t);}catch(e){}render();}
 function mileMonBar(){
   const chip=m=>{const on=MILEMONS.includes(m);return `<button class="mile-add mini${on?' on':''}" style="${on?'background:var(--accent);color:#fff;border-color:var(--accent)':''}" onclick="setMileMon(${m})" title="더블클릭하면 이 달만 봅니다" ondblclick="setMileMonOnly(${m})">${m}월</button>`;};
   return `<div class="milefilt" style="flex-wrap:wrap;row-gap:6px;margin:10px 0 0"><span class="fl">월</span>`
@@ -10084,7 +10095,23 @@ function importG2Master(wb,scope){
       if(hHas(row,'거래처')||hHas(row,'담당자')||hHas(row,'일정명')||hHas(row,'출발일')||(hHas(row,'날짜')&&hHas(row,'제목'))||(hHas(row,'KPI항목')&&(hHas(row,'연간목표')||hHas(row,'26년목표')))){hi=i;break;}}
     if(hi<0)return;
     const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
-    const ci=name=>hdr.findIndex(h=>h.includes(name));
+    /* ★ 근본원인 수정(2026-09-05): 「출장일정」 등 헤더 위 안내문(배너)에 "담당자/국가/구분/상태는
+       드롭다운" 처럼 실제 열 이름 단어가 그대로 섞여 있는 경우, 공개(gviz) 동기화 경로에서는
+       그 안내문 칸이 헤더행과 같은 행으로 압축되어 내려오는 현상이 있어(구글 gviz 자체 특성),
+       기존 ci()가 단순 .includes()만 쓰면 "담당자"/"국가" 등이 그 안내문 칸(0번째, 훨씬 긴 문자열)
+       에서 먼저 매칭돼 실제 담당자·국가 열 대신 출발일(날짜) 값을 잘못 읽어오는 사고가 났었다
+       (예: 담당자·국가 칸에 날짜가 그대로 표시됨). 정확히 일치 → 길이가 비슷한(안내문처럼 훨씬 길지
+       않은) 부분일치 → 마지막 수단으로 기존 방식(순수 부분일치) 순으로 찾아, 실제 열 이름이 있으면
+       항상 그것을 먼저 쓰도록 수정. 기존에 의도적으로 쓰던 느슨한 부분일치(예: '목적'→'출장 목적·주요일정')
+       는 마지막 단계에서 그대로 유지되어 동작이 바뀌지 않는다. */
+    const ci=name=>{
+      const nm=String(name).replace(/\s/g,'');
+      let idx=hdr.findIndex(h=>h===nm);
+      if(idx>=0)return idx;
+      idx=hdr.findIndex(h=>h.includes(nm)&&h.length<=nm.length+6);
+      if(idx>=0)return idx;
+      return hdr.findIndex(h=>h.includes(nm));
+    };
     const has=name=>ci(name)>=0;
     const body=A.slice(hi+1);
     // ⓪-1 중화팀 행사(2026 중점시장활동): 월+일정명
