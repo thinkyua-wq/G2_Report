@@ -2451,7 +2451,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M279</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M280</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2474,6 +2474,7 @@ body,input,select,textarea,button,table{font-size:inherit}
       <div class="tbar-per" id="perbar"></div>
       <div class="tbar-data">
         <button class="tb-b prim" onclick="cloudLoadSheet()">📊 <span class="lb-full">구글시트 불러오기</span><span class="lb-ro">시트 새로고침</span></button>
+        <span id="pullWarnBadge" onclick="showPullWarn()" style="display:none;align-items:center;font-size:12.1px;font-weight:700;letter-spacing:.01em;padding:0 6px;color:#c0392b;cursor:pointer">⚠ 불러오기 확인 필요</span>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <span class="ro-badge">🔒 읽기 전용</span>
         <span id="syncBadge" style="display:none;align-items:center;font-size:12.1px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
@@ -10393,6 +10394,7 @@ function importG2Master(wb,scope){
       const cW=ci('주차')>=0?ci('주차'):0,cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
       const byW={};
       let lastW=null,skipWk=0,skipNm=0,skipT=0;
+      const skipNmSamples=[],skipWkSamples=[],skipTSamples=[]; /* 어떤 행이 왜 빠졌는지 실제 값을 보여주기 위한 표본 */
       /* 근본원인 조사(2026-09-05, "5개 넣었는데 3개만 반영"): 구글시트가 주차 열(A열)을 여러 행에
          걸쳐 병합해 쓰면, 구글시트 API는 병합범위의 첫 행에만 값을 주고 나머지 행은 빈칸으로 준다
          → 그 행들은 주차를 못 읽어 통째로 누락됐다. 담당자·핵심과제가 있는데 주차 칸만 비어 있으면
@@ -10404,7 +10406,14 @@ function importG2Master(wb,scope){
         if(!rawW&&!nm&&!t)return; /* 완전 빈 행(서식용 여백)은 집계·경고 대상에서 제외 */
         const w=rawW||((nm&&t)?lastW:null);
         if(rawW)lastW=rawW;
-        if(!w||!nm||!t){if(!w)skipWk++;else if(!nm)skipNm++;else skipT++;return;}
+        if(!w||!nm||!t){
+          /* 사유 우선순위: 담당자명이 있는데 매칭 실패한 경우가 가장 흔하고 고치기 쉬운 원인이라
+             먼저 표시한다(2026-09-05, "이름은 있는데 주차 인식불가로만 뜬다" 오분류 방지). */
+          if(!nm){skipNm++;if(skipNmSamples.length<5)skipNmSamples.push('『'+String(r[cN]||'(빈칸)').trim()+'』');}
+          else if(!w){skipWk++;if(skipWkSamples.length<5)skipWkSamples.push('『'+String(r[cN]||'').trim()+' / '+t+'』');}
+          else{skipT++;if(skipTSamples.length<5)skipTSamples.push('『'+String(r[cN]||'').trim()+'』(W'+w+')');}
+          return;
+        }
         let due=g2fulldate(r[cD]);
         let st0=(cSt>=0?g2fulldate(r[cSt]):'');
         (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:g2pct(r[cPr]),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
@@ -10413,7 +10422,24 @@ function importG2Master(wb,scope){
         saveWKREPORT();mergeWeeklyTasks(true);saveTasks();
         let msg='주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·');
         const skipped=skipWk+skipNm+skipT;
-        if(skipped){const rs=[];if(skipWk)rs.push('주차 인식불가 '+skipWk+'건');if(skipNm)rs.push('담당자명 불일치 '+skipNm+'건');if(skipT)rs.push('핵심과제 빈칸 '+skipT+'건');msg+=' · ⚠누락 '+skipped+'건('+rs.join(', ')+')';}
+        if(skipped){
+          const rs=[];if(skipWk)rs.push('주차 인식불가 '+skipWk+'건');if(skipNm)rs.push('담당자명 불일치 '+skipNm+'건');if(skipT)rs.push('핵심과제 빈칸 '+skipT+'건');
+          msg+=' · ⚠누락 '+skipped+'건('+rs.join(', ')+')';
+          /* 2026-09-05, "⚠누락 메시지가 안 보인다": 기존엔 이 문구가 2.2초짜리 토스트로만 잠깐 떴다가
+             사라져서 놓치기 쉬웠다. 이제는 「구글시트 불러오기」 버튼 옆에 계속 남는 배지로 저장해,
+             다시 열어봐도(새로고침해도) 어떤 행이 왜 빠졌는지 실제 값과 함께 확인할 수 있게 한다. */
+          const detailLines=[];
+          if(skipNmSamples.length)detailLines.push('▸ 담당자명 불일치('+skipNm+'건): '+skipNmSamples.join(', ')+(skipNm>skipNmSamples.length?' 외 '+(skipNm-skipNmSamples.length)+'건':'')+'\n   → 시트의 이 이름이 담당자 6명(이유아·서혜민·유훈종·김유진·탁종민·장민훈) 중 누구와도 매칭되지 않았습니다. 오타·다른 표기(예: 영문, 별명)가 없는지 확인하세요.');
+          if(skipWkSamples.length)detailLines.push('▸ 주차 인식불가('+skipWk+'건): '+skipWkSamples.join(', ')+(skipWk>skipWkSamples.length?' 외 '+(skipWk-skipWkSamples.length)+'건':'')+'\n   → 주차 칸과 바로 위 행 모두 주차값이 없습니다. 병합된 셀이면 병합 범위의 첫 행에만 주차를 채워도 되지만, 그 위에 담당자·핵심과제가 있는 행이 하나는 있어야 합니다.');
+          if(skipTSamples.length)detailLines.push('▸ 핵심과제 빈칸('+skipT+'건): '+skipTSamples.join(', ')+(skipT>skipTSamples.length?' 외 '+(skipT-skipTSamples.length)+'건':''));
+          LASTPULLWARN=msg;
+          LASTPULLDETAIL='마지막 주간업무 불러오기에서 아래 '+skipped+'건을 인식하지 못해 반영되지 않았습니다.\n\n'+detailLines.join('\n\n');
+          try{localStorage.setItem('wr_lastpullwarn_v1',JSON.stringify({msg:LASTPULLWARN,detail:LASTPULLDETAIL,ts:Date.now()}));}catch(e){}
+        }else{
+          LASTPULLWARN='';LASTPULLDETAIL='';
+          try{localStorage.removeItem('wr_lastpullwarn_v1');}catch(e){}
+        }
+        try{updatePullWarnBadge();}catch(e){}
         done.push(msg);
       }
       return;
@@ -10664,6 +10690,16 @@ function scheduleSync(){
   _syncTimer=setTimeout(()=>{_syncTimer=null;if(NEEDAUTH){setSyncBadge('err');return;}cloudAuth(()=>{if(_syncing)return;_syncing=true;doCloudSave(true).finally(()=>{_syncing=false;});},true);},2500);
 }
 let LASTSYNCERR='',NEEDAUTH=false,APIOFF=false;
+let LASTPULLWARN='',LASTPULLDETAIL='';
+(function(){try{const s=JSON.parse(localStorage.getItem('wr_lastpullwarn_v1')||'null');if(s&&s.msg){LASTPULLWARN=s.msg;LASTPULLDETAIL=s.detail||'';}}catch(e){}try{updatePullWarnBadge();}catch(e){}})();
+function updatePullWarnBadge(){const el=document.getElementById('pullWarnBadge');if(!el)return;el.style.display=LASTPULLWARN?'inline-flex':'none';el.title=LASTPULLWARN?'클릭해서 상세 확인':'';}
+function showPullWarn(){
+  const dw=document.getElementById('drawer');
+  dw.innerHTML=`<div class="dw-h"><div class="top"><div style="min-width:0"><div class="chips"><span class="chip" style="background:var(--riskSoft);color:var(--risk)">불러오기 확인</span></div><h3>구글시트 불러오기에서 일부 행이 빠졌습니다</h3></div><button class="close" onclick="closeDetail()">✕</button></div></div>
+    <div class="dw-b"><div class="set-p" style="white-space:pre-wrap;line-height:1.6">${esc(LASTPULLDETAIL||LASTPULLWARN||'(기록 없음)')}</div>
+    <div class="set-hint" style="margin-top:10px">※ 시트를 고친 뒤 [구글시트 불러오기]를 다시 누르면 이 확인창은 자동으로 사라집니다(빠진 행이 없어지면).</div></div>`;
+  document.getElementById('ov').classList.add('on');dw.classList.add('on');
+}
 function setSyncErr(msg,needAuth){LASTSYNCERR=String(msg||'');NEEDAUTH=!!needAuth;APIOFF=false;
   if(/accessNotConfigured|has not been used|SERVICE_DISABLED|API .*disabled|사용 설정/i.test(LASTSYNCERR)){APIOFF=true;NEEDAUTH=false;}
   else if(/401|403|invalid_grant|invalid_token|interaction_required|consent|login_required|insufficient|scope|인증|PERMISSION_DENIED/i.test(LASTSYNCERR)){NEEDAUTH=true;CLOUD.token=null;CLOUD.tokenExp=0;}
@@ -11162,10 +11198,11 @@ try{mergeWkIntoTasks();}catch(e){}
 /* 예전엔 여기서 TAB='mreport'(주간보고·최신 업로드 주차)로 다시 덮어써서, 위쪽(3165행 부근)에서 이미
    정해둔 "첫 화면 = 팀종합현황(home)" 설정이 매번 조용히 무시되고 있었다 · 게다가 그 최신 업로드 주차 기준이
    「주간업무」(WKREPORT) 동기화 현황에 좌우돼, 정작 오늘 날짜의 ISO 주차보다 뒤처진 주(예: 36주차인데 35주차)가
-   첫 화면에 그대로 노출되는 원인이었다 · PC 첫 화면은 팀종합현황(오늘 기준 정확한 월/주차)을 그대로 두되,
-   모바일(폭 820px 이하)에서는 이유아 팀장 요청으로 주간보고(이번 주, curWeekMonth·gotoThisWeek 기준 —
-   위 버그를 일으켰던 gotoLastUpWeek()이 아니라 이미 고쳐진 최신 로직 사용)를 첫 화면으로 보여준다 */
-try{if(window.innerWidth<=820){TAB='mreport';MRTAB='week';gotoThisWeek();}}catch(e){}
+   첫 화면에 그대로 노출되는 원인이었다 · 한동안 모바일(폭 820px 이하)에서만 주간보고를 첫 화면으로 보여줬는데,
+   2026-09-05 요청("페이지를 열면 업무현황에 주간보고부터 보이게")으로 PC 포함 모든 화면에서 동일하게
+   업무현황 · 주간보고(이번 주, curWeekMonth·gotoThisWeek 기준 — 위 버그를 일으켰던 gotoLastUpWeek()이 아니라
+   이미 고쳐진 최신 로직 사용)를 첫 화면으로 보여주도록 확장 */
+try{TAB='mreport';MRTAB='week';gotoThisWeek();}catch(e){}
 render();
 try{mileFixDates();}catch(e){}
 setTimeout(()=>{publicSyncMaster(true).catch(()=>{});},50); /* 로그인·게스트 구분 없이 구글시트가 공개돼 있으면 조용히 최신 데이터로 맞춘다 */
