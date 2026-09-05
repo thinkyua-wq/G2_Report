@@ -1248,15 +1248,18 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 /* KPI 달성율 글자 10% 축소 */
 .ptable.fktbl td{font-size:11.3px}
 .ptable.fktbl td.fk-r,.ptable.fktbl td.fk-r .fk-in{font-size:13.5px!important}
-.ov-tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--ln);border-radius:8px;overflow:hidden}
-.ov-tbl thead th{background:var(--accent);color:#fff;font-size:11.5px;font-weight:700;padding:8px 10px;text-align:center;white-space:nowrap;border-right:1px solid rgba(255,255,255,.22)}
+/* 거래처별 실적요약(DEALER RESULT) 표 = 출장일정 표(.ptable.triptbl)와 동일 서식으로 통일
+   (요청 2026-09-05: "둥근네모 말고 내부 다 검정색" · "출장일정표와 동일하게 양식수정") —
+   각진 사각 테두리, 회색(진초록 아님) 헤더, 본문 전부 검정으로 맞춤 */
+.ov-tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid #cbd5e1;border-radius:0}
+.ov-tbl thead th{background:#eef0f3;color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;font-size:11.4px;font-weight:800;padding:7px 5px;text-align:center;white-space:nowrap;border-right:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1}
 .ov-tbl thead th:last-child{border-right:0}
-.ov-tbl tbody td{font-size:12.5px;color:var(--ink2);padding:8px 10px;text-align:center;border-bottom:1px solid var(--ln2);border-right:1px solid var(--ln2);font-variant-numeric:tabular-nums}
+.ov-tbl tbody td{font-size:12.4px;color:#000;padding:7px 6px;text-align:center;border-bottom:1px solid #cbd5e1;border-right:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
 .ov-tbl tbody td:last-child{border-right:0}
 .ov-tbl tbody tr:last-child td{border-bottom:0}
 .ov-tbl td.rl{text-align:left}
-.ov-pc{font-weight:800;color:var(--accentInk)}
-.ov-pc.ov-g{color:var(--done)}.ov-pc.ov-a{color:var(--review)}.ov-pc.ov-r{color:var(--risk)}
+.ov-pc{font-weight:800;color:#000}
+.ov-pc.ov-g,.ov-pc.ov-a,.ov-pc.ov-r,.ov-pc .ov-g,.ov-pc .ov-a,.ov-pc .ov-r{color:#000}
 .ov-note{font-size:11px;color:var(--dim);max-width:340px}
 .ov-st{font-size:11px;font-weight:700;border-radius:20px;padding:2px 9px;display:inline-block}
 .ov-st.done{background:var(--doneSoft);color:var(--done)}
@@ -1332,8 +1335,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 @media(max-width:1000px){.gs-flow,.gs-cascade,.gs-rhythm,.gs-props{grid-template-columns:1fr}.gs-fl:after{display:none}}
 .ptable.plan .grpcell,.ptable.plan td.unitc,.ptable.plan tbody td.rl{background:#fff!important;color:#000}
 .ptable.plan .trtot .grpcell,.ptable.plan .trtot td.unitc,.ptable.plan .trtot td.rl,.ptable.plan .trsub .grpcell,.ptable.plan .trsub td.unitc,.ptable.plan .trsub td.rl{background:#eef0f3!important}
-.ov-pc.ov-g{color:#16a34a}.ov-pc.ov-a{color:#f59e0b}.ov-pc.ov-r{color:#dc2626}
-.ov-pc .ov-g{color:#16a34a}.ov-pc .ov-a{color:#f59e0b}.ov-pc .ov-r{color:#dc2626}
+/* 위 .ov-pc 규칙에서 검정으로 통일(2026-09-05) — 이 중복 정의는 더 이상 색을 다시 입히지 않도록 무효화 */
+.ov-pc.ov-g,.ov-pc.ov-a,.ov-pc.ov-r,.ov-pc .ov-g,.ov-pc .ov-a,.ov-pc .ov-r{color:#000}
 .ov-foot{font-size:11px;color:var(--faint);margin-top:12px}
 /* 월간 성과·실행현황 (월보고) */
 .mr-summ{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
@@ -2444,7 +2447,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M266</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M267</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4596,8 +4599,8 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
      출발일·종료일·담당자·국가·출장명·출장 목적 6개뿐 (동행자·구분·방문처·연계 과제·결과·상태는
      이유아 팀장이 시트에서도 숨겨 쓰는 열이라 여기서도 제외) */
   h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%"><thead><tr>'
-    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:170px">출장명</th><th style="width:80px">담당자</th>'
-    +'<th style="width:140px">국가</th>'
+    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:170px">출장명</th><th style="width:128px">담당자</th>'
+    +'<th style="width:120px">국가</th>'
     +'<th style="text-align:left;width:44%">출장 목적</th></tr></thead><tbody>';
   sorted.forEach(t=>{
     const days=(t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1;
@@ -5247,10 +5250,16 @@ function renderHome(){
     if(!top.length)h+='<div class="hm-it hm-empty">진행 중 과제 없음</div>';
     h+='</div>';cards.push(h);});
   h+='<div class="hm-people'+(cards.length===1?' one':'')+'"'+(HMTASKS?'':' style="display:none"')+'>'+cards.join('')+'</div>';
-  // dealer table
-  h+='<div class="hm-mini">TRIP SCHEDULE · '+MONTH+'월 출장일정</div>';
-  try{h+=tripPanelHead('month')+tripPanel('month');}catch(e){}
-  {const em=mrEffMonth();h+=`<div class="hm-mini" style="margin-top:22px">DEALER RESULT · ${em}월${em!==MONTH?' (최종 입력월)':''} · 천$</div>`;h+=mrDealTable();}
+  // 출장일정 · DEALER RESULT — 세로로 쌓지 않고 탭으로 전환(요청: "9월출장일정과 아래표는 탭으로변경")
+  {
+    const em=mrEffMonth();
+    const HMTABS=[['trip',MONTH+'월 출장일정'],['deal','DEALER RESULT · '+em+'월'+(em!==MONTH?'(최종 입력월)':'')+' · 천$']];
+    h+='<div class="seccard" style="padding-top:10px;margin-top:18px"><div class="cltabs">'
+      +HMTABS.map(([k,l])=>`<button class="cltab${HMSECTAB===k?' on':''}" onclick="setHmSecTab('${k}')">${esc(l)}</button>`).join('')
+      +'</div><div class="cltab-b">'
+      +(HMSECTAB==='trip'?(function(){try{return tripPanelHead('month')+tripPanel('month');}catch(e){return '';}})():mrDealTable())
+      +'</div></div>';
+  }
   h+='</div>';
   // ── right ──
   if(HOMESIDE){
@@ -7550,6 +7559,8 @@ let CALLTAB='mile'; try{CALLTAB=localStorage.getItem('wr_calltab')||'mile';}catc
 function setCalLTab(t){CALLTAB=t;try{localStorage.setItem('wr_calltab',t);}catch(e){}render();}
 let MRSECTAB='monthchart'; try{MRSECTAB=localStorage.getItem('wr_mrsectab')||'monthchart';}catch(e){}
 function setMrSecTab(t){MRSECTAB=t;try{localStorage.setItem('wr_mrsectab',t);}catch(e){}render();}
+let HMSECTAB='trip'; try{HMSECTAB=localStorage.getItem('wr_hmsectab')||'trip';}catch(e){}
+function setHmSecTab(t){HMSECTAB=t;try{localStorage.setItem('wr_hmsectab',t);}catch(e){}render();}
 function mileMonBar(){
   const chip=m=>{const on=MILEMONS.includes(m);return `<button class="mile-add mini${on?' on':''}" style="${on?'background:var(--accent);color:#fff;border-color:var(--accent)':''}" onclick="setMileMon(${m})" title="더블클릭하면 이 달만 봅니다" ondblclick="setMileMonOnly(${m})">${m}월</button>`;};
   return `<div class="milefilt" style="flex-wrap:wrap;row-gap:6px;margin:10px 0 0"><span class="fl">월</span>`
@@ -10242,18 +10253,31 @@ function importG2Master(wb,scope){
     if(has('지시사항')&&has('담당자')&&!has('주차')&&!has('보고월')){
       const cT=ci('지시사항'),cN=ci('담당자'),cS=ci('지시일'),cD=ci('기한')>=0?ci('기한'):ci('완료기한'),cSt=ci('착수일'),cStx=ci('상태'),cP=ci('진행율')>=0?ci('진행율'):ci('진행률'),cPr=ci('중요도');
       let n=0;
+      /* ★ 근본원인 수정(2026-09-05): 지시사항을 시트에서 지우거나 문구를 고쳐도 예전 것이 계속
+         중복으로 남아있던 문제 — 기존 코드는 시트 행을 ASSIGN에 추가·갱신만 하고 "시트에서 없어진
+         지시"를 정리하는 로직이 아예 없었다(문구를 고치면 옛 텍스트와 더 이상 매칭이 안 돼 새
+         항목이 또 생기고, 옛 항목은 영원히 남음). 이번 동기화에서 실제로 매칭/생성된 시트기원
+         지시만 seen에 모아두고, 그 외의 '이전 시트기원(src:'sheet')' 지시는 정리한다 — 지시일정
+         (LEECAL)에서 이미 쓰고 있는 "원본(시트)이 곧 정답" 원칙과 동일. 팀장이 앱에서 직접 추가한
+         지시(src 없음)는 시트에서 온 게 아니므로 그대로 둔다. */
+      const seen=new Set();
       body.forEach(r=>{const task=String(r[cT]||'').trim();const nm=NAME2ID[String(r[cN]||'').trim().replace(/(팀장|차장|과장|대리|사원)$/,'')]||NAME2ID[String(r[cN]||'').trim()];if(!task||!nm)return;
         const since=g2date(cS>=0?r[cS]:'')||'',due=g2date(cD>=0?r[cD]:'')||'',start=g2date(cSt>=0?r[cSt]:'')||'';
         const stx=String(cStx>=0?r[cStx]||'':'').trim();const pg=g2num(cP>=0?r[cP]:'');
         const norm=x=>String(x||'').replace(/\s+/g,'').toLowerCase();
         let hit=ASSIGN.find(a=>a.mgr===nm&&norm(a.task)===norm(task));
         if(!hit){hit={mgr:nm,from:'이유아',task,cat:'',prio:String(cPr>=0?r[cPr]||'':'').trim()||'중간',since:since||todayStr(),due,start:'',status:'착수전',prog:0,done:false};ASSIGN.unshift(hit);}
+        hit.src='sheet';
         if(start)hit.start=start;if(due&&!hit.due)hit.due=due;
         if(pg!=null){hit.prog=Math.max(0,Math.min(100,Math.round(pg<=1&&pg>0?pg*100:pg)));hit.done=hit.prog>=100;}
         if(stx){hit.status=/완료/.test(stx)?'완료':/진행|착수/.test(stx)?'진행중':'착수전';if(hit.status==='완료'){hit.prog=100;hit.done=true;}else hit.done=false;}
         {const cF=ci('지시자');if(cF>=0&&String(r[cF]||'').trim())hit.from=String(r[cF]).trim();const cDn=ci('완료여부');if(cDn>=0&&/^y|완료|true/i.test(String(r[cDn]||'').trim())){hit.done=true;hit.status='완료';hit.prog=100;}}
+        seen.add(hit);
         n++;});
-      if(n){saveAssign();done.push('지시 '+n+'건');}
+      const beforeCnt=ASSIGN.length;
+      ASSIGN=ASSIGN.filter(a=>a.src!=='sheet'||seen.has(a));
+      const pruned=beforeCnt-ASSIGN.length;
+      if(n){saveAssign();done.push('지시 '+n+'건'+(pruned?(' · 시트에서 사라진 지시 '+pruned+'건 정리'):''));}
       return;
     }
     // ① 월말보고: 보고월+담당자
