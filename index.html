@@ -2451,7 +2451,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M277</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M278</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3202,8 +3202,19 @@ function pickAt(t){
     if(!c)return null;
     const due=(c.due)||t.due;
     if(isDate(due)){ // 기한이 지난 주차(해당 월·주차)까지만 노출, 그 이후 주차부터는 자동 숨김(2026-09-05)
-      const dueIso=isoWeekNum(due), curIso=(WEEKS[W]&&WEEKS[W].iso)||0;
-      if(dueIso&&curIso&&dueIso<curIso)return null;
+      /* 근본원인 수정(2026-09-05, "완료예정일 2028년인 과제가 안보임"): isoWeekNum은 연도가 리셋되는
+         "그 해의 몇 주차"만 돌려주므로, 완료예정일이 다른 연도(예: 2028년)면 연도를 무시하고 주차
+         숫자만 비교해 "이미 지난 주차"로 오판했다. 연도가 다르면 연도부터 비교하고, 같은 연도일 때만
+         기존처럼 주차 숫자로 비교한다. */
+      const dueY=+String(due).slice(0,4);
+      const curAsof=(WEEKS[W]&&WEEKS[W].asof)||'';
+      const curY=curAsof?+curAsof.slice(0,4):dueY;
+      if(dueY&&curY&&dueY<curY){return null;}
+      else if(!dueY||!curY||dueY===curY){
+        const dueIso=isoWeekNum(due), curIso=(WEEKS[W]&&WEEKS[W].iso)||0;
+        if(dueIso&&curIso&&dueIso<curIso)return null;
+      }
+      /* dueY>curY(완료예정일이 몇 년 뒤)면 아직 한참 남은 일정이므로 숨기지 않음 */
     }
     return {p:c.p,sx:c.sx||'',note:c.note,label:c.label||t.name,due,risk:(c.p<100&&isDate(due)&&new Date(due)<TODAY),prev:(W>0&&wkAt(t,W-1))?wkAt(t,W-1).p:null,carried};}
   // 월/연 : 최신 기록값
@@ -3226,7 +3237,14 @@ function activeRows(){
     if(scope&&t.mgr!==scope)return;
     if(fc&&t.country!==fc)return;
     if(fm&&t.mgr!==fm)return;
-    const ty=isDate(pk.due)?+pk.due.slice(0,4):(isDate(t.start)?+t.start.slice(0,4):YEAR); if(ty!==YEAR)return;
+    /* 주간(PERIOD==='week') 보기에서는 이 연도 필터를 건너뛴다(2026-09-05, "완료예정일 2028년 과제가 안보임"):
+       pickAt()이 이미 "이번 주(W)에 입력된 값이 있는 과제"만 돌려주므로 그 자체로 이번 주 소속임이
+       확정되는데, 완료예정일(장기 프로젝트라 2027·2028년 등 먼 미래일 수 있음)의 "연도"까지 올해와
+       같아야 한다고 한 번 더 걸러서 정상 진행 중인 장기 과제가 전부 숨겨지고 있었다. 월/연간 보기는
+       기존 로직 그대로 유지. */
+    if(PERIOD!=='week'){
+      const ty=isDate(pk.due)?+pk.due.slice(0,4):(isDate(t.start)?+t.start.slice(0,4):YEAR); if(ty!==YEAR)return;
+    }
     if((TAB==='kanban'||(TAB==='rr'&&RRTAB==='kanban')||(TAB==='mreport'&&MRTAB==='kanban'))&&KANMONTHS.length){const sm=isDate(t.start)?+t.start.slice(5,7):1; const dm=isDate(pk.due)?+pk.due.slice(5,7):(TODAY.getMonth()+1); if(!KANMONTHS.some(m=>sm<=m&&m<=dm))return;}
     else if(PERIOD==='month'){const sm=isDate(t.start)?+t.start.slice(5,7):1; const dm=isDate(pk.due)?+pk.due.slice(5,7):(TODAY.getMonth()+1); if(!(sm<=MONTH&&MONTH<=dm))return;}
     if(q&&!(pk.label.toLowerCase().includes(q)||(pk.note||'').toLowerCase().includes(q)))return;
@@ -10150,6 +10168,20 @@ function g2mmdd(v){
   if(m)return String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
   return s;
 }
+/* 근본원인 수정(2026-09-05, "완료예정일이 2028년인데 안보임"): g2mmdd는 연도를 버리고 "월-일"만 남기는데,
+   시작일·완료예정일 열에 2026년이 아닌 날짜(예: 2028-08-30, 2027-07-24)가 들어오면 mergeWeeklyTasks가
+   그 "월-일"에 무조건 "2026-"를 붙여 되살려서 실제로는 몇 년 뒤인 완료예정일이 "이미 2026년에 지난
+   날짜"로 둔갑 → 기한이 지난 주차는 자동 숨김 처리하는 규칙(2026-09-05, M271)에 걸려 그 과제 전체가
+   화면에서 통째로 사라졌다. 4자리 연도가 원본에 있으면 "그 연도"를 그대로 살려서 "YYYY-MM-DD"로 반환하고,
+   연도 없이 "월-일"만 있으면 기존처럼 "MM-DD"로 반환(호출부에서 현재년도로 보정), 그 외 텍스트("상시" 등)는
+   그대로 유지 — 주간업무 시작일·완료예정일 파싱에만 사용. */
+function g2fulldate(v){
+  if(v instanceof Date&&!isNaN(v)){const p=n=>String(n).padStart(2,'0');return v.getUTCFullYear()+'-'+p(v.getUTCMonth()+1)+'-'+p(v.getUTCDate());}
+  const s=String(v||'').trim();
+  const m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(m)return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  return s;
+}
 function importG2Master(wb,scope){
   const done=[];
   wb.SheetNames.forEach(sn=>{
@@ -10368,8 +10400,8 @@ function importG2Master(wb,scope){
         const w=rawW||((nm&&t)?lastW:null);
         if(rawW)lastW=rawW;
         if(!w||!nm||!t){if(!w)skipWk++;else if(!nm)skipNm++;else skipT++;return;}
-        let due=g2mmdd(r[cD]);
-        let st0=(cSt>=0?g2mmdd(r[cSt]):'');
+        let due=g2fulldate(r[cD]);
+        let st0=(cSt>=0?g2fulldate(r[cSt]):'');
         (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:g2pct(r[cPr]),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
       if(Object.keys(byW).length){
@@ -10987,11 +11019,17 @@ function mergeWeeklyTasks(force){
       let t=TASKS.find(x=>x.mgr===r.m&&(norm(x.name)===norm(r.t)||norm(x.name).includes(norm(r.t))||norm(r.t).includes(norm(x.name))));
       if(!t){
         t={mgr:r.m,country:(r.c||'중국'),name:r.t,
-           start:(/^\d\d-\d\d$/.test(r.st||'')?('2026-'+r.st):'2026-0'+Math.min(9,loc.m)+'-01'),
+           start:(/^\d\d-\d\d$/.test(r.st||'')?('2026-'+r.st):(r.st||'2026-0'+Math.min(9,loc.m)+'-01')),
            due:(/^\d\d-\d\d$/.test(r.due||'')?('2026-'+r.due):(r.due||'상시')),
+           cat:r.g||'',
            kpi:r.k||'',priority:({'상':'높음','중':'중간','하':'낮음'}[String(r.pri||'').trim()]||'중간'),status:'진행중',wk:{}};
         TASKS.push(t);
       }
+      /* 근본원인 수정(2026-09-05, "구분도 틀리고"): 「구분」 열은 새 과제를 만들 때만 한 번 심고 그 뒤로는
+         절대 안 건드려서, 이름이 비슷한 옛 과제와 매칭되면 그 옛 구분값을 그대로 물려받거나(엉뚱한 구분),
+         normalizeTasks()의 자동추정(autoCat)에 맡겨져 실제 시트 값과 다르게 보였다. 시트 「구분」 값이 있으면
+         매 동기화마다 그 값으로 갱신해 항상 시트를 정답으로 따르게 한다. */
+      if(r.g)t.cat=r.g;
       t.wk=wkMigArr(t.wk);
       const key=String(+wkk);
       if(force||!t.wk[key])t.wk[key]={p:pnum(r.p),note:r.note||''};
