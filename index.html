@@ -248,7 +248,7 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .wc-b:empty{display:none}
 .wc-b{padding:2px 0 8px}
 .wcard .card{margin:0}
-/* 주간과제 · 클릭 시 과제상세 블록 */
+/* 주간보고 · 클릭 시 과제상세 블록 */
 .wkdet{padding:0!important;background:none!important;border:0!important}
 .wkd-c{border:1px solid var(--ln);background:#fff;padding:9px 11px 10px;margin:6px 0 4px}
 .wkd-chips{display:flex;align-items:center;gap:6px;margin-bottom:5px}
@@ -282,7 +282,7 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .tm-r:not(.open) .tm-f{padding-top:0;padding-bottom:8px}
 /* 주간업무현황 표·타일 직사각형 */
 body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable th,body.vw-rr .ptable td,body.vw-rr .ptable-wrap,body.vw-rr .om-tile,body.vw-rr .omc,body.vw-rr .kpi,body.vw-rr .ov-tbl,body.vw-rr .ov-card,body.vw-rr .pcol,body.vw-rr .seccard,body.vw-rr .card,body.vw-rr .om-tiles>*{border-radius:0!important}
-.rr.rr-solo{grid-template-columns:minmax(0,1fr)} /* 주간과제: 담당자 카드 한 줄에 하나씩(2026-09-05) */
+.rr.rr-solo{grid-template-columns:minmax(0,1fr)} /* 주간보고: 담당자 카드 한 줄에 하나씩(2026-09-05) */
 .rr.rr2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .rr.rr2.rr1{grid-template-columns:minmax(0,1fr)}
 /* 1인 보기: 주요활동을 오른쪽으로 */
@@ -315,7 +315,7 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .pmile .pmc b{color:var(--ink2);font-weight:700}
 .pmile .pmc.more{border-left-color:var(--faint);color:var(--dim);font-weight:700}
 
-/* 담당자별 카드(주간과제) — 기존 .pcol 카드·rr 그리드 그대로 사용(2026-09-05) */
+/* 담당자별 카드(주간보고) — 기존 .pcol 카드·rr 그리드 그대로 사용(2026-09-05) */
 .area-chip{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:99px;color:#fff;white-space:nowrap;display:inline-block}
 
 /* task card */
@@ -2451,7 +2451,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M275</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M277</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2938,7 +2938,7 @@ let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){
 let VALL=false;
 const MEMBER_TABS=['home','mreport','calmonth']; // 팀원 메뉴: 월간업무현황 · 주간업무현황 · 중화팀 일정·행사 // 열람 허용 메뉴 (이유아 외 전원 + 공용 「중화팀」 계정)
 const GUEST_TABS=['home','mreport']; // 로그인 없이(게스트) 볼 때: 팀종합현황 · 업무현황만 (중화팀일정행사 제외)
-const GUEST_OVTABS=['focus','month','week']; // 게스트: 업무현황 안에서 중점추진과제·월별과제·주간과제만
+const GUEST_OVTABS=['focus','month','week']; // 게스트: 업무현황 안에서 중점추진과제·월별보고·주간보고만
 const MEMBER_RRTABS=['wsales','kanban']; // 팀원: 본사실적 · 과제진행율만 // 주간업무현황 중 열람 허용 탭
 function RO(){return VROLE==='member';}   /* 팀원·공용 계정 = 읽기 전용 */
 function roBlock(){if(RO()){try{toast('읽기 전용 계정입니다 · 수정·저장은 팀장 계정에서만 가능합니다');}catch(e){}return true;}return false;}
@@ -4018,12 +4018,12 @@ const KPI_SEED=[
  ['영업','이유아','영업 Infra 구축 · KPI 목표달성 (화남)','중국','만위안','2,565','월별 달성율'],
  ['제품PM','이유아','제품PM - BD 판매 수량','중국','대','73,000','해당월 최종실적'],
  ['제품PM','이유아','제품PM - BD 진입점','중국','점','1,500','해당월 최종실적'],
- ['제품PM','이유아','신제품런칭 - ARi','중국','일정','6/8일','목표일정 % 기입'],
+ ['제품PM','이유아','신제품런칭 - ARi','중국','일정','26/06/08','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - ARi 판매수량','중국','대','8,000','해당월 최종실적'],
  ['제품PM','이유아','제품PM - ARi 진입점','중국','점','400','해당월 최종실적'],
- ['제품PM','이유아','신제품런칭 - Evidence','중국','월','10/30','목표일정 % 기입'],
+ ['제품PM','이유아','신제품런칭 - Evidence','중국','일정','26/10/30','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - Evidence 판매수량','중국','대','50,000','해당월 최종실적'],
- ['제품PM','이유아','제품PM - AXA','중국','일정','9/30','목표일정 % 기입'],
+ ['제품PM','이유아','제품PM - AXA','중국','일정','26/09/30','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - B/L현지생산','중국','일정','28/03/31','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - B/L중국인허가','중국','일정','28/02/28',''],
  ['영업','서혜민','부진상권 M/S 개선(↑) 윈난','중국','%','5%',''],
@@ -4034,6 +4034,11 @@ const KPI_SEED=[
 let KPIDATA=[]; try{const s=localStorage.getItem('wr_kpi_v4');if(s){const o=JSON.parse(s);if(Array.isArray(o)&&o.length&&o[0].owner!==undefined)KPIDATA=o;}}catch(e){}
 if(!KPIDATA.length)KPIDATA=JSON.parse(JSON.stringify(KPI_SEED));
 KPIDATA=KPIDATA.filter(r=>!(r.item==='제품 경쟁력 강화'||r.item==='주간회의')); /* 회의체 항목=KPI 아님(2026-09-05 삭제 요청) */
+const KPI_HIDDEN=['부진상권 M/S 개선(↑) 광동','부진상권 M/S 개선(↑) 상하이','부진상권 M/S 개선(↑) 윈난']; /* 우선 안보이게(임시 숨김, 삭제 아님·2026-09-05) — 다시 보이려면 이 배열을 비우면 됨 */
+KPIDATA=KPIDATA.filter(r=>!KPI_HIDDEN.includes(r.item));
+/* 일정형 KPI 목표일 표기를 "년/월/일"(YY/MM/DD)로 통일(2026-09-05) — 예전 캐시(localStorage)에도 소급 반영 */
+{const KPI_DATE_FIX={'신제품런칭 - ARi':'26/06/08','신제품런칭 - Evidence':'26/10/30','제품PM - AXA':'26/09/30'};
+ KPIDATA.forEach(r=>{if(KPI_DATE_FIX[r.item]){r.yt=KPI_DATE_FIX[r.item];if(r.item==='신제품런칭 - Evidence')r.unit='일정';}});}
 function saveKPI(){try{localStorage.setItem('wr_kpi_v4',JSON.stringify(KPIDATA));}catch(e){}}
 let KPIVIEW='cur'; try{KPIVIEW=localStorage.getItem('wr_kpiview')||'cur';}catch(e){}
 function setKpiView(v){KPIVIEW=v;try{localStorage.setItem('wr_kpiview',v);}catch(e){}render();}
@@ -4867,7 +4872,7 @@ function mrTeamTiles(extra){ // 중화팀과제 KPI = 담당자별 주요내용
   const ps=owns.map(o=>o.pct).filter(p=>p!=null);
   const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
   let h=`<div class="mf-sumbar">
-      <div class="mfsb-i"><span class="mfsb-l">${fm}월 월별과제</span><b>${rows.length}건</b></div>
+      <div class="mfsb-i"><span class="mfsb-l">${fm}월 월별보고</span><b>${rows.length}건</b></div>
       <div class="mfsb-i"><span class="mfsb-l">담당자</span><b>${owns.length}명</b></div>
       <div class="mfsb-i"><span class="mfsb-l">평균 달성률</span><b style="color:#1e6f5c">${avg==null?'—':avg+'%'}</b><span class="mfsb-s">연간 기준선 ${plan}%</span></div>
       <div class="mfsb-s" style="margin-left:auto">담당자별 주요내용 · ★ = 우선순위 「상」</div>
@@ -5061,7 +5066,7 @@ function renderTeamWeekCards(wk){
   const iso=(WEEKS[W]&&WEEKS[W].iso)||'';
   const nIso=iso?iso+1:'';
   const wkR=(WEEKS[W]&&WEEKS[W].range&&WEEKS[W].range!=='—')?WEEKS[W].range:'';
-  let h=`<div class="ov-sec">주간과제 <span class="ov-sub">이번주 W${iso}${wkR?' ('+wkR+')':''} · 차주 W${nIso} · ${MONTH}월 중점추진과제</span></div>`;
+  let h=`<div class="ov-sec">주간보고 <span class="ov-sub">이번주 W${iso}${wkR?' ('+wkR+')':''} · 차주 W${nIso} · ${MONTH}월 중점추진과제</span></div>`;
   h+='<div class="ov-cards">'+MGRS.map(m=>{
     const pR=p=>({'상':0,'중':1,'하':2}[String(p||'').trim()]!==undefined?{'상':0,'중':1,'하':2}[String(p||'').trim()]:1);
     const items=wk.map((r,i)=>({r,i})).filter(x=>x.r.m===m.id).sort((a,b)=>pR(a.r.pri)-pR(b.r.pri));
@@ -5148,7 +5153,7 @@ function renderTeamMonthCards(isMR){
   if(!isMR)return renderTeamWeekCards(wkData());
   const m1=mrEffMonth2(), m2=(m1<12?m1+1:12);
   const rowsAll=MREPORTS[String(m1)]||[];
-  let h=`<div class="ov-sec">월별과제 <span class="ov-sub">${m1!==MONTH?`<b style="color:var(--risk)">${MONTH}월 월말보고 미입력 → 최종 입력월(${m1}월) 표시</b> · `:''}담당자별 1인 1행 · ${m1}월 과제 · ${m2}월 과제 · ${m2}월 중점추진과제 · ★=우선순위 상 · 달성률 낮은 순 · 상시는 맨 아래 · 마스터 「월말보고」 연동</span></div>`;
+  let h=`<div class="ov-sec">월별보고 <span class="ov-sub">${m1!==MONTH?`<b style="color:var(--risk)">${MONTH}월 월말보고 미입력 → 최종 입력월(${m1}월) 표시</b> · `:''}담당자별 1인 1행 · ${m1}월 과제 · ${m2}월 과제 · ${m2}월 중점추진과제 · ★=우선순위 상 · 달성률 낮은 순 · 상시는 맨 아래 · 마스터 「월말보고」 연동</span></div>`;
   let mgs=mgrsOrdered().filter(g=>rowsAll.some(r=>r.m===g.id));
   if(!mgs.length)return h+`<div class="om-tile"><div class="om-ts">${m1}월 보고 데이터가 없습니다. 「구글시트 불러오기」로 반영하세요.</div></div>`;
   h+=`<div class="rr-ctrlbar" style="margin-bottom:12px"><span class="pl">담당자</span>${personTabs(MMSEL,'setMMSel',m=>rowsAll.filter(r=>r.m===m.id).length)}</div>`;
@@ -5191,7 +5196,7 @@ function renderTeamMonthCardsLegacy(isMR){
   let h='';
 
     const m1=MONTH, m2=(MONTH<12?MONTH+1:12);
-    h+=`<div class="ov-sec">월별과제 </div>`;
+    h+=`<div class="ov-sec">월별보고 </div>`;
     h+='<div class="ov-cards">'+MGRS.map(m=>{
       const t1=ovMgrMonthTasks(m.id,m1), t2=ovMgrMonthTasks(m.id,m2);
       const mfNext=mfTasksForOwner(m.name,m2);
@@ -5254,7 +5259,7 @@ function renderHome(){
   h+='<div class="hm-mini">KEY METRICS · 누적 수출·수금 (천$) · KPI</div>';
   h+=mrMonthTiles('');
   // people
-  h+=`<div class="hm-mini" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">WEEKLY TASKS · 담당자별 <span style="font-weight:400;color:var(--faint)">(진행 중 상위 3건 · 담당자 여러 명 선택 가능 · 카드 클릭 시 주간과제로)</span>${HMTASKS?personTabs(HMSEL,'setHMSel',m=>rows.filter(r=>r.mgr===m.id).length):''}<span class="x" onclick="toggleHMTasks()" style="margin-left:auto;font-size:12.1px;color:var(--faint);cursor:pointer;border:1px solid var(--ln);border-radius:4px;padding:1px 7px;background:#fff">${HMTASKS?'▾ 숨기기':'▸ 펼치기'}</span></div>`;
+  h+=`<div class="hm-mini" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">WEEKLY TASKS · 담당자별 <span style="font-weight:400;color:var(--faint)">(진행 중 상위 3건 · 담당자 여러 명 선택 가능 · 카드 클릭 시 주간보고로)</span>${HMTASKS?personTabs(HMSEL,'setHMSel',m=>rows.filter(r=>r.mgr===m.id).length):''}<span class="x" onclick="toggleHMTasks()" style="margin-left:auto;font-size:12.1px;color:var(--faint);cursor:pointer;border:1px solid var(--ln);border-radius:4px;padding:1px 7px;background:#fff">${HMTASKS?'▾ 숨기기':'▸ 펼치기'}</span></div>`;
   const HM_DEFAULT=['lee','seo','yu']; /* 팀종합: 기본 이유아·서혜민·유훈종 3명 · 탭에서 다른 담당자 선택 가능 */
   const cards=[];
   mgrsOrdered().forEach(m=>{if(HMSEL.length?!HMSEL.includes(m.id):!HM_DEFAULT.includes(m.id))return;const my=rows.filter(r=>r.mgr===m.id);if(!my.length)return;let h='';
@@ -5292,7 +5297,7 @@ function renderHome(){
     if(!up.length)h+='<div class="hm-empty">예정 일정 없음</div>';
     up.forEach(e=>{const f=x=>x?x.slice(5).replace('-','/'):'';h+=`<div class="hm-ev" onclick="railCalPick('${e.ds}')"><div class="d hm-date">${f(e.ds)}${e.de?' → '+f(e.de):''}</div>${esc(e.title)}<div class="tags">${hmTag(e.kind,e.cls)}${hmTag(e.country,hmCtryCls(e.country))}</div></div>`;});
     h+='</div>';
-    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🔗</span>INFORMATION</div><div class="hm-lk"><a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener">마스터파일 (구글시트)</a><span onclick="setTab('mreport');setOVtab('month')">월별과제</span><span onclick="setTab('mreport');setOVtab('week')">주간과제</span><span onclick="setTab('calmonth')">중화팀 일정·행사·출장</span></div></div>`;
+    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🔗</span>INFORMATION</div><div class="hm-lk"><a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener">마스터파일 (구글시트)</a><span onclick="setTab('mreport');setOVtab('month')">월별보고</span><span onclick="setTab('mreport');setOVtab('week')">주간보고</span><span onclick="setTab('calmonth')">중화팀 일정·행사·출장</span></div></div>`;
     h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🎬</span>REPORT DECK</div><button class="tb-b" onclick="genGooglePPT()" style="width:100%">🖼 구글 PPT 자동 생성</button></div>`;
     h+='</div>';
   }
@@ -5305,10 +5310,10 @@ function renderOverview(){
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
   const isMR=(TAB==='mreport');
-  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별과제'],['week','주간과제'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정']]
-                 :[['main','본사실적'],['focus','중점추진과제'],['month','월별과제']];
+  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별보고'],['week','주간보고'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정']]
+                 :[['main','본사실적'],['focus','중점추진과제'],['month','월별보고']];
   if(isMR&&RO()){
-    if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별과제·주간과제만 */
+    if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고만 */
     else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U 포함 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
@@ -5320,7 +5325,7 @@ function renderOverview(){
   h+='<div class="pm-tabs" style="margin-bottom:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   const showTiles=!isMR||['main','focus','month'].includes(CT);
   if(showTiles){
-    const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별과제 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+    const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     h+=`<div class="ov-sec">핵심 지표 <span class="ov-sub">${secSub}</span></div>`;
     const evTile=evListTile(wev);
     if(isMR){
@@ -5702,7 +5707,7 @@ function renderRRTable(rows){
 let UNITAB='wk'; try{UNITAB=localStorage.getItem('wr_unitab')||'wk';}catch(e){}
 function setUniTab(t){UNITAB=t;try{localStorage.setItem('wr_unitab',t);}catch(e){}render();}
 function renderCombined(rows){
-  const T=[['wk','주간과제','담당자별 이번주·차주 과제 · 중점추진과제'],
+  const T=[['wk','주간보고','담당자별 이번주·차주 과제 · 중점추진과제'],
            ['all','업무 상세현황','담당자별 과제 전체']];
   if(UNITAB!=='wk'&&UNITAB!=='all')UNITAB='wk';
   const cur=T.find(x=>x[0]===UNITAB)||T[0];
@@ -6363,10 +6368,10 @@ function viewRR(rows){
   const inMR=(TAB==='mreport');
   let html=inMR?'':'<div class="sec-h"><h2>담당자 업무현황</h2><span class="hint">담당자 업무 · 전체 표 · 중점추진과제</span><span class="line"></span></div>';
   if(inMR)RRTAB='work';
-  const rrTabs=[['wsales','본사실적'],['work','주간과제'],['kanban','과제진행율'],['ops','루틴업무']]
+  const rrTabs=[['wsales','본사실적'],['work','주간보고'],['kanban','과제진행율'],['ops','루틴업무']]
     .filter(([k])=>RO()?MEMBER_RRTABS.includes(k):true);
   if(RRTAB==='focus'||RRTAB==='tmerge'||RRTAB==='tcards')RRTAB='work';
-  if(RO()&&!inMR&&!MEMBER_RRTABS.includes(RRTAB))RRTAB='wsales'; /* 업무현황(mreport) 안에서는 inMR이 이미 RRTAB='work'로 고정하므로 팀원 탭 제한을 적용하지 않음 · 중화팀공용도 이유아팀장과 동일한 주간과제 화면을 보게 함 */
+  if(RO()&&!inMR&&!MEMBER_RRTABS.includes(RRTAB))RRTAB='wsales'; /* 업무현황(mreport) 안에서는 inMR이 이미 RRTAB='work'로 고정하므로 팀원 탭 제한을 적용하지 않음 · 중화팀공용도 이유아팀장과 동일한 주간보고 화면을 보게 함 */
   if(!RO()&&LOGINUID!=='lee'&&(RRTAB==='table'||RRTAB==='report'))RRTAB='work';
   if(!inMR)html+=`<div class="pm-tabs" style="margin-bottom:14px">`+rrTabs.map(([k,l])=>`<button class="${RRTAB===k?'on':''}" onclick="setRRTab('${k}')">${l}</button>`).join('')+'</div>';
   if(RRTAB==='achieve')RRTAB='work';
@@ -6529,7 +6534,7 @@ function tmWkBadges(t){
 }
 function renderTaskMerge(rows){
   const fm=(document.getElementById('fMgr')||{}).value||'';
-  let h=`<div class="ov-sec">과제 통합 <span class="ov-sub">주간과제 + 과제상세 · 제목을 누르면 진행사항·KPI·차주계획이 펼쳐집니다 · 상태·진행율은 그 자리에서 수정</span></div>`;
+  let h=`<div class="ov-sec">과제 통합 <span class="ov-sub">주간보고 + 과제상세 · 제목을 누르면 진행사항·KPI·차주계획이 펼쳐집니다 · 상태·진행율은 그 자리에서 수정</span></div>`;
   h+='<div class="rr rr2 tmg">';
   MGRS.forEach(m=>{
     if(m.id==='jang')return;
@@ -6597,7 +6602,7 @@ function mgrDrop(e,id){
   DRAGMGR='';render();
 }
 function resetMgrOrder(){MGRORDER=[];try{localStorage.removeItem('wr_mgrorder_v2');}catch(e){}render();}
-let WCOPEN={}; /* 값이 없으면(undefined) 기본값 = 접힘(collapsed) · true로 명시된 것만 펼침(주간과제 카드는 기본적으로 한 줄 요약만 보이고, 클릭해야 상세가 펼쳐짐) */
+let WCOPEN={}; /* 값이 없으면(undefined) 기본값 = 접힘(collapsed) · true로 명시된 것만 펼침(주간보고 카드는 기본적으로 한 줄 요약만 보이고, 클릭해야 상세가 펼쳐짐) */
 function wcOpen(ti){return WCOPEN[ti]===true;}
 function wcToggle(ti){WCOPEN[ti]=!wcOpen(ti);render();}
 function isoRange(iso){
@@ -9216,7 +9221,7 @@ function emptyPersonCard(m){
       <div><div class="nm">${m.name}<span>${m.title}</span></div><div class="meta">${esc(m.region)}</div></div>
       <div class="pavg"><div class="n" style="color:var(--faint)">–</div><div class="t">과제 미등록</div></div></div>
     <div class="empty-body"><div class="ico">＋</div>
-      <div class="h">개별 주간과제 미등록</div>
+      <div class="h">개별 주간보고 미등록</div>
       <div class="p">개별 과제 입력 시<br>담당자 업무현황에 자동 반영됩니다.</div>
       <div class="add" onclick="openForm(null,'${m.id}')">＋ 과제 등록하기</div></div></div>`;
 }
@@ -9881,9 +9886,16 @@ async function sheetSaveAssign(silent){
     if(!silent)toast('지시 시트 기록 실패 · 상단 배지 클릭');}
 }
 let ASSIGN_DIRTY=false;
-function assignAutoSheet(){ /* 지시 등록·수정 직후 토큰이 살아있으면 조용히 시트에도 기록 */
+function assignAutoSheet(){ /* 지시 등록·수정(삭제 포함) 직후 시트에도 조용히 기록
+  · 근본원인 수정(2026-09-05): 예전엔 토큰이 "이미" 살아있을 때만 기록을 시도해서, 인증
+    유효시간(1시간)이 지난 뒤 삭제하면 그 삭제가 시트에 반영되지 않고 조용히 무시됐다.
+    그 상태로 나중에 "구글시트 불러오기"(또는 팀원 계정 자동조회)가 돌면 시트에는 여전히
+    지운 항목이 남아있어 "원본(시트)=정답" 규칙에 따라 되살아나 보였다("지웠는데 다시
+    나타남"). cloudAuth(...,true)로 감싸 토큰이 만료돼 있어도 조용히 재인증을 시도한 뒤
+    기록하도록 고쳐, 삭제가 실제로 시트까지 반영되게 한다(전체 자동저장 doCloudSave와
+    동일한 방식). */
   ASSIGN_DIRTY=true;
-  try{if(!RO()&&cloudAvailable()&&cloudTokenValid()){clearTimeout(assignAutoSheet._t);assignAutoSheet._t=setTimeout(()=>sheetSaveAssign(true),1500);}}catch(e){}
+  try{if(!RO()&&cloudAvailable()){clearTimeout(assignAutoSheet._t);assignAutoSheet._t=setTimeout(()=>cloudAuth(()=>sheetSaveAssign(true),true),1500);}}catch(e){}
 }
 async function doCloudLoad(silent){
   try{const id=await driveFind();if(!id){if(!silent)toast('드라이브에 저장된 파일이 없습니다');return;}
@@ -10081,6 +10093,11 @@ async function doSheetPullById(id,silent){
 }
 /* ═══ 마스터파일 연동 (2026년도_G2중화팀_업무보고_마스터파일) — 월간/주간 엄격 분리 ═══ */
 const NAME2ID={'이유아':'lee','서혜민':'seo','유훈종':'yu','김유진':'kim','탁종민':'tak','장민훈':'jang'};
+/* 시트 담당자 열에 "이유아 팀장"처럼 직급이 붙어 있어도 매칭되게 직급을 뗀 이름으로도 한 번 더 찾는다.
+   (원래 「지시」 탭 동기화에서만 이렇게 하고 있었는데, 「주간업무」·「월말보고」 탭은 정확히 이름만
+   있을 때만 매칭되던 불일치가 있어 통일 — 2026-09-05, "구글시트에 5개 넣었는데 3개만 반영" 조사) */
+function nm2id(raw){const s=String(raw||'').trim();if(!s)return null;
+  return NAME2ID[s.replace(/\s*(팀장|부팀장|본부장|부사장|이사|부장|차장|과장|대리|사원)$/,'').trim()]||NAME2ID[s]||null;}
 function g2num(v){if(v==null)return null;const t=String(v).replace(/[,\s]/g,'');if(t===''||t==='-'||t==='—'||t==='–')return null;const n=parseFloat(t);return isNaN(n)?null:n;}
 /* 구글시트 진행율(%) 열이 "퍼센트 서식" 셀이면 XLSX가 0.93처럼 소수(비율)로 내려준다(표시상 93%로 보여도 실제값은 0.93).
    문자열로 "93%"·"93"을 직접 입력한 값과 섞여 들어오므로, 0~1 사이 소수만 ×100 해 통일된 "정수%" 문자열로 반환한다. */
@@ -10088,7 +10105,10 @@ function g2pct(v){const n=g2num(v);if(n==null)return String(v||'').trim();const 
 /* 달성률처럼 원래 "93%" 텍스트로 화면에 그대로 표시되는 열용: 숫자면 %서식 통일, 숫자가 아니면(예:"완료","-") 원문 유지 */
 function g2pctTxt(v){const n=g2num(v);if(n==null)return String(v||'').trim();const p=(n>0&&n<=1)?n*100:n;return Math.max(0,Math.min(150,Math.round(p)))+'%';}
 function g2mon(v){const m=String(v||'').match(/(\d{1,2})\s*월/);return m?+m[1]:null;}
-function g2wk(v){const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;}
+function g2wk(v){const s=String(v||'').trim();let m=s.match(/W\s*(\d{1,2})/i);if(m)return +m[1];
+  m=s.match(/^(\d{1,2})\s*주/);if(m)return +m[1];  /* "36주차"·"36주"도 인식(2026-09-05) */
+  m=s.match(/^(\d{1,2})$/);if(m)return +m[1];      /* "W" 없이 숫자만("36")도 인식 */
+  return null;}
 /* 대만법인·대만 Sunriser 「수출목표(전체)」 시트 원본 데이터 입력 오류 보정.
    「거래처실적_주간」탭에는 두 거래처 모두 전 주차(W29~W36)에 걸쳐 1,000,000으로 동일하게
    입력돼 있으나, 같은 시점의 「거래처실적_월간」탭(1~8월 내내 일관된 값)에는 대만 Sunriser=
@@ -10296,7 +10316,7 @@ function importG2Master(wb,scope){
          (LEECAL)에서 이미 쓰고 있는 "원본(시트)이 곧 정답" 원칙과 동일. 팀장이 앱에서 직접 추가한
          지시(src 없음)는 시트에서 온 게 아니므로 그대로 둔다. */
       const seen=new Set();
-      body.forEach(r=>{const task=String(r[cT]||'').trim();const nm=NAME2ID[String(r[cN]||'').trim().replace(/(팀장|차장|과장|대리|사원)$/,'')]||NAME2ID[String(r[cN]||'').trim()];if(!task||!nm)return;
+      body.forEach(r=>{const task=String(r[cT]||'').trim();const nm=nm2id(r[cN]);if(!task||!nm)return;
         const since=g2date(cS>=0?r[cS]:'')||'',due=g2date(cD>=0?r[cD]:'')||'',start=g2date(cSt>=0?r[cSt]:'')||'';
         const stx=String(cStx>=0?r[cStx]||'':'').trim();const pg=g2num(cP>=0?r[cP]:'');
         const norm=x=>String(x||'').replace(/\s+/g,'').toLowerCase();
@@ -10321,7 +10341,7 @@ function importG2Master(wb,scope){
       const cM=ci('보고월'),cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL2=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cJ=ci('당월업무결과'),cRt=ci('달성률')>=0?ci('달성률'):ci('달성율'),cA=ci('익월실행계획');
       let cT=hdr.findIndex((h,i2)=>i2!==cB&&h.includes('중점추진과제')); if(cT<0)cT=cB+1;
       const byM={};
-      body.forEach(r=>{const mo=g2mon(r[cM]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
+      body.forEach(r=>{const mo=g2mon(r[cM]);const nm=nm2id(r[cN]);const t=String(r[cT]||'').trim();
         if(!mo||!nm||!t)return;
         (byM[mo]=byM[mo]||[]).push({m:nm,gb:String(r[cG]||'').trim(),g:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),r:g2pctTxt(r[cRt]),j:String(r[cJ]||'').trim(),a:String(r[cA]||'').trim(),kl:(cKL2>=0?String(r[cKL2]||'').trim():'')});});
       Object.keys(byM).forEach(mo=>{MREPORTS[String(mo)]=byM[mo];try{mfSyncFromMReports(mo);}catch(e){}});
@@ -10335,13 +10355,30 @@ function importG2Master(wb,scope){
       if(scope!=='week')return;
       const cW=ci('주차')>=0?ci('주차'):0,cN=ci('담당자'),cG=ci('구분'),cR=ci('R&R'),cB=ci('대분류'),cT=(ci('중점추진과제')>=0?ci('중점추진과제'):ci('핵심과제')),cK=(hdr.findIndex(h=>h.includes('KPI관리'))>=0?hdr.findIndex(h=>h.includes('KPI관리')):ci('KPI')),cKL=hdr.findIndex(h=>h.includes('KPI항목')||h.includes('KPI연결')),cSt=ci('시작일'),cD=ci('완료예정일'),cP=ci('우선순위'),cPr=ci('진행율'),cStx=ci('상태'),cNo=hdr.findIndex(h=>h.includes('업무결과')||h.includes('진행사항')),cNx=hdr.findIndex(h=>h.includes('차주'));
       const byW={};
-      body.forEach(r=>{const w=g2wk(r[cW]);const nm=NAME2ID[String(r[cN]||'').trim()];const t=String(r[cT]||'').trim();
-        if(!w||!nm||!t)return;
+      let lastW=null,skipWk=0,skipNm=0,skipT=0;
+      /* 근본원인 조사(2026-09-05, "5개 넣었는데 3개만 반영"): 구글시트가 주차 열(A열)을 여러 행에
+         걸쳐 병합해 쓰면, 구글시트 API는 병합범위의 첫 행에만 값을 주고 나머지 행은 빈칸으로 준다
+         → 그 행들은 주차를 못 읽어 통째로 누락됐다. 담당자·핵심과제가 있는데 주차 칸만 비어 있으면
+         "바로 위 행과 같은 주차"로 이어받고, 그래도 못 알아본 행은 사유별로 세어 아래 결과 메시지에
+         숫자로 남겨 다음부턴 눈에 보이게 한다. 담당자명도 「지시」 탭과 같은 방식(직급 뗀 이름)으로
+         매칭해 "이유아 팀장"처럼 직급이 붙어도 인식되게 통일. */
+      body.forEach(r=>{
+        const rawW=g2wk(r[cW]);const nm=nm2id(r[cN]);const t=String(r[cT]||'').trim();
+        if(!rawW&&!nm&&!t)return; /* 완전 빈 행(서식용 여백)은 집계·경고 대상에서 제외 */
+        const w=rawW||((nm&&t)?lastW:null);
+        if(rawW)lastW=rawW;
+        if(!w||!nm||!t){if(!w)skipWk++;else if(!nm)skipNm++;else skipT++;return;}
         let due=g2mmdd(r[cD]);
         let st0=(cSt>=0?g2mmdd(r[cSt]):'');
         (byW[w]=byW[w]||[]).push({m:nm,g:String(r[cG]||'').trim(),rr:String(r[cR]||'').trim(),big:String(r[cB]||'').trim(),t,k:String(r[cK]||'').trim(),st:st0,due,pri:String(r[cP]||'').trim(),p:g2pct(r[cPr]),stx:normStatus(cStx>=0?r[cStx]:''),note:String(r[cNo]||'').trim(),nx:String(r[cNx]||'').trim(),kl:(cKL>=0?String(r[cKL]||'').trim():'')});});
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
-      if(Object.keys(byW).length){saveWKREPORT();mergeWeeklyTasks(true);saveTasks();done.push('주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·'));}
+      if(Object.keys(byW).length){
+        saveWKREPORT();mergeWeeklyTasks(true);saveTasks();
+        let msg='주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·');
+        const skipped=skipWk+skipNm+skipT;
+        if(skipped){const rs=[];if(skipWk)rs.push('주차 인식불가 '+skipWk+'건');if(skipNm)rs.push('담당자명 불일치 '+skipNm+'건');if(skipT)rs.push('핵심과제 빈칸 '+skipT+'건');msg+=' · ⚠누락 '+skipped+'건('+rs.join(', ')+')';}
+        done.push(msg);
+      }
       return;
     }
     // ③ 거래처실적_월간: 보고월+거래처
@@ -11061,11 +11098,11 @@ try{mergeWkIntoTasks();}catch(e){}
 /* 예전엔 여기서 모바일이면 메뉴(rail)를 강제로 열어둔 채 시작했는데, 이유아 팀장 요청으로 제거 —
    모바일에서는 처음엔 메뉴가 접혀 있고 ☰ 버튼을 눌러야 열리는 것이 맞는 동작이다.
    (아래 rail-open 강제 추가 줄은 삭제함 — toggleRail()로 사용자가 직접 열 때만 열리게 둔다) */
-/* 예전엔 여기서 TAB='mreport'(주간과제·최신 업로드 주차)로 다시 덮어써서, 위쪽(3165행 부근)에서 이미
+/* 예전엔 여기서 TAB='mreport'(주간보고·최신 업로드 주차)로 다시 덮어써서, 위쪽(3165행 부근)에서 이미
    정해둔 "첫 화면 = 팀종합현황(home)" 설정이 매번 조용히 무시되고 있었다 · 게다가 그 최신 업로드 주차 기준이
    「주간업무」(WKREPORT) 동기화 현황에 좌우돼, 정작 오늘 날짜의 ISO 주차보다 뒤처진 주(예: 36주차인데 35주차)가
    첫 화면에 그대로 노출되는 원인이었다 · PC 첫 화면은 팀종합현황(오늘 기준 정확한 월/주차)을 그대로 두되,
-   모바일(폭 820px 이하)에서는 이유아 팀장 요청으로 주간과제(이번 주, curWeekMonth·gotoThisWeek 기준 —
+   모바일(폭 820px 이하)에서는 이유아 팀장 요청으로 주간보고(이번 주, curWeekMonth·gotoThisWeek 기준 —
    위 버그를 일으켰던 gotoLastUpWeek()이 아니라 이미 고쳐진 최신 로직 사용)를 첫 화면으로 보여준다 */
 try{if(window.innerWidth<=820){TAB='mreport';MRTAB='week';gotoThisWeek();}}catch(e){}
 render();
