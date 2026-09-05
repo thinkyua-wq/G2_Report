@@ -537,22 +537,21 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .md-ev.mile .me-d{display:block;font-size:9.5px;font-weight:500;opacity:.9}
 .md-ev.mile .me-info{display:block;font-size:9.5px;font-weight:500;opacity:.95;margin-top:1px}
 .mile-noday .md-ev.mile{color:#fff;display:inline-block}
-/* 중화팀 행사 상세표: 1pt 작게 · 줄바꿈 방지 · 동일 크기 */
-/* 중화팀 행사 상세표 = 반기실적(.ptable.plan) 표와 동일 서식 (본문 +10%) */
+/* 중화팀 행사 상세표 = 출장일정(.ptable.triptbl) 표와 글자크기·폰트 완전 동일 (2026-09-05 요청) */
 .ptable.triptbl{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;font-size:12.4px;border:1px solid #cbd5e1}
 .ptable.triptbl th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.4px;padding:7px 5px;white-space:nowrap;border:1px solid #cbd5e1}
 .ptable.triptbl td{border:1px solid #cbd5e1;padding:7px 6px;text-align:center;vertical-align:middle;color:#000;font-size:12.4px;line-height:1.45}
 .ptable.triptbl td.rl{text-align:left}
-.ptable.rept.miletbl,.ptable.rept.miletbl td{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;letter-spacing:normal;font-size:12px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
+.ptable.rept.miletbl,.ptable.rept.miletbl td{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;letter-spacing:normal;font-size:12.4px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
 .ptable.rept.miletbl th,.ptable.rept.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle!important;color:#000;font-weight:400}
 .ptable.rept.miletbl thead th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:11.4px;padding:7px 4px;white-space:nowrap}
 .ptable.rept.miletbl th.sortable{cursor:pointer}
 .ptable.rept.miletbl th.sorted{font-weight:800;color:#5b8a6e}
-.ptable.rept.miletbl td{background:#fff;font-size:12px;padding:4px 6px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35}
+.ptable.rept.miletbl td{background:#fff;font-size:12.4px;padding:4px 6px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35}
 .ptable.rept.miletbl td *{font-weight:400}
 .ptable.rept.miletbl td.gcol,.ptable.rept.miletbl td.gcol select{background:#fff}
-.ptable.rept.miletbl input,.ptable.rept.miletbl select,.ptable.rept.miletbl textarea{border:1px solid transparent;background:transparent;font-family:inherit;font-size:12px;font-weight:400;color:#000;text-align:center;padding:1px 4px;width:100%;box-sizing:border-box;border-radius:0;line-height:1.35}
-.ptable.rept.miletbl select{font-size:12px;padding:2px 3px;width:100%;max-width:100%;min-width:0}
+.ptable.rept.miletbl input,.ptable.rept.miletbl select,.ptable.rept.miletbl textarea{border:1px solid transparent;background:transparent;font-family:inherit;font-size:12.4px;font-weight:400;color:#000;text-align:center;padding:1px 4px;width:100%;box-sizing:border-box;border-radius:0;line-height:1.35}
+.ptable.rept.miletbl select{font-size:12.4px;padding:2px 3px;width:100%;max-width:100%;min-width:0}
 .ptable.rept.miletbl textarea,.ptable.rept.miletbl td.infc textarea,.ptable.rept.miletbl .rep-sum{display:block;margin:0;text-align:left;resize:none;overflow:hidden;min-height:28px;line-height:1.45;white-space:pre-wrap;font-size:12.4px}
 .ptable.rept.miletbl td.infc{text-align:left}
 .ptable.rept.miletbl input:hover,.ptable.rept.miletbl select:hover,.ptable.rept.miletbl textarea:hover{border-color:var(--ln)}
@@ -2445,7 +2444,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.04-M264</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M265</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2922,9 +2921,8 @@ let PMET='법인매출', PBUMON='전체', PMON=6;
 const MENU=[['home','팀 종합현황','홈'],
   ['mreport','업무현황','업무'],
   ['calmonth','중화팀 일정·행사','일정'],
-  ['goals','팀업무','목표'],
-  ['meetrep','G2업무일정관리(이유아)','회의']
-];
+  ['goals','팀업무','목표']
+]; /* 'meetrep'(G2업무일정관리(이유아)) 메뉴 삭제 요청(2026-09-05)으로 제거 — setTab()에서도 항상 home으로 돌리도록 처리 */
 const MENULB={home:'팀 종합현황',meetrep:'G2업무일정관리(이유아)',overview:'중화팀 관리 현황판',mreport:'업무현황',rr:'업무현황',kanban:'과제진행율',calendar:'중화팀 행사 · 2026 중점시장활동',calmonth:'중화팀 일정 · 행사 · 출장',goals:'팀업무',perf:'회사 성과관리',sales:'실적 현황',separate:'등록관리 · 별도 등록'};
 /* ===== 화면 보기(팀장/팀원) · 팀원=본인 스코프 + 전체 보기 토글 ===== */
 let VROLE='lead'; try{VROLE=localStorage.getItem('wr_vrole')||'lead';}catch(e){}
@@ -9439,7 +9437,7 @@ function toggleDataMenu(e){if(e)e.stopPropagation();const m=document.getElementB
 function closeDataMenu(){const m=document.getElementById('dataMenu');if(m)m.classList.add('hide');}
 document.addEventListener('click',e=>{const dd=e.target.closest&&e.target.closest('.tb-dd');if(!dd)closeDataMenu();});
 function toggleDone(v){HIDEDONE=v;render();}
-function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep'&&LOGINUID!=='lee')t='home';TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';MILECTRY='';CALKIND='';try{localStorage.setItem('wr_calkind','');}catch(e){}}render();}
+function setTab(t){try{window.scrollTo({top:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}if(t==='calendar')t='calmonth';if(t==='rr')t='mreport';if(t==='meetrep')t='home';/* 메뉴 삭제됨 — 항상 홈으로 */TAB=(VROLE==='member'&&!MEMBER_TABS.includes(t))?'mreport':t;if(TAB==='mreport'||TAB==='home')gotoCurMonthDefault();else if(TAB==='rr'){if(RRTAB==='focus')RRTAB='tcards';gotoThisWeek();}else if(TAB==='calendar'||TAB==='calmonth'){gotoTodayDefault();MILEMGR='';MILECTRY='';CALKIND='';try{localStorage.setItem('wr_calkind','');}catch(e){}}render();}
 function toggleRail(force){const open=(force===undefined)?!document.body.classList.contains('rail-open'):force;document.body.classList.toggle('rail-open',open);}
 function resetFilters(){document.getElementById('fCountry').value='';document.getElementById('fMgr').value='';document.getElementById('fQ').value='';render();}
 function exportXlsx(){
@@ -10329,13 +10327,55 @@ function csvParseG2(text){
   if(cur!==''||row.length){row.push(cur);rows.push(row);}
   return rows;
 }
+function g2colLetter(n){let s='';n++;while(n>0){s=String.fromCharCode(65+((n-1)%26))+s;n=Math.floor((n-1)/26);}return s;}
+/* ═ 「출장일정」 등 안내문(배너) 행이 헤더 위에 여러 줄 있는 탭에서, 구글시트 gviz CSV
+   내보내기가 헤더 바로 다음 첫 데이터행의 날짜(YYYY-MM-DD) 칸만 빈 값으로 내려주는 현상을
+   근본 진단·재현: 시트 자체 값(직접 셀 클릭)과 좁힌 range(예: 헤더행:다음행)로 재조회한
+   값은 모두 정상인데, range 없이(또는 헤더 위 배너·빈 줄을 포함한 범위로) 통째로 내려받을
+   때만 그 첫 데이터행의 날짜열이 빈 문자열로 온다 — 구글 gviz 자체의 헤더/타입 자동추론이
+   배너 다중행 때문에 오작동하는 것으로 보이며, 우리 쪽 파싱 로직 문제가 아님을 확인함.
+   시트 구조(배너가 몇 줄인지)를 코드에 고정하지 않고, 이 특정 결측 패턴(=헤더 바로 다음
+   행인데 날짜열만 비고 나머지 칸은 채워져 있음)이 실제로 감지될 때만, 후보 헤더행 번호를
+   몇 개 좁혀 재조회해서(같은 행인지 다른 칸 값으로 대조 확인 후) 그 값만 복구한다. */
+async function patchLeadingBlankDate(name, rows){
+  if(!rows||rows.length<2) return;
+  const first=rows[1];
+  const nCols=(rows[0]||[]).length||first.length;
+  if(!nCols) return;
+  const isDate=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||'').trim());
+  const dateCols=[];
+  for(let c=0;c<nCols;c++){
+    if(String(first[c]||'').trim())continue; // 이미 값이 있으면 대상 아님
+    let cnt=0; for(let r=1;r<rows.length;r++) if(isDate(rows[r][c]))cnt++;
+    if(cnt>=2) dateCols.push(c); // 다른 행들에는 그 칸에 실제 날짜값이 2개 이상 있음 → 날짜열로 판단
+  }
+  if(!dateCols.length) return;
+  const otherFilled=first.some((v,ci)=>!dateCols.includes(ci)&&String(v||'').trim());
+  if(!otherFilled) return; // 그냥 빈 행이면 건드리지 않음(예: 진짜로 날짜 미입력인 정상 케이스)
+  const last=g2colLetter(nCols-1);
+  for(let k=2;k<=12;k++){
+    try{
+      const url=`https://docs.google.com/spreadsheets/d/${MREPORT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}&range=A${k}:${last}${k+1}&_ts=${Date.now()}`;
+      const res=await fetch(url,{credentials:'omit',cache:'no-store'});
+      if(!res.ok)continue;
+      const probe=csvParseG2(await res.text());
+      const cand=probe&&probe[1];
+      if(!cand)continue;
+      const matches=first.every((v,ci)=>dateCols.includes(ci)||String(v||'').trim()===String(cand[ci]||'').trim());
+      const filled=dateCols.every(ci=>String(cand[ci]||'').trim());
+      if(matches&&filled){dateCols.forEach(ci=>{rows[1][ci]=cand[ci];});return;}
+    }catch(e){/* 다음 후보 행 번호로 계속 시도 */}
+  }
+}
 async function fetchPublicTab(name){
   const url=`https://docs.google.com/spreadsheets/d/${MREPORT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
   const res=await fetch(url,{credentials:'omit'});
   if(!res.ok)throw new Error('HTTP '+res.status);
   const text=await res.text();
   if(/^\s*<(!DOCTYPE|html)/i.test(text))throw new Error('비공개(로그인 필요) 또는 탭 없음'); // 비공개 시트는 로그인 페이지 HTML을 돌려줌
-  return csvParseG2(text);
+  const rows=csvParseG2(text);
+  try{await patchLeadingBlankDate(name,rows);}catch(e){/* 복구 실패해도 원본 값 그대로 유지 */}
+  return rows;
 }
 async function publicSyncMaster(silent){
   try{
