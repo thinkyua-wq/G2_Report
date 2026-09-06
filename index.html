@@ -2452,7 +2452,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.05-M281</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M283</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4062,8 +4062,26 @@ KPIDATA=KPIDATA.filter(r=>!KPI_HIDDEN.includes(r.item));
 function saveKPI(){try{localStorage.setItem('wr_kpi_v4',JSON.stringify(KPIDATA));}catch(e){}}
 let KPIVIEW='cur'; try{KPIVIEW=localStorage.getItem('wr_kpiview')||'cur';}catch(e){}
 function setKpiView(v){KPIVIEW=v;try{localStorage.setItem('wr_kpiview',v);}catch(e){}render();}
-function kfmt(v){return (v==null||v==='')?'':(typeof v==='number'?v.toLocaleString('en-US'):esc(String(v)));}
+/* 2026-09-06 요청("목표에 숫자인 경우 천단위 콤마·소수점은 사사오입"): 숫자 값(실제 number 타입뿐
+   아니라 시트에서 문자열로 들어온 순수 숫자 텍스트도 포함)은 반올림 후 천단위 콤마를 붙인다.
+   날짜·"상시"·"일정" 같은 텍스트는 숫자로 오인하지 않도록 순수 숫자 형태(콤마·소수점만 허용)일 때만 적용. */
+function kfmt(v){
+  if(v==null||v==='')return '';
+  if(typeof v==='number')return isFinite(v)?Math.round(v).toLocaleString('en-US'):'';
+  const s=String(v).trim();
+  if(/^-?[\d,]+(\.\d+)?$/.test(s)){const n=knum(s); if(n!=null&&isFinite(n))return Math.round(n).toLocaleString('en-US');}
+  return esc(s);
+}
 function knum(v){if(v==null||v==='')return null;const x=String(v).replace(/[,%\s]/g,'');return isNaN(+x)?null:+x;}
+/* 「26년목표」처럼 숫자·날짜·"상시" 텍스트가 섞여 들어오는 목표값 전용 표시 헬퍼.
+   구글시트 날짜 셀이 XLSX 파싱 때 실제 Date 객체로 들어와 "Tue Sep 29 2026 23:59:00 GMT..."처럼
+   그대로 문자열화되던 문제를 여기서 "26/09/29" 형태로 바로잡고, 순수 숫자는 kfmt와 동일하게
+   반올림·천단위 콤마 처리, 그 외(이미 정리된 날짜 텍스트·"상시" 등)는 그대로 둔다. */
+function ktgt(v){
+  if(v==null||v==='')return '–';
+  if(v instanceof Date&&!isNaN(v)){const p=n=>String(n).padStart(2,'0');return String(v.getFullYear()).slice(2)+'/'+p(v.getMonth()+1)+'/'+p(v.getDate());}
+  return kfmt(v);
+}
 function editKPI(i,f,v,mi){ if(roBlock())return; const list=kpiAll(); const r=list[i]; if(!r||r._auto)return;
   if(f==='owner'||f==='cat'||f==='item'||f==='unit'||f==='country'){
     if(f==='owner'&&r.owner!==v)r.chgd=todayStr();
@@ -4158,7 +4176,7 @@ function kpiStripFor(name,links,forceOpen){
     h+=`<tr class="${doneY?'kdone':''}"><td class="l">${doneY?'<span class="kdn">완료</span>':''}${esc(r.item)}</td><td>${esc(r.unit||'')}</td>`
       +`<td>${mt!=null&&mt!==''?kfmt(mt):'–'}</td><td class="au">${ma!=null&&ma!==''?kfmt(ma):'–'}</td>`
       +`<td>${doneM?'<span class="kdn">완료</span>':(mr!=null?`<b class="${cls(mr)}">${mr}%</b>`:'–')}</td>`
-      +`<td class="au">${acc!=null?acc.toLocaleString('en-US'):'–'}</td><td>${esc(String(r.yt||'–'))}</td>`
+      +`<td class="au">${acc!=null?Math.round(acc).toLocaleString('en-US'):'–'}</td><td>${ktgt(r.yt)}</td>`
       +`<td>${doneY?'<span class="kdn">완료</span>':(rt!=null?`<b class="${cls(rt)}">${rt}%</b>`:'–')}</td></tr>`;});
   return h+'</table></div>';
 }
@@ -6711,6 +6729,38 @@ function addDirect(mid){
   toast('지시 등록 · 캘린더 '+fmtDue(due)+'에 마감 일정이 추가되었습니다');
   try{ if(typeof emailAssign==='function') setTimeout(()=>{ if(confirm('담당자에게 이메일로 통지할까요? (메일 작성창이 열립니다)')) emailAssign(0); },200); }catch(e){}
 }
+/* 과제에 연결된 KPI 항목 찾기 · 시트 「KPI연결」(kl) 텍스트를 그 담당자의 KPI 항목명과 매칭
+   (이번 주 값이 있으면 그것 우선, 없으면 과제 기본값 t.kl 사용). 매칭되는 KPI가 없으면 null —
+   그 경우 지금까지와 동일하게 과제명만 제목으로 쓴다(2026-09-05, "KPI항목이 주간보고 제목이 되게" 요청) */
+function kpiForRow(r){
+  const g=mgrById(r.mgr); if(!g)return null;
+  const c=wkAt(r.t,W); const kl=(c&&c.kl)||r.t.kl||'';
+  if(!kl)return null;
+  const rows=kpiRowsFor(g.name);
+  return rows.find(k=>kpiMatch(k.item,kl))||null;
+}
+function rowTitle(r){ const kr=kpiForRow(r); return kr?(kr.item+' - '+r.label):r.label; }
+/* 완료예정일이 특정 날짜 없이 "상시"일 때만 앞에 "업무일정"을 붙여 구분(2026-09-06 요청) ·
+   실제 날짜가 있는 경우는 그대로 두어 다른 화면(표·PPT 등)의 fmtDue()는 건드리지 않는다 */
+function dueLabel(d){const t=fmtDue(d); return t==='상시'?('업무일정 '+t):t;}
+/* KPI 연결된 과제 카드에 "일정" 진행바와 같은 모양으로 그 KPI의 이번 달 실적·달성율 바를 하나 더 표시
+   · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청) */
+function kpiMiniBar(kr){
+  if(!kr)return '';
+  const mi=MONTH-1;
+  const mt=kr.mt[mi],ma=kpiMa(kr,mi);
+  const mtn=knum(mt),man=knum(ma);
+  const mr=(mtn&&man!=null)?Math.round(man/mtn*100):null;
+  const isSchedule=String(kr.method||'').includes('일정');
+  const doneM=isSchedule&&(mr!=null&&mr>=100);
+  const valTxt=man!=null?(kfmt(man)+(kr.unit?(' '+kr.unit):'')):'실적 미입력';
+  const barColor=doneM?'#1f9d57':(mr==null?'#c8cfca':mr>=90?'#1f9d57':mr>=60?'#9a7a10':'#c0392b');
+  return `<div class="foot" style="margin-top:5px" title="연결 KPI · ${esc(kr.item)}">
+    <span class="due">📊 KPI · ${MONTH}월 실적 ${esc(valTxt)}</span>
+    <span class="pbar"><i style="width:${doneM?100:(mr||0)}%;background:${barColor}"></i></span>
+    <span class="pnum" style="color:${barColor}">${doneM?'완료':(mr!=null?mr+'%':'–')}</span>
+  </div>`;
+}
 function cardFold(r,showMgr){
   const op=wcOpen(r.ti);
   const g=showMgr?(mgrById(r.mgr)||null):null;
@@ -6720,8 +6770,8 @@ function cardFold(r,showMgr){
       ${g?`<span class="wc-mgr" title="${esc(g.name+' '+g.title)}"><i style="background:${g.color}">${esc(g.ini)}</i>${esc(g.name)}</span>`:''}
       ${r.cat?`<span class="wc-cat" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${esc(r.cat)}</span>`:''}
       <span class="pri-b p${prioKo(r.prio)}" title="중요도">${prioKo(r.prio)}</span>
-      <span class="wc-tt">${esc(r.label)}${prioKo(r.prio)==='상'?' <span class="wc-star">★</span>':''}</span>
-      <span class="wc-due ${r.risk?'risk':''}">${esc(fmtDue(r.due))}</span>
+      <span class="wc-tt">${esc(rowTitle(r))}${prioKo(r.prio)==='상'?' <span class="wc-star">★</span>':''}</span>
+      <span class="wc-due ${r.risk?'risk':''}">${esc(dueLabel(r.due))}</span>
       <span class="wc-pb"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
       <span class="wc-pn">${r.p}%</span>
     </div>
@@ -6740,19 +6790,21 @@ function setTaskNext(ti,v,el){ if(roBlock())return; const t=TASKS[ti]; if(!t)ret
   saveTasks(); if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);} }
 function cardHTML(r){
   const delta=(r.prev!=null&&r.p>r.prev)?`<span class="deltaup">▲${r.p-r.prev}</span>`:'';
+  const kr=kpiForRow(r);
   return `<div class="card${r.carried?' carried':''}" onclick="openDetail(${r.ti})">
     <div class="chips">
       ${r.cat?`<span class="chip" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${r.cat}</span>`:''}
       ${(()=>{const cs=r.sx||KEY2ST[r.st]||'진행중';return `<select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)" title="상태 (구글시트 「상태」 열과 연동)">`+STATUS_OPTS.map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
       ${(()=>{const pk=prioKo(r.prio);return `<select class="pri-sel p${pk}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskPrio(${r.ti},this.value)" title="중요도">`+['상','중','하'].map(o=>`<option ${pk===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
     </div>
-    <div class="ttl">${esc(r.label)}</div>
+    <div class="ttl">${esc(rowTitle(r))}</div>
     <div class="note">${esc(r.note||'')}</div>
     <div class="foot">
       <span class="due ${r.risk?'risk':''}">${dueIcon(r.risk)}${fmtDue(r.due)}</span>
       <span class="pbar"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
       <span class="pnum">${r.p}%${delta}</span>
     </div>
+    ${kpiMiniBar(kr)}
     <div class="nxw" onclick="event.stopPropagation()"><span class="nxw-k">다음주 업무</span><textarea class="nxw-t" placeholder="다음주 계획을 적어주세요" oninput="autogrow(this)" onchange="setTaskNext(${r.ti},this.value,this)">${esc(nextOf(r)||'')}</textarea></div>
     </div>`;
 }
@@ -10617,8 +10669,8 @@ function pptKpiRows(name){
       {text:mt!=null&&mt!==''?kfmt(mt):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
       {text:ma!=null&&ma!==''?kfmt(ma):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
       {text:doneM?'완료':(mr!=null?mr+'%':'–'),options:{align:'center',color:doneM?G:pptPC(mr||0),bold:true,fontSize:10,valign:'middle'}},
-      {text:acc!=null?acc.toLocaleString('en-US'):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
-      {text:String(r.yt||'–'),options:{align:'center',color:MUT,fontSize:10,valign:'middle'}},
+      {text:acc!=null?Math.round(acc).toLocaleString('en-US'):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
+      {text:ktgt(r.yt),options:{align:'center',color:MUT,fontSize:10,valign:'middle'}},
       {text:doneY?'완료':(rt!=null?rt+'%':'–'),options:{align:'center',color:doneY?G:pptPC(rt||0),bold:true,fontSize:10,valign:'middle'}}]);
   });
   return tr;
