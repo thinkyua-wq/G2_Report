@@ -2452,7 +2452,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M283</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M285</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -10473,20 +10473,35 @@ function importG2Master(wb,scope){
       Object.keys(byW).forEach(w=>{WKREPORT[String(w)]=byW[w];});
       if(Object.keys(byW).length){
         saveWKREPORT();mergeWeeklyTasks(true);saveTasks();
+        /* 2026-09-06, "왔다갔다하는거 스크립트를 고쳐야하는거아니니": M279는 "부분일치가 틀린 과제를
+           잘못 흡수하는" 사고 자체를 막았지만, 부분일치 매칭은 여전히 정상 경로로 남아있고 항상
+           조용히 일어난다 — 그래서 다음번 비슷한 사고(예: 임계값을 살짝 넘나드는 케이스)가 또 생겨도
+           사람이 몇 주 뒤 데이터가 이상하다고 "느껴야만" 발견된다. 매번 반입할 때마다 부분일치로
+           연결된 건을 전부 모아 눈에 보이는 배지에 같이 올려, 근본 오류가 재발해도 이번엔 즉시
+           확인·거부할 수 있게 한다(중복 표시는 담당자+매칭된 과제명 기준으로 한 번만). */
+        const fuzzySeen=new Set(),fuzzyPairs=[];
+        MERGE_FUZZY.forEach(f=>{const key=f.mgr+'|'+f.matched;if(fuzzySeen.has(key))return;fuzzySeen.add(key);fuzzyPairs.push(f);});
         let msg='주간업무 '+Object.keys(byW).map(w=>'W'+w+'('+byW[w].length+')').join('·');
         const skipped=skipWk+skipNm+skipT;
+        const detailLines=[];
         if(skipped){
           const rs=[];if(skipWk)rs.push('주차 인식불가 '+skipWk+'건');if(skipNm)rs.push('담당자명 불일치 '+skipNm+'건');if(skipT)rs.push('핵심과제 빈칸 '+skipT+'건');
           msg+=' · ⚠누락 '+skipped+'건('+rs.join(', ')+')';
           /* 2026-09-05, "⚠누락 메시지가 안 보인다": 기존엔 이 문구가 2.2초짜리 토스트로만 잠깐 떴다가
              사라져서 놓치기 쉬웠다. 이제는 「구글시트 불러오기」 버튼 옆에 계속 남는 배지로 저장해,
              다시 열어봐도(새로고침해도) 어떤 행이 왜 빠졌는지 실제 값과 함께 확인할 수 있게 한다. */
-          const detailLines=[];
           if(skipNmSamples.length)detailLines.push('▸ 담당자명 불일치('+skipNm+'건): '+skipNmSamples.join(', ')+(skipNm>skipNmSamples.length?' 외 '+(skipNm-skipNmSamples.length)+'건':'')+'\n   → 시트의 이 이름이 담당자 6명(이유아·서혜민·유훈종·김유진·탁종민·장민훈) 중 누구와도 매칭되지 않았습니다. 오타·다른 표기(예: 영문, 별명)가 없는지 확인하세요.');
           if(skipWkSamples.length)detailLines.push('▸ 주차 인식불가('+skipWk+'건): '+skipWkSamples.join(', ')+(skipWk>skipWkSamples.length?' 외 '+(skipWk-skipWkSamples.length)+'건':'')+'\n   → 주차 칸과 바로 위 행 모두 주차값이 없습니다. 병합된 셀이면 병합 범위의 첫 행에만 주차를 채워도 되지만, 그 위에 담당자·핵심과제가 있는 행이 하나는 있어야 합니다.');
           if(skipTSamples.length)detailLines.push('▸ 핵심과제 빈칸('+skipT+'건): '+skipTSamples.join(', ')+(skipT>skipTSamples.length?' 외 '+(skipT-skipTSamples.length)+'건':''));
+        }
+        if(fuzzyPairs.length){
+          msg+=' · ⚠매칭 확인 '+fuzzyPairs.length+'건';
+          const lines=fuzzyPairs.map(f=>{const nm=(mgrById(f.mgr)||{}).name||f.mgr;return '  · ['+nm+'] 시트 『'+f.sheet+'』 → 기존 과제 『'+f.matched+'』로 자동 연결됨';});
+          detailLines.push('▸ 매칭 확인 필요('+fuzzyPairs.length+'건): 이름이 완전히 같지 않은데 비슷해서(부분일치) 자동으로 같은 과제로 연결했습니다. 실제로 같은 과제가 맞는지 아래에서 확인하세요 — 다른 과제라면 시트에서 둘 중 하나의 이름을 더 다르게 적어야 다음부터 분리됩니다.\n'+lines.join('\n'));
+        }
+        if(detailLines.length){
           LASTPULLWARN=msg;
-          LASTPULLDETAIL='마지막 주간업무 불러오기에서 아래 '+skipped+'건을 인식하지 못해 반영되지 않았습니다.\n\n'+detailLines.join('\n\n');
+          LASTPULLDETAIL='마지막 주간업무 불러오기에서 아래를 확인하세요.\n\n'+detailLines.join('\n\n');
           try{localStorage.setItem('wr_lastpullwarn_v1',JSON.stringify({msg:LASTPULLWARN,detail:LASTPULLDETAIL,ts:Date.now()}));}catch(e){}
         }else{
           LASTPULLWARN='';LASTPULLDETAIL='';
@@ -10606,7 +10621,29 @@ async function patchLeadingBlankDate(name, rows){
     }catch(e){/* 다음 후보 행 번호로 계속 시도 */}
   }
 }
+/* 2026-09-06, "왜 Code.gs 안 써?": 아래 gviz CSV 스크래핑은 구글의 비공식 엔드포인트라
+   헤더 자동추론이 배너 다중행에서 오작동하는 실제 버그가 있었고(바로 아래 patchLeadingBlankDate가
+   그 땜빵) 앞으로도 언제든 비슷한 문제가 재발할 수 있다. Code.gs 웹 앱(정식 SpreadsheetApp API로
+   셀 화면표시값을 그대로 JSON으로 내려줌 · 배포 방법은 /Code.gs 파일 맨 위 주석 참고)을 배포하고
+   그 웹 앱 URL을 아래 PUBLIC_SYNC_GAS_URL에 채우면, 이 함수가 그 경로를 최우선으로 쓰고
+   gviz는 "그 경로가 실패했을 때만" 쓰는 안전망으로 남는다. 비워두면(기본값) 기존과 완전히 동일하게
+   동작하므로 아직 배포 전이어도 지금 이 파일을 그대로 써도 무방하다. */
+const PUBLIC_SYNC_GAS_URL='';
+async function fetchPublicTabViaGAS(name){
+  const sep=PUBLIC_SYNC_GAS_URL.includes('?')?'&':'?';
+  const url=PUBLIC_SYNC_GAS_URL+sep+'sheet='+encodeURIComponent(name)+'&_ts='+Date.now();
+  const res=await fetch(url,{credentials:'omit',cache:'no-store'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const j=await res.json();
+  if(!j||!j.ok)throw new Error((j&&j.error)||'Code.gs 응답 오류');
+  return j.rows||[];
+}
 async function fetchPublicTab(name){
+  if(PUBLIC_SYNC_GAS_URL){
+    try{return await fetchPublicTabViaGAS(name);}
+    catch(e){/* Code.gs 경로 실패 시(배포 초기 오류·일시 장애 등) 서비스가 완전히 끊기지 않도록
+                기존 gviz 경로로 조용히 자동 대체한다 — 아래로 계속 진행 */}
+  }
   const url=`https://docs.google.com/spreadsheets/d/${MREPORT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
   const res=await fetch(url,{credentials:'omit'});
   if(!res.ok)throw new Error('HTTP '+res.status);
@@ -10819,9 +10856,9 @@ let LASTPULLWARN='',LASTPULLDETAIL='';
 function updatePullWarnBadge(){const el=document.getElementById('pullWarnBadge');if(!el)return;el.style.display=LASTPULLWARN?'inline-flex':'none';el.title=LASTPULLWARN?'클릭해서 상세 확인':'';}
 function showPullWarn(){
   const dw=document.getElementById('drawer');
-  dw.innerHTML=`<div class="dw-h"><div class="top"><div style="min-width:0"><div class="chips"><span class="chip" style="background:var(--riskSoft);color:var(--risk)">불러오기 확인</span></div><h3>구글시트 불러오기에서 일부 행이 빠졌습니다</h3></div><button class="close" onclick="closeDetail()">✕</button></div></div>
+  dw.innerHTML=`<div class="dw-h"><div class="top"><div style="min-width:0"><div class="chips"><span class="chip" style="background:var(--riskSoft);color:var(--risk)">불러오기 확인</span></div><h3>구글시트 불러오기에서 확인이 필요합니다</h3></div><button class="close" onclick="closeDetail()">✕</button></div></div>
     <div class="dw-b"><div class="set-p" style="white-space:pre-wrap;line-height:1.6">${esc(LASTPULLDETAIL||LASTPULLWARN||'(기록 없음)')}</div>
-    <div class="set-hint" style="margin-top:10px">※ 시트를 고친 뒤 [구글시트 불러오기]를 다시 누르면 이 확인창은 자동으로 사라집니다(빠진 행이 없어지면).</div></div>`;
+    <div class="set-hint" style="margin-top:10px">※ 빠진 행은 시트를 고치면, 매칭 확인 건은 시트에서 과제 이름을 더 다르게(같은 과제면 그대로 둬도 무방) 적으면 다음 [구글시트 불러오기] 때 자동으로 사라집니다.</div></div>`;
   document.getElementById('ov').classList.add('on');dw.classList.add('on');
 }
 function setSyncErr(msg,needAuth){LASTSYNCERR=String(msg||'');NEEDAUTH=!!needAuth;APIOFF=false;
@@ -11173,8 +11210,15 @@ function normStatus(v){
   if(/^(진행|진행중|prog)/i.test(s))return '진행중';
   return STATUS_OPTS.includes(s)?s:'';
 }
+let MERGE_FUZZY=[]; /* 2026-09-06, "\uc2a4\ud06c\ub9bd\ud2b8\ubd80\ubd84\uc744 \uace0\uccd0\uc57c\ud558\ub294\uac70\uc544\ub2c8\ub2c8": M279\uc5d0\uc11c \ubd80\ubd84\uc77c\uce58 \ubcd1\ud569\uc758 \uc624\ud310(\uc9c4\uc9dc
+  \ub2e4\ub978 \uacfc\uc81c\ub97c \uac19\uc740 \uacfc\uc81c\ub85c \uc798\ubabb \ud761\uc218)\uc744 \uadfc\ubcf8\uc6d0\uc778 \uc218\uc815\ud588\uc9c0\ub9cc, \ubd80\ubd84\uc77c\uce58 \uc790\uccb4\ub294 \uc5ec\uc804\ud788 \ub0a8\uc544\uc788\ub294 \uc815\uc0c1 \uacbd\ub85c\ub2e4
+  (\uc608: \uc0ac\uc18c\ud55c \ud45c\uae30 \ucc28\uc774\ub294 \uac19\uc740 \uacfc\uc81c\ub85c \ubd10\uc57c \ud568). \ubb38\uc81c\ub294 \uadf8 \ud310\ub2e8\uc774 \ud56d\uc0c1 \uc870\uc6a9\ud788, \uc0ac\ub78c \ub208\uc5d0 \uc548 \ubcf4\uc774\uac8c
+  \uc77c\uc5b4\ub09c\ub2e4\ub294 \uac83 \u2014 \uadf8\ub798\uc11c M279\ub958 \ubc84\uadf8\uac00 \ub098\ub3c4 "\u26a0\ub204\ub77d"\uc5d0\ub294 \uc548 \uc7a1\ud788\uace0 \uba87 \uc8fc \ub4a4 \uc0ac\ub78c\uc774 \ub370\uc774\ud130\uac00 \uc774\uc0c1\ud558\ub2e4\uace0
+  \ub290\uaef4\uc57c\ub9cc \ubc1c\uacac\ub410\ub2e4. \uc774\uc81c mergeWeeklyTasks\uac00 \ubd80\ubd84\uc77c\uce58\ub85c(\uc774\ub984\uc774 \uc644\uc804\ud788 \uac19\uc9c0 \uc54a\uc740\ub370\ub3c4) \ub9e4\uce6d\ud55c \ubaa8\ub4e0 \uac74\uc744
+  \uc774 \ubc30\uc5f4\uc5d0 \ub0a8\uaca8, \ud638\ucd9c\ud55c \ucabd(\uc8fc\uac04\uc5c5\ubb34 \ubc18\uc785)\uc774 "\u26a0\ub9e4\uce6d \ud655\uc778" \ubc30\uc9c0\ub85c \uc0ac\ub78c\uc774 \ub208\uc73c\ub85c \ud655\uc778\ud560 \uc218 \uc788\uac8c \ud55c\ub2e4. */
 function mergeWeeklyTasks(force){
   if(typeof WKREPORT==='undefined')return;
+  MERGE_FUZZY=[];
   const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
   const pnum=p=>{const v=parseInt(p);return isNaN(v)?60:v;};
   const isoIdx=iso=>{for(let m=7;m<=12;m++){const ws=buildWeeks(m);const i=ws.findIndex(x=>x.iso===+iso);if(i>=0)return {m,i,len:ws.length};}return null;};
@@ -11199,6 +11243,7 @@ function mergeWeeklyTasks(force){
           if(shorter/longer<0.8)return false;
           return nx.includes(nrt)||nrt.includes(nx);
         });
+        if(t)MERGE_FUZZY.push({mgr:r.m,wk:wkk,sheet:r.t,matched:t.name});
       }
       if(!t){
         t={mgr:r.m,country:(r.c||'중국'),name:r.t,
