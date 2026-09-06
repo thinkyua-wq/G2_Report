@@ -2452,7 +2452,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M285</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M286</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -10628,7 +10628,7 @@ async function patchLeadingBlankDate(name, rows){
    그 웹 앱 URL을 아래 PUBLIC_SYNC_GAS_URL에 채우면, 이 함수가 그 경로를 최우선으로 쓰고
    gviz는 "그 경로가 실패했을 때만" 쓰는 안전망으로 남는다. 비워두면(기본값) 기존과 완전히 동일하게
    동작하므로 아직 배포 전이어도 지금 이 파일을 그대로 써도 무방하다. */
-const PUBLIC_SYNC_GAS_URL='';
+const PUBLIC_SYNC_GAS_URL='https://script.google.com/macros/s/AKfycbzCE67DqW0owpNhDNepfplmGeMqZTzJDll9NOV-ojBwMYA7TL0idZqsVJ5S6QAmPgFo/exec';
 async function fetchPublicTabViaGAS(name){
   const sep=PUBLIC_SYNC_GAS_URL.includes('?')?'&':'?';
   const url=PUBLIC_SYNC_GAS_URL+sep+'sheet='+encodeURIComponent(name)+'&_ts='+Date.now();
