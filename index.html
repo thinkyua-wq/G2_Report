@@ -2452,7 +2452,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.06-M287</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.08-M292</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2555,13 +2555,16 @@ function todayWeekIdx(){
 }
 let WEEKS=buildWeeks(7);
 const MGRS=[
-  {id:'lee', name:'이유아', title:'팀장', region:'팀장 · 영업확대 · PM(임플·레이저)', color:'#1e3a8a', ini:'이', empty:true, area:'중국'},
+  {id:'lee', name:'이유아', title:'팀장', region:'팀장 · 영업확대 · PM(임플·레이저)', color:'#1e3a8a', ini:'이', empty:true, area:'중국·대만·홍콩'},
   {id:'seo', name:'서혜민', title:'차장', region:'전략 · 영업확대 · 법인관리', color:'#c0392b', ini:'서', area:'중국'},
   {id:'tak', name:'탁종민', title:'차장', region:'교육 · 마케팅 · PM(디지털)', color:'#5b8a6e', ini:'탁', area:'중국'},
   {id:'yu',  name:'유훈종', title:'차장', region:'영업(대리점) · 법인관리', color:'#0d9488', ini:'유', area:'대만·홍콩'},
-  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김', area:'중국'},
+  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김', area:'중국·대만·홍콩'},
   {id:'jang', name:'장민훈', title:'이사', region:'대만법인장 · 재무·인허가', color:'#7c5cbf', ini:'장', area:'대만'}
-];
+]; /* 2026-09-08 요청: 이유아 팀장(전체 통괄)·김유진 대리(수출입·법인지원, 국가 구분 없이 전체 대상)
+      지역 칩을 '중국·대만·홍콩'으로 — 아래 AREA_ORDER·AREACOLOR에도 같이 등록해, 이 두 사람의
+      과제 중 자체 country가 없어 이 기본값(area)으로 대체(fallback)되는 항목이 "지역별 보기"에서
+      조용히 빠지지 않게 함(rowArea→AREA_ORDER 매칭 필요) */
 /* 2026-09-05: 장민훈 이사(대만법인장)를 팀 화면에 다시 노출 — 더 이상 아무도 숨기지 않음 */
 const MGR_HIDE=[];
 /* 지시 업무(ASSIGN) 담당자 선택란 전용 추가 인원 · 팀 과제·실적 화면(mgrsOrdered 등)에는 노출되지 않음 */
@@ -5104,7 +5107,10 @@ function renderTeamWeekCards(wk){
   const iso=(WEEKS[W]&&WEEKS[W].iso)||'';
   const nIso=iso?iso+1:'';
   const wkR=(WEEKS[W]&&WEEKS[W].range&&WEEKS[W].range!=='—')?WEEKS[W].range:'';
-  let h=`<div class="ov-sec">주간보고 <span class="ov-sub">이번주 W${iso}${wkR?' ('+wkR+')':''} · 차주 W${nIso} · ${MONTH}월 중점추진과제</span></div>`;
+  /* 2026-09-08 요청: 로그인일자 기준 기본 화면이 "전주"를 보여주도록 바뀌어(gotoPrevWeekDefault),
+     실제로는 지난주인데 "이번주"라고 잘못 표시되는 걸 막기 위해 오늘 날짜의 ISO 주차와 비교해 라벨을 정확히 표시 */
+  const curLbl=(iso&&iso===(+isoWeekNum(todayStr())||0))?'이번주':'지난주';
+  let h=`<div class="ov-sec">주간보고 <span class="ov-sub">${curLbl} W${iso}${wkR?' ('+wkR+')':''} · 차주 W${nIso} · ${MONTH}월 중점추진과제</span></div>`;
   h+='<div class="ov-cards">'+MGRS.map(m=>{
     const pR=p=>({'상':0,'중':1,'하':2}[String(p||'').trim()]!==undefined?{'상':0,'중':1,'하':2}[String(p||'').trim()]:1);
     const items=wk.map((r,i)=>({r,i})).filter(x=>x.r.m===m.id).sort((a,b)=>pR(a.r.pri)-pR(b.r.pri));
@@ -5153,8 +5159,8 @@ function renderTeamWeekCards(wk){
       <div class="pcol-h"><div class="av" style="background:${m.color}">${esc(m.ini)}</div>
         <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · ')||roleLine)}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg==null?'–':avg+'%'}</div><div class="t">과제 ${items.length} · 완료 ${doneW}</div></div></div>
-      <div class="ov-tk-h">이번주 과제 · W${iso} <b>${items.length}건</b> <span class="mr-hint">클릭 → 상세</span></div>
-      <ul class="ov-tk">${items.length?items.map(li1).join(''):'<li class="mut">이번주 등록 과제 없음</li>'}</ul>
+      <div class="ov-tk-h">${curLbl} 과제 · W${iso} <b>${items.length}건</b> <span class="mr-hint">클릭 → 상세</span></div>
+      <ul class="ov-tk">${items.length?items.map(li1).join(''):`<li class="mut">${curLbl} 등록 과제 없음</li>`}</ul>
       <div class="ov-tk-h ov-tk-h2">차주 과제 · W${nIso} <b>${nextItems.length}건</b></div>
       <ul class="ov-tk ov-tk-next">${nextItems.length?nextItems.map(li2).join(''):'<li class="mut">차주 계획 없음</li>'}</ul>
       <div class="ov-tk-h ov-tk-h3" onclick="setTab('mreport');MRTAB='focus';setMFMon(${MONTH})" style="cursor:pointer" title="월간업무현황 · 중점추진과제로 이동">${MONTH}월 중점추진과제 <b>${mfCur.length}건</b></div>
@@ -5738,7 +5744,7 @@ function renderRRTable(rows){
   let h=`<div class="ptable-wrap"><div class="pm-head" style="margin-bottom:8px"><h3 style="font-size:15.4px">담당자 업무 전체 표 <span style="font-size:12.1px;color:var(--dim);font-weight:600">· 완료 포함 ${all.length}건</span></h3></div>`;
   h+='<div style="overflow-x:auto"><table class="ptable rralltbl"><thead><tr><th style="width:34px">No</th><th style="text-align:left;width:130px">담당자</th><th style="width:56px">국가</th><th style="width:80px">R&R</th><th style="width:56px">중요도</th><th style="text-align:left">과제</th><th style="width:70px">상태</th><th style="width:60px">진행율</th><th style="width:100px">완료예정일</th></tr></thead><tbody>';
   if(!all.length)h+=`<tr><td colspan="9" style="text-align:center;color:var(--faint);padding:18px">표시할 과제가 없습니다.</td></tr>`;
-  all.forEach((r,n)=>{const m=mgrById(r.mgr)||{};const cs=r.st==='done'?'완료':(r.st==='wait'?'대기':'진행중');
+  all.forEach((r,n)=>{const m=mgrById(r.mgr)||{};const cs=r.st==='done'?'완료':'진행중'; /* 2026-09-08 요청: 담당자 업무 전체 표는 "대기" 구분 없이 완료 전까지 전부 "진행중"으로 표시 */
     h+=`<tr><td class="mut">${n+1}</td><td class="rl">${esc(m.name||'')} ${esc(m.title||'')}</td><td>${esc(r.country||'')}</td><td>${esc(r.cat||'')}</td><td>${prioKo(r.prio)}</td><td class="rl" style="cursor:pointer" onclick="openDetail(${r.ti})">${esc(r.label)}</td><td>${cs}</td><td>${r.p}%</td><td>${esc(fmtDue(r.due))}</td></tr>`;});
   return h+'</tbody></table></div></div>';
 }
@@ -6461,14 +6467,19 @@ function viewRR(rows){
     const avg=Math.round(all.reduce((s,r)=>s+r.p,0)/all.length);
     const shown=HIDEDONE?all.filter(r=>r.p<100):all;
     const body=shown.length?shown.map(r=>cardFold(r)).join(''):'';
-    const lks=[...new Set(all.map(r=>{const c=wkAt(r.t,W);return (c&&c.kl)||r.t.kl||'';}).filter(Boolean))];
+    /* 2026-09-08 발견된 버그 수정: 예전엔 이번 주에 「KPI연결(kl)」이 채워진 과제가 하나라도 있으면
+       kpiRowsForLinked()가 "매칭된 KPI만" 남기고 그 담당자의 나머지 KPI 항목을 전부 숨겼다 —
+       실제 라이브 데이터로 재현: 이유아 팀장의 "영업 Infra 구축 · KPI 목표달성 (화남)" 등 여러 항목이
+       특정 주차에는 있고 없고를 반복하며 카드에서 사라졌다 규모(다른 담당자도 KPI연결이 부분적으로만
+       채워지면 언제든 같은 방식으로 겪을 수 있는 구조적 문제). 이제 이 카드에서는 담당자의 KPI 항목
+       전체를 항상 보여준다(links 필터 제거) · 어떤 항목이든 다시는 조용히 사라지지 않게 */
     html+=`<div class="pcol" draggable="true" ondragstart="mgrDragStart(event,'${m.id}')" ondragover="mgrDragOver(event)" ondragleave="mgrDragLeave(event)" ondrop="mgrDrop(event,'${m.id}')">
       <div class="pcol-h"><span class="drag-h" title="드래그해서 순서 변경">⠿</span><div class="av" style="background:${m.color}">${m.ini}</div>
         <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div>
           <div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}${m.area?` · <span class="area-chip" style="background:${AREACOLOR[m.area]||'#6b7280'}">${esc(m.area)}</span>`:''}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg}%</div><div class="t">과제 ${all.length} · 완료 ${doneN}${riskN?` · 주의 ${riskN}`:''}</div></div></div>
       ${mgrAssignStrip(m.id)}
-      ${kpiStripFor(m.name,lks)}
+      ${kpiStripFor(m.name)}
       <div class="pcol-body">${body}${mfBlock(m)}</div>
     </div>`;
   });
@@ -6743,27 +6754,39 @@ function rowTitle(r){ const kr=kpiForRow(r); return kr?(kr.item+' - '+r.label):r
 /* 완료예정일이 특정 날짜 없이 "상시"일 때만 앞에 "업무일정"을 붙여 구분(2026-09-06 요청) ·
    실제 날짜가 있는 경우는 그대로 두어 다른 화면(표·PPT 등)의 fmtDue()는 건드리지 않는다 */
 function dueLabel(d){const t=fmtDue(d); return t==='상시'?('업무일정 '+t):t;}
-/* KPI 연결된 과제 카드에 "일정" 진행바와 같은 모양으로 그 KPI의 이번 달 실적·달성율 바를 하나 더 표시
-   · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청) */
-function kpiMiniBar(kr){
-  if(!kr)return '';
+/* KPI 연결된 과제의 그 달 실적·달성율을 진행바 형태로 계산 (kpiMiniBar·cardFold 공용, 2026-09-08 분리) */
+function kpiPctFor(kr){
+  if(!kr)return null;
   const mi=MONTH-1;
   const mt=kr.mt[mi],ma=kpiMa(kr,mi);
   const mtn=knum(mt),man=knum(ma);
   const mr=(mtn&&man!=null)?Math.round(man/mtn*100):null;
   const isSchedule=String(kr.method||'').includes('일정');
   const doneM=isSchedule&&(mr!=null&&mr>=100);
-  const valTxt=man!=null?(kfmt(man)+(kr.unit?(' '+kr.unit):'')):'실적 미입력';
   const barColor=doneM?'#1f9d57':(mr==null?'#c8cfca':mr>=90?'#1f9d57':mr>=60?'#9a7a10':'#c0392b');
+  return {pct:doneM?100:(mr||0),color:barColor,label:doneM?'완료':(mr!=null?mr+'%':'–'),mr,doneM};
+}
+/* KPI 연결된 과제 카드에 "일정" 진행바와 같은 모양으로 그 KPI의 이번 달 실적·달성율 바를 하나 더 표시
+   · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청) */
+function kpiMiniBar(kr){
+  if(!kr)return '';
+  const kp=kpiPctFor(kr);
+  const mi=MONTH-1;
+  const man=knum(kpiMa(kr,mi));
+  const valTxt=man!=null?(kfmt(man)+(kr.unit?(' '+kr.unit):'')):'실적 미입력';
   return `<div class="foot" style="margin-top:5px" title="연결 KPI · ${esc(kr.item)}">
     <span class="due">📊 KPI · ${MONTH}월 실적 ${esc(valTxt)}</span>
-    <span class="pbar"><i style="width:${doneM?100:(mr||0)}%;background:${barColor}"></i></span>
-    <span class="pnum" style="color:${barColor}">${doneM?'완료':(mr!=null?mr+'%':'–')}</span>
+    <span class="pbar"><i style="width:${kp.pct}%;background:${kp.color}"></i></span>
+    <span class="pnum" style="color:${kp.color}">${kp.label}</span>
   </div>`;
 }
 function cardFold(r,showMgr){
   const op=wcOpen(r.ti);
   const g=showMgr?(mgrById(r.mgr)||null):null;
+  /* 2026-09-08 요청: KPI연결된 과제는 접힌 카드 줄(일정 옆 %)도 과제진행율 대신
+     그 달 KPI 달성률로 표시 · KPI연결 없는 과제는 지금까지처럼 과제진행율(r.p) 그대로 */
+  const kr=kpiForRow(r);
+  const kp=kr?kpiPctFor(kr):null;
   return `<div class="wcard${op?' open':''}">
     <div class="wc-m" onclick="wcToggle(${r.ti})">
       <span class="wc-cx">${op?'▾':'▸'}</span>
@@ -6772,8 +6795,8 @@ function cardFold(r,showMgr){
       <span class="pri-b p${prioKo(r.prio)}" title="중요도">${prioKo(r.prio)}</span>
       <span class="wc-tt">${esc(rowTitle(r))}${prioKo(r.prio)==='상'?' <span class="wc-star">★</span>':''}</span>
       <span class="wc-due ${r.risk?'risk':''}">${esc(dueLabel(r.due))}</span>
-      <span class="wc-pb"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
-      <span class="wc-pn">${r.p}%</span>
+      <span class="wc-pb" title="${kp?('연결 KPI · '+esc(kr.item)+' · '+MONTH+'월 실적'):''}"><i style="width:${kp?kp.pct:r.p}%;background:${kp?kp.color:barGrad[r.st]}"></i></span>
+      <span class="wc-pn">${kp?('📊 '+kp.label):(r.p+'%')}</span>
     </div>
     <div class="wc-b">${op?cardHTML(r):''}</div>
   </div>`;
@@ -8239,8 +8262,8 @@ function areaOf(mgrId){return (mgrById(mgrId)||{}).area||'중국';}
    그래야 유훈종처럼 대만·홍콩을 함께 맡는 담당자의 업무도 실제 업무 내용대로 대만/홍콩/대만·홍콩에 각각 갈리고,
    장민훈 이사의 대만 업무도 같은 '대만' 그룹에 함께 보인다(2026-09-05) */
 function rowArea(r){return r.country||areaOf(r.mgr);}
-const AREA_ORDER=['중국','대만·홍콩','대만','홍콩'];
-const AREACOLOR={'중국':'#c0392b','대만·홍콩':'#7a5cc0','대만':'#2f8f9d','홍콩':'#d99429'};
+const AREA_ORDER=['중국','대만·홍콩','대만','홍콩','중국·대만·홍콩'];
+const AREACOLOR={'중국':'#c0392b','대만·홍콩':'#7a5cc0','대만':'#2f8f9d','홍콩':'#d99429','중국·대만·홍콩':'#1e3a8a'};
 function toggleAreaTab(a){if(a===''){AREASEL=[];}else{const i=AREASEL.indexOf(a);if(i>=0)AREASEL.splice(i,1);else AREASEL.push(a);}render();}
 /* ---- Detail drawer ---- */
 function openDetail(ti){
@@ -9045,7 +9068,9 @@ function viewGoals(){
   if(GOALSUB==='story')GOALSUB='goal';
   {let gtabs=[['home','팀 종합현황'],['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합'],['sched','업무일정']];
   if(GOALSUB==='meet'||GOALSUB==='report')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정은 팀업무(통합 옆)로 이동(2026-09-05) */
-  html+='<div class="pm-tabs" style="margin-bottom:16px">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
+  /* 2026-09-08 요청("팀업무의 탭은 최대한 한줄로"): 탭이 12개라 폭이 좁으면 라벨이 버튼 안에서 두 줄로
+     줄바꿈되던 문제 — 각 버튼을 한 줄(nowrap)로 고정하고, 전체가 다 안 들어가면 줄바꿈 대신 가로 스크롤 */
+  html+='<div class="pm-tabs" style="margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" style="white-space:nowrap;flex:none" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
   if(GOALSUB==='home')return html+renderHome();
   if(GOALSUB==='kanban')return html+viewKanban(activeRows());
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
@@ -10741,52 +10766,72 @@ async function buildDeckBase64(){
   const people=MGRS.filter(m=>byM[m.id].length);
   const total=rows.length, avg=total?Math.round(rows.reduce((s,r)=>s+r.p,0)/total):0, done=rows.filter(r=>r.p>=100).length;
   const wkName=(WEEKS[W]&&WEEKS[W].name)||'';
+  /* 2026-09-08 요청: "첫페이지는 본사실적이 이미지로 들어가게" — 예전엔 1장(제목만)·2장(본사실적 캡쳐)
+     으로 나뉘어 있어 실제 "첫 페이지"에는 이미지가 없었다. 제목·주차 표기를 상단 배너로 압축해
+     본사실적 캡쳐와 한 장에 합쳐, 이 슬라이드 자체가 진짜 1페이지가 되도록 함 */
   let s=P.addSlide(); s.background={color:'FFFFFF'}; /* 첫 페이지 흰색 배경 요청(2026-09-05) */
   s.addShape(P.ShapeType.rect,{x:0,y:0,w:13.33,h:0.14,fill:{color:G},line:{type:'none'}});
-  s.addText('중화팀 주간 업무보고',{x:0.6,y:2.4,w:12,h:1,fontFace:F,fontSize:53,bold:true,color:DG});
-  s.addText(pptWLabel(),{x:0.6,y:3.4,w:12,h:0.6,fontFace:F,fontSize:26,color:MUT});
-  s.addText('G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.6,y:6.6,w:12,h:0.4,fontFace:F,fontSize:17,color:MUT});
-  s.addShape(P.ShapeType.ellipse,{x:10.7,y:0.7,w:1.9,h:1.9,fill:{color:G},line:{color:DG,width:1}});
-  s.addText(wkName,{x:10.7,y:1.35,w:1.9,h:0.6,fontFace:F,fontSize:26,bold:true,color:'FFFFFF',align:'center'});
-  s=P.addSlide(); s.background={color:'FFFFFF'};
-  s.addText('본사 실적',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:34,bold:true,color:DG});
-  s.addText(pptWLabel()+' · 대시보드 「업무현황 · 본사실적」 화면 캡쳐',{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
+  s.addText('중화팀 주간 업무보고',{x:0.55,y:0.3,w:9.4,h:0.55,fontFace:F,fontSize:30,bold:true,color:DG});
+  s.addText(pptWLabel()+'   |   G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.55,y:0.86,w:12.2,h:0.34,fontFace:F,fontSize:14.5,color:MUT});
+  s.addShape(P.ShapeType.ellipse,{x:11.68,y:0.24,w:1.1,h:1.1,fill:{color:G},line:{color:DG,width:1}});
+  s.addText(wkName,{x:11.68,y:0.6,w:1.1,h:0.42,fontFace:F,fontSize:15,bold:true,color:'FFFFFF',align:'center'});
+  s.addText('본사 실적 · 대시보드 「업무현황 · 본사실적」 화면 캡쳐',{x:0.55,y:1.28,w:12.2,h:0.32,fontFace:F,fontSize:15,bold:true,color:DG});
   {
     const cap=await pptCaptureMainCard();
     if(cap&&cap.dataUrl){
-      const maxW=12.23,maxH=5.7,x0=0.55,y0=1.55;
+      const maxW=12.23,maxH=5.55,x0=0.55,y0=1.68;
       let w=maxW,h=w*cap.h/cap.w;
       if(h>maxH){h=maxH;w=h*cap.w/cap.h;}
       const x=x0+(maxW-w)/2;
       s.addShape(P.ShapeType.rect,{x:x-0.03,y:y0-0.03,w:w+0.06,h:h+0.06,fill:{color:'FFFFFF'},line:{color:LN,width:1}});
       s.addImage({data:cap.dataUrl,x,y:y0,w,h});
     }else{
-      s.addText('본사실적 화면을 캡쳐하지 못했습니다. 대시보드에서 [업무현황 → 본사실적] 탭을 한 번 열어본 뒤 다시 생성해 주세요.',{x:0.55,y:2.8,w:12.23,h:1,fontFace:F,fontSize:16,color:MUT,align:'center'});
+      s.addText('본사실적 화면을 캡쳐하지 못했습니다. 대시보드에서 [업무현황 → 본사실적] 탭을 한 번 열어본 뒤 다시 생성해 주세요.',{x:0.55,y:3.2,w:12.23,h:1,fontFace:F,fontSize:16,color:MUT,align:'center'});
     }
   }
+  const pptHx=c=>String(c||'#6b7280').replace('#','')||'6B7280';
   people.forEach(m=>{const list=byM[m.id];
-    /* 담당자별 슬라이드 첫 장에 "내 KPI" 표를 위에 넣고 그 아래에 기존 과제표를 넣음(2026-09-05 요청) */
+    /* 담당자별 슬라이드 첫 장에 웹 카드 헤더(아바타·이름·직함·카테고리/지역 칩·과제·완료·주의·평균)를
+       그대로 재현하고, 그 아래 "내 KPI" 표 → 과제표 순으로 배치(2026-09-08 요청: 웹 「담당자 카드」와
+       동일 정보가 PT 한 장에 다 들어가게). 모자라면 뒷장(연속 페이지)에 과제표만 이어서 표시 */
     const kpiTr=pptKpiRows(m.name);
     const kpiRowH=0.3;
     const kpiBlockH=kpiTr?(0.34+kpiTr.length*kpiRowH+0.18):0;
-    const perFirst=kpiTr?Math.max(4,Math.floor((5.55-kpiBlockH)/0.42)):12;
-    const perRest=12;
+    const doneAll=list.filter(r=>r.p>=100).length, riskAll=list.filter(r=>r.risk).length;
+    const avgP=Math.round(list.reduce((a,r)=>a+r.p,0)/list.length);
+    const cats=catsOf(m.id).slice(0,4);
+    const HEAD0=1.65,HEADREST=1.55,ROWTARGET=0.42,BOTTOM=7.25,MARGIN=0.15;
+    const perFirst=kpiTr?Math.max(4,Math.floor((BOTTOM-MARGIN-HEAD0-kpiBlockH)/ROWTARGET)):Math.max(6,Math.floor((BOTTOM-MARGIN-HEAD0)/ROWTARGET));
+    const perRest=Math.max(6,Math.floor((BOTTOM-MARGIN-HEADREST)/ROWTARGET));
     const totalPages=list.length<=perFirst?1:1+Math.ceil((list.length-perFirst)/perRest);
     let i=0,pageNo=0;
     while(i<list.length){
       const per=pageNo===0?perFirst:perRest;
       const ch=list.slice(i,i+per);
       const sl=P.addSlide(); sl.background={color:'FFFFFF'};
-      const avgP=Math.round(list.reduce((a,r)=>a+r.p,0)/list.length);
-      sl.addText(`${m.name} ${m.title}`+(totalPages>1?`  (${pageNo+1}/${totalPages})`:''),{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:31,bold:true,color:DG});
-      sl.addText(`과제 ${list.length}건 · 평균 진행률 ${avgP}%`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
-      let tasksY=1.55;
-      if(pageNo===0&&kpiTr){
-        sl.addText('내 KPI',{x:0.55,y:1.42,w:3,h:0.3,fontFace:F,fontSize:14,bold:true,color:DG});
-        sl.addTable(kpiTr,{x:0.55,y:1.72,w:12.23,colW:[3.43,0.7,1.35,1.35,1.15,1.35,1.35,1.55],rowH:kpiRowH,fontFace:F,fontSize:10,valign:'middle',border:{type:'solid',color:LN,pt:1}});
-        tasksY=1.72+kpiRowH*kpiTr.length+0.28;
-        sl.addText('담당 과제',{x:0.55,y:tasksY-0.02,w:3,h:0.28,fontFace:F,fontSize:14,bold:true,color:DG});
-        tasksY+=0.32;
+      let tasksY;
+      if(pageNo===0){
+        sl.addShape(P.ShapeType.ellipse,{x:0.55,y:0.32,w:0.56,h:0.56,fill:{color:pptHx(m.color)},line:{type:'none'}});
+        sl.addText(m.ini||'',{x:0.55,y:0.32,w:0.56,h:0.56,fontFace:F,fontSize:20,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+        sl.addText(`${m.name} ${m.title}`+(totalPages>1?`  (${pageNo+1}/${totalPages})`:''),{x:1.28,y:0.3,w:10.5,h:0.56,fontFace:F,fontSize:25,bold:true,color:DG,valign:'middle'});
+        const chipRuns=[];
+        cats.forEach((c,idx)=>{chipRuns.push({text:(idx?'   ':'')+c,options:{color:pptHx(CATCOLOR[c]),bold:true,fontSize:12.5}});});
+        if(m.area){chipRuns.push({text:(chipRuns.length?'   ':'')+m.area,options:{color:pptHx(AREACOLOR[m.area]),bold:true,fontSize:12.5}});}
+        sl.addText(chipRuns.length?chipRuns:[{text:' ',options:{fontSize:12.5}}],{x:1.28,y:0.9,w:11,h:0.3,fontFace:F});
+        sl.addText(`과제 ${list.length}건 · 완료 ${doneAll}${riskAll?` · 주의 ${riskAll}`:''} · 평균 진행률 ${avgP}%`,{x:0.55,y:1.24,w:11.7,h:0.34,fontFace:F,fontSize:15,color:MUT});
+        tasksY=HEAD0;
+        if(kpiTr){
+          sl.addText('내 KPI',{x:0.55,y:tasksY,w:3,h:0.28,fontFace:F,fontSize:14,bold:true,color:DG});
+          tasksY+=0.30;
+          sl.addTable(kpiTr,{x:0.55,y:tasksY,w:12.23,colW:[3.43,0.7,1.35,1.35,1.15,1.35,1.35,1.55],rowH:kpiRowH,fontFace:F,fontSize:10,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+          tasksY+=kpiRowH*kpiTr.length+0.18;
+          sl.addText('담당 과제',{x:0.55,y:tasksY,w:3,h:0.28,fontFace:F,fontSize:14,bold:true,color:DG});
+          tasksY+=0.32;
+        }
+      }else{
+        sl.addText(`${m.name} ${m.title}  (${pageNo+1}/${totalPages})`,{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
+        sl.addText(`담당 과제 계속 · 전체 ${list.length}건 · 완료 ${doneAll}${riskAll?` · 주의 ${riskAll}`:''}`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:15,color:MUT});
+        tasksY=HEADREST;
       }
       const th=['R&R','국가','핵심과제','완료예정일','진행률','진행사항 (비고)'];
       const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:13}}))];
@@ -11375,9 +11420,11 @@ try{mergeWkIntoTasks();}catch(e){}
    「주간업무」(WKREPORT) 동기화 현황에 좌우돼, 정작 오늘 날짜의 ISO 주차보다 뒤처진 주(예: 36주차인데 35주차)가
    첫 화면에 그대로 노출되는 원인이었다 · 한동안 모바일(폭 820px 이하)에서만 주간보고를 첫 화면으로 보여줬는데,
    2026-09-05 요청("페이지를 열면 업무현황에 주간보고부터 보이게")으로 PC 포함 모든 화면에서 동일하게
-   업무현황 · 주간보고(이번 주, curWeekMonth·gotoThisWeek 기준 — 위 버그를 일으켰던 gotoLastUpWeek()이 아니라
-   이미 고쳐진 최신 로직 사용)를 첫 화면으로 보여주도록 확장 */
-try{TAB='mreport';MRTAB='week';gotoThisWeek();}catch(e){}
+   업무현황 · 주간보고를 첫 화면으로 보여주도록 확장 ·
+   2026-09-08 요청("로그인일자를 기준으로 전주를 보여줘")으로 gotoThisWeek() 대신 gotoPrevWeekDefault() 사용 —
+   접속 시점(오늘 날짜)의 ISO 주차 - 1주를 기본으로 보여준다(주간보고는 그 주가 끝난 뒤 정리되는 경우가
+   많아, 아직 비어있기 쉬운 "이번주"보다 이미 채워진 "지난주"를 기본으로 보는 게 더 유용하다는 판단) */
+try{TAB='mreport';MRTAB='week';gotoPrevWeekDefault();}catch(e){}
 render();
 try{mileFixDates();}catch(e){}
 setTimeout(()=>{publicSyncMaster(true).catch(()=>{});},50); /* 로그인·게스트 구분 없이 구글시트가 공개돼 있으면 조용히 최신 데이터로 맞춘다 */
