@@ -2452,7 +2452,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.08-M292</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.08-M295</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2559,7 +2559,7 @@ const MGRS=[
   {id:'seo', name:'서혜민', title:'차장', region:'전략 · 영업확대 · 법인관리', color:'#c0392b', ini:'서', area:'중국'},
   {id:'tak', name:'탁종민', title:'차장', region:'교육 · 마케팅 · PM(디지털)', color:'#5b8a6e', ini:'탁', area:'중국'},
   {id:'yu',  name:'유훈종', title:'차장', region:'영업(대리점) · 법인관리', color:'#0d9488', ini:'유', area:'대만·홍콩'},
-  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김', area:'중국·대만·홍콩'},
+  {id:'kim', name:'김유진', title:'대리', region:'수출입 · 법인지원', color:'#e08a2a', ini:'김', area:'중국·대만·홍콩', retired:true, retiredAt:'2026-09-04'},
   {id:'jang', name:'장민훈', title:'이사', region:'대만법인장 · 재무·인허가', color:'#7c5cbf', ini:'장', area:'대만'}
 ]; /* 2026-09-08 요청: 이유아 팀장(전체 통괄)·김유진 대리(수출입·법인지원, 국가 구분 없이 전체 대상)
       지역 칩을 '중국·대만·홍콩'으로 — 아래 AREA_ORDER·AREACOLOR에도 같이 등록해, 이 두 사람의
@@ -2567,6 +2567,12 @@ const MGRS=[
       조용히 빠지지 않게 함(rowArea→AREA_ORDER 매칭 필요) */
 /* 2026-09-05: 장민훈 이사(대만법인장)를 팀 화면에 다시 노출 — 더 이상 아무도 숨기지 않음 */
 const MGR_HIDE=[];
+/* 2026-09-08 요청: 김유진 대리 퇴사(9/4) — 지난 이력(카드·아바타·이름)은 그대로 정상 표시하되,
+   "새 과제/새 지시/새 KPI 담당자 지정" 같은 현재 담당자 선택 목록에서는 빠지게 함(퇴사자에게
+   새 업무가 배정되는 사고 방지). keepId를 넘기면(예: 수정 중인 항목의 현재 담당자) 그 사람이
+   퇴사자여도 목록에 남겨 — 이미 그 사람 소유인 항목을 열었을 때 선택값이 사라지는 것을 막는다.
+   신규직원이 오면 이 배열에서 retired 플래그를 지우고 담당 업무를 넘겨주면 된다. */
+function activeMgrs(keepId){return MGRS.filter(m=>!m.retired||m.id===keepId);}
 /* 지시 업무(ASSIGN) 담당자 선택란 전용 추가 인원 · 팀 과제·실적 화면(mgrsOrdered 등)에는 노출되지 않음 */
 const ASSIGN_EXTRA_MGRS=[{id:'jung', name:'정대영', title:'부사장', region:'경영지원', color:'#6b4c9a', ini:'정'}];
 /* ===== 월간 성과/실행현황 (G2중화 월보고) · PPTX·구글시트 연동 데이터 2026-08 ===== */
@@ -3296,7 +3302,7 @@ function render(){
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
   // avatars
-  document.getElementById('avatars').innerHTML=MGRS.filter(m=>!m.empty).map(m=>
+  document.getElementById('avatars').innerHTML=MGRS.filter(m=>!m.empty&&!m.retired).map(m=>
     `<div class="av" style="background:${m.color}" title="${m.name} ${m.title}">${m.ini}</div>`).join('');
   // mgr filter opts
   const fmSel=document.getElementById('fMgr');
@@ -3452,7 +3458,7 @@ function toggleMFOwner(i,name){const t=(MFOCUS[MFMON]||[])[i];if(!t)return;const
 function mfTasksForOwner(name,monthKey){const list=MFOCUS[String(monthKey)]||[];return list.filter(t=>mfOwners(t).includes(name)).map(t=>t.task).filter(Boolean);}
 function ownerCellMF(t,i){const own=mfOwners(t);
   const chips=own.length?`<div class="mf-ownchips">${own.map(n=>`<span class="mf-ownchip">${esc(n)}</span>`).join('')}</div>`:'<span class="mf-ownph">담당자</span>';
-  const menu=MFOWN===i?`<div class="mf-ownmenu">${MGRS.map(m=>{const on=own.includes(m.name);return `<div class="mf-ownopt${on?' on':''}" onclick="toggleMFOwner(${i},'${esc(m.name)}')"><span class="mf-ck">${on?'✓':''}</span><span class="mf-nm">${esc(m.name)}</span></div>`;}).join('')}</div>`:'';
+  const menu=MFOWN===i?`<div class="mf-ownmenu">${MGRS.filter(m=>!m.retired||own.includes(m.name)).map(m=>{const on=own.includes(m.name);return `<div class="mf-ownopt${on?' on':''}" onclick="toggleMFOwner(${i},'${esc(m.name)}')"><span class="mf-ck">${on?'✓':''}</span><span class="mf-nm">${esc(m.name)}</span></div>`;}).join('')}</div>`:'';
   return `<div class="mf-owntrig" onclick="toggleMFOwnMenu(${i})">${chips}<span class="mf-cx">▾</span></div>${menu}`;}
 function mfRows(){return MFOCUS[MFMON]||[];}
 function editMF(i,f,v){const l=MFOCUS[MFMON];if(l&&l[i]){l[i][f]=v;saveMFocus();}}
@@ -4213,7 +4219,7 @@ function renderKPI2(){
     const dis=r._auto?' disabled':'';
     const ownFn=r._auto?`editKPIauto('${esc(r.item)}','owner',this.value)`:`editKPI(${i},'owner',this.value)`;
     const catFn=r._auto?`editKPIauto('${esc(r.item)}','cat',this.value)`:`editKPI(${i},'cat',this.value)`;
-    const ownSel=`<div class="kpi-ownwrap">${g?`<i class="kpi-avdot" style="background:${g.color}">${esc(g.ini)}</i>`:''}<select onchange="${ownFn}">${MGRS.map(m2=>`<option ${r.owner===m2.name?'selected':''}>${esc(m2.name)}</option>`).join('')}${MGRS.some(m2=>m2.name===r.owner)?'':`<option selected>${esc(r.owner||'')}</option>`}</select>${r.chgd?`<span class="kpi-chg">변경 ${esc(String(r.chgd).slice(5).replace('-','/'))}</span>`:''}</div>`;
+    const ownSel=`<div class="kpi-ownwrap">${g?`<i class="kpi-avdot" style="background:${g.color}">${esc(g.ini)}</i>`:''}<select onchange="${ownFn}">${MGRS.filter(m2=>!m2.retired||m2.name===r.owner).map(m2=>`<option ${r.owner===m2.name?'selected':''}>${esc(m2.name)}</option>`).join('')}${MGRS.some(m2=>m2.name===r.owner)?'':`<option selected>${esc(r.owner||'')}</option>`}</select>${r.chgd?`<span class="kpi-chg">변경 ${esc(String(r.chgd).slice(5).replace('-','/'))}</span>`:''}</div>`;
     const catSel=`<select onchange="${catFn}">${KPICATS.map(c=>`<option ${r.cat===c?'selected':''}>${esc(c)}</option>`).join('')}${KPICATS.includes(r.cat)?'':`<option selected>${esc(r.cat||'')}</option>`}</select>`;
     h+=`<tr class="${r._auto?'kpi-autorow':''}">`
       +`<td class="rl kpi-own">${ownSel}</td>`
@@ -5157,7 +5163,7 @@ function renderTeamWeekCards(wk){
     const doneW=items.filter(x=>parseInt(x.r.p)>=100).length;
     return `<div class="ov-card">
       <div class="pcol-h"><div class="av" style="background:${m.color}">${esc(m.ini)}</div>
-        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · ')||roleLine)}</div></div>
+        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · ')||roleLine)}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg==null?'–':avg+'%'}</div><div class="t">과제 ${items.length} · 완료 ${doneW}</div></div></div>
       <div class="ov-tk-h">${curLbl} 과제 · W${iso} <b>${items.length}건</b> <span class="mr-hint">클릭 → 상세</span></div>
       <ul class="ov-tk">${items.length?items.map(li1).join(''):`<li class="mut">${curLbl} 등록 과제 없음</li>`}</ul>
@@ -5704,7 +5710,7 @@ function renderOps(){
   return h+'</div>';
 }
 function renderAssign(){
-  const mgrOpt=(sel)=>`<option value="" ${!sel?'selected':''}>담당자 지정</option>`+MGRS.concat(ASSIGN_EXTRA_MGRS).map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
+  const mgrOpt=(sel)=>`<option value="" ${!sel?'selected':''}>담당자 지정</option>`+activeMgrs(sel).concat(ASSIGN_EXTRA_MGRS).map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
   const prioOpt=(sel)=>[['높음','상'],['중간','중'],['낮음','하']].map(([v,o])=>`<option value="${v}" ${(sel||'중간')===v?'selected':''}>${o}</option>`).join('');
   const stOpt=(sel)=>['착수전','진행중','완료'].map(o=>`<option ${(sel||'착수전')===o?'selected':''}>${o}</option>`).join('');
   const openN=ASSIGN.filter(a=>!a.done).length;
@@ -6351,7 +6357,7 @@ function delFixed(id){FIXEDWORK=FIXEDWORK.filter(w=>w.id!==id);saveFixed();rende
 function renderFixed(){
   const fxTh=(col,label,w)=>{const on=FIXSORT.col===col;const ar=on?(FIXSORT.dir>0?' ▲':' ▼'):'';return `<th class="fx-sort${on?' on':''}" style="text-align:left;width:${w}px;cursor:pointer" onclick="setFixSort('${col}')">${label}<span class="fx-ar">${ar}</span></th>`;};
   const wl=(PERIOD==='week'&&WEEKS[W])?`${WEEKS[W].name} (${WEEKS[W].range})`:`${MONTH}월`;
-  const mgrOpt=(sel)=>MGRS.map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
+  const mgrOpt=(sel)=>activeMgrs(sel).map(m=>`<option value="${m.id}" ${sel===m.id?'selected':''}>${esc(m.name)} ${esc(m.title)}</option>`).join('');
   const cycOpt=(sel)=>['매주','격주','월례','수시'].map(c=>`<option ${sel===c?'selected':''}>${c}</option>`).join('');
   const dowOpt=(sel)=>['','일','월','화','수','목','금','토'].map(c=>`<option value="${c}" ${sel===c?'selected':''}>${c||'-'}</option>`).join('');
   const doneN=FIXEDWORK.filter(w=>fixLog(w.id).done).length;
@@ -6465,7 +6471,7 @@ function viewRR(rows){
     if(!all.length)return;
     const doneN=all.filter(r=>r.p>=100).length, riskN=all.filter(r=>r.risk).length;
     const avg=Math.round(all.reduce((s,r)=>s+r.p,0)/all.length);
-    const shown=HIDEDONE?all.filter(r=>r.p<100):all;
+    const shown=sortByKpiOrder(m.name,HIDEDONE?all.filter(r=>r.p<100):all);
     const body=shown.length?shown.map(r=>cardFold(r)).join(''):'';
     /* 2026-09-08 발견된 버그 수정: 예전엔 이번 주에 「KPI연결(kl)」이 채워진 과제가 하나라도 있으면
        kpiRowsForLinked()가 "매칭된 KPI만" 남기고 그 담당자의 나머지 KPI 항목을 전부 숨겼다 —
@@ -6475,7 +6481,7 @@ function viewRR(rows){
        전체를 항상 보여준다(links 필터 제거) · 어떤 항목이든 다시는 조용히 사라지지 않게 */
     html+=`<div class="pcol" draggable="true" ondragstart="mgrDragStart(event,'${m.id}')" ondragover="mgrDragOver(event)" ondragleave="mgrDragLeave(event)" ondrop="mgrDrop(event,'${m.id}')">
       <div class="pcol-h"><span class="drag-h" title="드래그해서 순서 변경">⠿</span><div class="av" style="background:${m.color}">${m.ini}</div>
-        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div>
+        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div>
           <div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}${m.area?` · <span class="area-chip" style="background:${AREACOLOR[m.area]||'#6b7280'}">${esc(m.area)}</span>`:''}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg}%</div><div class="t">과제 ${all.length} · 완료 ${doneN}${riskN?` · 주의 ${riskN}`:''}</div></div></div>
       ${mgrAssignStrip(m.id)}
@@ -6595,7 +6601,7 @@ function renderTaskMerge(rows){
     const shown=HIDEDONE?all.filter(r=>r.p<100):all;
     h+=`<div class="pcol">
       <div class="pcol-h"><div class="av" style="background:${m.color}">${m.ini}</div>
-        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span></div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}</div></div>
+        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg}%</div><div class="t">과제 ${all.length} · 완료 ${doneN}${riskN?` · <span style="color:var(--risk)">주의 ${riskN}</span>`:''}</div></div></div>
       ${mgrAssignStrip(m.id)}
       <div class="tm-list">`;
@@ -6751,6 +6757,18 @@ function kpiForRow(r){
   return rows.find(k=>kpiMatch(k.item,kl))||null;
 }
 function rowTitle(r){ const kr=kpiForRow(r); return kr?(kr.item+' - '+r.label):r.label; }
+/* 2026-09-08 요청: 담당 과제 목록을 그 담당자의 「내 KPI」 항목 순서대로 정렬하고, KPI에
+   연결되지 않은 과제는 맨 아래로 내림 · 웹 담당자 카드(.pcol 개인카드)와 구글PT 과제표
+   양쪽에 공용으로 사용. 같은 KPI 항목(또는 둘 다 미연결)인 과제끼리는 기존 정렬 순서
+   (지연주의→우선순위→완료예정일→진행율, sortRows 결과)를 그대로 유지 */
+function kpiOrderIdx(name,r){
+  const kr=kpiForRow(r); if(!kr)return Infinity;
+  const idx=kpiRowsFor(name).indexOf(kr);
+  return idx<0?Infinity:idx;
+}
+function sortByKpiOrder(name,rowsIn){
+  return rowsIn.map((r,i)=>({r,i,k:kpiOrderIdx(name,r)})).sort((a,b)=>a.k-b.k||a.i-b.i).map(x=>x.r);
+}
 /* 완료예정일이 특정 날짜 없이 "상시"일 때만 앞에 "업무일정"을 붙여 구분(2026-09-06 요청) ·
    실제 날짜가 있는 경우는 그대로 두어 다른 화면(표·PPT 등)의 fmtDue()는 건드리지 않는다 */
 function dueLabel(d){const t=fmtDue(d); return t==='상시'?('업무일정 '+t):t;}
@@ -6768,18 +6786,6 @@ function kpiPctFor(kr){
 }
 /* KPI 연결된 과제 카드에 "일정" 진행바와 같은 모양으로 그 KPI의 이번 달 실적·달성율 바를 하나 더 표시
    · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청) */
-function kpiMiniBar(kr){
-  if(!kr)return '';
-  const kp=kpiPctFor(kr);
-  const mi=MONTH-1;
-  const man=knum(kpiMa(kr,mi));
-  const valTxt=man!=null?(kfmt(man)+(kr.unit?(' '+kr.unit):'')):'실적 미입력';
-  return `<div class="foot" style="margin-top:5px" title="연결 KPI · ${esc(kr.item)}">
-    <span class="due">📊 KPI · ${MONTH}월 실적 ${esc(valTxt)}</span>
-    <span class="pbar"><i style="width:${kp.pct}%;background:${kp.color}"></i></span>
-    <span class="pnum" style="color:${kp.color}">${kp.label}</span>
-  </div>`;
-}
 function cardFold(r,showMgr){
   const op=wcOpen(r.ti);
   const g=showMgr?(mgrById(r.mgr)||null):null;
@@ -6813,7 +6819,8 @@ function setTaskNext(ti,v,el){ if(roBlock())return; const t=TASKS[ti]; if(!t)ret
   saveTasks(); if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);} }
 function cardHTML(r){
   const delta=(r.prev!=null&&r.p>r.prev)?`<span class="deltaup">▲${r.p-r.prev}</span>`:'';
-  const kr=kpiForRow(r);
+  /* 2026-09-08 요청: 펼친 카드에 과제진행율(위 줄)과 KPI 달성률(kpiMiniBar, 아래 줄)이
+     같이 뜨는 게 중복·혼란스럽다는 피드백 → KPI 줄은 삭제하고 위 과제진행율 줄만 유지 */
   return `<div class="card${r.carried?' carried':''}" onclick="openDetail(${r.ti})">
     <div class="chips">
       ${r.cat?`<span class="chip" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${r.cat}</span>`:''}
@@ -6827,7 +6834,6 @@ function cardHTML(r){
       <span class="pbar"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
       <span class="pnum">${r.p}%${delta}</span>
     </div>
-    ${kpiMiniBar(kr)}
     <div class="nxw" onclick="event.stopPropagation()"><span class="nxw-k">다음주 업무</span><textarea class="nxw-t" placeholder="다음주 계획을 적어주세요" oninput="autogrow(this)" onchange="setTaskNext(${r.ti},this.value,this)">${esc(nextOf(r)||'')}</textarea></div>
     </div>`;
 }
@@ -8290,7 +8296,7 @@ function openDetail(ti){
       <button class="close" onclick="closeDetail()">✕</button></div></div>
     <div class="dw-b">
       <div class="dw-meta">
-        <div class="m"><div class="l">담당자</div><div class="v"><select class="dw-edit-i" onchange="editTaskMeta(${ti},'mgr',this.value)">${MGRS.map(mm=>`<option value="${mm.id}" ${t.mgr===mm.id?'selected':''}>${esc(mm.name)} ${esc(mm.title)}</option>`).join('')}</select></div></div>
+        <div class="m"><div class="l">담당자</div><div class="v"><select class="dw-edit-i" onchange="editTaskMeta(${ti},'mgr',this.value)">${activeMgrs(t.mgr).map(mm=>`<option value="${mm.id}" ${t.mgr===mm.id?'selected':''}>${esc(mm.name)} ${esc(mm.title)}</option>`).join('')}</select></div></div>
         <div class="m"><div class="l">국가</div><div class="v"><select class="dw-edit-i" onchange="editTaskMeta(${ti},'country',this.value)">${['중국','홍콩','대만'].map(c=>`<option ${t.country===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
         <div class="m"><div class="l">R&R</div><div class="v"><select class="dw-edit-i" onchange="editTaskMeta(${ti},'cat',this.value)"><option value="">미분류</option>${[...new Set([...(catsOf(t.mgr)||[]),...(t.cat?[t.cat]:[])])].map(c=>`<option ${t.cat===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div></div>
         <div class="m"><div class="l">중요도</div><div class="v"><select class="dw-edit-i" onchange="editTaskMeta(${ti},'priority',this.value)">${['상','중','하'].map(o=>`<option ${prioKo(t.priority)===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
@@ -8323,7 +8329,7 @@ function openProj(i){
       <button class="close" onclick="closeDetail()">✕</button></div></div>
     <div class="dw-b">
       <div class="dw-meta">
-        <div class="m"><div class="l">주관 (담당자)</div><div class="v"><select class="dw-edit-i" onchange="editProj(${i},'mgr',this.value)"><option value="">미지정</option>${MGRS.map(mm=>`<option value="${mm.id}" ${projMgrId(pj)===mm.id?'selected':''}>${mm.name} ${mm.title}</option>`).join('')}</select></div></div>
+        <div class="m"><div class="l">주관 (담당자)</div><div class="v"><select class="dw-edit-i" onchange="editProj(${i},'mgr',this.value)"><option value="">미지정</option>${activeMgrs(projMgrId(pj)).map(mm=>`<option value="${mm.id}" ${projMgrId(pj)===mm.id?'selected':''}>${mm.name} ${mm.title}</option>`).join('')}</select></div></div>
         <div class="m"><div class="l">국가</div><div class="v"><select class="dw-edit-i" onchange="editProj(${i},'country',this.value)">${['중국','대만','홍콩'].map(c=>`<option ${pj.country===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
         <div class="m"><div class="l">시작일</div><div class="v"><input class="dw-edit-i" type="date" value="${isDate(pj.start)?pj.start:''}" onchange="editProj(${i},'start',this.value)"></div></div>
         <div class="m"><div class="l">완료예상일</div><div class="v"><input class="dw-edit-i" type="date" value="${isDate(pj.due)?pj.due:''}" onchange="editProj(${i},'due',this.value)"></div></div>
@@ -9453,7 +9459,7 @@ function openForm(idx,presetMgr){
     for(let k=WEEKS.length-1;k>=0;k--){const c=wkAt(t,k);if(c&&c.note){memo=c.note;break;}}
   }
   const opt=(arr,sel)=>arr.map(v=>`<option ${v===sel?'selected':''}>${v}</option>`).join('');
-  const mgrOpts=MGRS.map(m=>`<option value="${m.id}" ${m.id===mgr?'selected':''}>${m.name} ${m.title}</option>`).join('');
+  const mgrOpts=activeMgrs(mgr).map(m=>`<option value="${m.id}" ${m.id===mgr?'selected':''}>${m.name} ${m.title}</option>`).join('');
   document.getElementById('formCard').innerHTML=`
     <div class="fh"><h3>${editing?'✎ 과제 수정':'＋ 과제 등록'}</h3><button class="x" onclick="closeForm()">✕</button></div>
     <div class="fb">
@@ -10790,7 +10796,7 @@ async function buildDeckBase64(){
     }
   }
   const pptHx=c=>String(c||'#6b7280').replace('#','')||'6B7280';
-  people.forEach(m=>{const list=byM[m.id];
+  people.forEach(m=>{const list=sortByKpiOrder(m.name,byM[m.id]);
     /* 담당자별 슬라이드 첫 장에 웹 카드 헤더(아바타·이름·직함·카테고리/지역 칩·과제·완료·주의·평균)를
        그대로 재현하고, 그 아래 "내 KPI" 표 → 과제표 순으로 배치(2026-09-08 요청: 웹 「담당자 카드」와
        동일 정보가 PT 한 장에 다 들어가게). 모자라면 뒷장(연속 페이지)에 과제표만 이어서 표시 */
