@@ -241,11 +241,11 @@ select.ctl-in{cursor:pointer;padding-right:26px;appearance:none;
 .pri-b.p하,.pri-sel.p하{background:#f1f4f6;color:#667085}
 .pri-sel{font-size:11.7px;font-weight:800;border:0;border-radius:5px;padding:2px 4px;cursor:pointer;flex:none}
 .pri-sel:focus{outline:1px solid var(--accent)}
-.wc-due{font-size:11.6px;font-weight:700;color:#8a99a4;flex:none;font-variant-numeric:tabular-nums}
+.wc-due{font-size:10.4px;font-weight:700;color:#8a99a4;flex:none;font-variant-numeric:tabular-nums}
 .wc-due.risk{color:var(--risk)}
 .wc-pb{width:70px;height:5px;background:#eef1f4;flex:none;border-radius:3px;overflow:hidden}
 .wc-pb i{display:block;height:100%}
-.wc-pn{font-size:12.1px;font-weight:800;width:36px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.wc-pn{font-size:10.9px;font-weight:800;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 .wc-b:empty{display:none}
 .wc-b{padding:2px 0 8px}
 .wcard .card{margin:0}
@@ -391,9 +391,18 @@ body.vw-rr .omc-b,body.vw-rr .omc-b span,body.vw-rr .ptable,body.vw-rr .ptable t
 .kpi.rrsum .rs-l li .pd{width:5px;height:5px;border-radius:50%;flex:none;margin-top:5px}
 .kpi.rrsum .rs-none{font-size:13.2px;color:var(--faint);font-weight:400}
 .st-sel{font:inherit;font-size:11.6px;font-weight:700;border:1px solid var(--ln);border-radius:8px;padding:2px 6px;background:#fff;color:var(--ink2);cursor:pointer}
+/* 2026-09-09 요청: 대기/진행중/마무리/완료/보류 수기선택 제거 → 진행율에서 자동
+   산출된 상태만 배지(span)로 표시. select와 같은 색상 규칙을 쓰되 클릭 가능한
+   것처럼 보이지 않도록 커서·화살표만 제거 */
+span.st-sel{cursor:default;display:inline-block;-webkit-appearance:none;appearance:none}
 .st-sel.done{background:var(--doneSoft,#e7f6ee);color:var(--done)}
 .st-sel.wait{background:var(--waitSoft);color:var(--wait)}
 .st-sel.prog,.st-sel.review{background:var(--accentSoft);color:var(--accentInk)}
+/* 2026-09-09 요청: 상태 배지를 대기/진행중/마무리/완료 대신 달성율 기준 위험/보통/좋음 3단계로 */
+.st-sel.good{background:var(--doneSoft);color:var(--done)}
+.st-sel.normal{background:var(--reviewSoft);color:var(--review)}
+.st-sel.risk{background:var(--riskSoft);color:var(--risk)}
+.st-sel.unknown{background:var(--waitSoft);color:var(--wait)}
 .weeknote{background:var(--reviewSoft);border:1px solid #ecd9a6;border-radius:var(--rd);padding:16px 18px;font-size:14.3px;color:var(--ink2);font-weight:600;line-height:1.6}
 .weeknote b{color:var(--ink)}
 .calband{background:var(--sf);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln2);padding:7px 14px;font-size:12.1px;font-weight:800;color:var(--ink2);letter-spacing:.02em}
@@ -557,8 +566,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.rept.miletbl td.gcol,.ptable.rept.miletbl td.gcol select{background:#fff}
 .ptable.rept.miletbl input,.ptable.rept.miletbl select,.ptable.rept.miletbl textarea{border:1px solid transparent;background:transparent;font-family:inherit;font-size:13.6px;font-weight:400;color:#000;text-align:center;padding:1px 4px;width:100%;box-sizing:border-box;border-radius:0;line-height:1.35}
 .ptable.rept.miletbl select{font-size:13.6px;padding:2px 3px;width:100%;max-width:100%;min-width:0}
-.ptable.rept.miletbl textarea,.ptable.rept.miletbl td.infc textarea,.ptable.rept.miletbl .rep-sum{display:block;margin:0;text-align:left;resize:none;overflow:hidden;min-height:28px;line-height:1.45;white-space:pre-wrap;font-size:13.6px}
-.ptable.rept.miletbl td.infc{text-align:left}
+.ptable.rept.miletbl textarea,.ptable.rept.miletbl td.infc textarea,.ptable.rept.miletbl .rep-sum{display:block;margin:0;text-align:center;resize:none;overflow:hidden;min-height:28px;line-height:1.45;white-space:pre-wrap;font-size:13.6px}
+.ptable.rept.miletbl td.infc{text-align:center}
 .ptable.rept.miletbl input:hover,.ptable.rept.miletbl select:hover,.ptable.rept.miletbl textarea:hover{border-color:var(--ln)}
 .ptable.rept.miletbl .cell-ok{border-color:#5b8a6e!important;background:#f2f9f5}
 .ptable.rept.miletbl input:focus,.ptable.rept.miletbl select:focus,.ptable.rept.miletbl textarea:focus{outline:none;border-color:var(--accent)}
@@ -571,10 +580,23 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.rept.miletbl .rep-open{font-size:13.6px;font-weight:400;color:#5b8a6e}
 .ptable.rept.miletbl .mile-own select,.ptable.rept.miletbl .mile-own input{border:1px solid transparent;background:transparent}
 .ptable.rept.miletbl .mile-del{font-size:14.3px;border:0;background:transparent;cursor:pointer}
-.ptable.rept.miletbl .mile-infotext{font-size:13.6px;font-weight:400;color:#000;line-height:1.45;display:block;text-align:left}
+.ptable.rept.miletbl .mile-infotext{font-size:13.6px;font-weight:400;color:#000;line-height:1.45;display:block;text-align:center}
 .ptable.rept.miletbl .mile-linkico{font-size:16.5px;text-decoration:none;line-height:1;cursor:pointer}
 .ptable.rept.miletbl td.mile-bigo{text-align:center}
 .miletbl .mile-own .mf-ownph{min-height:18px;display:inline-block}
+/* 2026-09-09 요청: 중화팀행사·출장일정 표 글자를 전체적으로 작게 + 두 표 폰트 통일 유지,
+   시작일·종료일은 "월/일" 간략표기(작게·줄바꿈 없이), 담당자 선택칸은 20% 축소 */
+.ptable.rept.miletbl,.ptable.rept.miletbl td,.ptable.rept.miletbl td.mut,.ptable.rept.miletbl .mile-infolink,.ptable.rept.miletbl .rep-open,.ptable.rept.miletbl .mile-infotext{font-size:12px}
+.ptable.rept.miletbl thead th{font-size:11px}
+.ptable.rept.miletbl input,.ptable.rept.miletbl select,.ptable.rept.miletbl textarea,.ptable.rept.miletbl .rep-sum{font-size:12px}
+.ptable.triptbl,.ptable.triptbl td{font-size:12px}
+.ptable.triptbl th{font-size:11px}
+.ptable.rept.miletbl td.mile-day,.ptable.triptbl td.trip-day{white-space:nowrap}
+.ptable.rept.miletbl td.mile-day input{font-weight:700;color:#0f766e;text-align:center;padding:1px 2px}
+.ptable.triptbl td.trip-day{font-weight:700;color:#0f766e;text-align:center}
+.miletbl td.mile-own .mf-owntrig{min-height:18px;padding:1px 3px}
+.miletbl .mf-av{width:13.6px;height:13.6px;font-size:7.5px}
+.ptable.triptbl td.trip-mgr{white-space:normal;line-height:1.2}
 .mile-noday{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mile-noday .pl{font-size:12.1px;font-weight:800;color:var(--dim)}
 .mile-noday .md-ev{white-space:normal}
@@ -1575,7 +1597,7 @@ body.rail-min .shell{grid-template-columns:58px minmax(0,1fr)}
 .rail-sec h4{font-size:11px;letter-spacing:.1em;color:var(--sideDim);font-weight:700;margin-bottom:8px}
 .rnav{display:flex;flex-direction:column;gap:3px}
 .rnav button{display:flex;align-items:center;gap:9px;font-size:14.3px;font-weight:500;color:var(--sideTx);background:transparent;padding:6px 10px;border-radius:6px;text-align:left;transition:.12s;width:100%}
-.trip-tx{width:100%;border:1px solid transparent;background:transparent;font:inherit;font-size:13.6px;line-height:1.45;resize:none;overflow:hidden;padding:3px 5px;border-radius:5px;color:inherit;text-align:left} /* 표의 다른 칸(.ptable.triptbl td 12.4px)과 글자 크기 통일 — 이전엔 11.5px로 더 작게 나왔음 */
+.trip-tx{width:100%;border:1px solid transparent;background:transparent;font:inherit;font-size:12px;line-height:1.45;resize:none;overflow:hidden;padding:3px 5px;border-radius:5px;color:inherit;text-align:left} /* 표의 다른 칸(.ptable.triptbl td)과 글자 크기 통일 · 2026-09-09 요청으로 12px로 축소 */
 .trip-tx:hover{border-color:#dbe4ea;background:#fbfdfe}
 .trip-tx:focus{border-color:var(--tl);background:#fff;outline:none}
 .trip-tx.res{color:#1e6f5c;font-weight:600}
@@ -1888,6 +1910,9 @@ body.rail-min .rnav button .ic{display:block;font-size:11.6px;font-weight:800;le
 .pm-tabs button{font-size:13.8px;font-weight:700;color:var(--ink2);background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:8px 15px;transition:.12s}
 .pm-tabs button:hover{border-color:var(--accent2)}
 .pm-tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 2026-09-09 요청: 「팀업무」 상단 탭만 글자·여백 5% 축소(다른 화면 .pm-tabs는 그대로) */
+.pm-tabs.gtabs-sm{gap:5.7px}
+.pm-tabs.gtabs-sm button{font-size:13.1px;padding:7.6px 14.3px}
 /* 월간업무현황 = 기본 초록 테마 사용 (파란색 오버라이드 제거) */
 
 .pm-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
@@ -2292,12 +2317,12 @@ body.vw-ro .lb-full{display:none}
 .mf-ownopt .mf-ck{flex:0 0 15px;width:15px;height:15px;border:1.5px solid #c3ccd4;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12.1px;font-weight:800;color:#fff;background:#fff;line-height:1}
 .mf-ownopt.on .mf-ck{background:var(--accent);border-color:var(--accent)}
 .mf-ownopt .mf-nm{white-space:nowrap;color:var(--ink);font-weight:600}
-/* 일정 상세 목록 담당자 드롭다운: 굵기 제거 · 글자 15% 축소 */
-.miletbl .mile-own .mf-ownchip{font-weight:400;font-size:13.2px;background:transparent;border:0;padding:0;color:#000}
+/* 일정 상세 목록 담당자 드롭다운: 굵기 제거 · 글자 15% 축소 · 2026-09-09 요청으로 20% 추가 축소(누적 약 32%) */
+.miletbl .mile-own .mf-ownchip{font-weight:400;font-size:10.6px;background:transparent;border:0;padding:0;color:#000}
 .mf-av{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;color:#fff;font-size:9.4px;font-weight:800;margin-right:4px;vertical-align:-3px;flex:none}
-.miletbl .mile-own .mf-ownchip{display:flex;align-items:center;justify-content:flex-start;gap:0;font-size:13.2px;font-weight:400}
-.miletbl .mile-own .mf-ownph{font-size:13.6px;color:#9aa2ad}
-.miletbl .mile-own .mf-ownopt{font-size:13.8px}
+.miletbl .mile-own .mf-ownchip{display:flex;align-items:center;justify-content:flex-start;gap:0;font-size:10.6px;font-weight:400}
+.miletbl .mile-own .mf-ownph{font-size:10.9px;color:#9aa2ad}
+.miletbl .mile-own .mf-ownopt{font-size:11px}
 .miletbl td.mile-own .mf-owntrig{border:1px solid transparent;background:transparent;border-radius:0;padding:2px 4px;justify-content:center;gap:3px}
 .miletbl td.mile-own .mf-owntrig:hover{border-color:var(--ln)}
 .miletbl td.mile-own .mf-cx{color:#b0b7c0;font-size:11px}
@@ -2452,7 +2477,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.08-M295</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.09-M305</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2949,7 +2974,7 @@ let MEMBERID=''; try{MEMBERID=localStorage.getItem('wr_memberid')||'';}catch(e){
 let VALL=false;
 const MEMBER_TABS=['home','mreport','calmonth']; // 팀원 메뉴: 월간업무현황 · 주간업무현황 · 중화팀 일정·행사 // 열람 허용 메뉴 (이유아 외 전원 + 공용 「중화팀」 계정)
 const GUEST_TABS=['home','mreport']; // 로그인 없이(게스트) 볼 때: 팀종합현황 · 업무현황만 (중화팀일정행사 제외)
-const GUEST_OVTABS=['focus','month','week']; // 게스트: 업무현황 안에서 중점추진과제·월별보고·주간보고만
+const GUEST_OVTABS=['focus','month','week','trip']; // 게스트: 업무현황 안에서 중점추진과제·월별보고·주간보고·출장일정만
 const MEMBER_RRTABS=['wsales','kanban']; // 팀원: 본사실적 · 과제진행율만 // 주간업무현황 중 열람 허용 탭
 function RO(){return VROLE==='member';}   /* 팀원·공용 계정 = 읽기 전용 */
 function roBlock(){if(RO()){try{toast('읽기 전용 계정입니다 · 수정·저장은 팀장 계정에서만 가능합니다');}catch(e){}return true;}return false;}
@@ -4045,10 +4070,9 @@ const KPI_SEED=[
  ['영업','이유아','부진상권 M/S 개선(↑) 상하이','중국','%','6%','해당월 최종실적'],
  ['영업','이유아','영업 Infra 구축 · KPI 목표달성 (화동)','중국','만위안','7,584','월별 달성율'],
  ['영업','이유아','영업 Infra 구축 · KPI 목표달성 (화남)','중국','만위안','2,565','월별 달성율'],
- ['제품PM','이유아','제품PM - BD 판매 수량','중국','대','73,000','해당월 최종실적'],
+ ['제품PM','이유아','제품PM - BD·ARi 판매수량','중국','대','81,000','해당월 최종실적'],
  ['제품PM','이유아','제품PM - BD 진입점','중국','점','1,500','해당월 최종실적'],
  ['제품PM','이유아','신제품런칭 - ARi','중국','일정','26/06/08','목표일정 % 기입'],
- ['제품PM','이유아','제품PM - ARi 판매수량','중국','대','8,000','해당월 최종실적'],
  ['제품PM','이유아','제품PM - ARi 진입점','중국','점','400','해당월 최종실적'],
  ['제품PM','이유아','신제품런칭 - Evidence','중국','일정','26/10/30','목표일정 % 기입'],
  ['제품PM','이유아','제품PM - Evidence 판매수량','중국','대','50,000','해당월 최종실적'],
@@ -4069,6 +4093,28 @@ KPIDATA=KPIDATA.filter(r=>!KPI_HIDDEN.includes(r.item));
 {const KPI_DATE_FIX={'신제품런칭 - ARi':'26/06/08','신제품런칭 - Evidence':'26/10/30','제품PM - AXA':'26/09/30'};
  KPIDATA.forEach(r=>{if(KPI_DATE_FIX[r.item]){r.yt=KPI_DATE_FIX[r.item];if(r.item==='신제품런칭 - Evidence')r.unit='일정';}});}
 function saveKPI(){try{localStorage.setItem('wr_kpi_v4',JSON.stringify(KPIDATA));}catch(e){}}
+/* 2026-09-09 요청: 이유아 KPI 중 "BD 판매 수량"과 "ARi 판매수량"을 하나로 합쳐 합산 기준으로
+   달성율이 자동 계산되게 함(나머지 KPI 항목은 지금처럼 항목별 목표·실적 그대로 자동계산) ·
+   이미 값이 들어있는 localStorage 캐시에도 소급 적용(월별 목표·실적을 그달끼리 더하고 연간목표도
+   합산) · 병합 후에는 원본 두 항목("BD 판매 수량"·"ARi 판매수량")이 더 이상 존재하지 않으므로
+   다음 로드부터는 조건에 걸리지 않아 아무 일도 하지 않는다(멱등) */
+(function mergeBdAriKpi(){
+  const idxA=KPIDATA.findIndex(r=>r.owner==='이유아'&&r.item==='제품PM - BD 판매 수량');
+  const idxB=KPIDATA.findIndex(r=>r.owner==='이유아'&&r.item==='제품PM - ARi 판매수량');
+  if(idxA<0||idxB<0)return;
+  const A=KPIDATA[idxA],B=KPIDATA[idxB];
+  const sumArr=(a,b)=>Array.from({length:12},(_,i)=>{
+    const x=knum(a[i]),y=knum(b[i]);
+    if(x==null&&y==null)return null;
+    return (x||0)+(y||0);
+  });
+  const merged={cat:'제품PM',owner:'이유아',item:'제품PM - BD·ARi 판매수량',country:'중국',unit:'대',
+    y25:'',yt:(knum(A.yt)||0)+(knum(B.yt)||0),method:'해당월 최종실적',ya:null,
+    mt:sumArr(A.mt,B.mt),ma:sumArr(A.ma,B.ma)};
+  KPIDATA[idxA]=merged;
+  KPIDATA.splice(idxB,1);
+  saveKPI();
+})();
 let KPIVIEW='cur'; try{KPIVIEW=localStorage.getItem('wr_kpiview')||'cur';}catch(e){}
 function setKpiView(v){KPIVIEW=v;try{localStorage.setItem('wr_kpiview',v);}catch(e){}render();}
 /* 2026-09-06 요청("목표에 숫자인 경우 천단위 콤마·소수점은 사사오입"): 숫자 값(실제 number 타입뿐
@@ -4647,41 +4693,48 @@ function tripProjectRollup(){
   h+='</tbody></table></div><div class="ov-foot" style="margin-top:8px">※ 마스터시트 「출장일정」 탭의 <b>연계 프로젝트</b> 열에 같은 이름을 적으면 같은 프로젝트로 묶이고, <b>결과</b> 열이 성과로 누적됩니다. 프로젝트명이 「중화팀 행사」·「담당자 과제」와 같으면 자동으로 연결 표시됩니다.</div></div>';
   return h;
 }
-function tripPanelHead(mode){
-  const iso=(WEEKS[W]&&WEEKS[W].iso)||0;
-  const list=((mode==='week')?tripsOfWeek(iso):tripsOfMonth(MONTH)).filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR));
-  const lb=(mode==='week')?('W'+iso+' 출장일정'):(MONTH+'월 출장일정');
-  const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':'해당 월에 걸쳐 있는 출장';
-  return `<div class="ov-sec" style="margin:0">✈ ${esc(lb)} <span class="ov-sub">${sub} · 마스터시트 「출장일정」 탭 연동 · ${list.length}건</span></div>`;
+function tripsOfMonths(mos){ /* 2026-09-09 요청: 중화팀행사(MILEMONS)처럼 다중월 선택으로 출장일정도 필터 */
+  if(!mos||!mos.length)return [];
+  return TRIPS.filter(t=>{const sm=+String(t.start||'').slice(5,7),em=+String(t.end||t.start||'').slice(5,7)||sm;
+    return sm&&mos.some(mo=>mo>=sm&&mo<=em);});
 }
-function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' */
+function tripMD(d){if(!d||String(d).length<10)return '–';return (+String(d).slice(5,7))+'/'+(+String(d).slice(8,10));} /* 중화팀행사 mileMD와 동일한 "월/일" 간략표기 */
+function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' | 'sel'(=중화팀행사처럼 MILEMONS 다중월 선택, 업무현황 전용) */
   const iso=(WEEKS[W]&&WEEKS[W].iso)||0;
-  const list=((mode==='week')?tripsOfWeek(iso):(mode==='year')?TRIPS.slice():tripsOfMonth(MONTH)).filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR));
-  const lb=(mode==='week')?('W'+iso+' 출장일정'):(mode==='year')?(YEAR+'년 출장일정 · 전체'):(MONTH+'월 출장일정');
-  const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':(mode==='year')?'완료 여부와 관계없이 연간 전체 출장을 표시':'해당 월에 걸쳐 있는 출장';
+  const list=((mode==='week')?tripsOfWeek(iso):(mode==='year')?TRIPS.slice():(mode==='sel')?tripsOfMonths(MILEMONS):tripsOfMonth(MONTH))
+    .filter(t=>(!MILECTRY||(t.country||'')===MILECTRY)&&(!MILEMGR||(MGRS.find(m=>m.name===t.mgr)||{}).id===MILEMGR));
   const sorted=list.slice().sort((a,b)=>String(a.start).localeCompare(String(b.start)));
   let h='';
-  if(!sorted.length)return `<div class="om-tile"><div class="om-ts">등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.</div></div>`;
+  if(mode==='sel')h+=`<div class="pm-head" style="margin:10px 0 0"><h3 style="font-size:16.5px">🧳 출장일정</h3><span class="unit">${sorted.length}건</span></div>`;
+  else{
+    const lb=(mode==='week')?('W'+iso+' 출장일정'):(mode==='year')?(YEAR+'년 출장일정 · 전체'):(MONTH+'월 출장일정');
+    const sub=(mode==='week')?'해당 주차에 걸쳐 있는 출장':(mode==='year')?'완료 여부와 관계없이 연간 전체 출장을 표시':'해당 월에 걸쳐 있는 출장';
+    h+=`<div class="ov-sec" style="margin:0">✈ ${esc(lb)} <span class="ov-sub">${sub} · 마스터시트 「출장일정」 탭 연동 · ${sorted.length}건</span></div>`;
+  }
+  if(!sorted.length)return h+`<div class="om-tile"><div class="om-ts">${(mode==='sel'&&!MILEMONS.length)?'선택된 월이 없습니다 · 위에서 월을 선택하세요.':'등록된 출장이 없습니다. 마스터시트 「출장일정」 탭에 입력 후 [구글시트 불러오기]를 누르세요.'}</div></div>`;
   /* 표 항목을 마스터시트 「출장일정」(입력 시트) 화면에 현재 실제로 보이는 열 구성에 맞춤:
-     출발일·종료일·담당자·국가·출장명·출장 목적 6개뿐 (동행자·구분·방문처·연계 과제·결과·상태는
-     이유아 팀장이 시트에서도 숨겨 쓰는 열이라 여기서도 제외) */
-  h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%"><thead><tr>'
-    +'<th style="width:96px">일정</th><th style="width:52px">기간</th><th style="text-align:left;width:170px">출장명</th><th style="width:128px">담당자</th>'
-    +'<th style="width:120px">국가</th>'
-    +'<th style="text-align:left;width:44%">출장 목적</th></tr></thead><tbody>';
+     시작일·종료일(2026-09-09 요청: 중화팀행사와 동일하게 월/일 간략표기·소형화)·담당자·국가·출장명·
+     출발정보·도착정보·출장 목적 (동행자·구분·방문처·연계 과제·결과·상태는 이유아 팀장이 시트에서도
+     숨겨 쓰는 열이라 여기서도 제외) */
+  h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%;table-layout:fixed"><thead><tr>'
+    +'<th style="width:6%">시작일</th><th style="width:6%">종료일</th><th style="text-align:left;width:16%">출장명</th><th style="width:11%">담당자</th>'
+    +'<th style="width:8%">국가</th>'
+    +'<th style="text-align:left;width:15%">출발정보</th><th style="text-align:left;width:15%">도착정보</th>'
+    +'<th style="text-align:left;width:23%">출장 목적</th></tr></thead><tbody>';
   sorted.forEach(t=>{
-    const days=(t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1;
     const g=MGRS.find(m=>m.name===t.mgr);
     /* 국가 칸 = 시트의 「국가」열 원문 그대로(예: "중국동관") · 필터용으로 국가만 따로 뽑아 t.country에,
        나머지 지역은 t.city에 저장해두지만(마일스톤 국가 필터 등에서 사용), 표에는 시트에 적힌 그대로 다시 합쳐 보여준다 */
     const loc=String(t.country||'')+String(t.city||'');
-    h+=`<tr><td><b>${esc(tripFmt(t.start,t.end))}</b></td><td>${days}일</td>`
+    h+=`<tr><td class="trip-day">${esc(tripMD(t.start))}</td><td class="trip-day">${esc(tripMD(t.end||t.start))}</td>`
       +`<td class="rl"><textarea class="trip-tx" style="font-weight:700" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'name',this.value,0,this)" placeholder="출장명">${esc(t.name||'')}</textarea></td>`
-      +`<td>${g?`<span class="av" style="width:18px;height:18px;font-size:9.9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:11px">+${esc(t.with)}</div>`:''}</td>`
-      +`<td>${esc(loc)}</td>`
+      +`<td class="trip-mgr">${g?`<span class="av" style="width:16px;height:16px;font-size:9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:10.3px">+${esc(t.with)}</div>`:''}</td>`
+      +`<td class="trip-day">${esc(loc)}</td>`
+      +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'dep',this.value,0,this)" title="출발일시·공항/편명">${esc(t.dep||'')}</textarea></td>`
+      +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'arr',this.value,0,this)" title="도착일시·공항/편명">${esc(t.arr||'')}</textarea></td>`
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td></tr>`;});
   h+='</tbody></table></div>';
-  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적</b>은 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
+  h+='<div class="ov-foot" style="margin-top:6px">※ <b>출장 목적·출발정보·도착정보</b>는 여기서 바로 수정되며 자동 저장됩니다. 마스터시트 「출장일정」 탭에 같은 열이 채워져 있으면 시트 값이 우선하고, 시트가 비어 있으면 여기서 입력한 내용이 유지됩니다.<br>※ 달력 상세의 <b>「출장리포트」</b>도 같은 「출장일정」 탭에서 불러옵니다 — <b>중화팀출장자 · 본사출장자 · 출장기안서 · 항공권 · 출장내용 · 성과및소득 · 아쉬운점 · 참고사항</b> 열을 추가하면 자동 반영되고, 열이 없으면 기존에 입력된 리포트 내용이 그대로 유지됩니다.</div>';
   return h;
 }
 function renderRRSales(){
@@ -5095,13 +5148,24 @@ function mrDealTable0(){
     return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td>천$</td>`
       +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct((d.exTm&&d.exA!=null)?d.exA/d.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct((d.exT&&cA!=null)?cA/d.exT:null)}</td>`
       +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct((d.suT&&cS!=null)?cS/d.suT:null)}</td></tr>`;};
-  D.forEach(d=>{const g=/닝보|북경/.test(d.dealer)?'중국':(/대만/.test(d.dealer)?'대만':'홍콩');h+=row('',g,d);});
   // 소계·합계
   const sum=(list,f)=>{let c=0,a=false;list.forEach(d=>{if(d[f]!=null){c+=d[f];a=true;}});return a?c:null;};
+  const subRow=(label,list)=>{
+    if(!list.length)return '';
+    const cA=list.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=list.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
+    const sc={exT:sum(list,'exT'),exTm:sum(list,'exTm'),exA:sum(list,'exA'),suT:sum(list,'suT'),suA:sum(list,'suA')};
+    return `<tr class="ov-sub-row"><td>${esc(label)}</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;
+  };
+  /* 2026-09-09 요청: 닝보·북경(중국) 행 바로 아래 "중국" 소계, 그 다음 홍콩·대만 행을 몰아서
+     보여준 뒤 그 바로 아래 "홍콩대만" 소계(둘을 하나로 묶음)를 표시 · 원본 데이터의 행 순서가
+     지역별로 섞여 있어도 항상 이 순서(중국 묶음→중국소계→홍콩대만 묶음→홍콩대만소계→합계)로 나오게
+     그룹으로 나눠 렌더링(이전에는 소계만 있고 홍콩대만 소계가 아예 빠져 있었음) */
   const cn=D.filter(d=>/닝보|북경/.test(d.dealer));
-  if(cn.length){const cA=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=cn.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
-    const sc={dealer:'소계',exT:sum(cn,'exT'),exTm:sum(cn,'exTm'),exA:sum(cn,'exA'),suT:sum(cn,'suT'),suA:sum(cn,'suA')};
-    h+=`<tr class="ov-sub-row"><td>중국</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;}
+  const hktw=D.filter(d=>!/닝보|북경/.test(d.dealer));
+  cn.forEach(d=>{h+=row('','중국',d);});
+  h+=subRow('중국',cn);
+  hktw.forEach(d=>{const g=/대만/.test(d.dealer)?'대만':'홍콩';h+=row('',g,d);});
+  h+=subRow('홍콩대만',hktw);
   if(D.length){const cA=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
     const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
     h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
@@ -5136,16 +5200,16 @@ function renderTeamWeekCards(wk){
       const t=(ti>=0)?TASKS[ti]:null, pk=t?pickAt(t):null;
       const pv=(()=>{const v=parseInt(x.r.p);return isNaN(v)?(pk?pk.p:0):v;})();
       const stk=pk?stOf(pk,pv):st(pv);
-      const cs=(pk&&pk.sx)?pk.sx:(KEY2ST[stk]||'진행중');
       const due=(pk&&pk.due)?pk.due:(x.r.due||'');
       const risk=pk?pk.risk:false;
+      const stBadgeRow={mgr:(t&&t.mgr)||null,t:t||null,p:pv,risk};
       const cat=(t&&t.cat)||x.r.g||'';
       const note=String(x.r.note||(pk&&pk.note)||'').trim();
       const kpi=String(x.r.k||(t&&t.k)||'').trim();
       return `<li class="mr-li wkli${HIw(x)?' mr-hi':''}" onclick="mrToggle(this)" title="클릭 → 과제상세">${esc(x.r.t)}${HIw(x)?' <span class="mr-star">★</span>':''}${pct(x)}
         <div class="mr-x wkdet" onclick="event.stopPropagation()">
           <div class="wkd-c">
-            <div class="wkd-chips">${cat?`<span class="chip" style="background:${(CATCOLOR[cat]||'#6b7280')}1a;color:${CATCOLOR[cat]||'#6b7280'}">${esc(cat)}</span>`:''}${ti>=0?`<select class="st-sel ${stk}" onchange="setTaskStatus(${ti},this.value)" title="상태 (구글시트 「상태」 열과 연동)">${STATUS_OPTS.map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')}</select>`:`<span class="chip">${esc(cs)}</span>`}${ti>=0?`<a class="wkd-open" href="javascript:void(0)" onclick="openDetail(${ti})">↗ 수정</a>`:''}</div>
+            <div class="wkd-chips">${cat?`<span class="chip" style="background:${(CATCOLOR[cat]||'#6b7280')}1a;color:${CATCOLOR[cat]||'#6b7280'}">${esc(cat)}</span>`:''}${autoStatusBadge(stBadgeRow)}${ti>=0?`<a class="wkd-open" href="javascript:void(0)" onclick="openDetail(${ti})">↗ 수정</a>`:''}</div>
             <div class="wkd-tt">${esc(x.r.t)}</div>
             ${note?`<div class="wkd-p">${esc(note)}</div>`:''}
             ${kpi?`<div class="wkd-p"><span class="wkd-k">KPI 기준</span>${esc(kpi)}</div>`:''}
@@ -5308,8 +5372,10 @@ function renderHome(){
   h+=`<div class="hm-sec"><span class="em">📷</span>WORK DIARY <span class="sub">· ${MONTH}월 · ${WEEKS[W]?WEEKS[W].name:''}</span>${HOMESIDE?'':'<span class="x" onclick="toggleHomeSide()">◂ 오른쪽 열기</span>'}</div>`;
   h+='<div class="hm-mini">KEY METRICS · 누적 수출·수금 (천$) · KPI</div>';
   h+=mrMonthTiles('');
-  // people
-  h+=`<div class="hm-mini" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">WEEKLY TASKS · 담당자별 <span style="font-weight:400;color:var(--faint)">(진행 중 상위 3건 · 담당자 여러 명 선택 가능 · 카드 클릭 시 주간보고로)</span>${HMTASKS?personTabs(HMSEL,'setHMSel',m=>rows.filter(r=>r.mgr===m.id).length):''}<span class="x" onclick="toggleHMTasks()" style="margin-left:auto;font-size:12.1px;color:var(--faint);cursor:pointer;border:1px solid var(--ln);border-radius:4px;padding:1px 7px;background:#fff">${HMTASKS?'▾ 숨기기':'▸ 펼치기'}</span></div>`;
+  /* 2026-09-09 요청: 출장일정을 「팀 종합현황(홈)」에서 「업무현황」(중점추진과제 뒤) 탭으로 이동 —
+     여기서는 제거하고 WORK DIARY → KEY METRICS → WEEKLY TASKS 순서로 복귀 */
+  // people (WEEKLY TASKS)
+  h+=`<div class="hm-mini" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px">WEEKLY TASKS · 담당자별 <span style="font-weight:400;color:var(--faint)">(진행 중 상위 3건 · 담당자 여러 명 선택 가능 · 카드 클릭 시 주간보고로)</span>${HMTASKS?personTabs(HMSEL,'setHMSel',m=>rows.filter(r=>r.mgr===m.id).length):''}<span class="x" onclick="toggleHMTasks()" style="margin-left:auto;font-size:12.1px;color:var(--faint);cursor:pointer;border:1px solid var(--ln);border-radius:4px;padding:1px 7px;background:#fff">${HMTASKS?'▾ 숨기기':'▸ 펼치기'}</span></div>`;
   const HM_DEFAULT=['lee','seo','yu']; /* 팀종합: 기본 이유아·서혜민·유훈종 3명 · 탭에서 다른 담당자 선택 가능 */
   const cards=[];
   mgrsOrdered().forEach(m=>{if(HMSEL.length?!HMSEL.includes(m.id):!HM_DEFAULT.includes(m.id))return;const my=rows.filter(r=>r.mgr===m.id);if(!my.length)return;let h='';
@@ -5320,16 +5386,6 @@ function renderHome(){
     if(!top.length)h+='<div class="hm-it hm-empty">진행 중 과제 없음</div>';
     h+='</div>';cards.push(h);});
   h+='<div class="hm-people'+(cards.length===1?' one':'')+'"'+(HMTASKS?'':' style="display:none"')+'>'+cards.join('')+'</div>';
-  // 출장일정 · DEALER RESULT — 세로로 쌓지 않고 탭으로 전환(요청: "9월출장일정과 아래표는 탭으로변경")
-  {
-    const em=mrEffMonth();
-    const HMTABS=[['trip',MONTH+'월 출장일정'],['deal','DEALER RESULT · '+em+'월'+(em!==MONTH?'(최종 입력월)':'')+' · 천$']];
-    h+='<div class="seccard" style="padding-top:10px;margin-top:18px"><div class="cltabs">'
-      +HMTABS.map(([k,l])=>`<button class="cltab${HMSECTAB===k?' on':''}" onclick="setHmSecTab('${k}')">${esc(l)}</button>`).join('')
-      +'</div><div class="cltab-b">'
-      +(HMSECTAB==='trip'?(function(){try{return tripPanelHead('month')+tripPanel('month');}catch(e){return '';}})():mrDealTable())
-      +'</div></div>';
-  }
   h+='</div>';
   // ── right ──
   if(HOMESIDE){
@@ -5360,11 +5416,13 @@ function renderOverview(){
   const wev=ovWeekEvents();
   let h='<div class="ovw">';
   const isMR=(TAB==='mreport');
-  let OVTABS=isMR?[['main','본사실적'],['focus','중점추진과제'],['month','월별보고'],['week','주간보고'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정']]
-                 :[['main','본사실적'],['focus','중점추진과제'],['month','월별보고']];
+  /* 2026-09-09 요청: 본사실적 다음은 주간보고 순으로, 중점추진과제는 맨 뒤로 이동
+     2026-09-09 요청(2차): 「팀 종합현황」에 있던 출장일정을 업무현황 안, 중점추진과제 바로 뒤로 이동 */
+  let OVTABS=isMR?[['main','본사실적'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정']]
+                 :[['main','본사실적'],['month','월별보고'],['focus','중점추진과제'],['trip','출장일정']];
   if(isMR&&RO()){
-    if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고만 */
-    else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U 포함 */
+    if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고·출장일정만 */
+    else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops','trip'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U·출장일정 포함 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
   if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'&&k!=='sched'); /* 팀장 화면: 과제진행율·업무일정은 팀업무 메뉴(통합 옆)로 이동 (팀원·공용계정은 팀업무 접근이 없어 여기 유지) */
@@ -5376,7 +5434,9 @@ function renderOverview(){
   const showTiles=!isMR||['main','focus','month'].includes(CT);
   if(showTiles){
     const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
-    h+=`<div class="ov-sec">핵심 지표 <span class="ov-sub">${secSub}</span></div>`;
+    /* 2026-09-09 요청: 본사실적 탭의 핵심지표 헤더 앞에 "몇월 몇주차" 표기 추가 */
+    const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:'핵심 지표';
+    h+=`<div class="ov-sec">${esc(kpiHead)} <span class="ov-sub">${secSub}</span></div>`;
     const evTile=evListTile(wev);
     if(isMR){
       if(CT==='focus')h+=mrFocusTiles(evTile);
@@ -5394,28 +5454,32 @@ function renderOverview(){
     h+='<div style="margin-top:2px">'+renderOps()+'</div>';
   } else if(CT==='sched'){
     h+='<div style="margin-top:2px">'+renderRoutineMeetings()+'</div>';
+  } else if(CT==='trip'){
+    h+='<div style="margin-top:2px">'+mileMonBar()+tripPanel('sel')+'</div>';
   } else if(CT==='focus'){
     h+=renderFocus();
   } else if(CT==='month'){
     h+=renderTeamMonthCards(isMR);
   } else {
     if(TAB==='mreport'){
-      /* 본사실적 4개 섹션(월별 목표대비실적·당월 거래처별 실적·주간 수출수금·주간 거래처별 실적)을
-         숨김/펼치기 토글 4묶음 대신 탭 1개로 통합(요청: "본사실적에서 4개의 섹션은 탭으로 수정").
-         탭 UI는 「중화팀 행사/출장일정」에서 쓰던 것과 동일한 .cltabs 서식을 그대로 재사용해 통일감 유지. */
+      /* 2026-09-09 요청: 앞서(M297) 탭 없이 한 화면으로 합쳤던 본사실적 화면을, 탭 2개로 재구성.
+         ①년간 실적그래프(mrMonthChart, 단독 탭) ②당월 실적그래프(옛 "주간 수출·수금"·rrWeekChart를
+         이름만 바꿈) + [N]월 실적상세표(mrDealTable)를 하나로 묶어 두 번째 탭으로.
+         MRSECTAB(과거 4탭 구조에서 쓰다 M297에서 미사용으로 남겨뒀던 상태변수)를 이 2탭 전환에 재사용. */
       const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
       const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
-      const MRTABS=[['monthchart','본사 실적 · 월별 목표대비실적'],['dealmonth',`${MONTH}월 거래처별 실적 요약`],['weekchart','본사 실적 · 주간 수출·수금'],['dealweek',`${ovWeekKey()} 거래처별 실적 요약`]];
-      const MRSUB={monthchart:'단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
-        dealmonth:dealSub,weekchart:`단위 천불 USD · 기준 주차 ${ovWeekKey()} · 최근 주차 스냅샷`,dealweek:''};
+      const MRTABS=[['year','년간 실적그래프'],['month','당월 실적그래프']];
+      const MRSUB={year:'단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
+        month:`단위 천불 USD · 기준 주차 ${esc(ovWeekKey())} · 최근 주차 스냅샷 + ${MONTH}월 실적상세표`};
+      if(!['year','month'].includes(MRSECTAB))MRSECTAB='year';
       h+='<div class="seccard" style="padding-top:10px"><div class="cltabs">'
         +MRTABS.map(([k,l])=>`<button class="cltab${MRSECTAB===k?' on':''}" onclick="setMrSecTab('${k}')">${esc(l)}</button>`).join('')
         +(MRSUB[MRSECTAB]?`<div class="cltab-act"><span class="cltab-sub">${esc(MRSUB[MRSECTAB])}</span></div>`:'')
         +'</div><div class="cltab-b" id="pptMainCapture" style="background:#fff">'
-        +(MRSECTAB==='monthchart'?`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`
-          :MRSECTAB==='dealmonth'?mrDealTable()
-          :MRSECTAB==='weekchart'?`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`
-          :ovDealTable())
+        +(MRSECTAB==='year'?`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`
+          :`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`
+            +`<div class="ov-sec" style="margin-top:18px">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
+            +mrDealTable())
         +'</div></div>';
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
@@ -6607,14 +6671,13 @@ function renderTaskMerge(rows){
       <div class="tm-list">`;
     shown.forEach(r=>{
       const t=r.t, op=!!TGOPEN[r.ti];
-      const cs=r.sx||KEY2ST[r.st]||'진행중';
       const kpi=String(t.k||'').trim(), nx=String((pickAt(t)||{}).nx||t.a||'').trim();
       h+=`<div class="tm-r${op?' open':''}">
         <div class="tm-m" onclick="tgToggle(${r.ti})">
           <span class="tm-cx">${op?'▾':'▸'}</span>
           ${r.cat?`<span class="tm-cat" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${esc(r.cat)}</span>`:''}
           <span class="tm-tt">${tmWkBadges(t)}${esc(r.label)}${String(r.prio||'').trim()==='상'?' <span class="tm-st2">★</span>':''}</span>
-          <select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)" title="상태 (구글시트 「상태」 열과 연동)">${STATUS_OPTS.map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')}</select>
+          ${autoStatusBadge(r)}
         </div>
         <div class="tm-d">
           <div class="tm-p">${esc(r.note||'')}</div>
@@ -6746,17 +6809,49 @@ function addDirect(mid){
   toast('지시 등록 · 캘린더 '+fmtDue(due)+'에 마감 일정이 추가되었습니다');
   try{ if(typeof emailAssign==='function') setTimeout(()=>{ if(confirm('담당자에게 이메일로 통지할까요? (메일 작성창이 열립니다)')) emailAssign(0); },200); }catch(e){}
 }
-/* 과제에 연결된 KPI 항목 찾기 · 시트 「KPI연결」(kl) 텍스트를 그 담당자의 KPI 항목명과 매칭
-   (이번 주 값이 있으면 그것 우선, 없으면 과제 기본값 t.kl 사용). 매칭되는 KPI가 없으면 null —
-   그 경우 지금까지와 동일하게 과제명만 제목으로 쓴다(2026-09-05, "KPI항목이 주간보고 제목이 되게" 요청) */
+/* 2026-09-09 요청: 9월부터 주간보고 제목 입력 방식이 바뀜 — 팀원이 별도 「KPI연결」(kl) 칸을
+   채우지 않고, 제목 자체를 "<KPI항목> - <중점추진과제>" 형식으로 직접 입력해 KPI지표와 매칭한다
+   (KPI항목명은 KPI지표 탭의 KPI항목과 정확히 같은 표기여야 함). 항목명 자체에 "-"가 들어있는
+   경우를 오매칭하지 않도록, 그 담당자의 KPI 항목명 중 제목과 "가장 길게" 겹치는 것부터 확인한다.
+   8월까지의 기존 데이터는 이 방식이 아니라 kl 매칭 그대로 유지(MONTH<9). */
+function kpiTitleMatch(g,r){
+  const label=String(r.label||'').trim(); if(!label)return null;
+  const rows=kpiRowsFor(g.name); if(!rows.length)return null;
+  const cands=rows.filter(k=>String(k.item||'').trim()).sort((a,b)=>String(b.item).trim().length-String(a.item).trim().length);
+  for(const k of cands){
+    const item=String(k.item).trim();
+    if(label.indexOf(item)!==0)continue;
+    if(/^\s*-\s*/.test(label.slice(item.length)))return k;
+  }
+  return null;
+}
+/* 과제에 연결된 KPI 항목 찾기 · 우선 시트 「KPI연결」(kl) 텍스트를 그 담당자의 KPI 항목명과
+   매칭(이번 주 값이 있으면 그것 우선, 없으면 과제 기본값 t.kl 사용) · kl이 없고 9월 이후 데이터면
+   위 kpiTitleMatch로 제목 자체에서 매칭 시도. 매칭되는 KPI가 없으면 null — 그 경우 지금까지와
+   동일하게 과제명만 제목으로 쓴다(2026-09-05, "KPI항목이 주간보고 제목이 되게" 요청) */
 function kpiForRow(r){
   const g=mgrById(r.mgr); if(!g)return null;
   const c=wkAt(r.t,W); const kl=(c&&c.kl)||r.t.kl||'';
-  if(!kl)return null;
-  const rows=kpiRowsFor(g.name);
-  return rows.find(k=>kpiMatch(k.item,kl))||null;
+  if(kl){
+    const rows=kpiRowsFor(g.name);
+    const m=rows.find(k=>kpiMatch(k.item,kl));
+    if(m)return m;
+  }
+  if(MONTH>=9){
+    const tm=kpiTitleMatch(g,r);
+    if(tm)return tm;
+  }
+  return null;
 }
-function rowTitle(r){ const kr=kpiForRow(r); return kr?(kr.item+' - '+r.label):r.label; }
+/* 9월부터는 팀원이 제목에 KPI항목을 이미 직접 적으므로("KPI항목 - 과제") 앞에 한 번 더
+   중복해서 붙이지 않는다 · kl로만 연결돼 제목에 항목명이 없는 경우(8월 이전 등)는 기존처럼
+   item명을 앞에 붙여 표시 */
+function rowTitle(r){
+  const kr=kpiForRow(r); if(!kr)return r.label;
+  const label=String(r.label||'').trim(), item=String(kr.item||'').trim();
+  if(item && label.indexOf(item)===0)return r.label;
+  return kr.item+' - '+r.label;
+}
 /* 2026-09-08 요청: 담당 과제 목록을 그 담당자의 「내 KPI」 항목 순서대로 정렬하고, KPI에
    연결되지 않은 과제는 맨 아래로 내림 · 웹 담당자 카드(.pcol 개인카드)와 구글PT 과제표
    양쪽에 공용으로 사용. 같은 KPI 항목(또는 둘 다 미연결)인 과제끼리는 기존 정렬 순서
@@ -6769,10 +6864,14 @@ function kpiOrderIdx(name,r){
 function sortByKpiOrder(name,rowsIn){
   return rowsIn.map((r,i)=>({r,i,k:kpiOrderIdx(name,r)})).sort((a,b)=>a.k-b.k||a.i-b.i).map(x=>x.r);
 }
-/* 완료예정일이 특정 날짜 없이 "상시"일 때만 앞에 "업무일정"을 붙여 구분(2026-09-06 요청) ·
-   실제 날짜가 있는 경우는 그대로 두어 다른 화면(표·PPT 등)의 fmtDue()는 건드리지 않는다 */
-function dueLabel(d){const t=fmtDue(d); return t==='상시'?('업무일정 '+t):t;}
-/* KPI 연결된 과제의 그 달 실적·달성율을 진행바 형태로 계산 (kpiMiniBar·cardFold 공용, 2026-09-08 분리) */
+/* 완료예정일이 특정 날짜 없이 "상시"인 과제는 접힌 카드 줄에서 "업무일정 상시"(김) 대신
+   "12/31"(연말)로 표시 · 모바일에서 자리를 너무 많이 차지해 KPI 표시가 잘리는 문제 개선
+   (2026-09-09 요청) · 실제 날짜가 있는 경우는 그대로 두어 다른 화면(표·PPT 등)의 fmtDue()는
+   건드리지 않는다 */
+function dueLabel(d){const t=fmtDue(d); return t==='상시'?'12/31':t;}
+/* KPI 연결된 과제의 그 달 실적·달성율을 진행바 형태로 계산 (kpiMiniBar·cardFold 공용, 2026-09-08 분리)
+   · 2026-09-09 요청: 접힌 카드의 표시를 "이모티콘+달성율%"에서 "당월 실적/목표(달성율%)"로 바꾸기
+   위해 disp 필드 추가(예: 223/400(56%)) · 일정형 KPI가 완료된 경우는 그대로 "완료"만 표시 */
 function kpiPctFor(kr){
   if(!kr)return null;
   const mi=MONTH-1;
@@ -6782,10 +6881,15 @@ function kpiPctFor(kr){
   const isSchedule=String(kr.method||'').includes('일정');
   const doneM=isSchedule&&(mr!=null&&mr>=100);
   const barColor=doneM?'#1f9d57':(mr==null?'#c8cfca':mr>=90?'#1f9d57':mr>=60?'#9a7a10':'#c0392b');
-  return {pct:doneM?100:(mr||0),color:barColor,label:doneM?'완료':(mr!=null?mr+'%':'–'),mr,doneM};
+  const mtTxt=(mt!=null&&mt!=='')?kfmt(mt):null, maTxt=(ma!=null&&ma!=='')?kfmt(ma):null;
+  /* 2026-09-09 요청: "/" 앞뒤로 한 칸씩 띄어서 표시(예: 223 / 400(56%)) */
+  const disp=doneM?'완료':((mtTxt||maTxt)?`${maTxt||'–'} / ${mtTxt||'–'}${mr!=null?'('+mr+'%)':''}`:(mr!=null?mr+'%':'–'));
+  return {pct:doneM?100:(mr||0),color:barColor,label:doneM?'완료':(mr!=null?mr+'%':'–'),mr,doneM,disp};
 }
 /* KPI 연결된 과제 카드에 "일정" 진행바와 같은 모양으로 그 KPI의 이번 달 실적·달성율 바를 하나 더 표시
-   · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청) */
+   · 라벨을 "KPI"로 시작해 위 업무일정 바와 구분되게 함(2026-09-06 요청)
+   · 2026-09-09 요청: 접힌 줄의 순서를 "완료예정일 → 바 → KPI숫자"에서 "KPI숫자 → 바 → 완료예정일"로
+   좌우 위치를 맞바꿈(모바일에서 KPI 실적/목표 숫자가 화면 밖으로 밀려 잘리던 문제 개선) */
 function cardFold(r,showMgr){
   const op=wcOpen(r.ti);
   const g=showMgr?(mgrById(r.mgr)||null):null;
@@ -6800,9 +6904,9 @@ function cardFold(r,showMgr){
       ${r.cat?`<span class="wc-cat" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${esc(r.cat)}</span>`:''}
       <span class="pri-b p${prioKo(r.prio)}" title="중요도">${prioKo(r.prio)}</span>
       <span class="wc-tt">${esc(rowTitle(r))}${prioKo(r.prio)==='상'?' <span class="wc-star">★</span>':''}</span>
-      <span class="wc-due ${r.risk?'risk':''}">${esc(dueLabel(r.due))}</span>
+      <span class="wc-pn">${kp?(MONTH>=9?esc(kp.disp):('📊 '+kp.label)):(r.p+'%')}</span>
       <span class="wc-pb" title="${kp?('연결 KPI · '+esc(kr.item)+' · '+MONTH+'월 실적'):''}"><i style="width:${kp?kp.pct:r.p}%;background:${kp?kp.color:barGrad[r.st]}"></i></span>
-      <span class="wc-pn">${kp?('📊 '+kp.label):(r.p+'%')}</span>
+      <span class="wc-due ${r.risk?'risk':''}">${esc(dueLabel(r.due))}</span>
     </div>
     <div class="wc-b">${op?cardHTML(r):''}</div>
   </div>`;
@@ -6817,22 +6921,59 @@ function nextOf(r){ const c=wkAt(r.t,W); if(c&&c.nx!=null)return c.nx;
 function setTaskNext(ti,v,el){ if(roBlock())return; const t=TASKS[ti]; if(!t)return;
   const c=wkAt(t,W); if(c){c.nx=v;} else {wkSet(t,W,{p:0,note:'',nx:v});}
   saveTasks(); if(el){el.classList.add('cell-ok');setTimeout(()=>el.classList.remove('cell-ok'),700);} }
+/* 2026-09-09 요청(1차): 대기/진행중/마무리/완료/보류 수기선택은 의미가 없다 → 수기select 제거,
+   자동산출 배지로 대체.
+   2026-09-09 요청(2차, "달성율 기준 문제있다/위험, 보통, 좋다"): 그 배지의 기준을 4단계
+   진행율 구간(대기/진행중/마무리/완료)에서, KPI 연간달성율(연동된 경우) 또는 과제진행율
+   (미연동인 경우)을 "달성율"로 보고 위험/보통/좋음 3단계로 재구성. 완료예정일이 지났는데
+   미완료(r.risk)면 달성율 수치와 무관하게 위험으로 표시(문제 상황을 놓치지 않도록). */
+function achieveRateOf(r){
+  const kr=kpiForRow(r); const kt=kr?kpiEffT(kr):null;
+  if(kr&&kt!=null&&kt!==0)return kpiRate(kr); // KPI 연동 & 연간목표 숫자형 → 연간달성율
+  return (r.p==null?null:r.p); // 그 외에는 과제진행율을 달성율로 간주
+}
+function achieveTier(rate,risk){
+  if(risk)return {key:'risk',label:'위험'};
+  if(rate==null)return {key:'unknown',label:'–'};
+  if(rate>=90)return {key:'good',label:'좋음'};
+  if(rate>=60)return {key:'normal',label:'보통'};
+  return {key:'risk',label:'위험'};
+}
+function autoStatusBadge(r){
+  const rate=achieveRateOf(r), tier=achieveTier(rate,r.risk);
+  return `<span class="st-sel ${tier.key}" title="달성율 기준 자동 산출 상태(${rate!=null?rate+'%':'–'})">${esc(tier.label)}</span>`;
+}
+/* 2026-09-09 요청: KPI에 연결되고(kpiForRow) 연간목표(yt)가 숫자로 잡혀 있는 과제는
+   펼친 카드 하단 바를 기존 "완료예정일(상시→12/31) + 과제진행율(r.p) 수기값" 대신
+   "연간달성율" 고정 라벨 + 그 KPI의 연간 실적/목표 자동 달성률로 표시한다.
+   → 이 경우는 주간보고에 진행율(r.p)을 더 입력할 필요가 없다(자동 계산으로 대체).
+   KPI 미연결이거나 연간목표가 일정(날짜)형 KPI(kpiEffT가 null)인 과제는 자동계산할
+   근거가 없으므로 기존처럼 완료예정일 + 수기 진행율(r.p) 표시를 그대로 유지한다. */
 function cardHTML(r){
   const delta=(r.prev!=null&&r.p>r.prev)?`<span class="deltaup">▲${r.p-r.prev}</span>`:'';
-  /* 2026-09-08 요청: 펼친 카드에 과제진행율(위 줄)과 KPI 달성률(kpiMiniBar, 아래 줄)이
-     같이 뜨는 게 중복·혼란스럽다는 피드백 → KPI 줄은 삭제하고 위 과제진행율 줄만 유지 */
+  const kr=kpiForRow(r);
+  const kt=kr?kpiEffT(kr):null;
+  const useAnnual=!!(kr&&kt!=null&&kt!==0);
+  const footHTML=useAnnual?(()=>{
+    const rate=kpiRate(kr);
+    const pct=rate==null?0:Math.max(0,Math.min(100,rate));
+    const color=rate==null?'#c8cfca':rate>=90?'#1f9d57':rate>=60?'#9a7a10':'#c0392b';
+    return `<span class="due" title="연결 KPI · ${esc(kr.item)} · 연간 실적/목표 기준 자동계산">연간달성율</span>
+      <span class="pbar"><i style="width:${pct}%;background:${color}"></i></span>
+      <span class="pnum">${rate!=null?rate+'%':'–'}</span>`;
+  })():`<span class="due ${r.risk?'risk':''}">${dueIcon(r.risk)}${fmtDue(r.due)}</span>
+      <span class="pbar"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
+      <span class="pnum">${r.p}%${delta}</span>`;
   return `<div class="card${r.carried?' carried':''}" onclick="openDetail(${r.ti})">
     <div class="chips">
       ${r.cat?`<span class="chip" style="background:${(CATCOLOR[r.cat]||'#6b7280')}1a;color:${CATCOLOR[r.cat]||'#6b7280'}">${r.cat}</span>`:''}
-      ${(()=>{const cs=r.sx||KEY2ST[r.st]||'진행중';return `<select class="st-sel ${r.st}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskStatus(${r.ti},this.value)" title="상태 (구글시트 「상태」 열과 연동)">`+STATUS_OPTS.map(o=>`<option ${cs===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
-      ${(()=>{const pk=prioKo(r.prio);return `<select class="pri-sel p${pk}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskPrio(${r.ti},this.value)" title="중요도">`+['상','중','하'].map(o=>`<option ${pk===o?'selected':''}>${o}</option>`).join('')+`</select>`;})()}
+      ${autoStatusBadge(r)}
+      ${(()=>{const pk=prioKo(r.prio);return `<select class="pri-sel p${pk}" onclick="event.stopPropagation()" onchange="event.stopPropagation();setTaskPrio(${r.ti},this.value)" title="중요도">`+['상','중','하'].map(o=>`<option value="${o}" ${pk===o?'selected':''}>중요도-${o}</option>`).join('')+`</select>`;})()}
     </div>
     <div class="ttl">${esc(rowTitle(r))}</div>
     <div class="note">${esc(r.note||'')}</div>
     <div class="foot">
-      <span class="due ${r.risk?'risk':''}">${dueIcon(r.risk)}${fmtDue(r.due)}</span>
-      <span class="pbar"><i style="width:${r.p}%;background:${barGrad[r.st]}"></i></span>
-      <span class="pnum">${r.p}%${delta}</span>
+      ${footHTML}
     </div>
     <div class="nxw" onclick="event.stopPropagation()"><span class="nxw-k">다음주 업무</span><textarea class="nxw-t" placeholder="다음주 계획을 적어주세요" oninput="autogrow(this)" onchange="setTaskNext(${r.ti},this.value,this)">${esc(nextOf(r)||'')}</textarea></div>
     </div>`;
@@ -7687,7 +7828,7 @@ function secBox(k,title,sub,bodyFn){
 }
 let CALLTAB='mile'; try{CALLTAB=localStorage.getItem('wr_calltab')||'mile';}catch(e){}
 function setCalLTab(t){CALLTAB=t;try{localStorage.setItem('wr_calltab',t);}catch(e){}render();}
-let MRSECTAB='monthchart'; try{MRSECTAB=localStorage.getItem('wr_mrsectab')||'monthchart';}catch(e){}
+let MRSECTAB='year'; try{MRSECTAB=localStorage.getItem('wr_mrsectab')||'year';}catch(e){}
 function setMrSecTab(t){MRSECTAB=t;try{localStorage.setItem('wr_mrsectab',t);}catch(e){}render();}
 let HMSECTAB='trip'; try{HMSECTAB=localStorage.getItem('wr_hmsectab')||'trip';}catch(e){}
 function setHmSecTab(t){HMSECTAB=t;try{localStorage.setItem('wr_hmsectab',t);}catch(e){}render();}
@@ -7771,13 +7912,19 @@ function mileDayBounds(x){
   return {d1,d2};
 }
 function mileDaysToStr(d1,d2){if(!d1)return '';return (d2&&d2!==d1)?`${d1}~${d2}`:String(d1);}
+/* 2026-09-09 요청: 시작일·종료일을 달력(input type=date) 대신 "월/일" 텍스트로 간단·소형 표기
+   (예: 9/15) · 종료일 칸은 일자만 반영(월은 시작일 기준 공통, 기존 달력 방식과 동일한 한계) */
 function editMileTblDate(i,which,v){
   if(roBlock())return;
   const x=MILESTONES[i];if(!x)return;
-  if(!v){ if(which==='start')x.date=''; saveMile();render();return; }
-  const [yy,mm,dd]=v.split('-').map(Number);
+  const t=String(v||'').trim();
+  if(!t){ if(which==='start')x.date=''; saveMile();render();return; }
+  const m=t.match(/^(\d{1,2})[\/.\-월]\s*(\d{1,2})일?$/);
+  const dd=m?+m[2]:(/^\d{1,2}$/.test(t)?+t:null);
+  const mo=m?+m[1]:null;
+  if(dd==null||dd<1||dd>31){toast('형식: 월/일 (예: 9/15)');render();return;}
   let {d1,d2}=mileDayBounds(x);
-  if(which==='start'){ x.month=mm; d1=dd; if(!d2||d2<d1)d2=d1; }
+  if(which==='start'){ if(mo)x.month=mo; d1=dd; if(!d2||d2<d1)d2=d1; }
   else{ d2=dd; if(!d1)d1=dd; }
   x.date=mileDaysToStr(d1,d2);
   saveMile();render();
@@ -7793,19 +7940,18 @@ function mileTable(){
   const ctryOpts=(sel)=>['중국','대만','홍콩'].map(c=>`<option ${(sel||'중국')===c?'selected':''}>${c}</option>`).join('');
   const sar=c=>MILESORT.col===c?(MILESORT.dir>0?' ▲':' ▼'):'';
   const th=(c,label,style)=>`<th class="sortable${MILESORT.col===c?' sorted':''}" style="${style||''}" onclick="setMileSort('${c}')">${label}${sar(c)}</th>`;
+  /* 2026-09-09 요청: 시작일·종료일 간단(월/일)·소형 표기, 비고 열 삭제, 담당자 칸 20% 축소,
+     너비 재배분으로 잘림·2줄바뀜 방지(일정명에 여유 폭 배분) */
   let html=`<div class="ptable-wrap" style="margin:0">
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:5%')}<th style="text-align:center;width:7%">시작일</th><th style="text-align:center;width:7%">종료일</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:12%')}<th style="text-align:center;width:14%">일정명</th><th style="text-align:center;width:6%">참가인원</th><th style="text-align:center;width:6%">신규고객</th><th style="text-align:center;width:9%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">담당자</th><th style="text-align:center;width:4%">비고</th><th style="width:3%"></th></tr></thead><tbody>`;
-  if(!list.length){html+=`<tr><td colspan="14" style="text-align:center;color:var(--faint);padding:22px">${MILEMONS.length?'해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.':'선택된 월이 없습니다 · 위에서 월을 선택하세요.'}</td></tr>`;}
-  const pad2=v=>String(v).padStart(2,'0');
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:4%')}<th style="text-align:center;width:5%">시작일</th><th style="text-align:center;width:5%">종료일</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:11%')}<th style="text-align:center;width:26%">일정명</th><th style="text-align:center;width:6%">참가인원</th><th style="text-align:center;width:6%">신규고객</th><th style="text-align:center;width:9%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:7%">담당자</th><th style="width:3%"></th></tr></thead><tbody>`;
+  if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">${MILEMONS.length?'해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.':'선택된 월이 없습니다 · 위에서 월을 선택하세요.'}</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     const {d1,d2}=mileDayBounds(x);
-    const iso1=d1?`${YEAR}-${pad2(x.month)}-${pad2(d1)}`:'';
-    const iso2=d2?`${YEAR}-${pad2(x.month)}-${pad2(d2)}`:'';
     html+=`<tr>
       <td class="mut">${n+1}</td>
       <td style="text-align:center"><input type="number" min="1" max="12" value="${x.month}" oninput="editMileTbl(${i},'month',this.value,0,this)" onchange="editMileTbl(${i},'month',this.value,1)" class="mile-mnum"></td>
-      <td class="mile-day"><input type="date" value="${iso1}" onchange="editMileTblDate(${i},'start',this.value)"></td>
-      <td class="mile-day"><input type="date" value="${iso2}" onchange="editMileTblDate(${i},'end',this.value)"></td>
+      <td class="mile-day"><input type="text" value="${x.month}/${d1||''}" onchange="editMileTblDate(${i},'start',this.value)" placeholder="9/15"></td>
+      <td class="mile-day"><input type="text" value="${x.month}/${d2||''}" onchange="editMileTblDate(${i},'end',this.value)" placeholder="9/15"></td>
       <td style="text-align:center"><select onchange="editMileTbl(${i},'country',this.value,1)">${ctryOpts(x.country)}</select></td>
       <td><select onchange="editMileTbl(${i},'cat',this.value,1)" style="width:100%">${catOpts(x.cat)}</select></td>
       <td class="infc">${x.link?`<span class="mile-infotext">${esc(x.info||x.name||'(내용 없음)')}</span>`:`<textarea class="rep-sum" oninput="autogrow(this);editMileTbl(${i},'info',this.value,0,this)" placeholder="일정명">${esc(x.info||x.name||'')}</textarea>`}</td>
@@ -7814,10 +7960,25 @@ function mileTable(){
       <td class="mile-attn"><input value="${esc(fmtThou(x.cost))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'cost',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
       <td class="mile-attn"><input value="${esc(fmtThou(x.pkg))}" onfocus="this.value=this.value.replace(/,/g,'')" onblur="this.value=fmtThou(this.value)" oninput="editMileTbl(${i},'pkg',this.value.replace(/,/g,''),0,this)" placeholder="-"></td>
       <td class="mile-own">${ownerCellMile(x,i)}</td>
-      <td class="mile-bigo">${x.link?`<a class="rep-open mile-linkico" href="${esc(x.link)}" target="_blank" rel="noopener" title="링크 열기">🔗</a>`:''}</td>
       <td style="text-align:center"><button class="mile-del" onclick="delMile(${i})" title="삭제">🗑</button></td>
     </tr>`;});
-  return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다. 비고 칸에 링크(URL)를 붙여넣거나 파일을 첨부할 수 있습니다.</div></div>`;
+  /* 2026-09-09 요청: 월을 하나만 선택해서 볼 때는 그 달 합계 줄을 한 줄 더 추가
+     (참가인원·신규고객·비용·PKG 합산) · 여러 달을 같이 보거나 전체를 볼 때는 합계 의미가
+     불분명해지므로 표시하지 않음 */
+  if(MILEMONS.length===1&&list.length){
+    const sumOf=f=>{let s=0,any=false;list.forEach(o=>{const raw=String(o.x[f]==null?'':o.x[f]).replace(/,/g,'').trim();if(raw!==''&&!isNaN(+raw)){s+=+raw;any=true;}});return any?s:null;};
+    const fv=v=>v==null?'–':v.toLocaleString('en-US');
+    const bg='background:#eef1f4';
+    html+=`<tr>
+      <td colspan="7" style="text-align:center;font-weight:800;${bg}">${MILEMONS[0]}월 합계</td>
+      <td style="text-align:center;font-weight:800;${bg}">${fv(sumOf('attn'))}</td>
+      <td style="text-align:center;font-weight:800;${bg}">${fv(sumOf('newcust'))}</td>
+      <td style="text-align:center;font-weight:800;${bg}">${fv(sumOf('cost'))}</td>
+      <td style="text-align:center;font-weight:800;${bg}">${fv(sumOf('pkg'))}</td>
+      <td colspan="2" style="${bg}"></td>
+    </tr>`;
+  }
+  return html+`</tbody></table></div>`+prevModalHTML()+`<div class="dw-hint" style="margin-top:8px">※ 이 표와 카드 클릭 시 열리는 오른쪽 상세는 같은 데이터입니다 — 어느 쪽에서 수정해도 즉시 반영·자동저장됩니다.</div></div>`;
 }
 const NOTION_MKT_PAGE='https://app.notion.com/p/G2-3a873e4ce54281ec9214f00fbfc6ae9b';
 const NOTION_MKT=[
@@ -9075,8 +9236,10 @@ function viewGoals(){
   {let gtabs=[['home','팀 종합현황'],['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합'],['sched','업무일정']];
   if(GOALSUB==='meet'||GOALSUB==='report')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정은 팀업무(통합 옆)로 이동(2026-09-05) */
   /* 2026-09-08 요청("팀업무의 탭은 최대한 한줄로"): 탭이 12개라 폭이 좁으면 라벨이 버튼 안에서 두 줄로
-     줄바꿈되던 문제 — 각 버튼을 한 줄(nowrap)로 고정하고, 전체가 다 안 들어가면 줄바꿈 대신 가로 스크롤 */
-  html+='<div class="pm-tabs" style="margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" style="white-space:nowrap;flex:none" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
+     줄바꿈되던 문제 — 각 버튼을 한 줄(nowrap)로 고정하고, 전체가 다 안 들어가면 줄바꿈 대신 가로 스크롤
+     · 2026-09-09 요청("탭이 너무커, 글씨를 5%줄이고"): 이 탭만 별도 클래스(gtabs-sm)로 글자·여백을
+     5% 축소(다른 화면의 공용 .pm-tabs에는 영향 없음) */
+  html+='<div class="pm-tabs gtabs-sm" style="margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden">'+gtabs.map(([k,l])=>`<button class="${GOALSUB===k?'on':''}" style="white-space:nowrap;flex:none" onclick="setGoalSub('${k}')">${l}</button>`).join('')+'</div>';}
   if(GOALSUB==='home')return html+renderHome();
   if(GOALSUB==='kanban')return html+viewKanban(activeRows());
   if(GOALSUB==='focusq')return html+renderQuarterFocus();
@@ -10372,7 +10535,8 @@ function importG2Master(wb,scope){
       const cNm=hdr.findIndex(h=>h.includes('출장명')||h.includes('일정명')||h==='제목');
       const cS=ci('출발일'),cE=ci('종료일'),cN=ci('담당자'),cCo=ci('동행'),cC=ci('국가'),cR=ci('지역'),
             cG=ci('구분'),cV=ci('방문처'),cP=ci('목적'),cB=ci('연계'),cSt=ci('상태'),cBk=ci('항공'),
-            cCt=ci('예상비용'),cNo=hdr.findIndex(h=>h.includes('결과')||h.includes('비고'));
+            cCt=ci('예상비용'),cNo=hdr.findIndex(h=>h.includes('결과')||h.includes('비고')),
+            cDep=ci('출발정보'),cArr=ci('도착정보'); /* 2026-09-09 요청: 마스터시트 「출장일정」에 새로 추가된 출발정보·도착정보 열 */
       /* 출장리포트(상세) 열 · 없어도 되지만 있으면 카드의 「출장리포트」 토글 내용을 채운다 */
       const cSCN=hdr.findIndex(h=>h.includes('중화팀출장자')),
             cSHQ=hdr.findIndex(h=>h.includes('본사출장자')),
@@ -10413,11 +10577,12 @@ function importG2Master(wb,scope){
             if(sd&&new Date(sd)>t)return '예정';
             return '진행중';})(),
           book:String(cBk>=0?r[cBk]||'':'').trim(),cost:g2num(cCt>=0?r[cCt]:''),
+          dep:String(cDep>=0?r[cDep]||'':'').trim(),arr:String(cArr>=0?r[cArr]||'':'').trim(),
           note:String(cNo>=0?r[cNo]||'':'').trim(),report:hasRep?rep:null});});
       if(out.length){
         const prev={};TRIPS.forEach(t=>{prev[String(t.start||'')+'|'+String(t.mgr||'')]=t;});
         out.forEach(t=>{const o=prev[String(t.start||'')+'|'+String(t.mgr||'')];if(!o)return;
-          ['name','purpose','big','note'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});
+          ['name','purpose','big','note','dep','arr'].forEach(f=>{if(!String(t[f]||'').trim()&&String(o[f]||'').trim())t[f]=o[f];});
           if(!t.report&&o.report)t.report=o.report; /* 시트에 리포트 열이 없으면 기존에 입력해둔 리포트를 그대로 보존 */
           /* 시트 값으로 리포트를 새로 채우더라도 노션 연결(페이지 id·블록 id)은 잃지 않게 이어붙임 */
           else if(t.report&&o.report&&o.report.nid){t.report.nid=o.report.nid;t.report.nblocks=o.report.nblocks||[];t.report.nsync=o.report.nsync||'';t.report.dirty=1;}
