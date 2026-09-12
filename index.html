@@ -11,7 +11,15 @@
 <meta name="apple-mobile-web-app-title" content="업무보고">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='38' fill='%232e7d52'/%3E%3Ctext x='90' y='120' font-size='96' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3E주%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<!-- 2026-09-12 발견·수정: pptxgenjs의 "pptxgen.bundle.js"는 배포판 자체의 UMD 이름표 버그로
+     브라우저에서 window.PptxGenJS가 아니라 엉뚱하게 window.JSZip로 노출된다(실제로 빈 JSZip이 아니라
+     PptxGenJS 코드 전체가 그 이름 아래 들어있음 — pptxgenjs 3.12.0·최신 4.0.1 모두 동일하게 재현·확인).
+     그 결과 지금까지 new PptxGenJS()가 항상 "PptxGenJS is not defined"로 실패해 PPT 생성 기능 자체가
+     동작하지 않고 있었다. 해결: 정식 JSZip을 먼저 로드한 뒤 "pptxgen.min.js"(bundle.js 아님)를 로드하면
+     JSZip을 외부 의존성으로 정상 인식해 window.PptxGenJS가 올바르게 노출됨(실제 브라우저 스크립트 태그로
+     addSlide·addText·write까지 동작 확인). -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1302,6 +1310,39 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-perf tbody td b{font-weight:400}
 .ov-tbl tr.ov-tot-row td,.ov-tbl tr.ov-tot-row td b,.ov-tbl tr.ov-tot-row td *{background:#dee2e6;font-weight:800}
 .ov-tbl tr.ov-tot-row td b{background:transparent}
+/* ===== 2026-09-12 요청: 「N월 실적상세표」 가독성 개선(.ov-perf2 전용 · 다른 표에는 영향 없음) =====
+   숫자 색·굵기는 2026-09-05 요청(검정·굵게 없음) 그대로 두고, 색이 아니라 구조로만 위계를 만든다.
+   ① 2단 그룹헤더(수출/수금) + 경계 굵은 세로선  ② 당월 3열에 옅은 배경 밴드(가장 먼저 봐야 할 구간)
+   ③ 숫자 우측정렬  ④ 구분열 rowspan  ⑤ 당월달성 칸에만 미니바(바를 그 열에만 써서 시선이 먼저 감) */
+.ov-perf2 thead th.gh{background:#d8dde4;font-size:13.2px;font-weight:800;padding:6px 6px;letter-spacing:.01em}
+.ov-perf2 thead th.gh span{font-size:11.2px;font-weight:700;color:#5b6570;margin-left:5px}
+.ov-perf2 thead th.gh-su{background:#dfe1e5}
+.ov-perf2 thead tr.sub th{font-size:11.9px;font-weight:700;padding:5px 6px 5px 4px;background:#eef0f3}
+.ov-perf2 thead th.c-grp,.ov-perf2 thead th.c-dl{background:#e4e7ec;vertical-align:middle}
+.ov-perf2 thead th.cur{background:#e6ecf3}
+.ov-perf2 tbody td.cur{background:#f4f7fb}
+.ov-perf2 .bd-x{border-right:2px solid #94a3b8}
+.ov-tbl.ov-perf2 tbody td{text-align:right;padding:6px 9px 6px 5px}
+.ov-tbl.ov-perf2 tbody td.rl,.ov-tbl.ov-perf2 tbody td.c-agg{text-align:left}
+.ov-tbl.ov-perf2 tbody td.c-grp{text-align:center;vertical-align:middle;background:#f1f3f6;font-weight:800;font-size:12.8px;letter-spacing:.02em}
+.ov-perf2 tbody td.c-agg{font-weight:800}
+.ov-perf2 td.ov-rate{line-height:1.15}
+.ov-perf2 td.ov-rate .rv{display:block}
+.ov-perf2 td.ov-rate .rb{display:block;height:4px;margin-top:3px;background:#dfe3e8}
+.ov-perf2 td.ov-rate .rb i{display:block;height:100%;background:#8a94a2}
+.ov-perf2 td.ov-rate .rb i.f3{background:#2f3a4a}
+.ov-perf2 td.ov-rate .rb i.f2{background:#5a6673}
+.ov-perf2 td.ov-rate .rb i.f1{background:#98a2af}
+.ov-perf2 td.ov-rate .rb i.f0{background:#c3cad3}
+/* 소계·합계 행의 `td *` 회색 배경 규칙이 미니바까지 덮어쓰는 걸 막는다 */
+.ov-perf2 tbody tr.ov-sub-row td .rb,.ov-perf2 tbody tr.ov-tot-row td .rb{background:#cdd3da}
+.ov-perf2 tbody tr.ov-sub-row td .rb i,.ov-perf2 tbody tr.ov-tot-row td .rb i{background:#5a6673}
+.ov-perf2 tbody tr.ov-sub-row td .rb i.f3,.ov-perf2 tbody tr.ov-tot-row td .rb i.f3{background:#2f3a4a}
+.ov-perf2 tbody tr.ov-sub-row td .rb i.f1,.ov-perf2 tbody tr.ov-tot-row td .rb i.f1{background:#98a2af}
+.ov-perf2 tbody tr.ov-sub-row td .rb i.f0,.ov-perf2 tbody tr.ov-tot-row td .rb i.f0{background:#c3cad3}
+/* 소계·합계 행에서도 당월 밴드가 유지되도록(밴드가 회색에 묻히지 않게 살짝 더 밝게) */
+.ov-perf2 tbody tr.ov-sub-row td.cur{background:#e2e6ec}
+.ov-perf2 tbody tr.ov-tot-row td.cur{background:#d6dbe2}
 .goal-decl{background:#eef4ef;border:1px solid #d9e6dd;border-radius:10px;padding:11px 14px;margin:-2px 0 16px;font-size:14.9px;font-weight:700;color:#1c5138;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .mg-ctrl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .mg-ctrl .nametabs.inline{margin:0}
@@ -1519,13 +1560,23 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .om-tv{font-size:28.6px;font-weight:900;color:var(--ink);margin-top:5px;letter-spacing:-.01em}
 .om-tu{font-size:13.2px;font-weight:700;color:var(--faint);margin-left:4px}
 .om-ts{font-size:12.1px;color:var(--faint);margin-top:4px}
+/* 2026-09-12 요청: 본사실적 지역별 수출·수금 타일을 카드 1개로 합치고(수출 위/수금 아래 + 구분선),
+   이 합쳐진 카드 안의 글자만 10% 축소(다른 화면의 .om-tile 은 그대로 유지) */
+.om-combo{display:flex;flex-direction:column;gap:8px}
+.om-combo-sec{display:flex;flex-direction:column}
+.om-combo-div{height:1px;background:var(--line);margin:2px 0 1px}
+.om-combo .om-tl{font-size:11.88px}
+.om-combo .om-tv{font-size:25.74px}
+.om-combo .om-tu{font-size:11.88px}
+.om-combo .om-ts{font-size:10.89px}
 .om-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.om-charts4{grid-template-columns:repeat(4,minmax(0,1fr))} /* 2026-09-11: 본사실적 년간 실적그래프(전체·중국·대만·홍콩 4개) 전용 */
 .omc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
 .omc-h{font-size:14.3px;font-weight:800;color:var(--ink);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .omc-h span{font-size:11.6px;font-weight:600;color:var(--faint)}
 .omc-b{display:flex;justify-content:flex-end;margin-top:2px}
 .omc-b span{background:var(--accentSoft,#e9f6f2);color:var(--accentInk,#1e5c4f);font-size:12.1px;font-weight:800;padding:3px 10px;border-radius:14px}
-@media(max-width:1100px){.om-charts{grid-template-columns:1fr}.om-tiles,.om-tiles5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){.om-charts,.om-charts4{grid-template-columns:1fr}.om-tiles,.om-tiles5{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* 市场本部 重点KPI */
 .mk-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:4px}
 .mkb-wrap{display:flex;flex-direction:column;gap:7px;padding:4px 0 2px}
@@ -2477,7 +2528,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.09-M305</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.12-M309</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5004,6 +5055,40 @@ function mrMonthTiles(extra){
   h+=tile('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`전체목표 ${n(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`);
   return h+(extra||'')+(A.liveUpto?`<div class="om-tiles-note" style="grid-column:1/-1;font-size:12.1px;color:var(--risk);margin-top:2px">※ ${(A.liveMonths||[]).join('·')}월은 「거래처실적_월간」 데이터가 아직 없어 「거래처실적_주간」(최근 W${A.liveUpto.iso})까지 잠정 합산한 값입니다</div>`:'')+'</div>';
 }
+/* 2026-09-11 요청: 「업무현황 → 본사실적」 화면 전용 KPI지표 — 수출·수금을 각각 전체/중국/대만/홍콩
+   4개씩(같은 포맷) 두 줄로 표시하고, 이 화면에서만 "당월 중화팀 행사" 타일을 제거한다(팀 종합현황
+   KEY METRICS·중점추진과제·월별보고의 타일은 그대로 mrMonthTiles/evTile을 계속 쓰므로 영향 없음) */
+function mrMainTiles(){
+  /* 2026-09-12 요청: 지역별 수출·수금 타일이 위(수출)·아래(수금) 두 줄로 나뉘어 있던 걸
+     지역당 카드 1개로 합침(수출 위 / 구분선 / 수금 아래) + 카드 내 글자 10% 축소(.om-combo) */
+  const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH),HK=mdAggUpto('홍콩',MONTH);
+  const k=v=>Math.round((v||0)/1000),n=v=>k(v).toLocaleString('en-US');
+  const pct=(v,base)=>base?Math.round(v/base*100):0;
+  const sec=(lb,val,r,sub)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
+  const combo=(exSec,suSec)=>`<div class="om-tile om-combo">${exSec}<div class="om-combo-div"></div>${suSec}</div>`;
+  let h='<div class="om-tiles">';
+  h+=combo(
+    sec('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`전체목표 ${n(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`),
+    sec('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`전체목표 ${n(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`)
+  );
+  h+=combo(
+    sec('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`전체목표 ${n(C.T)} · 비중 ${pct(C.cumA,A.cumA)}%`),
+    sec('중국 누적 수금',C.cumSu,C.S?C.cumSu/C.S:null,`전체목표 ${n(C.S)} · 비중 ${pct(C.cumSu,A.cumSu)}%`)
+  );
+  h+=combo(
+    sec('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`전체목표 ${n(T.T)} · 비중 ${pct(T.cumA,A.cumA)}%`),
+    sec('대만 누적 수금',T.cumSu,T.S?T.cumSu/T.S:null,`전체목표 ${n(T.S)} · 비중 ${pct(T.cumSu,A.cumSu)}%`)
+  );
+  h+=combo(
+    sec('홍콩 누적 수출',HK.cumA,HK.T?HK.cumA/HK.T:null,`전체목표 ${n(HK.T)} · 비중 ${pct(HK.cumA,A.cumA)}%`),
+    sec('홍콩 누적 수금',HK.cumSu,HK.S?HK.cumSu/HK.S:null,`전체목표 ${n(HK.S)} · 비중 ${pct(HK.cumSu,A.cumSu)}%`)
+  );
+  h+='</div>';
+  const liveUpto=A.liveUpto||C.liveUpto||T.liveUpto||HK.liveUpto;
+  const liveMonths=[...new Set([...(A.liveMonths||[]),...(C.liveMonths||[]),...(T.liveMonths||[]),...(HK.liveMonths||[])])].sort((a,b)=>a-b);
+  if(liveUpto)h+=`<div class="om-tiles-note" style="font-size:12.1px;color:var(--risk);margin-top:2px">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 데이터가 아직 없어 「거래처실적_주간」(최근 W${liveUpto.iso})까지 잠정 합산한 값입니다</div>`;
+  return h;
+}
 function mrMonthChart(label,scope){
   const upto=12, k=v=>Math.round((v||0)/1000);
   // 월별 누적 포인트 (데이터 있는 달만)
@@ -5113,7 +5198,11 @@ function mrDealMonthRows(month){
     lastData=w;
     dl.forEach(d=>{const dealer=d.dealer;if(!dealer)return;
       if(!acc[dealer]){acc[dealer]={dealer,grp:d.grp,owner:d.owner,exT:null,exTm:null,exA:0,suT:null,suTm:null,suA:0};order.push(dealer);}
-      const a=acc[dealer];a.exA+=(+d.exA||0);a.suA+=(+d.suA||0);
+      const a=acc[dealer];
+      /* 2026-09-11 수정("이건 누적이야"): exA·suA는 그 주차까지의 당월 누적값이지 그 주만의 증분이
+         아니므로 주차별로 더하면 실제값보다 몇 배 부풀려진다 → 가장 최근 주차 값으로 덮어쓴다
+         (ws는 오름차순이라 forEach를 끝까지 돌고 나면 마지막에 남는 값 = 최신 주차 값) */
+      a.exA=(+d.exA||0);a.suA=(+d.suA||0);
       if(d.exT!=null)a.exT=d.exT;if(d.exTm!=null)a.exTm=d.exTm;
       if(d.suT!=null)a.suT=d.suT;if(d.suTm!=null)a.suTm=d.suTm;
       if(d.owner)a.owner=d.owner;});
@@ -5123,11 +5212,33 @@ function mrDealMonthRows(month){
 function mrEffMonth(){if(mdealRows(MONTH).length)return MONTH; if(mrDealMonthRows(MONTH).rows.length)return MONTH; const lm=mdealLastMonth();return lm||MONTH;}
 function mrDealTable(){return mrDealTable0();}
 function mrDealTable0(){
+  /* 2026-09-12 요청("실적상세표 가독성"): 13열이 모두 같은 회색 헤더로 평평하게 나열돼 있어
+     ① 어디까지가 수출이고 어디부터 수금인지 헤더를 하나씩 읽어야 하고
+     ② 수출은 6열인데 수금은 4열이라 좌우 대칭이 깨져 눈이 열 위치를 못 외우고
+     ③ 매 행 "천$"·"중국"이 반복돼 실제 숫자가 들어갈 자리를 잡아먹고
+     ④ 숫자가 가운데 정렬이라 자릿수 비교가 안 되던 문제를 구조로 해결.
+     · 2단 그룹헤더(수출/수금)로 블록을 나누고 경계에 굵은 세로선
+     · 단위열 삭제(단위는 그룹헤더에 "천$" 1회) · 구분열 rowspan 병합
+     · 숫자 우측정렬(tabular-nums) · 당월 블록에 옅은 배경 밴드
+     · 수금 "당월목표(suTm)"는 원본 데이터에 이미 있는데 표에 없어서 "수금이 당월 목표를
+       달성했는지" 자체를 알 수 없었다 → 당월목표·당월달성 2열을 살려 수출과 대칭으로 맞춤
+     · 당월달성 칸에만 미니바(회색 농담) — 바를 그 열에만 써서 눈이 먼저 가게 함
+     숫자 색·굵기는 2026-09-05 요청(검정·굵게 없음)을 그대로 유지해 색이 아닌 구조로만 처리 */
   const {rows:D,fromWeek,uptoWeek}=mrDealMonthRows(MONTH);
   const k=n2=>(n2==null||n2==='')?null:Math.round(n2/1000);
-  const pctCol=r=>r==null?'':(r>=0.8?'ov-g':r>=0.5?'ov-a':'ov-r');
-  const pct=r=>r==null?'—':`<b class="${pctCol(r)}">${Math.round(r*100)}%</b>`;
   const num=n2=>n2==null?'—':n2.toLocaleString('en-US');
+  const rt=(a,b)=>(b&&a!=null&&b>0)?a/b:null;
+  /* 당월달성 셀: 숫자(검정·보통굵기) + 아래 회색 미니바. 길이=달성율, 농도=구간(미달일수록 옅음) */
+  const rcell=(r,cls)=>{
+    const c='ov-pc ov-rate cur'+(cls?' '+cls:'');
+    if(r==null)return `<td class="${c}">—</td>`;
+    const p=Math.round(r*100);
+    const w=Math.max(3,Math.min(100,p));
+    const tone=r>=1?'f3':r>=0.8?'f2':r>=0.5?'f1':'f0';
+    return `<td class="${c}"><span class="rv">${p}%</span><span class="rb"><i class="${tone}" style="width:${w}%"></i></span></td>`;
+  };
+  /* 누적진도는 바 없이 숫자만 — 바를 당월달성에만 써야 그 열이 먼저 보인다 */
+  const pcell=(r,cls)=>`<td class="ov-pc${cls?' '+cls:''}">${r==null?'—':Math.round(r*100)+'%'}</td>`;
   /* 누적(1~당월) 계산 · 「거래처실적_월간」이 없는 달은 (당월뿐 아니라 그 이전 어느 달이든) 그냥 「거래처실적_주간」을
      그 달 주차만큼 합산해 대체한다 — 월간탭 입력이 밀린 달이 누적에서 통째로 빠지는 걸 막기 위함(mdAggUpto와 동일 규칙) */
   const monthRowsCache={};
@@ -5137,40 +5248,63 @@ function mrDealTable0(){
   const liveMonths=[];for(let m=1;m<=MONTH;m++){const d2=MDEAL[String(m)];if(!d2||!d2.length)liveMonths.push(m);}
   const cumOf=(dl,f)=>{let c=0,any=false;for(let m=1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=(+x[f]||0);any=true;}});}
     return any?c:null;};
-  let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:110px">거래처</th><th style="width:36px">단위</th>'
-    +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(당월누적)</th><th>달성율</th><th>수출전체<br>누적실적</th><th>누적달성율</th>'
-    +'<th>수금목표<br>(전체)</th><th>수금실적<br>(당월누적)</th><th>수금전체<br>누적실적</th><th>수금<br>누적달성율</th></tr></thead><tbody>';
-  if(!D.length){h+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
-  const acc={exT:0,exTm:null,exA:0,suT:0,suA:0,cA:0,cS:0};
-  const accCn={...acc};const accAll={...acc};
-  const row=(cls,g,d)=>{
+  const NCOL=14;
+  let h='<table class="ov-tbl ov-perf ov-perf2">'
+    +'<colgroup><col style="width:52px"><col style="width:112px">'
+    +'<col span="6"><col span="6"></colgroup>'
+    +'<thead>'
+    +'<tr><th rowspan="2" class="c-grp">구분</th><th rowspan="2" class="c-dl">거래처</th>'
+    +'<th colspan="6" class="gh gh-ex bd-x">수출 <span>단위 천$</span></th>'
+    +'<th colspan="6" class="gh gh-su">수금 <span>단위 천$</span></th></tr>'
+    +`<tr class="sub"><th>연간목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th class="bd-x">누적진도</th>`
+    +`<th>연간목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th>누적진도</th></tr>`
+    +'</thead><tbody>';
+  if(!D.length){h+=`<tr><td colspan="${NCOL}" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
+  /* 데이터 행 · grpCell=이 행에 구분(rowspan) 셀을 넣을지 */
+  const row=(d,grpCell)=>{
     const cA=cumOf(d.dealer,'exA'),cS=cumOf(d.dealer,'suA');
-    return `<tr${cls?` class="${cls}"`:''}><td>${esc(g)}</td><td class="rl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td><td>천$</td>`
-      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc">${num(k(d.exTm))}</td><td class="ov-pc">${num(k(d.exA))}</td><td class="ov-pc">${pct((d.exTm&&d.exA!=null)?d.exA/d.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct((d.exT&&cA!=null)?cA/d.exT:null)}</td>`
-      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc">${num(k(d.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct((d.suT&&cS!=null)?cS/d.suT:null)}</td></tr>`;};
-  // 소계·합계
+    return '<tr>'+(grpCell||'')
+      +`<td class="rl c-dl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td>`
+      +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc cur">${num(k(d.exTm))}</td><td class="ov-pc cur">${num(k(d.exA))}</td>`
+      +rcell(rt(d.exA,d.exTm))
+      +`<td class="ov-pc">${num(k(cA))}</td>`+pcell(rt(cA,d.exT),'bd-x')
+      +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc cur">${num(k(d.suTm))}</td><td class="ov-pc cur">${num(k(d.suA))}</td>`
+      +rcell(rt(d.suA,d.suTm))
+      +`<td class="ov-pc">${num(k(cS))}</td>`+pcell(rt(cS,d.suT))
+      +'</tr>';};
   const sum=(list,f)=>{let c=0,a=false;list.forEach(d=>{if(d[f]!=null){c+=d[f];a=true;}});return a?c:null;};
-  const subRow=(label,list)=>{
+  /* 소계·합계는 구분+거래처 2칸을 합쳐 한 줄 라벨로 — 위계가 바로 보이게 */
+  const aggRow=(label,list,cls)=>{
     if(!list.length)return '';
     const cA=list.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=list.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
-    const sc={exT:sum(list,'exT'),exTm:sum(list,'exTm'),exA:sum(list,'exA'),suT:sum(list,'suT'),suA:sum(list,'suA')};
-    return `<tr class="ov-sub-row"><td>${esc(label)}</td><td class="rl">소계</td><td>천$</td><td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc">${num(k(sc.exTm))}</td><td class="ov-pc">${num(k(sc.exA))}</td><td class="ov-pc">${pct((sc.exTm&&sc.exA!=null)?sc.exA/sc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(sc.exT?cA/sc.exT:null)}</td><td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc">${num(k(sc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(sc.suT?cS/sc.suT:null)}</td></tr>`;
+    const sc={exT:sum(list,'exT'),exTm:sum(list,'exTm'),exA:sum(list,'exA'),suT:sum(list,'suT'),suTm:sum(list,'suTm'),suA:sum(list,'suA')};
+    return `<tr class="${cls}"><td colspan="2" class="rl c-agg">${esc(label)}</td>`
+      +`<td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc cur">${num(k(sc.exTm))}</td><td class="ov-pc cur">${num(k(sc.exA))}</td>`
+      +rcell(rt(sc.exA,sc.exTm))
+      +`<td class="ov-pc">${num(k(cA))}</td>`+pcell(rt(cA,sc.exT),'bd-x')
+      +`<td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc cur">${num(k(sc.suTm))}</td><td class="ov-pc cur">${num(k(sc.suA))}</td>`
+      +rcell(rt(sc.suA,sc.suTm))
+      +`<td class="ov-pc">${num(k(cS))}</td>`+pcell(rt(cS,sc.suT))
+      +'</tr>';
   };
   /* 2026-09-09 요청: 닝보·북경(중국) 행 바로 아래 "중국" 소계, 그 다음 홍콩·대만 행을 몰아서
      보여준 뒤 그 바로 아래 "홍콩대만" 소계(둘을 하나로 묶음)를 표시 · 원본 데이터의 행 순서가
      지역별로 섞여 있어도 항상 이 순서(중국 묶음→중국소계→홍콩대만 묶음→홍콩대만소계→합계)로 나오게
-     그룹으로 나눠 렌더링(이전에는 소계만 있고 홍콩대만 소계가 아예 빠져 있었음) */
+     그룹으로 나눠 렌더링(이전에는 소계만 있고 홍콩대만 소계가 아예 빠져 있었음)
+     2026-09-12: 여기에 더해 같은 지역이 연속되면 구분 칸을 rowspan으로 합쳐 "중국·중국·중국" 반복 제거 */
   const cn=D.filter(d=>/닝보|북경/.test(d.dealer));
   const hktw=D.filter(d=>!/닝보|북경/.test(d.dealer));
-  cn.forEach(d=>{h+=row('','중국',d);});
-  h+=subRow('중국',cn);
-  hktw.forEach(d=>{const g=/대만/.test(d.dealer)?'대만':'홍콩';h+=row('',g,d);});
-  h+=subRow('홍콩대만',hktw);
-  if(D.length){const cA=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'exA')||0),0),cS=D.reduce((sm,d)=>sm+(cumOf(d.dealer,'suA')||0),0);
-    const tc={exT:sum(D,'exT'),exTm:sum(D,'exTm'),exA:sum(D,'exA'),suT:sum(D,'suT'),suA:sum(D,'suA')};
-    h+=`<tr class="ov-tot-row"><td>합계</td><td class="rl">중국·대만·홍콩</td><td>천$</td><td class="ov-pc">${num(k(tc.exT))}</td><td class="ov-pc">${num(k(tc.exTm))}</td><td class="ov-pc">${num(k(tc.exA))}</td><td class="ov-pc">${pct((tc.exTm&&tc.exA!=null)?tc.exA/tc.exTm:null)}</td><td class="ov-pc"><b>${num(k(cA))}</b></td><td class="ov-pc">${pct(tc.exT?cA/tc.exT:null)}</td><td class="ov-pc">${num(k(tc.suT))}</td><td class="ov-pc">${num(k(tc.suA))}</td><td class="ov-pc"><b>${num(k(cS))}</b></td><td class="ov-pc">${pct(tc.suT?cS/tc.suT:null)}</td></tr>`;}
+  const hk=hktw.filter(d=>!/대만/.test(d.dealer));
+  const tw=hktw.filter(d=>/대만/.test(d.dealer));
+  const block=(label,list)=>{let s2='';list.forEach((d,i)=>{s2+=row(d,i===0?`<td class="c-grp" rowspan="${list.length}">${esc(label)}</td>`:'');});return s2;};
+  h+=block('중국',cn);
+  h+=aggRow('중국 소계',cn,'ov-sub-row');
+  h+=block('홍콩',hk);
+  h+=block('대만',tw);
+  h+=aggRow('홍콩·대만 소계',hktw,'ov-sub-row');
+  h+=aggRow('합계 · 중국·대만·홍콩',D,'ov-tot-row');
   h+='</tbody></table>';
-  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · 달성율 = 당월 실적 ÷ 당월 목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:'<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · 달성율 = 당월 실적 ÷ 당월 목표 · 누적 = 1~'+MONTH+'월 합(데이터 입력된 달만) · 1~6월 입력 시 누적 자동 갱신</div>';
+  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 연간목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 연간목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
   return h;
 }
 function renderTeamWeekCards(wk){
@@ -5185,11 +5319,16 @@ function renderTeamWeekCards(wk){
     const pR=p=>({'상':0,'중':1,'하':2}[String(p||'').trim()]!==undefined?{'상':0,'중':1,'하':2}[String(p||'').trim()]:1);
     const items=wk.map((r,i)=>({r,i})).filter(x=>x.r.m===m.id).sort((a,b)=>pR(a.r.pri)-pR(b.r.pri));
     const nxRows=((typeof WKREPORT!=='undefined'&&WKREPORT[String(nIso)])||[]).map((r,i)=>({r,i})).filter(x=>x.r.m===m.id).sort((a,b)=>pR(a.r.pri)-pR(b.r.pri));
-    if(!items.length&&!nxRows.length)return '';
+    /* 2026-09-12 요청: 이번주·차주 등록 건이 하나도 없어도 카드 자체를 숨기지 않고
+       "등록 없음" 상태로 항상 표시(예: 장민훈 이사처럼 그 주에 주간보고 미제출인 담당자가
+       화면에서 통째로 빠져 보이던 문제) — 아래 return template의 기존 mut 플레이스홀더가
+       빈 items/nextItems를 그대로 처리하므로 이 조기 return만 제거하면 됨 */
     const ps=items.map(x=>{const v=parseInt(x.r.p);return isNaN(v)?null:v;}).filter(v=>v!=null);
     const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
     const rd=RRDATA.find(x2=>(x2.who||'').startsWith(m.name));
-    const roleLine=OVROLE[m.id]||((rd&&rd.role)?rd.role:(m.region||''));
+    /* 2026-09-12 요청: 김유진 대리(9/4 퇴사) — W37주차부터는 이 카드의 직함·지역 표기를
+       "법인관리"로 변경(주간보고 화면 한정, 다른 화면의 OVROLE·OVSUB 기본값은 유지) */
+    const roleLine=(m.id==='kim'&&iso&&+iso>=37)?'법인관리':(OVROLE[m.id]||((rd&&rd.role)?rd.role:(m.region||'')));
     const routines=ovRoutinesFor(m.name);
     const mfCur=mfTasksForOwner(m.name,MONTH);
     const pct=x=>{const v=parseInt(x.r.p);const txt=isNaN(v)?String(x.r.p||''):(v+'%');if(!txt)return '';const c=isNaN(v)?'':(v>=90?'mr-tg':v>=70?'mr-ta':'mr-tr');return ` <b class="${c}">(${esc(txt)})</b>`;};
@@ -5227,7 +5366,7 @@ function renderTeamWeekCards(wk){
     const doneW=items.filter(x=>parseInt(x.r.p)>=100).length;
     return `<div class="ov-card">
       <div class="pcol-h"><div class="av" style="background:${m.color}">${esc(m.ini)}</div>
-        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · ')||roleLine)}</div></div>
+        <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div><div class="meta">${(m.id==='kim'&&iso&&+iso>=37)?esc('법인관리'):esc(catsOf(m.id).slice(0,4).join(' · ')||roleLine)}</div></div>
         <div class="pavg"><div class="n" style="color:${m.color}">${avg==null?'–':avg+'%'}</div><div class="t">과제 ${items.length} · 완료 ${doneW}</div></div></div>
       <div class="ov-tk-h">${curLbl} 과제 · W${iso} <b>${items.length}건</b> <span class="mr-hint">클릭 → 상세</span></div>
       <ul class="ov-tk">${items.length?items.map(li1).join(''):`<li class="mut">${curLbl} 등록 과제 없음</li>`}</ul>
@@ -5418,7 +5557,7 @@ function renderOverview(){
   const isMR=(TAB==='mreport');
   /* 2026-09-09 요청: 본사실적 다음은 주간보고 순으로, 중점추진과제는 맨 뒤로 이동
      2026-09-09 요청(2차): 「팀 종합현황」에 있던 출장일정을 업무현황 안, 중점추진과제 바로 뒤로 이동 */
-  let OVTABS=isMR?[['main','본사실적'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['ops','지시사항F/U'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정']]
+  let OVTABS=isMR?[['main','본사실적'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
                  :[['main','본사실적'],['month','월별보고'],['focus','중점추진과제'],['trip','출장일정']];
   if(isMR&&RO()){
     if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고·출장일정만 */
@@ -5442,7 +5581,7 @@ function renderOverview(){
       if(CT==='focus')h+=mrFocusTiles(evTile);
       else if(CT==='month')h+=mrTeamTiles(evTile);
       else if(PERIOD==='week')h+=ovMainTiles();
-      else h+=mrMonthTiles(evTile);
+      else h+=mrMainTiles(); /* 2026-09-11 요청: 본사실적 화면은 "당월 중화팀 행사" 타일 제거 · 수출·수금 4개씩 별도 함수로 분리 */
     } else h+=ovMainTiles(evTile);
   }
   h+='<div class="ov-tabc">';
@@ -5462,25 +5601,19 @@ function renderOverview(){
     h+=renderTeamMonthCards(isMR);
   } else {
     if(TAB==='mreport'){
-      /* 2026-09-09 요청: 앞서(M297) 탭 없이 한 화면으로 합쳤던 본사실적 화면을, 탭 2개로 재구성.
-         ①년간 실적그래프(mrMonthChart, 단독 탭) ②당월 실적그래프(옛 "주간 수출·수금"·rrWeekChart를
-         이름만 바꿈) + [N]월 실적상세표(mrDealTable)를 하나로 묶어 두 번째 탭으로.
-         MRSECTAB(과거 4탭 구조에서 쓰다 M297에서 미사용으로 남겨뒀던 상태변수)를 이 2탭 전환에 재사용. */
+      /* 2026-09-11 요청: "당월중화팀행사는삭제. 아래 당월실적그래프삭제.. 년간실적그래프는 전체, 중국,
+         대만, 홍콩의 그래프를 현재양식으로" — 탭 2개(년간/당월) 구조를 걷어내고 년간 실적그래프
+         (mrMonthChart) 하나만 남기되 홍콩을 추가해 4개로, 그 아래 실적상세표(mrDealTable)는 그대로 유지.
+         MRSECTAB/MRTABS/setMrSecTab는 더 이상 이 화면에서 쓰지 않음(다른 화면도 참조하지 않아 그대로
+         남겨둬도 무해 — 실제로 안 쓰이는지는 grep으로 확인함) */
       const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
       const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
-      const MRTABS=[['year','년간 실적그래프'],['month','당월 실적그래프']];
-      const MRSUB={year:'단위 천불 USD · 마스터 「거래처실적_월간」 연동 · 목표(회색)·실적(초록) 막대 + 1월~현재 누적선(우측축) · 당월 실적 미입력 시 해당 월은 공란',
-        month:`단위 천불 USD · 기준 주차 ${esc(ovWeekKey())} · 최근 주차 스냅샷 + ${MONTH}월 실적상세표`};
-      if(!['year','month'].includes(MRSECTAB))MRSECTAB='year';
-      h+='<div class="seccard" style="padding-top:10px"><div class="cltabs">'
-        +MRTABS.map(([k,l])=>`<button class="cltab${MRSECTAB===k?' on':''}" onclick="setMrSecTab('${k}')">${esc(l)}</button>`).join('')
-        +(MRSUB[MRSECTAB]?`<div class="cltab-act"><span class="cltab-sub">${esc(MRSUB[MRSECTAB])}</span></div>`:'')
-        +'</div><div class="cltab-b" id="pptMainCapture" style="background:#fff">'
-        +(MRSECTAB==='year'?`<div class="om-charts">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}</div>`
-          :`<div class="om-charts">${rrWeekChart('전체','전체')}${rrWeekChart('중국','중국')}${rrWeekChart('대만','대만')}</div>`
-            +`<div class="ov-sec" style="margin-top:18px">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
-            +mrDealTable())
-        +'</div></div>';
+      h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
+        +`<div class="ov-sec">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「거래처실적_주간(u)」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
+        +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
+        +`<div class="ov-sec" style="margin-top:18px">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
+        +mrDealTable()
+        +'</div>';
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
       h+=ovMainTrendGrid();
@@ -5522,7 +5655,9 @@ function monthCumAgg(scope,uptoIdx){
     if(i>idx||!w.iso)return;
     const D=wkDealOf(w.iso)||((i===W)?ovDealD():null); if(!D)return;
     const a=ovScopeAggFrom(D,scope);
-    g.exA+=a.exA; g.suA+=a.suA; lastRow=a;
+    /* 2026-09-11 수정: exA·suA는 그 주차까지의 당월 누적값이므로 주차별로 더하지 않고
+       가장 최근 주차 값으로 덮어쓴다("이건 누적이야" 지적 반영 · mrDealMonthRows와 동일 원칙) */
+    g.exA=a.exA; g.suA=a.suA; lastRow=a;
   });
   if(lastRow){g.exT=lastRow.exT;g.suT=lastRow.suT;g.exTm=lastRow.exTm;g.suTm=lastRow.suTm;}
   else{const a=ovScopeAggFrom(ovDealD(),scope);g.exT=a.exT;g.suT=a.suT;g.exTm=a.exTm;g.suTm=a.suTm;}
@@ -5536,10 +5671,12 @@ function ovDealTable(){
   const num=n=>n==null?'\u2014':n.toLocaleString('en-US');
   /* 당월 누적실적 = 이번 달 1주차부터 현재 선택한 주차까지 「거래처실적_주간」(SPHIST) 실적 합산
      · DEALER RESULT 표(mrDealTable0)의 당월누적과 같은 원천·같은 계산방식을 써서 두 표가 서로 어긋나지 않게 한다 */
-  const cumOfWk=(dealer,field)=>{let c=0;
+  /* 2026-09-11 수정: 주차별 값은 당월 누적값이지 그 주만의 증분이 아니므로 합산하지 않고
+     가장 최근 주차 값을 그대로 쓴다("이건 누적이야" 지적 반영) */
+  const cumOfWk=(dealer,field)=>{let v=0;
     for(let i=0;i<=W;i++){const iso=(WEEKS[i]&&WEEKS[i].iso);if(!iso)continue;const dl=(SPHIST['W'+iso]&&SPHIST['W'+iso].deal)||[];
-      dl.forEach(x=>{if(x.dealer===dealer&&x[field]!=null)c+=(+x[field]||0);});}
-    return c;};
+      const hit=dl.find(x=>x.dealer===dealer);if(hit&&hit[field]!=null)v=(+hit[field]||0);}
+    return v;};
   let h='<table class="ov-tbl ov-perf"><thead><tr><th style="width:40px">구분</th><th style="text-align:left;width:90px">거래처</th><th style="width:56px">담당자</th><th style="width:36px">단위</th>'
     +'<th>수출목표<br>(전체)</th><th>수출목표<br>(당월)</th><th>수출실적<br>(해당주)</th><th>당월 누적<br>수출실적</th><th>당월누적수출<br>달성율</th>'
     +'<th>수금목표<br>(전체)</th><th>수금목표<br>(당월)</th><th>수금실적<br>(해당주)</th><th>당월 누적<br>수금실적</th><th>당월누적수금<br>달성율</th></tr></thead><tbody>';
@@ -10721,7 +10858,44 @@ function importG2Master(wb,scope){
       if(Object.keys(byM).length){saveMDEAL();done.push('거래처실적(월간) '+Object.keys(byM).map(m=>m+'월').join('·'));}
       return;
     }
-    // ④ 거래처실적_주간: 주차+거래처
+    // ④-new 거래처실적_주간(u): 주차+거래처+적용기준 (2026-09-11 개편)
+    /* 기존 「거래처실적_월간」 탭이 삭제되고 이 탭 하나로 통합됨(Code.gs availableSheets로 실제 탭 목록
+       확인·2026-09-11). 결정적으로, 이 탭의 "수출 실적(당월누적)"·"수금 실적(당월누적)" 열은 이름 그대로
+       그 주차까지의 "당월 누적값"이지 그 주만의 증분이 아니다 — 실제 데이터로 확인(닝보 7월: W29=650,269 →
+       W30=650,269(동일) → W31=1,149,596, 매주 우상향/동일만 하고 절대 줄지 않음 = 누적값의 전형적 패턴).
+       팀장 지적("이건 누적이야")의 근본원인이 바로 이것: 아래 옛 ④ 로직처럼 주차별로 더하면 실제값의
+       몇 배로 부풀려진다(예: 위 닝보 7월 예시를 그대로 더하면 2,450,134 → 실제 1,149,596의 약 2.13배).
+       그래서 주차별로 합산하지 않고, (월,거래처)별로 가장 우선순위 높은 주차 행 하나만 채택한다 —
+       우선순위: "월말"(이미 마감된 1~6월의 최종값) > 숫자가 큰 주차. 같은 우선순위가 여러 번 나오면
+       시트에 더 나중에 적힌 행(마지막에 훑은 값)을 채택. "적용기준" 열이 "…최종"을 포함하지 않으면
+       (예: "주간 잠정") 그 달을 잠정치로 표시해, 기존 「거래처실적_월간」 미입력 표시와 같은 역할을 하게 한다.
+       이 탭이 매칭되면 옛 ④(바로 아래)는 이 통합탭에 대해서는 절대 실행되지 않는다(이 블록이 먼저
+       return하므로) — 그래서 SPHIST(주간 스냅샷)에는 더 이상 이 탭 값이 잘못된 "증분"으로 쌓이지 않는다. */
+    if(has('주차')&&has('거래처')&&has('적용기준')){
+      if(scope!=='month')return; // 「거래처실적_월간」 탭의 역할(MDEAL 채우기)을 대신하므로 월간 패스에서만 처리
+      const cMo=ci('월'),cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자'),cJg=ci('적용기준');
+      const wkPri=v=>{const s=String(v||'').trim();if(/월말/.test(s))return 9999;const w=g2wk(s);return w||-1;}; // -1=주차 인식불가(하단 요약블록 등) → 제외
+      const byMonth={};
+      body.forEach(r=>{
+        const mo=g2mon(r[cMo]);const dl=String(r[cD2]||'').trim();
+        if(!mo||!dl||/소계|합계/.test(dl))return;
+        const pri=wkPri(r[cW]); if(pri<0)return;
+        const exT=fixSheetExT(dl,g2num(r[cT1])),exA=g2num(r[cA1]);
+        if(exT==null&&exA==null)return;
+        const bucket=(byMonth[mo]=byMonth[mo]||{});
+        const cur=bucket[dl];
+        if(cur&&cur._pri>pri)return; // 이미 더 늦은 주차(또는 월말) 값을 채택한 상태면 더 이른 주차 값은 무시
+        bucket[dl]={dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),
+          exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA]),
+          _pri:pri,_prov:!/최종/.test(String(cJg>=0?r[cJg]||'':''))};
+      });
+      const months=Object.keys(byMonth);
+      months.forEach(mo=>{const rows=Object.values(byMonth[mo]);rows._prov=rows.some(x=>x._prov);MDEAL[mo]=rows;});
+      if(months.length){saveMDEAL();done.push('거래처실적 '+months.map(m=>m+'월').join('·')+' (「거래처실적_주간(u)」 통합탭 · 월·거래처별 최신 누적값 채택, 합산 아님)');}
+      return;
+    }
+    // ④ 거래처실적_주간(구형식·증분 방식, 현재는 매칭될 일 없음 — 위 새 탭이 「적용기준」 열을 추가로 요구하므로
+    //    옛 형식 탭이 남아있는 경우에만 대비용으로 유지): 주차+거래처
     if(has('주차')&&has('거래처')){
       if(scope!=='week')return;
       const cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자');
@@ -10760,13 +10934,16 @@ function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doK
    한 번도 누르지 않은 기기가 코드에 미리 박혀있는 오래된 기본값(예: 주간업무 W33까지)만 보던 문제를
    해결하기 위한 것 — 로그인 여부와 무관하게 페이지를 열 때마다 조용히 1회 시도하고,
    시트가 아직 비공개(제한됨)라 실패해도 화면엔 기존 기본값이 그대로 유지된다(에러 노출 없음). */
-const PUBLIC_SYNC_TABS=['주간보고','거래처실적_월간','거래처실적_주간','월말보고','KPI지표','중화팀일정','출장일정']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
+const PUBLIC_SYNC_TABS=['주간보고','거래처실적_주간(u)','월말보고','KPI지표','중화팀일정','출장일정']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
   · 2026-09-06, Code.gs 디버그 응답(availableSheets)으로 실제 마스터시트의 탭 이름을 전부 대조해보니 이 목록에 두 개가 실제 탭
     이름과 달랐다: "주간업무"→실제로는 "주간보고", "일정"→실제로는 "중화팀일정"(개인 일정用 "일정"이라는 이름의 탭은 아예 존재하지
     않음 — 그 기능은 현재 시트에 없는 것으로 보임, 별도 확인 필요). gviz/Code.gs 둘 다 탭을 "이름으로" 요청하기 때문에, 로그인 안
     한 기기(게스트·팀원 폰)가 자동 동기화될 때는 이 이름이 안 맞아 두 탭 데이터(특히 주간보고!)를 계속 못 받아온 것으로 보인다 —
     로그인 후 [구글시트 불러오기]는 탭 이름이 아니라 내용(담당자+R&R+이번주업무결과 등)으로 인식해서 이 문제를 안 겪었다. 즉
-    "일부가 안 들어오거나 안 맞는다"는 증상 중 최소 일부는 로그인 안 한 화면에서 나타났을 가능성이 있다. */
+    "일부가 안 들어오거나 안 맞는다"는 증상 중 최소 일부는 로그인 안 한 화면에서 나타났을 가능성이 있다.
+  · 2026-09-11, 같은 방식(Code.gs availableSheets)으로 재확인: 「거래처실적_월간」·「거래처실적_주간」 두 탭이 실제로는
+    삭제되어 더 이상 존재하지 않고, 「거래처실적_주간(u)」 통합탭 하나로 합쳐져 있었다 — 그래서 옛 이름 두 개를 걷어내고
+    실제 탭 이름으로 교체(옛 이름을 그대로 뒀으면 이 목록으로 도는 비로그인 공개 동기화가 매번 조용히 실패만 하고 있었을 것). */
 function csvParseG2(text){
   const rows=[];let row=[],cur='',inQ=false;
   for(let i=0;i<text.length;i++){
@@ -10892,9 +11069,11 @@ function pptPC(p){return p>=100?'2E7D52':(p>=50?'222222':'B3781C');}
 function pptKpiRows(name){
   const rows=kpiRowsFor(name);
   if(!rows.length)return null;
-  const mi=MONTH-1,G='2E7D52',INK='222222',MUT='6B7280';
+  /* 2026-09-12: 표 머리글 색은 MEGAGEN 브랜드 인디고(BR)로, "완료" 표시는 웹 화면과 동일한
+     달성율=녹색(OK) 신호등 배색을 그대로 유지 — 브랜드색 교체가 상태색 의미를 바꾸지 않도록 분리 */
+  const mi=MONTH-1,BR='2D3194',OK='2E7D52',INK='222222',MUT='6B7280';
   const th=['KPI 항목','단위',`${MONTH}월 목표`,`${MONTH}월 실적`,`${MONTH}월 달성율`,'누적 실적','26년목표','연간 달성율'];
-  const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:11}}))];
+  const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:BR},align:'center',valign:'middle',fontSize:11}}))];
   rows.forEach(r=>{
     const mt=r.mt[mi],ma=kpiMa(r,mi);
     const mtn=knum(mt),man=knum(ma);
@@ -10907,10 +11086,10 @@ function pptKpiRows(name){
       {text:r.unit||'',options:{align:'center',color:MUT,fontSize:10,valign:'middle'}},
       {text:mt!=null&&mt!==''?kfmt(mt):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
       {text:ma!=null&&ma!==''?kfmt(ma):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
-      {text:doneM?'완료':(mr!=null?mr+'%':'–'),options:{align:'center',color:doneM?G:pptPC(mr||0),bold:true,fontSize:10,valign:'middle'}},
+      {text:doneM?'완료':(mr!=null?mr+'%':'–'),options:{align:'center',color:doneM?OK:pptPC(mr||0),bold:true,fontSize:10,valign:'middle'}},
       {text:acc!=null?Math.round(acc).toLocaleString('en-US'):'–',options:{align:'center',color:INK,fontSize:10,valign:'middle'}},
       {text:ktgt(r.yt),options:{align:'center',color:MUT,fontSize:10,valign:'middle'}},
-      {text:doneY?'완료':(rt!=null?rt+'%':'–'),options:{align:'center',color:doneY?G:pptPC(rt||0),bold:true,fontSize:10,valign:'middle'}}]);
+      {text:doneY?'완료':(rt!=null?rt+'%':'–'),options:{align:'center',color:doneY?OK:pptPC(rt||0),bold:true,fontSize:10,valign:'middle'}}]);
   });
   return tr;
 }
@@ -10929,8 +11108,24 @@ async function pptCaptureMainCard(){
   }catch(e){return null;}
   finally{TAB=prevTAB;MRTAB=prevMRTAB;render();}
 }
+/* 2026-09-12 요청: 업로드한 MEGAGEN 정식 주간보고 PPT양식(중화팀 26년 9월 1주차 주간보고-양식.pptx)을 PPT 생성 포맷으로 반영.
+   image6=표지/헤더용 미니 컬러 도형 아이콘, image2=MEGAGEN 정식 워드마크 로고. 원본 양식의 unpacked XML/media에서 추출한 그대로. */
+const MG_ICON_B64='data:image/png;base64,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';
+const MG_LOGO_B64='data:image/png;base64,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';
+/* 2026-09-12 요청: 업로드한 MEGAGEN 정식 양식(중화팀 26년 9월 1주차 주간보고-양식.pptx)의 unpacked
+   XML·media에서 실측한 브랜드 색(표지 도형 이미지 픽셀 샘플링) · 로고 · 태그라인을 PPT 생성에 반영.
+   G/DG는 기존 임의 녹색 대신 MEGAGEN 실제 브랜드 인디고/네이비로 교체 — pptPC()의 "달성율=녹색"
+   신호등 배색(웹 화면과 동일 의미)은 브랜드색과 무관한 상태색이라 그대로 둔다(혼동 방지로 별도 유지). */
+function mgBrandChrome(sl,{logo}={}){
+  sl.addImage({data:MG_ICON_B64,x:0.14,y:0.14,w:0.3,h:0.459});
+  if(logo){
+    sl.addImage({data:MG_LOGO_B64,x:9.85,y:0.16,w:1.7,h:0.342});
+  }else{
+    sl.addText('For Lifetime Smiles',{x:10.5,y:7.28,w:2.68,h:0.2,fontFace:'Microsoft YaHei',fontSize:9,bold:true,color:'A6A6A6',align:'right'});
+  }
+}
 async function buildDeckBase64(){
-  const G='2E7D52',DG='1F5C3B',LT='EAF2ED',INK='222222',MUT='6B7280',LN='D9E2DC',F='맑은 고딕';
+  const G='2D3194',DG='1B1D58',INK='222222',MUT='6B7280',LN='D7DCE8',F='맑은 고딕';
   const P=new PptxGenJS(); P.defineLayout({name:'WR',width:13.33,height:7.5}); P.layout='WR';
   const rows=activeRows();
   const byM={}; MGRS.forEach(m=>byM[m.id]=[]); rows.forEach(r=>{if(byM[r.mgr])byM[r.mgr].push(r);});
@@ -10942,6 +11137,7 @@ async function buildDeckBase64(){
      본사실적 캡쳐와 한 장에 합쳐, 이 슬라이드 자체가 진짜 1페이지가 되도록 함 */
   let s=P.addSlide(); s.background={color:'FFFFFF'}; /* 첫 페이지 흰색 배경 요청(2026-09-05) */
   s.addShape(P.ShapeType.rect,{x:0,y:0,w:13.33,h:0.14,fill:{color:G},line:{type:'none'}});
+  mgBrandChrome(s,{logo:true}); /* 표지에는 MEGAGEN 정식 워드마크 로고(양식 원본 이미지) */
   s.addText('중화팀 주간 업무보고',{x:0.55,y:0.3,w:9.4,h:0.55,fontFace:F,fontSize:30,bold:true,color:DG});
   s.addText(pptWLabel()+'   |   G2 中华팀 · 해외영업본부   |   작성: 이유아 팀장',{x:0.55,y:0.86,w:12.2,h:0.34,fontFace:F,fontSize:14.5,color:MUT});
   s.addShape(P.ShapeType.ellipse,{x:11.68,y:0.24,w:1.1,h:1.1,fill:{color:G},line:{color:DG,width:1}});
@@ -10980,6 +11176,7 @@ async function buildDeckBase64(){
       const per=pageNo===0?perFirst:perRest;
       const ch=list.slice(i,i+per);
       const sl=P.addSlide(); sl.background={color:'FFFFFF'};
+      mgBrandChrome(sl);
       let tasksY;
       if(pageNo===0){
         sl.addShape(P.ShapeType.ellipse,{x:0.55,y:0.32,w:0.56,h:0.56,fill:{color:pptHx(m.color)},line:{type:'none'}});
@@ -11020,6 +11217,7 @@ async function buildDeckBase64(){
     }});
   const D=(SPCUR&&SPCUR.deal)||(SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:null);
   if(D&&D.length){const sl=P.addSlide(); sl.background={color:'FFFFFF'};
+    mgBrandChrome(sl);
     sl.addText('실적 현황 · 거래처별 수출·수금',{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:34,bold:true,color:DG});
     sl.addText('단위: 천불(USD)',{x:0.55,y:1.02,w:12,h:0.35,fontFace:F,fontSize:16,color:MUT});
     const kU=v=>v==null?'—':Math.round(v/1000).toLocaleString();
