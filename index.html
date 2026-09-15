@@ -1560,7 +1560,7 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
    되므로, KPI 카드(.om-tile)·차트 카드(.omc) 테두리와 콤보 카드 구분선(.om-combo-div)이 계속 보이지
    않고 있었다. 요청(카드를 시안처럼)에 해당하는 이 4곳만 실제 색(#cbd5e1 · 표 테두리와 동일)으로 교체.
    나머지 7곳(.mr-st·.mr-tw·.mr-tbl·.tmrow·.mf-sumbar·.mo-tile)은 다른 화면이라 그대로 두었다. */
-.om-tile{background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:13px 16px 12px}
+.om-tile{background:#fff;border:1px solid #e7ebf0;border-radius:14px;padding:13px 16px 12px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
 .om-tl{font-size:13.2px;color:var(--dim);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .om-tv{font-size:28.6px;font-weight:900;color:var(--ink);margin-top:5px;letter-spacing:-.01em}
 .om-tu{font-size:13.2px;font-weight:700;color:var(--faint);margin-left:4px}
@@ -1569,7 +1569,7 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
    이 합쳐진 카드 안의 글자만 10% 축소(다른 화면의 .om-tile 은 그대로 유지) */
 .om-combo{display:flex;flex-direction:column;gap:8px}
 .om-combo-sec{display:flex;flex-direction:column}
-.om-combo-div{height:1px;background:#cbd5e1;margin:2px 0 1px}
+.om-combo-div{height:1px;background:#e7ebf0;margin:2px 0 1px}
 .om-combo .om-tl{font-size:11.88px}
 .om-combo .om-tv{font-size:25.74px}
 .om-combo .om-tu{font-size:11.88px}
@@ -1585,7 +1585,7 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 /* ===== 현지실적 탭 (중국 닝보·북경 / 대만) ===== */
 .lp-legend{display:flex;gap:16px;align-items:center;font-size:11.8px;color:var(--dim);font-weight:700;margin:-2px 0 10px 2px}
 .lp-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px}
-.lp-plot{position:relative;height:150px;margin:16px 0 0;border-bottom:1px solid #cbd5e1}
+.lp-plot{position:relative;height:150px;margin:16px 0 0;border-bottom:1px solid #e7ebf0}
 .lp-gl{position:absolute;left:0;right:0;height:1px;background:#e6eaef}
 .lp-gl b{position:absolute;left:-2px;top:-14px;font-size:9.6px;color:var(--faint);font-weight:600;font-family:Arial,sans-serif}
 .lp-groups{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around}
@@ -1656,7 +1656,7 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 @media(max-width:1180px){.mgg-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.mgg-2col{grid-template-columns:minmax(0,1fr)}}
 .om-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .om-charts4{grid-template-columns:repeat(4,minmax(0,1fr))} /* 2026-09-11: 본사실적 년간 실적그래프(전체·중국·대만·홍콩 4개) 전용 */
-.omc{background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
+.omc{background:#fff;border:1px solid #eceff3;border-radius:14px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
 .omc-h{font-size:14.3px;font-weight:800;color:var(--ink);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .omc-h span{font-size:11.6px;font-weight:600;color:var(--faint)}
 .omc-b{display:flex;justify-content:flex-end;margin-top:2px}
@@ -2543,8 +2543,10 @@ body.vw-ro .lb-full{display:none}
 .kstrip.kstrip-min{padding-bottom:0}
 .kstrip.kstrip-min .kstrip-h{margin-bottom:0}
 .rail{scrollbar-width:none;-ms-overflow-style:none;gap:12px}
-/* 핵심지표 타일만 옅은 회색(50%) */
-.om-tile,.hm-tile{background:rgba(233,231,226,.4)!important}
+/* 2026-09-15 요청("그냥 하얀색인데?"): KPI 카드에 베이지 톤이 !important 로 덮여 있어
+   흰색도 아니고 테두리도 묻혀 밋밋한 상자로 보였다 → .om-tile 은 제외하고 깨끗한 흰 카드로.
+   홈 화면 타일(.hm-tile)은 기존 톤 유지 */
+.hm-tile{background:rgba(233,231,226,.4)!important}
 .rail::-webkit-scrollbar{display:none}
 .hm-ctl{display:flex;align-items:center;gap:4px;margin-top:6px;flex-wrap:wrap}
 .hm-ctl .hm-cl{font-size:11.6px;color:var(--faint)}
@@ -2613,7 +2615,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M314</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M315</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5992,17 +5994,17 @@ function renderOverview(){
   if(!OVTABS.some(([k])=>k===CT))CT=(OVTABS[0]||['main'])[0];
   if(isMR)MRTAB=CT; else OVTAB=CT;
   h+='<div class="pm-tabs" style="margin-bottom:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
-  const showTiles=!isMR||['main','local','focus','month','week'].includes(CT); /* 2026-09-15: 주간보고에도 KPI 카드(현지실적은 자체 렌더) */
+  const showTiles=!isMR||['main','local','focus','month'].includes(CT); /* 2026-09-15 요청: 주간보고 KPI 카드는 삭제 */
   if(showTiles&&CT!=='local'&&CT!=='prod'){
-    const secSub=(isMR&&(CT==='week'||CT==='main'))?localPerfTilesSub():(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+    const secSub=(isMR&&CT==='main')?localPerfTilesSub():(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     /* 2026-09-09 요청: 본사실적 탭의 핵심지표 헤더 앞에 "몇월 몇주차" 표기 추가 */
-    const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:(isMR&&CT==='week')?`${MONTH}월 ${W+1}주차 주간보고 핵심 지표`:'핵심 지표';
+    const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:'핵심 지표';
     h+=`<div class="ov-sec">${esc(kpiHead)} <span class="ov-sub">${secSub}</span></div>`;
     const evTile=evListTile(wev);
     if(isMR){
       /* 2026-09-15 요청("내용까지 똑같이"): 본사실적·주간보고 상단 카드를 현지실적 카드와 동일하게 통일.
          기존 mrMainTiles()/mrWeekTiles()는 되돌리기 쉽게 그대로 남겨둔다. */
-      if(CT==='main'||CT==='week')h+=localPerfTiles();
+      if(CT==='main')h+=localPerfTiles();
       else if(CT==='focus')h+=mrFocusTiles(evTile);
       else if(CT==='month')h+=mrTeamTiles(evTile);
       else h+=mrMainTiles();
