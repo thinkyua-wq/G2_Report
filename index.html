@@ -2627,7 +2627,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M316</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M317</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5307,7 +5307,7 @@ function mggBars(p,D){
 function renderProductPerf(){
   if(MGG.state==='idle')mggFetch();
   const D=MGG.data;
-  let h=`<div class="ov-sec">제품 성과현황 <span class="ov-sub">ARi · BD · mgg_pm 주간보고 엑셀(구글드라이브) 실시간 연동${D?` · 기준 ${esc(D.week)} · ${esc(D.asOf)}`:''}</span></div>`;
+  let h=`<div class="ov-sec">BD/ARi 성과현황 <span class="ov-sub">ARi · BD · mgg_pm 주간보고 엑셀(구글드라이브) 실시간 연동${D?` · 기준 ${esc(D.week)} · ${esc(D.asOf)}`:''}</span></div>`;
   h+='<div class="mgg-bar2">'
    +`<button class="tb-b" onclick="mggFetch(1)"${MGG.state==='loading'?' disabled':''}>${MGG.state==='loading'?'불러오는 중…':'↻ 다시 불러오기'}</button>`
    +(D&&D.files?`<span class="mgg-src">원본 ${esc(D.files.ARi||'')}${D.files.BD?' / '+esc(D.files.BD):''}</span>`:'')
@@ -5342,7 +5342,7 @@ function renderProductPerf(){
    각 항목 배열 = [25년실적, 26년목표, 실적, 달성율(%), 성장율(%), 예상, 예상달성율(%)]  (수금은 앞 5개)
    null = 원본에 값이 없음(대만은 26년 신규법인이라 25년 실적·성장율이 없고, 현지 수금 집계 항목 자체가 없음)
    ※ 추후 마스터 구글시트에 「현지실적」 탭을 만들면 이 상수만 그 값으로 교체하면 된다 */
-const LOCALPERF={
+let LOCALPERF={
   asOf:{cn:'2026-09-12', tw:'2026-09-11'},
   corps:[
     {id:'ning',label:'닝보',sub:'중국',cur:'M RMB',curCash:'K USD',
@@ -5359,6 +5359,43 @@ const LOCALPERF={
       cash:null}
   ]
 };
+/* ===== 「현지실적」 구글시트 연동 (2026-09-15 요청) =====
+   시트에서 받은 원자료(법인×항목×구분 → {v25,tgt,act,exp})를 화면이 쓰는 구조로 바꾼다.
+   달성율·성장율·예상달성율은 전부 여기서 계산한다 — 시트에 직접 적어 넣으면 목표(분모)를
+   고쳤을 때 같이 안 고쳐져 표와 그래프가 조용히 어긋난다.
+   · 연간 행의 성장율은 연말 확정 전이라 항상 비운다(기존 화면 규칙 그대로)
+   · 「중국 소계」는 닝보+북경을 더해 다시 계산하므로 시트에 소계 행을 넣을 필요가 없다 */
+function lpBuild(raw,prev){
+  const R=(a2,b2)=>(b2&&a2!=null&&b2!==0)?Math.round(a2/b2*100):null;
+  const GR=(a2,b2)=>(b2&&a2!=null&&b2!==0)?Math.round((a2-b2)/b2*100):null;
+  const g=(cp,it,k)=>((raw[cp]||{})[it]||{})[k]||null;
+  const add=(x,y)=>{if(!x&&!y)return null;
+    const f=n=>{const p1=x?x[n]:null,p2=y?y[n]:null;return (p1==null&&p2==null)?null:((+p1||0)+(+p2||0));};
+    return {v25:f('v25'),tgt:f('tgt'),act:f('act'),exp:f('exp')};};
+  const saleRow=(o,k)=>o?[o.v25,o.tgt,o.act,R(o.act,o.tgt),(k==='y'?null:GR(o.act,o.v25)),o.exp,(o.exp==null?null:R(o.exp,o.tgt))]
+                       :[null,null,null,null,null,null,null];
+  const cashRow=(o,k)=>o?[o.v25,o.tgt,o.act,R(o.act,o.tgt),(k==='y'?null:GR(o.act,o.v25))]
+                       :[null,null,null,null,null];
+  const prevBy={}; (((prev&&prev.corps)||[])).forEach(c=>prevBy[c.id]=c);
+  const cu=(id,f,d)=>((prevBy[id]&&prevBy[id][f])||d);
+  const corp=(id,label,sub,cur,curCash,pick,flags)=>{
+    const sale={},cash={};
+    ['m','c','y'].forEach(k=>sale[k]=saleRow(pick('sale',k),k));
+    const hasCash=['m','c','y'].some(k=>pick('cash',k));
+    if(hasCash)['m','c','y'].forEach(k=>cash[k]=cashRow(pick('cash',k),k));
+    return Object.assign({id,label,sub,cur,curCash:hasCash?curCash:null,sale,cash:hasCash?cash:null},flags||{});
+  };
+  return {asOf:(prev&&prev.asOf)||{cn:'',tw:''},src:'sheet',pulledAt:(typeof todayStr==='function'?todayStr():''),
+    corps:[
+      corp('ning',cu('ning','label','닝보'),cu('ning','sub','중국'),cu('ning','cur','M RMB'),'K USD',(it,k)=>g('ning',it,k)),
+      corp('beij',cu('beij','label','북경'),cu('beij','sub','중국'),cu('beij','cur','M RMB'),'K USD',(it,k)=>g('beij',it,k)),
+      corp('cn','중국 소계','닝보+북경',cu('ning','cur','M RMB'),'K USD',(it,k)=>add(g('ning',it,k),g('beij',it,k)),{sum:true}),
+      corp('tw',cu('tw','label','대만'),cu('tw','sub','Sunriser+TBMS'),cu('tw','cur','K TWD'),null,(it,k)=>g('tw',it,k),{tw:true})
+    ]};
+}
+function saveLOCALPERF(){try{localStorage.setItem('wr_localperf_v1',JSON.stringify(LOCALPERF));}catch(e){}}
+(function(){try{const raw=localStorage.getItem('wr_localperf_v1');if(raw){const o=JSON.parse(raw);
+  if(o&&o.corps&&o.corps.length)LOCALPERF=o;}}catch(e){}})();
 const LP_S1='#4750D0';   /* 현지 매출 — MEGAGEN 인디고 계열 */
 const LP_S2='#14A3A0';   /* 현지 수금 — 색각이상 구분도 검증 통과(ΔE 21.9 deutan) */
 
@@ -5993,7 +6030,7 @@ function renderOverview(){
   const isMR=(TAB==='mreport');
   /* 2026-09-09 요청: 본사실적 다음은 주간보고 순으로, 중점추진과제는 맨 뒤로 이동
      2026-09-09 요청(2차): 「팀 종합현황」에 있던 출장일정을 업무현황 안, 중점추진과제 바로 뒤로 이동 */
-  let OVTABS=isMR?[['main','본사실적'],['local','현지실적'],['prod','제품성과'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
+  let OVTABS=isMR?[['main','본사실적'],['local','현지실적'],['prod','BD/ARi'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
                  :[['main','본사실적'],['month','월별보고'],['focus','중점추진과제'],['trip','출장일정']];
   if(isMR&&RO()){
     if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고·출장일정만 */
@@ -11024,7 +11061,7 @@ function importG2Master(wb,scope){
     /* 셀 자체가 "담당자" 같은 짧은 열 제목인 경우만 인정 · 긴 안내문(예: "노란 칸만 입력·담당자/국가/구분은 드롭다운...")에 열 이름 단어가 우연히 포함돼 안내문 행을 헤더로 잘못 인식하는 것을 방지 */
     const hHas=(row,kw)=>row.some(x=>x.includes(kw)&&x.length<=kw.length+6);
     for(let i=0;i<Math.min(14,A.length);i++){const row=(A[i]||[]).map(x=>String(x).replace(/\s/g,''));
-      if(hHas(row,'거래처')||hHas(row,'담당자')||hHas(row,'일정명')||hHas(row,'출발일')||(hHas(row,'날짜')&&hHas(row,'제목'))||(hHas(row,'KPI항목')&&(hHas(row,'연간목표')||hHas(row,'26년목표')))){hi=i;break;}}
+      if(hHas(row,'거래처')||hHas(row,'담당자')||hHas(row,'일정명')||hHas(row,'출발일')||(hHas(row,'날짜')&&hHas(row,'제목'))||(hHas(row,'법인')&&hHas(row,'항목'))/* 2026-09-15: 「현지실적」 탭 */||(hHas(row,'KPI항목')&&(hHas(row,'연간목표')||hHas(row,'26년목표')))){hi=i;break;}}
     if(hi<0)return;
     const hdr=(A[hi]||[]).map(x=>String(x).replace(/\s/g,''));
     /* ★ 근본원인 수정(2026-09-05): 「출장일정」 등 헤더 위 안내문(배너)에 "담당자/국가/구분/상태는
@@ -11353,6 +11390,39 @@ function importG2Master(wb,scope){
       if(Object.keys(byW).length){saveSPHIST();try{refreshSPERFtoLatest();}catch(e){}done.push('거래처실적(주간) '+Object.keys(byW).map(w=>'W'+w).join('·'));}
       return;
     }
+    /* ⑤ 현지실적 (2026-09-15 요청: 「현지실적」 탭 신설 — 차주부터 시트에 입력하면 화면에 반영)
+       열 구성: 구분(9월|누적|연간) · 법인(닝보|북경|대만) · 항목(매출|수금) · 25년실적 · 26년목표 · 실적 · 예상
+       달성율·성장율·중국소계는 시트에 넣지 않는다 — lpBuild()가 계산한다. */
+    if(has('법인')&&has('항목')&&(has('26년목표')||has('목표'))){
+      if(scope!=='month')return;
+      const cG=ci('구분'),cC=ci('법인'),cI=ci('항목'),c25=ci('25년실적'),
+            cTg=(ci('26년목표')>=0?ci('26년목표'):ci('목표')),cAc=ci('실적'),cEx=ci('예상');
+      if(cC<0||cI<0||cTg<0)return;
+      const keyOf=v=>{const t=String(v||'').replace(/\s/g,'');
+        if(/누적/.test(t))return 'c'; if(/연간|연도|연$/.test(t))return 'y';
+        if(/월|당월/.test(t))return 'm'; return null;};
+      const corpOf=v=>{const t=String(v||'').replace(/\s/g,'');
+        if(/닝보|宁波|寧波/.test(t))return 'ning';
+        if(/북경|베이징|北京/.test(t))return 'beij';
+        if(/대만|台湾|台灣|타이완/.test(t))return 'tw'; return null;};
+      const itemOf=v=>{const t=String(v||'').replace(/\s/g,'');
+        if(/수금/.test(t))return 'cash'; if(/매출/.test(t))return 'sale'; return null;};
+      const raw={};let n=0;
+      body.forEach(r=>{
+        const k=keyOf(cG>=0?r[cG]:''),cp=corpOf(r[cC]),it=itemOf(r[cI]);
+        if(!k||!cp||!it)return;
+        const tgt=g2num(r[cTg]),act=g2num(r[cAc]);
+        if(tgt==null&&act==null)return;
+        raw[cp]=raw[cp]||{};raw[cp][it]=raw[cp][it]||{};
+        raw[cp][it][k]={v25:(c25>=0?g2num(r[c25]):null),tgt,act,exp:(cEx>=0?g2num(r[cEx]):null)};
+        n++;
+      });
+      if(!n)return;
+      LOCALPERF=lpBuild(raw,LOCALPERF);
+      saveLOCALPERF();
+      done.push('현지실적 '+n+'행');
+      return;
+    }
   });
   return done;
 }
@@ -11378,7 +11448,7 @@ function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doK
    한 번도 누르지 않은 기기가 코드에 미리 박혀있는 오래된 기본값(예: 주간업무 W33까지)만 보던 문제를
    해결하기 위한 것 — 로그인 여부와 무관하게 페이지를 열 때마다 조용히 1회 시도하고,
    시트가 아직 비공개(제한됨)라 실패해도 화면엔 기존 기본값이 그대로 유지된다(에러 노출 없음). */
-const PUBLIC_SYNC_TABS=['주간보고','거래처실적_주간(u)','월말보고','KPI지표','중화팀일정','출장일정']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
+const PUBLIC_SYNC_TABS=['주간보고','거래처실적_주간(u)','월말보고','KPI지표','중화팀일정','출장일정','현지실적']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
   · 2026-09-06, Code.gs 디버그 응답(availableSheets)으로 실제 마스터시트의 탭 이름을 전부 대조해보니 이 목록에 두 개가 실제 탭
     이름과 달랐다: "주간업무"→실제로는 "주간보고", "일정"→실제로는 "중화팀일정"(개인 일정用 "일정"이라는 이름의 탭은 아예 존재하지
     않음 — 그 기능은 현재 시트에 없는 것으로 보임, 별도 확인 필요). gviz/Code.gs 둘 다 탭을 "이름으로" 요청하기 때문에, 로그인 안
@@ -11539,6 +11609,37 @@ function pptKpiRows(name){
 }
 /* 「업무현황 → 본사실적」 화면(#pptMainCapture)을 캡쳐해 PPT 2번째 장에 이미지로 삽입(2026-09-05 요청)
    · 캡쳐를 위해 잠시 그 화면으로 전환했다가, 끝나면 사용자가 보던 화면으로 되돌린다 */
+/* 2026-09-15 요청: PPT 2~4페이지를 「본사실적 전체 / 현지실적 전체 / BD·ARi 전체」 캡처로.
+   기존 pptCaptureMainCard()는 본사실적의 차트+표 카드(#pptMainCapture)만 잘라냈는데,
+   "전부 캡처"는 KPI 카드까지 포함한 탭 화면 전체여야 하므로 .ovw 를 통째로 찍는다.
+   탭 버튼 줄(.pm-tabs)은 보고서에 불필요해 캡처 동안만 숨긴다.
+   BD/ARi 는 외부(mgg_pm) 데이터를 비동기로 받아오므로 waitFor 로 도착을 기다린 뒤 찍는다. */
+async function pptCaptureTab(mrtab,opts){
+  const prevTAB=TAB,prevMRTAB=MRTAB;
+  const waitFor=opts&&opts.waitFor;
+  try{
+    TAB='mreport';MRTAB=mrtab;render();
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    await new Promise(r=>setTimeout(r,250));
+    if(typeof waitFor==='function'){
+      for(let i=0;i<40&&!waitFor();i++){await new Promise(r=>setTimeout(r,500));}
+      render();
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      await new Promise(r=>setTimeout(r,350));
+    }
+    const el=document.querySelector('.ovw');
+    if(!el||typeof html2canvas==='undefined')return null;
+    const tabs=el.querySelector('.pm-tabs');
+    const prevDisp=tabs?tabs.style.display:null;
+    if(tabs)tabs.style.display='none';
+    let canvas=null;
+    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2});}
+    finally{if(tabs)tabs.style.display=(prevDisp==null?'':prevDisp);}
+    if(!canvas)return null;
+    return {dataUrl:canvas.toDataURL('image/png'),w:canvas.width,h:canvas.height};
+  }catch(e){return null;}
+  finally{TAB=prevTAB;MRTAB=prevMRTAB;render();}
+}
 async function pptCaptureMainCard(){
   const prevTAB=TAB,prevMRTAB=MRTAB;
   try{
@@ -11628,18 +11729,19 @@ async function buildDeckBase64(){
     s.addImage({data:MG_LOGO_B64,x:10.365,y:6.62,w:2.618,h:0.528});
   }
 
-  /* ===== 2페이지 · 본사실적 캡쳐만 전체화면 (2026-09-12 요청: 제목·부제·주차뱃지 전부 제거) ===== */
-  {
+  /* ===== 2·3·4페이지 · 본사실적 / 현지실적 / BD·ARi 탭 전체 캡쳐 (2026-09-15 요청) =====
+     각 장에 해당 탭 화면만 꽉 채워 넣는다. 제목·부제 없이 캡쳐 이미지 + 태그라인 + 페이지번호만. */
+  for(const [capTab,capName] of [['main','본사실적'],['local','현지실적'],['prod','BD/ARi']]){
     const sl=P.addSlide(); sl.background={color:'FFFFFF'}; PAGES.push(sl);
     sl.addText('For Lifetime Smiles',{x:10.5,y:TAGY,w:2.68,h:0.2,fontFace:'Microsoft YaHei',fontSize:9,bold:true,color:'A6A6A6',align:'right'});
-    const cap=await pptCaptureMainCard();
+    const cap=await pptCaptureTab(capTab, capTab==='prod'?{waitFor:()=>(typeof MGG!=='undefined'&&(MGG.state==='ok'||MGG.state==='err'))}:null);
     if(cap&&cap.dataUrl){
       const maxW=12.93,maxH=6.88,x0=0.20,y0=0.08;
       let w=maxW,h=w*cap.h/cap.w;
       if(h>maxH){h=maxH;w=h*cap.w/cap.h;}
       sl.addImage({data:cap.dataUrl,x:x0+(maxW-w)/2,y:y0+(maxH-h)/2,w,h});
     }else{
-      sl.addText('본사실적 화면을 캡쳐하지 못했습니다. 대시보드에서 [업무현황 → 본사실적] 탭을 한 번 열어본 뒤 다시 생성해 주세요.',{x:0.55,y:3.2,w:12.23,h:1,fontFace:F,fontSize:16,color:MUT,align:'center'});
+      sl.addText(`${capName} 화면을 캡쳐하지 못했습니다. 대시보드에서 [업무현황 → ${capName}] 탭을 한 번 열어본 뒤 다시 생성해 주세요.`,{x:0.55,y:3.2,w:12.23,h:1,fontFace:F,fontSize:16,color:MUT,align:'center'});
     }
   }
 
