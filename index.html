@@ -1555,7 +1555,12 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .om-tile.ev2 .om-ev3{font-size:12.1px;color:var(--faint);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mfw-3{color:#b23434}.mfw-2{color:#1e6f5c}.mfw-1{color:#5b6570}
 @media(max-width:1400px){.om-tiles6{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.om-tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 16px 12px}
+/* 2026-09-15 발견·수정: 이 파일에는 --line 변수가 한 번도 정의된 적이 없는데 11곳에서 var(--line)을
+   쓰고 있었다. border 단축속성에 미정의 변수가 들어가면 선언 전체가 무효가 되어 border-style:none 이
+   되므로, KPI 카드(.om-tile)·차트 카드(.omc) 테두리와 콤보 카드 구분선(.om-combo-div)이 계속 보이지
+   않고 있었다. 요청(카드를 시안처럼)에 해당하는 이 4곳만 실제 색(#cbd5e1 · 표 테두리와 동일)으로 교체.
+   나머지 7곳(.mr-st·.mr-tw·.mr-tbl·.tmrow·.mf-sumbar·.mo-tile)은 다른 화면이라 그대로 두었다. */
+.om-tile{background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:13px 16px 12px}
 .om-tl{font-size:13.2px;color:var(--dim);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .om-tv{font-size:28.6px;font-weight:900;color:var(--ink);margin-top:5px;letter-spacing:-.01em}
 .om-tu{font-size:13.2px;font-weight:700;color:var(--faint);margin-left:4px}
@@ -1564,14 +1569,94 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
    이 합쳐진 카드 안의 글자만 10% 축소(다른 화면의 .om-tile 은 그대로 유지) */
 .om-combo{display:flex;flex-direction:column;gap:8px}
 .om-combo-sec{display:flex;flex-direction:column}
-.om-combo-div{height:1px;background:var(--line);margin:2px 0 1px}
+.om-combo-div{height:1px;background:#cbd5e1;margin:2px 0 1px}
 .om-combo .om-tl{font-size:11.88px}
 .om-combo .om-tv{font-size:25.74px}
 .om-combo .om-tu{font-size:11.88px}
 .om-combo .om-ts{font-size:10.89px}
+/* ===== 2026-09-15 요청: 콤보 KPI 카드의 달성율 뱃지를 차분한 한 가지 회색으로 통일하고
+   실제로 위험한 구간(50% 미만)에서만 붉게 — 기존 .mr-badge 3색(90/70 기준)은 카드마다
+   초록·주황·빨강이 섞여 시선이 분산됐다. .mr-badge 는 다른 화면에서 계속 쓰므로 건드리지 않고
+   콤보 카드 전용 뱃지(.om-pill)만 새로 둔다 ===== */
+.om-pill{display:inline-block;padding:1px 7px;border-radius:9px;font-size:10.8px;font-weight:800;
+  white-space:nowrap;background:#eef0f7;color:#3a4256;font-variant-numeric:tabular-nums}
+.om-pill.lo{background:#fbeceb;color:#a2342a}
+.om-pill.na{background:#eef0f3;color:#8a919b;font-weight:700}
+/* ===== 현지실적 탭 (중국 닝보·북경 / 대만) ===== */
+.lp-legend{display:flex;gap:16px;align-items:center;font-size:11.8px;color:var(--dim);font-weight:700;margin:-2px 0 10px 2px}
+.lp-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px}
+.lp-plot{position:relative;height:150px;margin:16px 0 0;border-bottom:1px solid #cbd5e1}
+.lp-gl{position:absolute;left:0;right:0;height:1px;background:#e6eaef}
+.lp-gl b{position:absolute;left:-2px;top:-14px;font-size:9.6px;color:var(--faint);font-weight:600;font-family:Arial,sans-serif}
+.lp-groups{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around}
+/* 주의: 표의 「구분」 셀 클래스와 겹치면 display:flex 가 td 에 걸려 rowspan 이 통째로 무시된다 → lp- 접두사 고정 */
+.lp-cgrp{display:flex;align-items:flex-end;gap:2px;height:100%}
+.lp-bar{width:19px;position:relative;display:flex;align-items:flex-end}
+.lp-bar i{display:block;width:100%;border-radius:4px 4px 0 0}
+.lp-bar em{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:3px;font-size:10px;
+  font-style:normal;font-weight:800;color:var(--ink);font-family:Arial,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lp-xlab{display:flex;justify-content:space-around;margin-top:5px;font-size:11px;color:var(--dim);font-weight:700}
+.lp-xlab span{width:56px;text-align:center}
+.lp-tbl td.lp-grp{background:#f1f3f6;font-weight:800;font-size:12.9px;vertical-align:middle;text-align:center;
+  font-family:"Malgun Gothic","맑은 고딕",sans-serif;letter-spacing:.02em}
+.lp-tbl td.lp-corp{background:#fafbfc;font-weight:700;text-align:left;padding-left:10px;
+  font-family:"Malgun Gothic","맑은 고딕",sans-serif}
+.lp-tbl td.lp-corp u{display:block;text-decoration:none;font-size:9.8px;font-weight:700;color:var(--faint);margin-top:1px}
+.lp-tbl tbody tr.lp-tw td{background:#f7fbfb}
+.lp-tbl tbody tr.lp-tw td.lp-grp{background:#f1f3f6}
+.lp-tbl tbody tr.lp-tw td.lp-corp{background:#eef7f7}
+.lp-fc{color:#4750D0}
+.lp-na{color:#b6bcc4}
+.lp-warn{font-size:11.6px;color:#9a5b12;background:#fdf6ec;border:1px solid #f0e0c4;padding:8px 11px;margin-top:10px;line-height:1.6}
+/* ===== 제품성과 (ARi·BD) · mgg_pm 화면 재현 · 색은 원본 화면에서 실측 추출 ===== */
+.mgg-bar2{display:flex;align-items:center;gap:12px;margin:-4px 0 12px;flex-wrap:wrap}
+.mgg-src{font-size:11.2px;color:var(--faint)}
+.mgg-sec{padding:12px 14px 14px}
+.mgg-h{display:flex;align-items:center;gap:12px;margin-bottom:11px;flex-wrap:wrap}
+.mgg-h b{font-size:15px;font-weight:800;color:var(--ink)}
+.mgg-tabs{display:flex;gap:2px}
+.mgg-tabs button{border:1px solid #d7dbe2;background:#fff;color:#5b6570;font-family:inherit;
+  font-size:11.8px;font-weight:700;padding:4px 11px;cursor:pointer;border-radius:3px}
+.mgg-tabs button.on{background:#212B5F;border-color:#212B5F;color:#fff}
+.mgg-pw{font-size:11.2px;color:var(--faint);margin-left:auto}
+.mgg-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:11px}
+.mgg-t{padding:11px 14px 12px;color:#fff;border-radius:3px;min-width:0}
+.mgg-t.g{background:#42774E}.mgg-t.n1{background:#212B5F}.mgg-t.n2{background:#2E3B81}
+.mgg-t.b1{background:#556CC3}.mgg-t.b2{background:#657FCF}
+.mgg-tl{font-size:11.6px;font-weight:700;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgg-tv{font-size:26px;font-weight:900;letter-spacing:-.01em;margin-top:3px;line-height:1.1;
+  font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums}
+.mgg-tv span{font-size:12.4px;font-weight:700;margin-left:4px;opacity:.92;font-family:inherit}
+.mgg-ts{font-size:10.9px;margin-top:5px;opacity:.86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgg-2col{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:11px}
+.mgg-c{box-shadow:none}
+.mgg-c .omc-h span{font-size:11.2px;font-weight:600;color:var(--faint)}
+.mgg-dwrap{display:flex;align-items:center;gap:14px;padding:6px 2px 2px}
+.mgg-dn{font-size:25px;font-weight:900;fill:#1b2130;font-family:Arial,Helvetica,sans-serif}
+.mgg-dl{font-size:10.6px;fill:#8a919b;font-family:"Malgun Gothic","맑은 고딕",sans-serif}
+.mgg-dleg{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
+.mgg-dleg div{display:flex;align-items:center;gap:7px;font-size:12.4px;color:var(--ink);font-weight:700}
+.mgg-dleg i{width:11px;height:11px;border-radius:2px;flex:none}
+.mgg-dleg b{margin-left:auto;font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums}
+.mgg-bars{display:flex;flex-direction:column;gap:5px;padding:4px 0 2px}
+.mgg-br{display:flex;align-items:center;gap:9px;cursor:pointer}
+.mgg-br.sub{cursor:default;padding-left:18px;opacity:.9}
+.mgg-bk{width:74px;flex:none;font-size:12.4px;font-weight:700;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgg-br.sub .mgg-bk{width:96px;font-size:11.4px;font-weight:600;color:var(--dim)}
+.mgg-bt{flex:1;min-width:0;height:15px;background:#E5E6EA;border-radius:2px;overflow:hidden}
+.mgg-br.sub .mgg-bt{height:10px}
+.mgg-bt i{display:block;height:100%;background:#2F3B85;border-radius:2px}
+.mgg-br.sub .mgg-bt i{background:#8590c0}
+.mgg-br b{width:58px;flex:none;text-align:right;font-size:12.8px;font-weight:800;color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums}
+.mgg-br em{width:52px;flex:none;text-align:right;font-style:normal;font-size:11.6px;color:var(--faint);
+  font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums}
+.mgg-foot{font-size:11.2px;color:var(--faint);margin-top:8px}
+@media(max-width:1180px){.mgg-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.mgg-2col{grid-template-columns:minmax(0,1fr)}}
 .om-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .om-charts4{grid-template-columns:repeat(4,minmax(0,1fr))} /* 2026-09-11: 본사실적 년간 실적그래프(전체·중국·대만·홍콩 4개) 전용 */
-.omc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
+.omc{background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px 12px;position:relative;box-shadow:0 1px 3px rgba(20,30,40,.05)}
 .omc-h{font-size:14.3px;font-weight:800;color:var(--ink);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .omc-h span{font-size:11.6px;font-weight:600;color:var(--faint)}
 .omc-b{display:flex;justify-content:flex-end;margin-top:2px}
@@ -2528,7 +2613,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.12-M310</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M314</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4800,6 +4885,14 @@ function renderRRSales(){
   return h+'</div>';
 }
 function omPill(r){const p=r==null?null:Math.round(r*100);if(p==null)return '';const c=p>=90?'mr-g':p>=70?'mr-a':'mr-r';return `<span class="mr-badge ${c}">${p}%</span>`;}
+/* 2026-09-15 요청: 콤보 KPI 카드(본사실적·현지실적) 전용 달성율 뱃지 — 기본 회색, 50% 미만만 빨강.
+   r 은 비율(0~1), pct=true 면 이미 퍼센트 값. 데이터 자체가 없으면 na 뱃지 */
+function omPillN(r,{pct=false,na=false,naText='데이터 없음'}={}){
+  if(na)return `<span class="om-pill na">${esc(naText)}</span>`;
+  if(r==null||isNaN(r))return '';
+  const p=pct?Math.round(r):Math.round(r*100);
+  return `<span class="om-pill${p<50?' lo':''}">${p}%</span>`;
+}
 function ovMainTiles(extra){
   const all=ovScopeAgg('전체'),cn=ovScopeAgg('중국'),tw=ovScopeAgg('대만');
   const k=v=>Math.round(v/1000),n=v=>k(v).toLocaleString('en-US');
@@ -5058,13 +5151,342 @@ function mrMonthTiles(extra){
 /* 2026-09-11 요청: 「업무현황 → 본사실적」 화면 전용 KPI지표 — 수출·수금을 각각 전체/중국/대만/홍콩
    4개씩(같은 포맷) 두 줄로 표시하고, 이 화면에서만 "당월 중화팀 행사" 타일을 제거한다(팀 종합현황
    KEY METRICS·중점추진과제·월별보고의 타일은 그대로 mrMonthTiles/evTile을 계속 쓰므로 영향 없음) */
+/* ================= 제품성과 (ARi · BD) · mgg_pm 실시간 연동 · 2026-09-15 요청 =================
+   https://thinkyua-wq.github.io/mgg_pm/ 의 「ARi·BD 성과현황」 화면을 이 앱 안으로 끌어온다.
+   · 데이터: mgg_pm 이 쓰는 것과 똑같은 구글 Apps Script 엔드포인트를 JSONP 로 직접 호출한다.
+     mgg_pm 이 구글드라이브의 주간보고 엑셀(ARi客户开发现况 · BD客户开发现况)을 읽어 만드는 구조라,
+     그쪽이 갱신되면 이 화면도 다시 불러오는 순간 같은 값으로 따라온다(별도 복사·입력 없음).
+   · 화면: mgg_pm 은 React+Recharts 라 DOM 을 그대로 가져올 수 없어 같은 구성을 바닐라로 재현했다
+     (KPI 5장 · 목표고객 대비 진입 도넛 · 본부별 26년 판매 막대 + 권역별 펼침 + 전주 대비 증감).
+   · 합계는 tot 이 아니라 본부(area) 합을 쓴다 — ARi 판매목표가 tot.sT 9,270 / area 합 9,390 으로
+     다르고 mgg_pm 화면은 9,390 을 쓰기 때문. 나머지 항목은 둘이 완전히 같다(실측 확인).
+   · 응답이 564KB·3~5초라 매번 호출하지 않고 세션 캐시(30분)를 두고, [다시 불러오기]로 강제 갱신한다. */
+const MGG_EP='https://script.google.com/macros/s/AKfycbykcFeA1Li6PzoxkTYMXoeDOc1huZyvls1JMvmJlWpBCHrCD8xolGGWQUlywyJDnOIIOg/exec';
+const MGG_HQKO={'浙江本部':'절강','华东本部':'화동','华中本部':'화중','华西本部':'화서','华南本部':'화남','华北本部':'화북','':'기타'};
+const MGG_F=['cT','cP','cC','cA','sT','sA','dB'];
+let MGG={state:'idle',data:null,err:''};
+let MGGTAB={ARi:'cur',BD:'cur'}, MGGOPEN={};
+function mggSetTab(p,v){MGGTAB[p]=v;render();}
+function mggToggle(k){MGGOPEN[k]=!MGGOPEN[k];render();}
+
+/* 받아온 원본(564KB)에서 화면에 쓰는 값만 추려 작게 만든다 — 세션 캐시에 넣기 위함 */
+function mggDigest(raw){
+  const sum=(list,f)=>list.reduce((s,x)=>s+(+x[f]||0),0);
+  const one=A=>{
+    const ar=(A&&A.area)||[];
+    const tot={}; MGG_F.forEach(f=>tot[f]=sum(ar,f));
+    const mon={};
+    ar.forEach(x=>{const m=x.m||{};Object.keys(m).forEach(k=>{
+      mon[k]=mon[k]||{};MGG_F.forEach(f=>mon[k][f]=(mon[k][f]||0)+(+m[k][f]||0));});});
+    const hqm={};
+    ar.forEach(x=>{const hk=x.hq||'';
+      const o=hqm[hk]=hqm[hk]||{hq:hk,sA:0,dB:0,cA:0,cT:0,areas:[]};
+      o.sA+=(+x.sA||0);o.dB+=(+x.dB||0);o.cA+=(+x.cA||0);o.cT+=(+x.cT||0);
+      o.areas.push({name:(x.provs&&x.provs.length?x.provs.join('·'):(x.corp||x.area||'-')),sA:(+x.sA||0),dB:(+x.dB||0)});});
+    const hq=Object.keys(hqm).map(k=>hqm[k]).sort((a,b)=>b.sA-a.sA);
+    hq.forEach(o=>o.areas.sort((a,b)=>b.sA-a.sA));
+    const sn=(A&&A.snaps)||[];
+    let prev=null;
+    if(sn.length>1){const pv=sn[sn.length-2], par=pv.area||[];
+      const pt={}; MGG_F.forEach(f=>pt[f]=sum(par,f));
+      const phq={}; par.forEach(x=>{const hk=x.hq||'';phq[hk]=(phq[hk]||0)+(+x.sA||0);});
+      prev={week:pv.week,tot:pt,hq:phq};}
+    return {tot,mon,hq,prev};
+  };
+  return {week:raw.week||'',asOf:raw.asOf||'',files:raw.files||{},P:{ARi:one(raw.ARi),BD:one(raw.BD)}};
+}
+
+function mggFetch(force){
+  if(MGG.state==='loading')return;
+  if(!force){
+    try{const c=JSON.parse(sessionStorage.getItem('mgg_cache')||'null');
+      if(c&&c.t&&(Date.now()-c.t)<30*60*1000&&c.d){MGG={state:'ok',data:c.d,err:''};return;}}catch(e){}
+  }
+  MGG={state:'loading',data:MGG.data,err:''};
+  const cb='__mggCB'+Date.now();
+  const sc=document.createElement('script');
+  let done=false;
+  const fin=(st,err,d)=>{
+    if(done)return; done=true;
+    try{delete window[cb];}catch(e){window[cb]=undefined;}
+    try{sc.remove();}catch(e){}
+    MGG={state:st,data:d||MGG.data,err:err||''};
+    if(st==='ok'&&d){try{sessionStorage.setItem('mgg_cache',JSON.stringify({t:Date.now(),d}));}catch(e){}}
+    try{render();}catch(e){}
+  };
+  const tm=setTimeout(()=>fin('err','응답 시간 초과(30초) — 네트워크 또는 mgg_pm 데이터 주소 상태를 확인해 주세요'),30000);
+  window[cb]=raw=>{clearTimeout(tm);
+    try{fin('ok','',mggDigest(raw));}catch(e){fin('err','데이터 형식이 예상과 달라 처리하지 못했습니다: '+e.message);}};
+  sc.onerror=()=>{clearTimeout(tm);fin('err','연결 실패 — mgg_pm 데이터 주소에 접속할 수 없습니다(사내망·차단 여부 확인)');};
+  sc.src=MGG_EP+'?callback='+cb+'&t='+Date.now();
+  document.head.appendChild(sc);
+}
+
+function mggTiles(p,D){
+  const t=D.tot, m=D.mon[String(MONTH)]||{}, pv=D.prev;
+  const n=v=>Math.round(+v||0).toLocaleString('en-US');
+  const pc=(a,b)=>b?(Math.round((+a||0)/b*1000)/10)+'%':'–';
+  const wow=(MGGTAB[p]==='wow')&&!!pv;
+  const dv=(cur,prv)=>{const v=Math.round((+cur||0)-(+prv||0));return (v>0?'+':'')+v.toLocaleString('en-US');};
+  const T=[
+    {c:'g', lb:'26년 누적진입고객', v:wow?dv(t.cA,pv.tot.cA):n(t.cA), u:'',
+     sub:wow?`전주 ${n(pv.tot.cA)} → ${n(t.cA)}`:`목표 ${n(t.cT)}개소 · ${pc(t.cA,t.cT)}`},
+    {c:'n1', lb:'26년 판매수량', v:wow?dv(t.sA,pv.tot.sA):n(t.sA), u:'개',
+     sub:wow?`전주 ${n(pv.tot.sA)} → ${n(t.sA)}`:`목표 ${n(t.sT)}개 · ${pc(t.sA,t.sT)}`},
+    {c:'n2', lb:'대리상 구매', v:wow?dv(t.dB,pv.tot.dB):n(t.dB), u:'개',
+     sub:wow?`전주 ${n(pv.tot.dB)} → ${n(t.dB)}`:`소진율 ${pc(t.sA,t.dB)}`},
+    {c:'b1', lb:`${MONTH}월 판매`, v:n(m.sA), u:'개', sub:`${MONTH}월 목표 ${n(m.sT)} · ${pc(m.sA,m.sT)}`},
+    {c:'b2', lb:`${MONTH}월 진입`, v:n(m.cA), u:'', sub:`목표 ${n(m.cT)} · 확정 ${n(m.cC)}`}
+  ];
+  return '<div class="mgg-tiles">'+T.map(x=>`<div class="mgg-t ${x.c}"><div class="mgg-tl">${esc(x.lb)}</div>`
+    +`<div class="mgg-tv">${esc(x.v)}${x.u?`<span>${esc(x.u)}</span>`:''}</div>`
+    +`<div class="mgg-ts">${esc(x.sub)}</div></div>`).join('')+'</div>';
+}
+
+function mggDonut(D){
+  const t=D.tot, rate=t.cT?(+t.cA||0)/t.cT:0;
+  const R=54, C=2*Math.PI*R, on=Math.max(0,Math.min(1,rate))*C;
+  const n=v=>Math.round(+v||0).toLocaleString('en-US');
+  return `<div class="omc mgg-c"><div class="omc-h">목표고객 대비 진입</div>
+  <div class="mgg-dwrap">
+    <svg width="152" height="152" viewBox="0 0 152 152">
+      <circle cx="76" cy="76" r="${R}" fill="none" stroke="#E5E6EA" stroke-width="21"></circle>
+      <circle cx="76" cy="76" r="${R}" fill="none" stroke="#2F3B85" stroke-width="21"
+        stroke-dasharray="${on.toFixed(1)} ${(C-on).toFixed(1)}" transform="rotate(-90 76 76)"></circle>
+      <text x="76" y="74" text-anchor="middle" class="mgg-dn">${t.cT?(Math.round(rate*1000)/10)+'%':'–'}</text>
+      <text x="76" y="93" text-anchor="middle" class="mgg-dl">목표 달성</text>
+    </svg>
+    <div class="mgg-dleg">
+      <div><i style="background:#2F3B85"></i><span>진입 완료</span><b>${n(t.cA)}개소</b></div>
+      <div><i style="background:#E5E6EA"></i><span>목표 미달</span><b>${n(Math.max(0,(+t.cT||0)-(+t.cA||0)))}개소</b></div>
+    </div>
+  </div></div>`;
+}
+
+function mggBars(p,D){
+  const wow=(MGGTAB[p]==='wow')&&!!D.prev;
+  const rows=D.hq||[];
+  const mx=Math.max(1,...rows.map(o=>o.sA));
+  const n=v=>Math.round(+v||0).toLocaleString('en-US');
+  const pcs=(a,b)=>b?(Math.round((+a||0)/b*1000)/10)+'%':'0%';
+  let h=`<div class="omc mgg-c"><div class="omc-h">본부별 26년 판매 <span>누르면 권역별 펼침</span></div><div class="mgg-bars">`;
+  rows.forEach(o=>{
+    const ko=(MGG_HQKO[o.hq]!==undefined)?MGG_HQKO[o.hq]:(o.hq||'기타');
+    const key=p+'|'+ko, open=!!MGGOPEN[key];
+    const d=wow?(o.sA-(D.prev.hq[o.hq]||0)):null;
+    h+=`<div class="mgg-br" onclick="mggToggle('${key}')" title="클릭 → 권역별 펼침">`
+      +`<span class="mgg-bk">${open?'▾':'▸'} ${esc(ko)}</span>`
+      +`<span class="mgg-bt"><i style="width:${Math.round(o.sA/mx*100)}%"></i></span>`
+      +`<b>${n(o.sA)}</b><em>${wow?((d>0?'+':'')+Math.round(d).toLocaleString('en-US')):pcs(o.sA,o.dB)}</em></div>`;
+    if(open){
+      const amx=Math.max(1,...o.areas.map(a=>a.sA));
+      o.areas.forEach(a=>{h+=`<div class="mgg-br sub">`
+        +`<span class="mgg-bk">${esc(a.name)}</span>`
+        +`<span class="mgg-bt"><i style="width:${Math.round(a.sA/amx*100)}%"></i></span>`
+        +`<b>${n(a.sA)}</b><em>${pcs(a.sA,a.dB)}</em></div>`;});
+    }
+  });
+  h+=`</div><div class="mgg-foot">오른쪽 숫자 = ${wow?'전주 대비 판매 증감':'대리상 구매 대비 소진율'}</div></div>`;
+  return h;
+}
+
+function renderProductPerf(){
+  if(MGG.state==='idle')mggFetch();
+  const D=MGG.data;
+  let h=`<div class="ov-sec">제품 성과현황 <span class="ov-sub">ARi · BD · mgg_pm 주간보고 엑셀(구글드라이브) 실시간 연동${D?` · 기준 ${esc(D.week)} · ${esc(D.asOf)}`:''}</span></div>`;
+  h+='<div class="mgg-bar2">'
+   +`<button class="tb-b" onclick="mggFetch(1)"${MGG.state==='loading'?' disabled':''}>${MGG.state==='loading'?'불러오는 중…':'↻ 다시 불러오기'}</button>`
+   +(D&&D.files?`<span class="mgg-src">원본 ${esc(D.files.ARi||'')}${D.files.BD?' / '+esc(D.files.BD):''}</span>`:'')
+   +'</div>';
+  if(!D){
+    return h+`<div class="om-tile"><div class="om-ts">${MGG.state==='err'
+      ?esc(MGG.err)
+      :'mgg_pm 데이터를 불러오는 중입니다 — 첫 호출은 3~5초 걸립니다.'}</div></div>`;
+  }
+  ['ARi','BD'].forEach(p=>{
+    const Dp=D.P&&D.P[p]; if(!Dp)return;
+    h+='<div class="seccard mgg-sec">'
+      +`<div class="mgg-h"><b>${esc(p)} 성과현황</b>`
+      +`<span class="mgg-tabs"><button class="${MGGTAB[p]==='cur'?'on':''}" onclick="mggSetTab('${p}','cur')">성과현황</button>`
+      +`<button class="${MGGTAB[p]==='wow'?'on':''}" onclick="mggSetTab('${p}','wow')">전주 대비 증감</button></span>`
+      +(Dp.prev?`<span class="mgg-pw">전주 ${esc(Dp.prev.week)} 대비</span>`:'<span class="mgg-pw">전주 스냅샷 없음</span>')
+      +'</div>'
+      +mggTiles(p,Dp)
+      +'<div class="mgg-2col">'+mggDonut(Dp)+mggBars(p,Dp)+'</div>'
+      +'</div>';
+  });
+  if(MGG.state==='err')h+=`<div class="lp-warn">최신 데이터를 불러오지 못해 직전에 받아둔 값을 보여주고 있습니다 — ${esc(MGG.err)}</div>`;
+  return h;
+}
+/* ================= 현지실적 (중국 닝보·북경 / 대만) · 2026-09-15 요청 =================
+   본사실적 다음 탭. 본사실적과 같은 순서(KPI 콤보카드 → 그래프 → 표)로 구성한다.
+   · 항목은 「현지 매출」과 「현지 수금」 둘만 (임플란트 판매·본사 수출/송금·Cash flow·본사 채권은 제외)
+   · 행은 9월 / 누적(1~9월) / 연간 × 닝보 · 북경 · 중국 소계 · 대만
+   · 그래프는 금액이 아니라 "목표 대비 달성율(%)" — 중국 매출 M RMB, 대만 매출 K TWD, 수금 K USD로
+     통화가 서로 달라 금액 막대로는 비교가 불가능하고 환산하면 환율 가정이 섞인다. 달성율은 단위가
+     없어 네 법인을 같은 축에 놓을 수 있고 절대금액은 바로 아래 표에 그대로 있다.
+   각 항목 배열 = [25년실적, 26년목표, 실적, 달성율(%), 성장율(%), 예상, 예상달성율(%)]  (수금은 앞 5개)
+   null = 원본에 값이 없음(대만은 26년 신규법인이라 25년 실적·성장율이 없고, 현지 수금 집계 항목 자체가 없음)
+   ※ 추후 마스터 구글시트에 「현지실적」 탭을 만들면 이 상수만 그 값으로 교체하면 된다 */
+const LOCALPERF={
+  asOf:{cn:'2026-09-12', tw:'2026-09-11'},
+  corps:[
+    {id:'ning',label:'닝보',sub:'중국',cur:'M RMB',curCash:'K USD',
+      sale:{m:[21787,27233,2450,9,-89,24400,90], c:[177971,194712,145816,75,-18,167766,86], y:[229272,272323,145816,54,null,167766,62]},
+      cash:{m:[13167,27233,1250,5,-91],           c:[162819,194712,128810,66,-21],            y:[219126,272323,128810,47,null]}},
+    {id:'beij',label:'북경',sub:'중국',cur:'M RMB',curCash:'K USD',
+      sale:{m:[5069,5890,509,9,-90,4500,76],      c:[35015,42137,28567,68,-18,32558,77],      y:[43140,58935,28567,48,null,32558,55]},
+      cash:{m:[5357,5890,632,11,-88],             c:[34792,42137,27801,66,-20],               y:[42722,58935,27801,47,null]}},
+    {id:'cn',label:'중국 소계',sub:'닝보+북경',cur:'M RMB',curCash:'K USD',sum:true,
+      sale:{m:[26856,33123,2959,9,-89,28900,87],  c:[212986,236849,174383,74,-18,200324,85],  y:[272412,331259,174383,53,null,200324,60]},
+      cash:{m:[18524,33123,1882,6,-90],           c:[197611,236849,156612,66,-21],            y:[261848,331259,156612,47,null]}},
+    {id:'tw',label:'대만',sub:'Sunriser+TBMS',cur:'K TWD',curCash:null,tw:true,
+      sale:{m:[null,3700,0,0,null,3300,89],       c:[null,4700,1082,23,null,4382,93],         y:[null,25400,1082,4,null,null,null]},
+      cash:null}
+  ]
+};
+const LP_S1='#4750D0';   /* 현지 매출 — MEGAGEN 인디고 계열 */
+const LP_S2='#14A3A0';   /* 현지 수금 — 색각이상 구분도 검증 통과(ΔE 21.9 deutan) */
+
+/* 2026-09-15 요청("내용까지 똑같이"): KPI 콤보 카드를 본사실적·현지실적·주간보고 세 탭이 공유한다.
+   중국 합계 · 닝보 · 북경 · 대만 4장, 위=누적 매출 / 아래=누적 수금(뱃지=목표 대비 달성율).
+   ※ 이 교체로 본사실적 탭 상단에서 「본사 수출·수금(천$)」 카드는 사라진다. 해당 수치는 같은 탭
+      아래의 년간 실적그래프와 월 실적상세표에 그대로 있으므로 화면에서 정보가 없어지지는 않는다.
+      되돌리려면 renderOverview()의 타일 분기에서 localPerfTiles() 를 mrMainTiles()/mrWeekTiles() 로 바꾸면 된다. */
+function localPerfTiles(){
+  const C=LOCALPERF.corps, byId=id=>C.find(x=>x.id===id);
+  const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
+  const sec=(lb,val,rate,sub,cur,na)=>`<div class="om-combo-sec">`
+    +`<div class="om-tl">${esc(lb)} ${omPillN(rate,{pct:true,na:!!na,naText:'데이터 없음'})}</div>`
+    +(na?`<div class="om-tv lp-na" style="font-size:19px">—</div>`
+        :`<div class="om-tv">${n(val)}<span class="om-tu">${esc(cur)}</span></div>`)
+    +`<div class="om-ts">${esc(sub)}</div></div>`;
+  let h='<div class="om-tiles">';
+  ['cn','ning','beij','tw'].forEach(id=>{
+    const d=byId(id), s=d.sale.c, ca=d.cash?d.cash.c:null;
+    h+='<div class="om-tile om-combo">'
+      + sec(`${d.label} 누적 매출`, s[2], s[3], `목표 ${n(s[1])} · 잔여 ${n(Math.max(0,(s[1]||0)-(s[2]||0)))}`, d.cur, false)
+      + '<div class="om-combo-div"></div>'
+      + (ca ? sec(`${d.label} 누적 수금`, ca[2], ca[3], `목표 ${n(ca[1])} · 잔여 ${n(Math.max(0,(ca[1]||0)-(ca[2]||0)))}`, d.curCash, false)
+            : sec(`${d.label} 누적 수금`, null, null, '대만법인 수금 집계 항목 없음', '', true))
+      + '</div>';
+  });
+  return h+'</div>';
+}
+function localPerfTilesSub(){
+  return `누적(1~${MONTH}월) 기준 · 중국 합계·닝보·북경·대만의 현지 매출·수금 · 뱃지 = 26년 목표 대비 달성율 · 중국 ${LOCALPERF.asOf.cn} · 대만 ${LOCALPERF.asOf.tw} 기준`;
+}
+function renderLocalPerf(){
+  const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
+  const C=LOCALPERF.corps, byId=id=>C.find(x=>x.id===id);
+  let h=`<div class="ov-sec">현지실적 핵심 지표 <span class="ov-sub">${esc(localPerfTilesSub())}</span></div>`;
+  h+=localPerfTiles();
+
+  /* ---------- 2) 그래프 · 법인별 목표 대비 달성율 ---------- */
+  const H=150;
+  const bar=(v,color)=>{
+    if(v==null)return '<div class="lp-bar"></div>';
+    const hh=Math.max(2,Math.round(Math.min(v,100)/100*H));
+    return `<div class="lp-bar" style="height:${hh}px"><em>${v}%</em><i style="height:100%;background:${color}"></i></div>`;
+  };
+  h+=`<div class="seccard" style="padding-top:10px">`
+   +`<div class="ov-sec">목표 대비 달성율 <span class="ov-sub">법인별 · ${MONTH}월 / 누적(1~${MONTH}월) / 연간 · 세로축 = 26년 목표 대비 달성율(%) · 통화가 달라도 비교되도록 금액이 아닌 달성율로 표시</span></div>`
+   +`<div class="lp-legend"><span><i class="lp-dot" style="background:${LP_S1}"></i>현지 매출</span><span><i class="lp-dot" style="background:${LP_S2}"></i>현지 수금</span></div>`
+   +'<div class="om-charts om-charts4">';
+  ['ning','beij','cn','tw'].forEach(id=>{
+    const d=byId(id);
+    let grps='';
+    ['m','c','y'].forEach(kk=>{
+      const s=d.sale[kk], ca=d.cash?d.cash[kk]:null;
+      grps+=`<div class="lp-cgrp">${bar(s?s[3]:null,LP_S1)}${bar(ca?ca[3]:null,LP_S2)}</div>`;
+    });
+    h+=`<div class="omc"><div class="omc-h">${esc(d.label)}<span>${esc(d.cur)}${d.curCash?' · '+esc(d.curCash):''}</span></div>`
+      +`<div class="lp-plot"><div class="lp-gl" style="bottom:${H}px"><b>100%</b></div><div class="lp-gl" style="bottom:${H*0.5}px"><b>50%</b></div>`
+      +`<div class="lp-groups">${grps}</div></div>`
+      +`<div class="lp-xlab"><span>${MONTH}월</span><span>누적</span><span>연간</span></div>`
+      +(d.cash?'':'<div class="om-ts" style="margin-top:6px;text-align:center">수금 데이터 없음 — 매출만 표시</div>')
+      +'</div>';
+  });
+  h+='</div></div>';
+
+  /* ---------- 3) 표 ---------- */
+  const g=v=>v==null?'<td class="lp-na">—</td>':`<td class="${v<0?'ov-r':''}">${v}%</td>`;
+  const cell=v=>v==null?'<td class="lp-na">—</td>':`<td>${n(v)}</td>`;
+  const pct=v=>v==null?'<td class="lp-na">—</td>':`<td>${v}%</td>`;
+  h+='<div class="seccard" style="padding-top:10px">'
+   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">중국(닝보·북경) · 대만 · ${MONTH}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
+   +'<table class="ov-tbl ov-perf lp-tbl">'
+   +'<colgroup><col style="width:52px"><col style="width:104px">'
+   +'<col style="width:82px"><col style="width:82px"><col style="width:80px"><col style="width:60px"><col style="width:62px"><col style="width:82px"><col style="width:62px">'
+   +'<col style="width:82px"><col style="width:82px"><col style="width:80px"><col style="width:60px"><col style="width:62px"></colgroup>'
+   +'<thead><tr><th rowspan="2">구분</th><th rowspan="2">법인</th>'
+   +'<th class="gh bd-x" colspan="7">현지 매출 <span>중국 M RMB · 대만 K TWD</span></th>'
+   +'<th class="gh" colspan="5">현지 수금 <span>K USD</span></th></tr>'
+   +'<tr class="sub"><th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th><th>예상</th><th class="bd-x">예상 달성율</th>'
+   +'<th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th></tr></thead><tbody>';
+  [['m',MONTH+'월'],['c','누적'],['y','연간']].forEach(([kk,glabel])=>{
+    C.forEach((d,i)=>{
+      const s=d.sale[kk], ca=d.cash?d.cash[kk]:null;
+      h+=`<tr class="${d.sum?'ov-sub-row':(d.tw?'lp-tw':'')}">`;
+      if(i===0)h+=`<td class="lp-grp" rowspan="${C.length}">${esc(glabel)}</td>`;
+      h+=`<td class="lp-corp">${esc(d.label)}<u>${esc(d.sub)} · ${esc(d.cur)}</u></td>`;
+      h+=cell(s[0])+cell(s[1])+`<td><b>${n(s[2])}</b></td>`+pct(s[3])+g(s[4])
+        +(s[5]==null?'<td class="lp-na">—</td>':`<td class="lp-fc">${n(s[5])}</td>`)
+        +(s[6]==null?'<td class="lp-na bd-x">—</td>':`<td class="lp-fc bd-x">${s[6]}%</td>`);
+      h+= ca ? (cell(ca[0])+cell(ca[1])+`<td><b>${n(ca[2])}</b></td>`+pct(ca[3])+g(ca[4]))
+             : '<td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td>';
+      h+='</tr>';
+    });
+  });
+  h+='</tbody></table>'
+   +'<div class="ov-foot">※ 달성율 = 실적 ÷ 26년 목표 · 성장율 = (26년 − 25년) ÷ 25년 · 연간 행의 성장율은 연말 확정 후 산출 · 「예상 달성율」은 예상 ÷ 26년 목표로 산출<br>'
+   +'※ 대만법인은 26년 신규 법인이라 25년 실적·성장율이 없고, 현지 수금은 아직 집계 항목이 없어 전부 «—»로 둡니다</div>'
+   +'<div class="lp-warn"><b>확인 필요</b> — 원본에서 「현지 수금」 단위가 K USD로 적혀 있는데, 닝보 26년 목표가 매출 194,712 / 수금 194,712로 완전히 동일합니다(북경·합계도 동일). 수금 목표를 매출 목표와 같은 값으로 잡은 것이라면 수금 단위도 매출과 같은 RMB여야 맞습니다. 단위 표기 오기인지 확인 부탁드립니다.</div>'
+   +'</div>';
+  return h;
+}
+/* 2026-09-15 요청: 주간보고 탭에도 본사실적·현지실적과 같은 콤보 KPI 카드를 지역별 4장으로.
+   위 = 이번주 과제 건수(뱃지=완료율), 아래 = 평균 진행률. 값은 모두 activeRows()에서 직접 계산한다
+   (별도 스냅샷을 두면 원본이 바뀌었는데 카드만 옛날 값으로 남는 사고가 난다). */
+function mrWeekTiles(){
+  const rows=activeRows();
+  const pick=c=>c?rows.filter(r=>String(r.country||'')===c):rows;
+  const stat=list=>{
+    const n=list.length;
+    const pv=r=>{const v=parseInt(r.p);return isNaN(v)?0:v;};
+    return {n,
+      done:list.filter(r=>pv(r)>=100).length,
+      risk:list.filter(r=>r.risk).length,
+      avg:n?Math.round(list.reduce((a,r)=>a+pv(r),0)/n):null,
+      hi:list.filter(r=>pv(r)>=90).length,
+      lo:list.filter(r=>pv(r)<50).length};
+  };
+  const sec=(lb,val,unit,pill,sub)=>`<div class="om-combo-sec"><div class="om-tl">${esc(lb)} ${pill}</div>`
+    +`<div class="om-tv">${val}${unit?`<span class="om-tu">${esc(unit)}</span>`:''}</div>`
+    +`<div class="om-ts">${esc(sub)}</div></div>`;
+  let h='<div class="om-tiles">';
+  [['전체',''],['중국','중국'],['대만','대만'],['홍콩','홍콩']].forEach(([nm,c])=>{
+    const s=stat(pick(c));
+    const doneRate=s.n?Math.round(s.done/s.n*100):null;
+    h+='<div class="om-tile om-combo">'
+      + sec(`${nm} 이번주 과제`, s.n.toLocaleString('en-US'), '건',
+            omPillN(doneRate,{pct:true,na:!s.n,naText:'과제 없음'}),
+            s.n?`완료 ${s.done} · 지연주의 ${s.risk}`:'등록된 과제 없음')
+      + '<div class="om-combo-div"></div>'
+      + sec(`${nm} 평균 진행률`, (s.avg==null?'–':s.avg), (s.avg==null?'':'%'), '',
+            s.n?`90%↑ ${s.hi}건 · 50% 미만 ${s.lo}건`:'–')
+      + '</div>';
+  });
+  return h+'</div>';
+}
 function mrMainTiles(){
   /* 2026-09-12 요청: 지역별 수출·수금 타일이 위(수출)·아래(수금) 두 줄로 나뉘어 있던 걸
      지역당 카드 1개로 합침(수출 위 / 구분선 / 수금 아래) + 카드 내 글자 10% 축소(.om-combo) */
   const A=mdAggUpto('전체',MONTH),C=mdAggUpto('중국',MONTH),T=mdAggUpto('대만',MONTH),HK=mdAggUpto('홍콩',MONTH);
   const k=v=>Math.round((v||0)/1000),n=v=>k(v).toLocaleString('en-US');
   const pct=(v,base)=>base?Math.round(v/base*100):0;
-  const sec=(lb,val,r,sub)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPill(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
+  /* 2026-09-15 요청("본사실적 kpi 카드도 현지실적처럼"): 뱃지를 .om-pill(회색·50%미만만 빨강)로 교체 */
+  const sec=(lb,val,r,sub)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPillN(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   const combo=(exSec,suSec)=>`<div class="om-tile om-combo">${exSec}<div class="om-combo-div"></div>${suSec}</div>`;
   let h='<div class="om-tiles">';
   h+=combo(
@@ -5557,7 +5979,7 @@ function renderOverview(){
   const isMR=(TAB==='mreport');
   /* 2026-09-09 요청: 본사실적 다음은 주간보고 순으로, 중점추진과제는 맨 뒤로 이동
      2026-09-09 요청(2차): 「팀 종합현황」에 있던 출장일정을 업무현황 안, 중점추진과제 바로 뒤로 이동 */
-  let OVTABS=isMR?[['main','본사실적'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
+  let OVTABS=isMR?[['main','본사실적'],['local','현지실적'],['prod','제품성과'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
                  :[['main','본사실적'],['month','월별보고'],['focus','중점추진과제'],['trip','출장일정']];
   if(isMR&&RO()){
     if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고·출장일정만 */
@@ -5570,22 +5992,30 @@ function renderOverview(){
   if(!OVTABS.some(([k])=>k===CT))CT=(OVTABS[0]||['main'])[0];
   if(isMR)MRTAB=CT; else OVTAB=CT;
   h+='<div class="pm-tabs" style="margin-bottom:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
-  const showTiles=!isMR||['main','focus','month'].includes(CT);
-  if(showTiles){
-    const secSub=(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+  const showTiles=!isMR||['main','local','focus','month','week'].includes(CT); /* 2026-09-15: 주간보고에도 KPI 카드(현지실적은 자체 렌더) */
+  if(showTiles&&CT!=='local'&&CT!=='prod'){
+    const secSub=(isMR&&(CT==='week'||CT==='main'))?localPerfTilesSub():(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     /* 2026-09-09 요청: 본사실적 탭의 핵심지표 헤더 앞에 "몇월 몇주차" 표기 추가 */
-    const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:'핵심 지표';
+    const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:(isMR&&CT==='week')?`${MONTH}월 ${W+1}주차 주간보고 핵심 지표`:'핵심 지표';
     h+=`<div class="ov-sec">${esc(kpiHead)} <span class="ov-sub">${secSub}</span></div>`;
     const evTile=evListTile(wev);
     if(isMR){
-      if(CT==='focus')h+=mrFocusTiles(evTile);
+      /* 2026-09-15 요청("내용까지 똑같이"): 본사실적·주간보고 상단 카드를 현지실적 카드와 동일하게 통일.
+         기존 mrMainTiles()/mrWeekTiles()는 되돌리기 쉽게 그대로 남겨둔다. */
+      if(CT==='main'||CT==='week')h+=localPerfTiles();
+      else if(CT==='focus')h+=mrFocusTiles(evTile);
       else if(CT==='month')h+=mrTeamTiles(evTile);
-      else if(PERIOD==='week')h+=ovMainTiles();
-      else h+=mrMainTiles(); /* 2026-09-11 요청: 본사실적 화면은 "당월 중화팀 행사" 타일 제거 · 수출·수금 4개씩 별도 함수로 분리 */
+      else h+=mrMainTiles();
     } else h+=ovMainTiles(evTile);
   }
   h+='<div class="ov-tabc">';
-  if(CT==='week'){
+  if(CT==='prod'){
+    /* 2026-09-15 요청: mgg_pm(ARi·BD 성과현황) 화면을 같은 데이터로 끌어온 탭 */
+    h+='<div style="margin-top:2px">'+renderProductPerf()+'</div>';
+  } else if(CT==='local'){
+    /* 2026-09-15 요청: 본사실적 뒤 「현지실적」 탭 — 중국(닝보·북경)·대만의 현지 매출·현지 수금 */
+    h+='<div style="margin-top:2px">'+renderLocalPerf()+'</div>';
+  } else if(CT==='week'){
     h+='<div style="margin-top:2px">'+viewRR(activeRows())+'</div>';
   } else if(CT==='kanban'){
     h+='<div style="margin-top:2px">'+viewKanban(activeRows())+'</div>';
