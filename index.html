@@ -2627,7 +2627,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.15-M317</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.18-M320</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2651,6 +2651,8 @@ body,input,select,textarea,button,table{font-size:inherit}
       <div class="tbar-data">
         <button class="tb-b prim" onclick="cloudLoadSheet()">📊 <span class="lb-full">구글시트 불러오기</span><span class="lb-ro">시트 새로고침</span></button>
         <span id="pullWarnBadge" onclick="showPullWarn()" style="display:none;align-items:center;font-size:12.1px;font-weight:700;letter-spacing:.01em;padding:0 6px;color:#c0392b;cursor:pointer">⚠ 불러오기 확인 필요</span>
+        <!-- 2026-09-18: 공개(비로그인) 자동 동기화 진행상태 — 로그인 여부와 무관하게 항상 보인다 -->
+        <span id="pubSyncBadge" style="display:none;align-items:center;font-size:12.1px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
         <button class="tb-b" onclick="cloudSave()">☁ 저장</button>
         <span class="ro-badge">🔒 읽기 전용</span>
         <span id="syncBadge" style="display:none;align-items:center;font-size:12.1px;font-weight:700;letter-spacing:.01em;padding:0 6px"></span>
@@ -5339,26 +5341,33 @@ function renderProductPerf(){
    · 그래프는 금액이 아니라 "목표 대비 달성율(%)" — 중국 매출 M RMB, 대만 매출 K TWD, 수금 K USD로
      통화가 서로 달라 금액 막대로는 비교가 불가능하고 환산하면 환율 가정이 섞인다. 달성율은 단위가
      없어 네 법인을 같은 축에 놓을 수 있고 절대금액은 바로 아래 표에 그대로 있다.
-   각 항목 배열 = [25년실적, 26년목표, 실적, 달성율(%), 성장율(%), 예상, 예상달성율(%)]  (수금은 앞 5개)
+   각 항목 배열 = [25년실적, 26년목표, 실적, 달성율(%), 성장율(%), 예상, 예상달성율(%), 예상성장율(%)]  (수금은 앞 5개)
    null = 원본에 값이 없음(대만은 26년 신규법인이라 25년 실적·성장율이 없고, 현지 수금 집계 항목 자체가 없음)
-   ※ 추후 마스터 구글시트에 「현지실적」 탭을 만들면 이 상수만 그 값으로 교체하면 된다 */
-let LOCALPERF={
-  asOf:{cn:'2026-09-12', tw:'2026-09-11'},
-  corps:[
-    {id:'ning',label:'닝보',sub:'중국',cur:'M RMB',curCash:'K USD',
-      sale:{m:[21787,27233,2450,9,-89,24400,90], c:[177971,194712,145816,75,-18,167766,86], y:[229272,272323,145816,54,null,167766,62]},
-      cash:{m:[13167,27233,1250,5,-91],           c:[162819,194712,128810,66,-21],            y:[219126,272323,128810,47,null]}},
-    {id:'beij',label:'북경',sub:'중국',cur:'M RMB',curCash:'K USD',
-      sale:{m:[5069,5890,509,9,-90,4500,76],      c:[35015,42137,28567,68,-18,32558,77],      y:[43140,58935,28567,48,null,32558,55]},
-      cash:{m:[5357,5890,632,11,-88],             c:[34792,42137,27801,66,-20],               y:[42722,58935,27801,47,null]}},
-    {id:'cn',label:'중국 소계',sub:'닝보+북경',cur:'M RMB',curCash:'K USD',sum:true,
-      sale:{m:[26856,33123,2959,9,-89,28900,87],  c:[212986,236849,174383,74,-18,200324,85],  y:[272412,331259,174383,53,null,200324,60]},
-      cash:{m:[18524,33123,1882,6,-90],           c:[197611,236849,156612,66,-21],            y:[261848,331259,156612,47,null]}},
-    {id:'tw',label:'대만',sub:'Sunriser+TBMS',cur:'K TWD',curCash:null,tw:true,
-      sale:{m:[null,3700,0,0,null,3300,89],       c:[null,4700,1082,23,null,4382,93],         y:[null,25400,1082,4,null,null,null]},
-      cash:null}
-  ]
+   ※ 추후 마스터 구글시트에 「현지실적」 탭을 만들면 이 상수만 그 값으로 교체하면 된다
+
+   2026-09-18 갱신: 중국(닝보·북경) W38 기준 원본으로 교체. 대만은 원본이 9/11 기준 그대로라 값 변동 없음.
+   · 달성율·성장율·예상달성율·예상성장율은 아래 lpBuildFromBase()가 금액에서 다시 계산한다 — 원본 표에
+     적힌 %를 그대로 베껴 넣으면 목표(분모)만 고쳤을 때 %가 같이 안 고쳐져 표와 그래프가 조용히 어긋난다.
+   · 「중국 소계」도 닝보+북경을 더해 계산한다. 원본 소계는 반올림 전 값을 더해서 1 차이가 나는 칸이 있다
+     (예: 9월 매출 소계 원본 3,590 ↔ 2,897+692=3,589 / 누적 수금 소계 원본 157,835 ↔ 129,720+28,114=157,834).
+     화면은 "닝보+북경 = 소계"가 눈으로 맞는 쪽을 택한다. */
+const LP_REV='2026-09-18'; /* 내장 기준값을 갱신한 날짜 — 브라우저에 저장된 옛 값이 이걸 덮어쓰지 못하게 하는 기준 */
+/* 금액만 적고 %는 전부 계산하게 한다 — {v25, tgt, act, exp} */
+const LOCALPERF_BASE={
+  asOf:{cn:'2026-09-18', tw:'2026-09-11'},
+  ning:{sale:{m:{v25:21787,tgt:27233,act:2897,exp:24400}, c:{v25:177971,tgt:194712,act:146264,exp:167766}, y:{v25:229272,tgt:272323,act:146264,exp:167766}},
+        cash:{m:{v25:13167,tgt:27233,act:2160},            c:{v25:162819,tgt:194712,act:129720},            y:{v25:219126,tgt:272323,act:129720}}},
+  beij:{sale:{m:{v25:5069,tgt:5890,act:692,exp:4500},      c:{v25:35015,tgt:42137,act:28750,exp:32558},     y:{v25:43140,tgt:58935,act:28750,exp:32558}},
+        cash:{m:{v25:5357,tgt:5890,act:945},               c:{v25:34792,tgt:42137,act:28114},               y:{v25:42722,tgt:58935,act:28114}}},
+  tw:  {sale:{m:{v25:null,tgt:3700,act:0,exp:3300},        c:{v25:null,tgt:4700,act:1082,exp:4382},         y:{v25:null,tgt:25400,act:1082,exp:null}}}
 };
+function lpBuildFromBase(){
+  const B=LOCALPERF_BASE;
+  const o=lpBuild({ning:B.ning,beij:B.beij,tw:B.tw},{asOf:B.asOf,corps:[]});
+  o.asOf=B.asOf; o.src='base'; o.rev=LP_REV; o.pulledAt='';
+  return o;
+}
+let LOCALPERF=null; /* lpBuild 정의 뒤에서 채운다 */
 /* ===== 「현지실적」 구글시트 연동 (2026-09-15 요청) =====
    시트에서 받은 원자료(법인×항목×구분 → {v25,tgt,act,exp})를 화면이 쓰는 구조로 바꾼다.
    달성율·성장율·예상달성율은 전부 여기서 계산한다 — 시트에 직접 적어 넣으면 목표(분모)를
@@ -5372,8 +5381,10 @@ function lpBuild(raw,prev){
   const add=(x,y)=>{if(!x&&!y)return null;
     const f=n=>{const p1=x?x[n]:null,p2=y?y[n]:null;return (p1==null&&p2==null)?null:((+p1||0)+(+p2||0));};
     return {v25:f('v25'),tgt:f('tgt'),act:f('act'),exp:f('exp')};};
-  const saleRow=(o,k)=>o?[o.v25,o.tgt,o.act,R(o.act,o.tgt),(k==='y'?null:GR(o.act,o.v25)),o.exp,(o.exp==null?null:R(o.exp,o.tgt))]
-                       :[null,null,null,null,null,null,null];
+  /* 2026-09-18: 원본에 「예상」 뒤 달성율·성장율이 두 칸 있어 예상성장율(8번째)을 추가 */
+  const saleRow=(o,k)=>o?[o.v25,o.tgt,o.act,R(o.act,o.tgt),(k==='y'?null:GR(o.act,o.v25)),o.exp,
+                          (o.exp==null?null:R(o.exp,o.tgt)),(k==='y'||o.exp==null?null:GR(o.exp,o.v25))]
+                       :[null,null,null,null,null,null,null,null];
   const cashRow=(o,k)=>o?[o.v25,o.tgt,o.act,R(o.act,o.tgt),(k==='y'?null:GR(o.act,o.v25))]
                        :[null,null,null,null,null];
   const prevBy={}; (((prev&&prev.corps)||[])).forEach(c=>prevBy[c.id]=c);
@@ -5394,16 +5405,26 @@ function lpBuild(raw,prev){
     ]};
 }
 function saveLOCALPERF(){try{localStorage.setItem('wr_localperf_v1',JSON.stringify(LOCALPERF));}catch(e){}}
-(function(){try{const raw=localStorage.getItem('wr_localperf_v1');if(raw){const o=JSON.parse(raw);
-  if(o&&o.corps&&o.corps.length)LOCALPERF=o;}}catch(e){}})();
+/* 내장 기준값 → 그 다음 저장본으로 덮어쓰기.
+   2026-09-18: 여기서 조건 없이 저장본을 복원하던 게 함정이었다 — 내장 수치를 새로 갱신해도
+   브라우저에 남아 있던 옛 값이 그대로 덮어써서 "고쳤는데 화면이 안 바뀐다"가 된다.
+   저장본이 현재 내장본보다 새로울 때(시트에서 받아온 값 포함)만 복원하고, 아니면 버린다. */
+LOCALPERF=lpBuildFromBase();
+(function(){try{
+  const raw=localStorage.getItem('wr_localperf_v1'); if(!raw)return;
+  const o=JSON.parse(raw); if(!o||!o.corps||!o.corps.length)return;
+  const stamp=String(o.pulledAt||o.rev||'');
+  if(stamp&&stamp>=LP_REV){LOCALPERF=o;return;}
+  localStorage.removeItem('wr_localperf_v1'); /* 낡은 저장본 폐기 — 다음 시트 동기화 때 새로 쌓인다 */
+}catch(e){}})();
 const LP_S1='#4750D0';   /* 현지 매출 — MEGAGEN 인디고 계열 */
 const LP_S2='#14A3A0';   /* 현지 수금 — 색각이상 구분도 검증 통과(ΔE 21.9 deutan) */
 
-/* 2026-09-15 요청("내용까지 똑같이"): KPI 콤보 카드를 본사실적·현지실적·주간보고 세 탭이 공유한다.
-   중국 합계 · 닝보 · 북경 · 대만 4장, 위=누적 매출 / 아래=누적 수금(뱃지=목표 대비 달성율).
-   ※ 이 교체로 본사실적 탭 상단에서 「본사 수출·수금(천$)」 카드는 사라진다. 해당 수치는 같은 탭
-      아래의 년간 실적그래프와 월 실적상세표에 그대로 있으므로 화면에서 정보가 없어지지는 않는다.
-      되돌리려면 renderOverview()의 타일 분기에서 localPerfTiles() 를 mrMainTiles()/mrWeekTiles() 로 바꾸면 된다. */
+/* 「현지실적」 탭 전용 KPI 콤보 카드 — 중국 합계 · 닝보 · 북경 · 대만 4장,
+   위=누적 현지매출 / 아래=누적 현지수금(뱃지=26년 목표 대비 달성율).
+   2026-09-15에는 이 카드를 본사실적·주간보고 탭까지 세 탭이 공유했으나, 2026-09-18에
+   본사실적은 mrMainTiles()(본사 수출·수금 천$)로 되돌렸다 — 본사실적 탭의 나머지 내용이
+   전부 USD라 카드만 RMB·TWD면 같은 화면에서 단위가 충돌한다. 카드 디자인은 양쪽이 동일하다. */
 function localPerfTiles(){
   const C=LOCALPERF.corps, byId=id=>C.find(x=>x.id===id);
   const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
@@ -5468,12 +5489,12 @@ function renderLocalPerf(){
    +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">중국(닝보·북경) · 대만 · ${MONTH}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
    +'<table class="ov-tbl ov-perf lp-tbl">'
    +'<colgroup><col style="width:52px"><col style="width:104px">'
-   +'<col style="width:82px"><col style="width:82px"><col style="width:80px"><col style="width:60px"><col style="width:62px"><col style="width:82px"><col style="width:62px">'
-   +'<col style="width:82px"><col style="width:82px"><col style="width:80px"><col style="width:60px"><col style="width:62px"></colgroup>'
+   +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"><col style="width:78px"><col style="width:58px"><col style="width:58px">'
+   +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"></colgroup>'
    +'<thead><tr><th rowspan="2">구분</th><th rowspan="2">법인</th>'
-   +'<th class="gh bd-x" colspan="7">현지 매출 <span>중국 M RMB · 대만 K TWD</span></th>'
+   +'<th class="gh bd-x" colspan="8">현지 매출 <span>중국 M RMB · 대만 K TWD</span></th>'
    +'<th class="gh" colspan="5">현지 수금 <span>K USD</span></th></tr>'
-   +'<tr class="sub"><th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th><th>예상</th><th class="bd-x">예상 달성율</th>'
+   +'<tr class="sub"><th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th><th>예상</th><th>예상 달성율</th><th class="bd-x">예상 성장율</th>'
    +'<th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th></tr></thead><tbody>';
   [['m',MONTH+'월'],['c','누적'],['y','연간']].forEach(([kk,glabel])=>{
     C.forEach((d,i)=>{
@@ -5483,15 +5504,17 @@ function renderLocalPerf(){
       h+=`<td class="lp-corp">${esc(d.label)}<u>${esc(d.sub)} · ${esc(d.cur)}</u></td>`;
       h+=cell(s[0])+cell(s[1])+`<td><b>${n(s[2])}</b></td>`+pct(s[3])+g(s[4])
         +(s[5]==null?'<td class="lp-na">—</td>':`<td class="lp-fc">${n(s[5])}</td>`)
-        +(s[6]==null?'<td class="lp-na bd-x">—</td>':`<td class="lp-fc bd-x">${s[6]}%</td>`);
+        +(s[6]==null?'<td class="lp-na">—</td>':`<td class="lp-fc">${s[6]}%</td>`)
+        +(s[7]==null?'<td class="lp-na bd-x">—</td>':`<td class="lp-fc bd-x${s[7]<0?' ov-r':''}">${s[7]}%</td>`);
       h+= ca ? (cell(ca[0])+cell(ca[1])+`<td><b>${n(ca[2])}</b></td>`+pct(ca[3])+g(ca[4]))
              : '<td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td>';
       h+='</tr>';
     });
   });
   h+='</tbody></table>'
-   +'<div class="ov-foot">※ 달성율 = 실적 ÷ 26년 목표 · 성장율 = (26년 − 25년) ÷ 25년 · 연간 행의 성장율은 연말 확정 후 산출 · 「예상 달성율」은 예상 ÷ 26년 목표로 산출<br>'
-   +'※ 대만법인은 26년 신규 법인이라 25년 실적·성장율이 없고, 현지 수금은 아직 집계 항목이 없어 전부 «—»로 둡니다</div>'
+   +'<div class="ov-foot">※ 달성율 = 실적 ÷ 26년 목표 · 성장율 = (26년 − 25년) ÷ 25년 · 연간 행의 성장율은 연말 확정 후 산출 · 「예상 달성율」= 예상 ÷ 26년 목표 · 「예상 성장율」= (예상 − 25년) ÷ 25년<br>'
+   +'※ 대만법인은 26년 신규 법인이라 25년 실적·성장율이 없고, 현지 수금은 아직 집계 항목이 없어 전부 «—»로 둡니다<br>'
+   +'※ 중국 소계는 화면에서 닝보+북경을 더해 산출합니다 — 원본 소계는 반올림 전 값을 더한 것이라 1 차이가 나는 칸이 있습니다(원본 3,590·157,835·331,259 ↔ 화면 3,589·157,834·331,258)</div>'
    +'<div class="lp-warn"><b>확인 필요</b> — 원본에서 「현지 수금」 단위가 K USD로 적혀 있는데, 닝보 26년 목표가 매출 194,712 / 수금 194,712로 완전히 동일합니다(북경·합계도 동일). 수금 목표를 매출 목표와 같은 값으로 잡은 것이라면 수금 단위도 매출과 같은 RMB여야 맞습니다. 단위 표기 오기인지 확인 부탁드립니다.</div>'
    +'</div>';
   return h;
@@ -5656,6 +5679,22 @@ function mrMonthChart(label,scope){
     <div class="omc-b"><span>${lastData?`${lastData.lb} 목표 ${(lastData.t||0).toLocaleString('en-US')} · 실적 ${(lastData.a||0).toLocaleString('en-US')}`:'실적 입력 대기'} │ 누적 ${cLast.toLocaleString('en-US')} / 연간목표 ${YT.toLocaleString('en-US')} · <b style="color:#1e6f5c">${YT?Math.round(cLast/YT*100):0}%</b></span></div></div>`;
 }
 function mdealLastMonth(){let mx=0;Object.keys(MDEAL||{}).forEach(k=>{const m=+k;if(m&&(MDEAL[k]||[]).length&&m>mx)mx=m;});return mx||null;}
+/* 2026-09-18: 그 달의 MDEAL 값이 「거래처실적_주간(u)」의 몇 주차 행에서 왔는지.
+   ④-new 임포트가 각 행에 _pri(주차번호, 월말=9999)·_prov(최종 아님=잠정)를 심어 두므로
+   그대로 읽어 화면에 표기한다. 표에 "몇 주차 기준"이 안 적혀 있으면 시트가 갱신되지 않아
+   값이 그대로인 건지, 화면이 안 받아온 건지 구분이 안 된다 — 그게 이번 문제의 절반이었다. */
+function mdealWeekInfo(month){
+  const rows=mdealRows(month); if(!rows.length)return null;
+  let mx=-1,prov=false;
+  rows.forEach(r=>{const p=+r._pri;if(!isNaN(p)&&p>mx)mx=p;if(r._prov)prov=true;});
+  if(mx<0)return null;
+  return {eom:mx===9999,iso:mx===9999?null:mx,prov};
+}
+function mdealWeekLabel(month){
+  const wi=mdealWeekInfo(month); if(!wi)return '';
+  return wi.eom?'「거래처실적_주간(u)」 월말 최종값 기준'
+               :`「거래처실적_주간(u)」 W${wi.iso} 기준${wi.prov?' · 주간 잠정':' · 월간 최종'}`;
+}
 /* 해당 월의 「거래처실적_월간」 데이터가 아직 없을 때, 그 달의 「거래처실적_주간」(SPHIST) 주차별 실적을
    선택 주차까지 이어 합산해 임시 당월 거래처 행을 만든다 · exTm/suTm(당월목표)은 주차마다 동일하게 실려오므로 최신 값 사용 */
 function mrDealMonthRows(month){
@@ -5777,7 +5816,7 @@ function mrDealTable0(){
   h+=aggRow('홍콩·대만 소계',hktw,'ov-sub-row');
   h+=aggRow('합계 · 중국·대만·홍콩',D,'ov-tot-row');
   h+='</tbody></table>';
-  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 연간목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 마스터 「거래처실적_월간」 탭 연동 · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 연간목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
+  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 연간목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 단위 천$ · 마스터 「거래처실적_주간(u)」 탭 연동${mdealWeekLabel(MONTH)?' ('+esc(mdealWeekLabel(MONTH).replace('「거래처실적_주간(u)」 ',''))+')':''} · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 연간목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
   return h;
 }
 function renderTeamWeekCards(wk){
@@ -6045,7 +6084,13 @@ function renderOverview(){
   h+='<div class="pm-tabs" style="margin-bottom:14px">'+OVTABS.map(([k,l])=>`<button class="${CT===k?'on':''}" onclick="setOVtab('${k}')">${esc(l)}</button>`).join('')+'</div>';
   const showTiles=!isMR||['main','local','focus','month'].includes(CT); /* 2026-09-15 요청: 주간보고 KPI 카드는 삭제 */
   if(showTiles&&CT!=='local'&&CT!=='prod'){
-    const secSub=(isMR&&CT==='main')?localPerfTilesSub():(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+    /* 2026-09-18 요청("본사실적은 USD인데 왜 RMB가 잡히니"): 본사실적 탭 상단 카드를 다시
+       본사 기준(수출·수금 천$)으로 되돌린다. 9/15에 "카드 모양을 현지실적과 똑같이"라는 요청을
+       내용까지 현지실적 값으로 바꾸는 것으로 처리한 게 잘못이었다 — 본사실적 탭의 그래프·
+       실적상세표는 전부 천$인데 그 위 카드만 M RMB·K TWD라 같은 화면에서 단위가 충돌했다.
+       카드 디자인(om-combo·om-pill)은 현지실적과 동일하게 유지하고 숫자만 본사 USD로 되돌린다.
+       현지 매출·수금(RMB·TWD)은 바로 옆 「현지실적」 탭에 그대로 있다. */
+    const secSub=(isMR&&CT==='main')?`누적(1~${MONTH}월) 기준 · 전체·중국·대만·홍콩의 본사 수출·수금(천\$) · 뱃지 = 전체목표 대비 달성율`:(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     /* 2026-09-09 요청: 본사실적 탭의 핵심지표 헤더 앞에 "몇월 몇주차" 표기 추가 */
     const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:'핵심 지표';
     h+=`<div class="ov-sec">${esc(kpiHead)} <span class="ov-sub">${secSub}</span></div>`;
@@ -6053,7 +6098,7 @@ function renderOverview(){
     if(isMR){
       /* 2026-09-15 요청("내용까지 똑같이"): 본사실적·주간보고 상단 카드를 현지실적 카드와 동일하게 통일.
          기존 mrMainTiles()/mrWeekTiles()는 되돌리기 쉽게 그대로 남겨둔다. */
-      if(CT==='main')h+=localPerfTiles();
+      if(CT==='main')h+=mrMainTiles(); /* 2026-09-18: 현지실적 값(RMB) → 본사 수출·수금(천$)으로 환원 */
       else if(CT==='focus')h+=mrFocusTiles(evTile);
       else if(CT==='month')h+=mrTeamTiles(evTile);
       else h+=mrMainTiles();
@@ -6088,7 +6133,8 @@ function renderOverview(){
          MRSECTAB/MRTABS/setMrSecTab는 더 이상 이 화면에서 쓰지 않음(다른 화면도 참조하지 않아 그대로
          남겨둬도 무해 — 실제로 안 쓰이는지는 grep으로 확인함) */
       const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
-      const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:'')+`당월 실적 + 1~${MONTH}월 누적`;
+      const mwl=mdealWeekLabel(MONTH); /* 2026-09-18: 지금 보고 있는 값이 몇 주차 행에서 온 건지 명시 */
+      const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:(mwl?mwl+' · ':''))+`당월 실적 + 1~${MONTH}월 누적`;
       h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
         +`<div class="ov-sec">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「거래처실적_주간(u)」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
         +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
@@ -11546,21 +11592,53 @@ async function fetchPublicTab(name){
   try{await patchLeadingBlankDate(name,rows);}catch(e){/* 복구 실패해도 원본 값 그대로 유지 */}
   return rows;
 }
+/* ── 공개 동기화 진행상태 배지 (2026-09-18) ───────────────────────────────
+   지금까지 이 동기화는 화면에 아무 표시 없이 조용히 돌았다. 문제는 탭 7개를
+   "한 번에 하나씩" 순서대로 받아오는 구조라 전부 끝나기까지 실제로 15~20초가
+   걸린다는 점이다(구글 Apps Script는 매 요청이 302 리다이렉트를 한 번 거친다).
+   그동안 화면에는 직전에 저장돼 있던 옛 데이터가 그대로 떠 있고, 아무 안내도
+   없으니 "열어봤는데 최신 주차가 안 보인다 = 업데이트가 안 된다"로 보인다.
+   → ① 7개 탭을 동시에(Promise.all) 받아 대기시간을 1/5 수준으로 줄이고
+     ② 받는 동안·끝난 뒤 상태를 상단에 눈에 보이게 표시한다(마지막 동기화 시각 포함).
+   실패 시에는 배지를 눌러 즉시 다시 시도할 수 있게 한다. */
+let PUBSYNC={state:'idle',at:'',err:''};
+function pubSyncBadgeEl(){return document.getElementById('pubSyncBadge');}
+function setPubSync(state,err){
+  PUBSYNC.state=state; if(err!=null)PUBSYNC.err=String(err||'');
+  if(state==='ok')PUBSYNC.at=new Date().toTimeString().slice(0,5);
+  const el=pubSyncBadgeEl(); if(!el)return;
+  const map={
+    idle:['',''],
+    sync:['⟳ 구글시트 동기화 중…','#8a6d1a'],
+    ok:['✅ 구글시트 최신 · '+PUBSYNC.at,'#1f6f52'],
+    err:['⚠ 구글시트 동기화 실패 · 클릭해 다시 시도','#c0392b']
+  };
+  const m=map[state]||map.idle;
+  el.textContent=m[0]; el.style.color=m[1];
+  el.style.display=m[0]?'inline-flex':'none';
+  el.style.cursor=state==='err'?'pointer':'default';
+  el.title=state==='err'?(PUBSYNC.err||''):(state==='ok'?'마스터 구글시트에서 마지막으로 받아온 시각':'');
+  el.onclick=state==='err'?()=>publicSyncMaster(false):null;
+}
 async function publicSyncMaster(silent){
   try{
+    setPubSync('sync');
     const wb={SheetNames:[],Sheets:{}};
-    for(const name of PUBLIC_SYNC_TABS){
-      try{const rows=await fetchPublicTab(name);
-        if(rows&&rows.length){wb.SheetNames.push(name);wb.Sheets[name]=XLSX.utils.aoa_to_sheet(rows);}
-      }catch(e){/* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */}
-    }
-    if(!wb.SheetNames.length){if(!silent)toast('공개 동기화 실패 · 마스터 구글시트 공유설정을 "링크가 있는 모든 사용자·뷰어"로 확인하세요');return false;}
+    /* 순차 → 병렬. 순서는 PUBLIC_SYNC_TABS 그대로 유지해야 한다(importG2Master는 탭 순서를
+       가정하지 않지만, done 메시지·디버깅 때 순서가 뒤섞이면 읽기 어렵다). */
+    const got=await Promise.all(PUBLIC_SYNC_TABS.map(async name=>{
+      try{const rows=await fetchPublicTab(name);return (rows&&rows.length)?{name,rows}:null;}
+      catch(e){return null;} /* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */
+    }));
+    got.forEach(g=>{if(g){wb.SheetNames.push(g.name);wb.Sheets[g.name]=XLSX.utils.aoa_to_sheet(g.rows);}});
+    if(!wb.SheetNames.length){setPubSync('err','모든 탭 수신 실패 (공유설정 또는 네트워크)');if(!silent)toast('공개 동기화 실패 · 마스터 구글시트 공유설정을 "링크가 있는 모든 사용자·뷰어"로 확인하세요');return false;}
     const done=(importG2Master(wb,'month')||[]).concat(importG2Master(wb,'week')||[]);
     try{if(Object.keys(WKREPORT||{}).length&&TAB==='mreport'&&PERIOD==='week')gotoLastUpWeek();}catch(e){}
+    setPubSync('ok');
     render();
     if(!silent)toast('공개 동기화 완료 · '+(done.length?done.join(' / '):'해당 데이터 없음'));
     return true;
-  }catch(e){if(!silent)toast('공개 동기화 오류: '+((e&&e.message)||e));return false;}
+  }catch(e){setPubSync('err',(e&&e.message)||e);if(!silent)toast('공개 동기화 오류: '+((e&&e.message)||e));return false;}
 }
 function loadKPISheet(){cloudAuth(()=>doKpiPull(false));}
 async function doKpiPull(silent){
