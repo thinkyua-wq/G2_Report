@@ -29,6 +29,11 @@
   --accent:#5b8a6e; --accent2:#7a9c8a; --accentSoft:#e6efe9; --accentInk:#3f6b52;
   --ink:#37352f; --ink2:#37352f; --dim:#787774; --faint:#9b9a97;
   --bg:#ffffff; --pn:#ffffff; --ln:#e9e7e3; --ln2:#f1efeb; --sf:#f7f6f3;
+  /* 2026-09-18: --line 은 --ln 의 오타로 쓰인 이름인데 정의된 적이 없어, 이걸 쓰는 7개 규칙의
+     border 선언이 통째로 무효가 되어(계산 시점 무효 → border-style:none) 월별보고 표·팀 행·
+     중점추진과제 요약바·월말 타일·주간보고 상태칩의 테두리가 조용히 사라져 있었다.
+     각 규칙을 고치는 대신 여기서 --ln 과 같은 값으로 한 번에 정의한다. */
+  --line:#e9e7e3;
   --tYel:#fdecc8;--tBlu:#d3e5ef;--tPnk:#f5e0e9;--tGrn:#dbeddb;--tGry:#e3e2e0;--tPur:#e8deee;--tOrg:#fadec9;--tRed:#ffe2dd;
   --wait:#8a8f98; --waitSoft:#f0f1f3;
   --prog:#7a9c8a; --progSoft:#e6efe9; --progInk:#3f6b52;
@@ -2627,7 +2632,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.18-M320</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.18-M323</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -11577,6 +11582,23 @@ async function fetchPublicTabViaGAS(name){
   if(!j||!j.ok)throw new Error((j&&j.error)||'Code.gs 응답 오류');
   return j.rows||[];
 }
+/* 2026-09-18: 여러 탭을 한 번의 요청으로 받는다(Code.gs의 ?sheets= 지원).
+   Apps Script는 요청마다 302 리다이렉트를 거치고, 한동안 호출이 없으면 첫 요청이 콜드
+   스타트로 20초 넘게 걸린다 — 탭마다 따로 부르면 그 비용을 7번 낸다.
+   Code.gs를 아직 새 버전으로 배포하지 않았으면 응답에 sheets가 없으므로 null을 돌려주고,
+   호출부가 기존 탭별 방식으로 자동 대체한다(구버전 배포에서도 그대로 동작). */
+async function fetchPublicTabsBulk(names){
+  if(!PUBLIC_SYNC_GAS_URL)return null;
+  try{
+    const sep=PUBLIC_SYNC_GAS_URL.includes('?')?'&':'?';
+    const url=PUBLIC_SYNC_GAS_URL+sep+'sheets='+encodeURIComponent(names.join(','))+'&_ts='+Date.now();
+    const res=await fetch(url,{credentials:'omit',cache:'no-store'});
+    if(!res.ok)return null;
+    const j=await res.json();
+    if(!j||!j.ok||!j.sheets)return null; /* 구버전 배포 = sheets 없음 */
+    return j.sheets;
+  }catch(e){return null;}
+}
 async function fetchPublicTab(name){
   if(PUBLIC_SYNC_GAS_URL){
     try{return await fetchPublicTabViaGAS(name);}
@@ -11626,10 +11648,29 @@ async function publicSyncMaster(silent){
     const wb={SheetNames:[],Sheets:{}};
     /* 순차 → 병렬. 순서는 PUBLIC_SYNC_TABS 그대로 유지해야 한다(importG2Master는 탭 순서를
        가정하지 않지만, done 메시지·디버깅 때 순서가 뒤섞이면 읽기 어렵다). */
-    const got=await Promise.all(PUBLIC_SYNC_TABS.map(async name=>{
-      try{const rows=await fetchPublicTab(name);return (rows&&rows.length)?{name,rows}:null;}
-      catch(e){return null;} /* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */
-    }));
+    /* 응답이 영영 안 오면 Promise.all이 끝나지 않아 배지가 "동기화 중"에 멈춘 채
+       화면은 옛 데이터로 남는다(사내망·프록시에서 실제로 재현됨). 상한을 둔다. */
+    const withTimeout=(pr,ms)=>Promise.race([pr,new Promise(r=>setTimeout(()=>r(null),ms))]);
+    /* ① 한 번의 요청으로 전부(Code.gs 새 버전) → ② 안 되면 탭별 병렬(구버전 배포·gviz 대체) */
+    const oneTab=(name,ms)=>withTimeout(
+      fetchPublicTab(name).then(rows=>(rows&&rows.length)?{name,rows}:null)
+                          .catch(()=>null), /* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */
+      ms);
+    const bulk=await withTimeout(fetchPublicTabsBulk(PUBLIC_SYNC_TABS),35000);
+    let got;
+    if(bulk){
+      got=PUBLIC_SYNC_TABS.map(name=>{const rows=bulk[name];return (rows&&rows.length)?{name,rows}:null;});
+    }else{
+      got=await Promise.all(PUBLIC_SYNC_TABS.map(name=>oneTab(name,35000)));
+      /* 콜드 스타트 때 일부 탭이 상한에 걸려 통째로 빠지는 일이 실제로 있었다(주간보고 9주 → 4주).
+         이 시점엔 서버가 이미 더워져 재요청은 2~4초면 끝나므로, 빠진 탭만 한 번 더 받아온다. */
+      const miss=[];
+      got.forEach((g,i)=>{if(!g)miss.push(i);});
+      if(miss.length&&miss.length<PUBLIC_SYNC_TABS.length){
+        const re=await Promise.all(miss.map(i=>oneTab(PUBLIC_SYNC_TABS[i],20000)));
+        miss.forEach((i,k)=>{if(re[k])got[i]=re[k];});
+      }
+    }
     got.forEach(g=>{if(g){wb.SheetNames.push(g.name);wb.Sheets[g.name]=XLSX.utils.aoa_to_sheet(g.rows);}});
     if(!wb.SheetNames.length){setPubSync('err','모든 탭 수신 실패 (공유설정 또는 네트워크)');if(!silent)toast('공개 동기화 실패 · 마스터 구글시트 공유설정을 "링크가 있는 모든 사용자·뷰어"로 확인하세요');return false;}
     const done=(importG2Master(wb,'month')||[]).concat(importG2Master(wb,'week')||[]);
@@ -11777,16 +11818,67 @@ function pptLineCount(txt,colW,fs,bold){
   const usable=Math.max(0.6,colW-0.20)*0.92;                 /* 어절 줄바꿈 여유 8% */
   const byChar=em*(fs/72)/usable;                            /* 1em ≒ fs/72 inch */
   const byMeasure=pptTextWidthIn(s,fs,bold)/usable;
-  return Math.min(9,Math.max(1,Math.ceil(Math.max(byChar,byMeasure))));
+  /* 2026-09-18: 여기 있던 Math.min(9,…) 상한이 과제 누락의 직접 원인이었다. 진행사항이 40줄인
+     과제도 9줄로 계산돼 2인치만 배정받고, 실제로는 8인치로 렌더되면서 그 아래 과제 행들이
+     슬라이드 밖으로 밀려 눈에 보이지 않게 됐다(XML에는 있지만 화면·인쇄에는 안 나옴).
+     상한을 없애고 실제 줄 수를 그대로 돌려준다 — 페이지 분할은 아래 pptWrapLines로 처리. */
+  return Math.max(1,Math.ceil(Math.max(byChar,byMeasure)));
 }
+/* 진행사항 글을 "실제로 렌더될 줄"로 미리 쪼갠다. 줄 단위로 갖고 있어야 한 과제가 한 페이지를
+   넘길 때 줄 중간에서 끊어 다음 장으로 넘길 수 있다(추정만으로는 어디서 끊길지 알 수 없다).
+   폭은 실제 사용폭의 92%로 잡아, 파워포인트가 내 줄을 다시 한 번 접는 일이 없게 한다. */
+/* 줄 높이 — 실측 보정(2026-09-18). 11pt 한 줄이 파워포인트/LibreOffice에서 실제로 차지하는
+   높이는 0.215" 안팎이라, 종전 0.205"로 계산하면 20줄쯤에서 한 줄이 아래로 삐져나갔다.
+   0.225"로 잡아 한 줄 여유를 둔다(페이지당 한두 줄 덜 들어가는 대신 잘리지 않는다). */
+const PPT_LINEH=0.225, PPT_ROWPAD=0.16;
+/* 글자 폭(인치). 캔버스 실측만 믿으면 안 된다 — 브라우저에 「맑은 고딕」이 없으면 훨씬 좁은
+   대체 글꼴로 재서, 파워포인트에서는 두 줄이 될 글이 한 줄로 계산된다(실측으로 확인).
+   그래서 글꼴과 무관한 글자수 기준(한글·한자 1em, 그 외 0.55em)과 실측 중 큰 값을 쓴다.
+   과대평가는 페이지가 한 장 늘 뿐이지만, 과소평가는 글이 슬라이드 밖으로 잘려 나간다. */
+function pptTxtW(s,fs,bold){
+  let em=0;
+  for(const ch of String(s||''))em+=/[ᄀ-ᇿ　-〿㄰-㆏가-힯一-鿿＀-￯]/.test(ch)?1:0.55;
+  return Math.max(em*(fs/72),pptTextWidthIn(s,fs,bold));
+}
+function pptWrapLines(txt,colW,fs,bold){
+  const usable=Math.max(0.6,colW-0.20)*0.92;
+  const out=[];
+  String(txt==null?'':txt).split(/\r?\n/).forEach(par=>{
+    if(!par.trim()){out.push('');return;}
+    let cur='';
+    par.split(/(\s+)/).forEach(tok=>{
+      if(tok==='')return;
+      // 공백 없는 아주 긴 토큰은 글자 단위로 쪼갠다(중국어·URL 등)
+      if(pptTxtW(tok,fs,bold)>usable){
+        for(const ch of tok){
+          if(cur&&pptTxtW(cur+ch,fs,bold)>usable){out.push(cur);cur=ch;}
+          else cur+=ch;
+        }
+        return;
+      }
+      if(cur&&pptTxtW(cur+tok,fs,bold)>usable){out.push(cur.replace(/\s+$/,''));cur=tok.replace(/^\s+/,'');}
+      else cur+=tok;
+    });
+    out.push(cur.replace(/\s+$/,''));
+  });
+  return out.length?out:[''];
+}
+function pptRowHFromLines(n){return Math.max(0.34,n*PPT_LINEH+PPT_ROWPAD);}
 function pptTaskRowH(r){
   const n=Math.max(
     pptLineCount(r.label,2.7,12,true),
     pptLineCount(r.note,6.0,11,false),
     pptLineCount(r.cat,1.0,12,false));
-  return Math.max(0.34,n*0.205+0.16);
+  return pptRowHFromLines(n);
 }
 async function buildDeckBase64(){
+  /* 2026-09-18: 구글시트 자동 동기화가 끝나기 전에 PPT를 누르면 동기화 이전(=옛 주차) 화면이
+     그대로 캡쳐된다. 페이지를 연 직후 5초 안에 누르면 실제로 그렇게 된다 — 최대 25초 기다린다. */
+  try{
+    for(let i=0;i<50&&typeof PUBSYNC!=='undefined'&&PUBSYNC.state==='sync';i++){
+      await new Promise(r=>setTimeout(r,500));
+    }
+  }catch(e){}
   const G='2D3194',DG='1B1D58',INK='222222',MUT='6B7280',LN='D7DCE8',F='맑은 고딕';
   const P=new PptxGenJS(); P.defineLayout({name:'WR',width:13.33,height:7.5}); P.layout='WR';
   const rows=activeRows();
@@ -11835,17 +11927,45 @@ async function buildDeckBase64(){
     const avgP=Math.round(list.reduce((a,r)=>a+r.p,0)/list.length);
     const cats=catsOf(m.id).slice(0,4);
     const HEAD0=1.65,HEADREST=1.55,THEAD=0.36;
-    /* 실제 예상 높이로 페이지를 나눈다 — 한 장에 안 들어가는 과제는 자동으로 뒷장으로 */
+    /* ── 페이지 분할 (2026-09-18 재작성) ────────────────────────────────────
+       기존 방식은 "과제 한 건 = 반드시 한 행"이라 한 장보다 긴 과제를 만나면 그 행을 그대로
+       올려놓았고, 넘친 부분과 그 아래 과제들이 슬라이드 밖으로 밀려 안 보였다(이유아 팀장
+       7건 중 5건만 보이던 문제). 이제 과제를 "줄" 단위로 쪼개 남은 자리에 들어갈 만큼만 넣고,
+       나머지 줄은 다음 장에 「과제명 (계속)」으로 이어 붙인다. 잘려 사라지는 글자는 없다. */
+    const MINSEG=3;                 /* 한 장에 이만큼도 못 넣으면 통째로 다음 장부터 시작 */
+    const prepped=list.map(r=>({
+      r,
+      noteLines:pptWrapLines(r.note,6.0,11,false),
+      headLines:Math.max(pptLineCount(r.label,2.7,12,true),pptLineCount(r.cat,1.0,12,false))
+    }));
     const chunks=[];{
-      let i=0;
-      while(i<list.length){
+      let i=0, noteAt=0;           /* noteAt = 현재 과제에서 이미 넣은 진행사항 줄 수 */
+      while(i<prepped.length){
         const headH=(chunks.length===0)?(HEAD0+kpiBlockH):HEADREST;
         let avail=BOTTOM-headH-THEAD;
         const ch=[];
-        while(i<list.length){
-          const rh=pptTaskRowH(list[i]);
-          if(ch.length&&rh>avail)break;
-          ch.push(list[i]); avail-=rh; i++;
+        while(i<prepped.length){
+          const pr=prepped[i];
+          const contd=noteAt>0;
+          const rest=pr.noteLines.length-noteAt;
+          const needLines=Math.max(contd?1:pr.headLines,rest);
+          const fullH=pptRowHFromLines(needLines);
+          if(fullH<=avail){       /* 남김없이 들어간다 */
+            ch.push({r:pr.r,note:pr.noteLines.slice(noteAt).join('\n'),contd,lines:needLines});
+            avail-=fullH; i++; noteAt=0; continue;
+          }
+          /* 안 들어간다 → 들어갈 만큼만 잘라 넣고 나머지는 다음 장으로 */
+          const fit=Math.floor((avail-PPT_ROWPAD)/PPT_LINEH);
+          if(fit>=MINSEG&&rest>fit){
+            ch.push({r:pr.r,note:pr.noteLines.slice(noteAt,noteAt+fit).join('\n'),contd,lines:fit,more:true});
+            noteAt+=fit;
+          }else if(!ch.length){    /* 빈 장인데도 안 들어감 = 한 장을 통째로 쓴다 */
+            const take=Math.max(1,fit);
+            ch.push({r:pr.r,note:pr.noteLines.slice(noteAt,noteAt+take).join('\n'),contd,lines:take,more:(rest>take)});
+            noteAt+=take;
+            if(noteAt>=pr.noteLines.length){i++;noteAt=0;}
+          }
+          break;                   /* 이 장은 여기서 마감 */
         }
         chunks.push(ch);
       }
@@ -11880,18 +12000,21 @@ async function buildDeckBase64(){
       }
       const th=['R&R','국가','핵심과제','완료예정일','진행률','진행사항 (비고)'];
       const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:13}}))];
-      ch.forEach(r=>{tr.push([
-        {text:r.cat||'',options:{align:'center',color:INK,valign:'middle'}},
-        {text:r.country||'',options:{align:'center',color:INK,valign:'middle'}},
-        {text:r.label||'',options:{align:'left',color:INK,bold:true,valign:'middle'}},
-        {text:(r.due&&isDate(r.due))?r.due:(r.due||'상시'),options:{align:'center',color:MUT,fontSize:11,valign:'middle'}},
-        {text:r.p+'%',options:{align:'center',color:pptPC(r.p),bold:true,valign:'middle'}},
-        {text:r.note||'',options:{align:'left',color:'333333',fontSize:11,valign:'middle'}}]);});
-      /* 행마다 예상 높이를 그대로 지정 — 남는 공간이 있으면 비례로 늘려 아래 여백만 채운다 */
-      let hs=ch.map(pptTaskRowH);
+      /* 쪼개진 과제의 뒷부분은 R&R·국가·예정일·진행률을 비우고 과제명에 「(계속)」만 남긴다 —
+         같은 과제가 두 번 집계된 것처럼 보이지 않게 하려는 것이다. */
+      ch.forEach(c=>{const r=c.r; tr.push([
+        {text:c.contd?'':(r.cat||''),options:{align:'center',color:INK,valign:'middle'}},
+        {text:c.contd?'':(r.country||''),options:{align:'center',color:INK,valign:'middle'}},
+        {text:(r.label||'')+(c.contd?' (계속)':''),options:{align:'left',color:c.contd?MUT:INK,bold:!c.contd,valign:'top'}},
+        {text:c.contd?'':((r.due&&isDate(r.due))?r.due:(r.due||'상시')),options:{align:'center',color:MUT,fontSize:11,valign:'middle'}},
+        {text:c.contd?'':(r.p+'%'),options:{align:'center',color:pptPC(r.p),bold:true,valign:'middle'}},
+        {text:c.note||'',options:{align:'left',color:'333333',fontSize:11,valign:'top'}}]);});
+      /* 행마다 계산된 높이를 그대로 지정. 남는 공간이 있어도, 이 장에서 다음 장으로 이어지는
+         과제가 있으면 늘리지 않는다 — 늘렸다가 아래로 넘치면 다시 글이 잘린다. */
+      let hs=ch.map(c=>pptRowHFromLines(c.lines));
       const used=hs.reduce((a,b)=>a+b,0)+THEAD;
       const room=BOTTOM-tasksY;
-      if(used<room&&used>0){const k2=Math.min(1.12,room/used);hs=hs.map(v=>v*k2);}
+      if(used<room&&used>0&&!ch.some(c=>c.more)){const k2=Math.min(1.12,room/used);hs=hs.map(v=>v*k2);}
       sl.addTable(tr,{x:0.55,y:tasksY,w:12.23,colW:[1.0,0.65,2.7,1.05,0.85,6.0],rowH:[THEAD].concat(hs),fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
     });});
   const D=(SPCUR&&SPCUR.deal)||(SPERF&&SPERF.deal)||(typeof DEALSEED!=='undefined'?DEALSEED:null);
