@@ -2150,7 +2150,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .kli.h{border-top-color:rgba(255,255,255,.28)}
 .kli-r{display:flex;gap:7px;align-items:baseline;font-size:12.1px;line-height:1.45;min-width:0}
 .kli-d{font-weight:800;color:var(--dim);flex:none;font-variant-numeric:tabular-nums;min-width:48px}
-.kli-t{font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kli-t{font-weight:600;color:var(--ink);white-space:normal;word-break:break-word}  /* 2026-09-20: 제목이 …로 잘리지 않고 줄바꿈되어 전부 보이게 */
 .kli.h .kli-d{color:rgba(255,255,255,.72)}
 .kli.h .kli-t{color:#fff}
 .kli-m{font-size:11px;font-weight:700;color:var(--faint);margin-top:1px}
@@ -2646,7 +2646,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.20-M327</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.20-M329</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5042,13 +5042,14 @@ function evListTile(list){
   const evs=(list||[]).slice().sort((a,b)=>evDayKey(a)-evDayKey(b));
   const lab=periodWord()+' 중화팀 행사';
   const fmt=d=>String(d||'').replace(/^\d+\s*\//,m=>m).replace(/~/g,'-').replace(/·/g,' · ');
-  const li=evs.slice(0,6).map(x=>{
+  /* 2026-09-20 요청: 「외 N건」으로 접지 말고 전부 보이게 */
+  const li=evs.map(x=>{
     const nm=(x.name||(x.info||'').split('·')[0]||'').trim();
     const pl=((x.info||'').split('·').slice(1).join('·')||'').trim();
     return `<li><span class="ev-d">${esc(fmt(x.date))}</span><span class="ev-n">${esc(nm)}</span>${pl?`<span class="ev-p">${esc(pl)}</span>`:''}</li>`;
   }).join('');
   return `<div class="om-tile evlist"><div class="om-tl">${esc(lab)} <b>${evs.length}건</b></div>
-    ${evs.length?`<ul class="ev-ul">${li}</ul>${evs.length>6?`<div class="ev-more">외 ${evs.length-6}건</div>`:''}`:`<div class="om-ts" style="margin-top:10px">${esc(periodWord())} 등록된 행사 없음</div>`}</div>`;
+    ${evs.length?`<ul class="ev-ul">${li}</ul>`:`<div class="om-ts" style="margin-top:10px">${esc(periodWord())} 등록된 행사 없음</div>`}</div>`;
 }
 function mrEventTile(mon,label){
   const evs=(typeof MILESTONES!=='undefined'?MILESTONES:[]).filter(x=>+x.month===+mon);
@@ -7299,12 +7300,13 @@ function renderCalMergedKPI(){
   const ev=CALLIST.filter(e=>String(e.sdate||e.date||'').slice(0,7)===ym)
     .sort((a,b)=>String(a.sdate||a.date).localeCompare(String(b.sdate||b.date)));
   const days=tp.reduce((a,t)=>a+((t.start&&t.end)?Math.max(1,Math.round((new Date(t.end)-new Date(t.start))/86400000)+1):1),0);
-  const LIM=5;
+  /* 2026-09-20 요청: 5건까지만 보이고 「외 N건」으로 접히던 것을 전부 표시로 변경.
+     항목이 많으면 카드가 그만큼 길어진다 — 접지 않는 것이 요청이다. */
   const mkList=(arr,fn,hero)=>{
     if(!arr.length)return `<div class="kli emp${hero?' h':''}">해당 항목 없음</div>`;
-    return '<div class="kli'+(hero?' h':'')+'">'+arr.slice(0,LIM).map(o=>{const [d,t]=fn(o);
+    return '<div class="kli'+(hero?' h':'')+'">'+arr.map(o=>{const [d,t]=fn(o);
       return `<div class="kli-r"><span class="kli-d">${esc(d)}</span><span class="kli-t">${esc(t)}</span></div>`;}).join('')
-      +(arr.length>LIM?`<div class="kli-m">외 ${arr.length-LIM}건</div>`:'')+'</div>';
+      +'</div>';
   };
   const fstat=`${MILECTRY||'전체 국가'} · ${MILEMGR?((mgrById(MILEMGR)||{}).name||'')+' 담당':'전체 담당자'}`;
   document.getElementById('kpis').innerHTML=`
@@ -11828,6 +11830,48 @@ async function pptCaptureTab(mrtab,opts){
   }catch(e){return null;}
   finally{TAB=prevTAB;MRTAB=prevMRTAB;render();}
 }
+/* 2026-09-20 요청: PPT 마지막에 「중화팀 일정·행사·출장」 추가 — 한 장은 KPI 카드, 나머지는 달력만.
+   which='kpi' → 상단 카드 3장(#kpis) · which='cal' → 달력 박스만(리스트 탭은 제외).
+   캡쳐 전에 달력 섹션이 접혀 있으면 펼친다(사용자가 접어둔 상태여도 PPT에는 나와야 한다). */
+async function pptCaptureCal(which){
+  const prevTAB=TAB;
+  let restoreSec=null;
+  try{
+    if(which==='cal'&&typeof secIsOpen==='function'&&!secIsOpen('cal_cal')){
+      try{toggleSec('cal_cal');restoreSec='cal_cal';}catch(e){}
+    }
+    TAB='calmonth';render();
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    await new Promise(r=>setTimeout(r,300));
+    let el=null;
+    const undo=[];
+    if(which==='kpi'){
+      el=document.getElementById('kpis');
+      /* 카드 3장이 한 줄로 늘어서면 가로:세로가 8:1이라 슬라이드 폭에 맞추는 순간 글씨가
+         깨알만 해지고 아래가 텅 빈다. 잠시 폭을 좁혀 2단으로 접히게 해서 슬라이드 비율에
+         가깝게 만든 뒤 캡쳐한다(화면은 캡쳐 후 원상복구). */
+      if(el){const pw=el.style.width;el.style.width='900px';undo.push(()=>{el.style.width=pw;});}
+    }else{
+      el=document.querySelector('#view .calx-cal');   /* 달력만 — 오른쪽 상세 패널 제외 */
+      if(el){ /* 달력 상단에서 제목(.calx-tt)만 남기고 조작요소(오늘·필터·상세·이동)는 모두 숨긴다 */
+        const top=el.querySelector('.calx-top');
+        if(top)[...top.children].forEach(c=>{
+          if(c.classList&&c.classList.contains('calx-tt'))return;
+          const d=c.style.display;c.style.display='none';undo.push(()=>{c.style.display=d;});});
+      }
+    }
+    if(!el||typeof html2canvas==='undefined')return null;
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    let canvas=null;
+    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2});}
+    finally{undo.forEach(f=>{try{f();}catch(e){}});}
+    return canvas?{dataUrl:canvas.toDataURL('image/png'),w:canvas.width,h:canvas.height}:null;
+  }catch(e){return null;}
+  finally{
+    if(restoreSec){try{toggleSec(restoreSec);}catch(e){}}
+    TAB=prevTAB;render();
+  }
+}
 async function pptCaptureMainCard(){
   const prevTAB=TAB,prevMRTAB=MRTAB;
   try{
@@ -12104,6 +12148,19 @@ async function buildDeckBase64(){
       {text:kU(d.suT),options:{align:'right',color:INK}},
       {text:kU(d.suA),options:{align:'right',color:INK}}]);});
     sl.addTable(dt,{x:0.55,y:1.6,w:12.23,colW:[1.4,2.8,1.6,1.6,1.0,1.0,1.6,1.63],rowH:0.5,fontFace:F,fontSize:14,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+  }
+  /* ── 맨 뒤: 중화팀 일정·행사·출장 (2026-09-20 요청) ──
+     1장 = 상단 KPI 카드(행사·출장·회의 목록) · 1장 = 달력만. 제목 한 줄만 얹고 나머지는 캡쳐 그대로. */
+  for(const [which,title] of [['kpi',`중화팀 일정 · 행사 · 출장`],['cal',`${YEAR}년 ${MONTH}월 달력`]]){
+    const cap=await pptCaptureCal(which);
+    if(!cap||!cap.dataUrl)continue;
+    const sl=P.addSlide(); sl.background={color:'FFFFFF'};
+    mgBrandChrome(sl); PAGES.push(sl);
+    sl.addText(title,{x:0.55,y:0.32,w:12,h:0.5,fontFace:F,fontSize:26,bold:true,color:DG,valign:'middle'});
+    const maxW=12.23,maxH=BOTTOM-1.02,x0=0.55,y0=0.98;
+    let w=maxW,h=w*cap.h/cap.w;
+    if(h>maxH){h=maxH;w=h*cap.w/cap.h;}
+    sl.addImage({data:cap.dataUrl,x:x0+(maxW-w)/2,y:y0,w,h});
   }
   /* 페이지번호 · 하단 우측, For Lifetime Smiles 바로 위 (2026-09-12 요청) · 표지 제외, 전체 장수 기준 */
   {
