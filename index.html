@@ -2632,7 +2632,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.18-M323</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.20-M325</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5450,8 +5450,23 @@ function localPerfTiles(){
   });
   return h+'</div>';
 }
+/* 지금 화면의 현지실적이 "언제 기준"인지 한 줄로. 시트에 주차 열이 있으면 그 주차(와 금요일 날짜)를,
+   없으면 종전의 asOf 날짜를 쓴다. 이게 없으면 시트가 안 올라온 건지 화면이 못 받은 건지 구분이 안 된다
+   — 본사실적에서 겪은 문제와 같은 이유로 넣는다(2026-09-20). */
+function lpBasisLabel(){
+  const wk=LOCALPERF&&LOCALPERF.wk;
+  if(wk){
+    const mix=(LOCALPERF.wkMix&&LOCALPERF.wkMix.length>1)?` · ⚠ 시트에 주차가 섞여 있음(W${LOCALPERF.wkMix[0]}~W${LOCALPERF.wkMix[LOCALPERF.wkMix.length-1]})`:'';
+    try{
+      const mon=isoWeekMonday(2026,wk),fri=new Date(mon);fri.setUTCDate(mon.getUTCDate()+4);
+      return `「현지실적」 시트 W${wk} 기준 (${fri.getUTCMonth()+1}.${String(fri.getUTCDate()).padStart(2,'0')})${mix}`;
+    }catch(e){return `「현지실적」 시트 W${wk} 기준${mix}`;}
+  }
+  const a=(LOCALPERF&&LOCALPERF.asOf)||{};
+  return `중국 ${a.cn||'—'} · 대만 ${a.tw||'—'} 기준`;
+}
 function localPerfTilesSub(){
-  return `누적(1~${MONTH}월) 기준 · 중국 합계·닝보·북경·대만의 현지 매출·수금 · 뱃지 = 26년 목표 대비 달성율 · 중국 ${LOCALPERF.asOf.cn} · 대만 ${LOCALPERF.asOf.tw} 기준`;
+  return `누적(1~${MONTH}월) 기준 · 중국 합계·닝보·북경·대만의 현지 매출·수금 · 뱃지 = 26년 목표 대비 달성율 · ${lpBasisLabel()}`;
 }
 function renderLocalPerf(){
   const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
@@ -5459,14 +5474,16 @@ function renderLocalPerf(){
   let h=`<div class="ov-sec">현지실적 핵심 지표 <span class="ov-sub">${esc(localPerfTilesSub())}</span></div>`;
   h+=localPerfTiles();
 
-  /* ---------- 2) 그래프 · 법인별 목표 대비 달성율 ---------- */
+  /* ---------- 2) 그래프 · 법인별 목표 대비 달성율 ----------
+     2026-09-20 요청: 그래프를 표 아래로 옮긴다. 여기서 만들어 두고 표 뒤에 붙인다
+     (표가 LOCALPERF를 그대로 쓰므로 만드는 순서는 화면 순서와 무관하다). */
   const H=110;   /* CSS .lp-plot 의 height 와 같은 값이어야 한다 */
   const bar=(v,color)=>{
     if(v==null)return '<div class="lp-bar"></div>';
     const hh=Math.max(2,Math.round(Math.min(v,100)/100*H));
     return `<div class="lp-bar" style="height:${hh}px"><em>${v}%</em><i style="height:100%;background:${color}"></i></div>`;
   };
-  h+=`<div class="seccard" style="padding-top:10px">`
+  let chartHtml=`<div class="seccard" style="padding-top:10px">`
    +`<div class="ov-sec">목표 대비 달성율 <span class="ov-sub">법인별 · ${MONTH}월 / 누적(1~${MONTH}월) / 연간 · 세로축 = 26년 목표 대비 달성율(%) · 통화가 달라도 비교되도록 금액이 아닌 달성율로 표시</span></div>`
    +`<div class="lp-legend"><span><i class="lp-dot" style="background:${LP_S1}"></i>현지 매출</span><span><i class="lp-dot" style="background:${LP_S2}"></i>현지 수금</span></div>`
    +'<div class="om-charts om-charts4">';
@@ -5477,21 +5494,21 @@ function renderLocalPerf(){
       const s=d.sale[kk], ca=d.cash?d.cash[kk]:null;
       grps+=`<div class="lp-cgrp">${bar(s?s[3]:null,LP_S1)}${bar(ca?ca[3]:null,LP_S2)}</div>`;
     });
-    h+=`<div class="omc"><div class="omc-h">${esc(d.label)}<span>${esc(d.cur)}${d.curCash?' · '+esc(d.curCash):''}</span></div>`
+    chartHtml+=`<div class="omc"><div class="omc-h">${esc(d.label)}<span>${esc(d.cur)}${d.curCash?' · '+esc(d.curCash):''}</span></div>`
       +`<div class="lp-plot"><div class="lp-gl" style="bottom:${H}px"><b>100%</b></div><div class="lp-gl" style="bottom:${H*0.5}px"><b>50%</b></div>`
       +`<div class="lp-groups">${grps}</div></div>`
       +`<div class="lp-xlab"><span>${MONTH}월</span><span>누적</span><span>연간</span></div>`
       +(d.cash?'':'<div class="om-ts" style="margin-top:6px;text-align:center">수금 데이터 없음 — 매출만 표시</div>')
       +'</div>';
   });
-  h+='</div></div>';
+  chartHtml+='</div></div>';
 
   /* ---------- 3) 표 ---------- */
   const g=v=>v==null?'<td class="lp-na">—</td>':`<td class="${v<0?'ov-r':''}">${v}%</td>`;
   const cell=v=>v==null?'<td class="lp-na">—</td>':`<td>${n(v)}</td>`;
   const pct=v=>v==null?'<td class="lp-na">—</td>':`<td>${v}%</td>`;
   h+='<div class="seccard" style="padding-top:10px">'
-   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">중국(닝보·북경) · 대만 · ${MONTH}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
+   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">${esc(lpBasisLabel())} · 중국(닝보·북경) · 대만 · ${MONTH}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
    +'<table class="ov-tbl ov-perf lp-tbl">'
    +'<colgroup><col style="width:52px"><col style="width:104px">'
    +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"><col style="width:78px"><col style="width:58px"><col style="width:58px">'
@@ -5522,6 +5539,7 @@ function renderLocalPerf(){
    +'※ 중국 소계는 화면에서 닝보+북경을 더해 산출합니다 — 원본 소계는 반올림 전 값을 더한 것이라 1 차이가 나는 칸이 있습니다(원본 3,590·157,835·331,259 ↔ 화면 3,589·157,834·331,258)</div>'
    +'<div class="lp-warn"><b>확인 필요</b> — 원본에서 「현지 수금」 단위가 K USD로 적혀 있는데, 닝보 26년 목표가 매출 194,712 / 수금 194,712로 완전히 동일합니다(북경·합계도 동일). 수금 목표를 매출 목표와 같은 값으로 잡은 것이라면 수금 단위도 매출과 같은 RMB여야 맞습니다. 단위 표기 오기인지 확인 부탁드립니다.</div>'
    +'</div>';
+  h+=chartHtml;   /* 2026-09-20 요청: 그래프는 표 아래 */
   return h;
 }
 /* 2026-09-15 요청: 주간보고 탭에도 본사실적·현지실적과 같은 콤보 KPI 카드를 지역별 4장으로.
@@ -6140,11 +6158,12 @@ function renderOverview(){
       const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
       const mwl=mdealWeekLabel(MONTH); /* 2026-09-18: 지금 보고 있는 값이 몇 주차 행에서 온 건지 명시 */
       const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:(mwl?mwl+' · ':''))+`당월 실적 + 1~${MONTH}월 누적`;
+      /* 2026-09-20 요청: 그래프를 표 아래로. 숫자를 먼저 확인하고 추세는 그 뒤에 보는 순서 */
       h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
-        +`<div class="ov-sec">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「거래처실적_주간(u)」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
-        +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
-        +`<div class="ov-sec" style="margin-top:18px">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
+        +`<div class="ov-sec">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
         +mrDealTable()
+        +`<div class="ov-sec" style="margin-top:18px">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「거래처실적_주간(u)」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
+        +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
         +'</div>';
     } else {
       {const cn=ovCorpRev(),tw=ovTwRev();const rp=[cn!=null?`중국 ${cn.toLocaleString('en-US')}万RMB`:'',tw!=null?`대만 ${tw.toLocaleString('en-US')}천TWD`:''].filter(Boolean).join(' · ');h+=`<div class="ov-sec">본사 실적 · 월별 누적 수출·수금 <span class="ov-sub">단위 천불 USD · 법인매출(CORPREV) ${rp||'–'}</span></div>`;}
@@ -11458,18 +11477,35 @@ function importG2Master(wb,scope){
         if(/대만|台湾|台灣|타이완/.test(t))return 'tw'; return null;};
       const itemOf=v=>{const t=String(v||'').replace(/\s/g,'');
         if(/수금/.test(t))return 'cash'; if(/매출/.test(t))return 'sale'; return null;};
-      const raw={};let n=0;
+      /* 2026-09-20: 「주차」 열 지원. 매주 같은 18행을 지우고 덮어쓰는 대신 주차만 바꿔 아래에
+         이어 붙일 수 있게 한다 — (구분·법인·항목)이 같은 행이 여러 주차에 있으면 가장 큰 주차를
+         채택한다. 지난주 값이 시트에 남아 있어도 화면은 항상 최신 주차만 본다.
+         주차 열이 없거나 비어 있으면 종전대로 "시트에서 마지막에 적힌 행"이 이긴다. */
+      const cW=ci('주차');
+      const wkOf=v=>{const m=String(v||'').match(/W\s*(\d{1,2})/i);return m?+m[1]:null;};
+      const raw={},seen={},wkCnt={};let n=0,maxWk=null;
       body.forEach(r=>{
         const k=keyOf(cG>=0?r[cG]:''),cp=corpOf(r[cC]),it=itemOf(r[cI]);
         if(!k||!cp||!it)return;
         const tgt=g2num(r[cTg]),act=g2num(r[cAc]);
         if(tgt==null&&act==null)return;
+        const wk=(cW>=0?wkOf(r[cW]):null), cur=(wk==null?-1:wk), key=cp+'|'+it+'|'+k;
+        if(seen[key]!==undefined&&seen[key]>cur)return;   /* 이미 더 최신 주차를 채택함 */
+        seen[key]=cur;
         raw[cp]=raw[cp]||{};raw[cp][it]=raw[cp][it]||{};
         raw[cp][it][k]={v25:(c25>=0?g2num(r[c25]):null),tgt,act,exp:(cEx>=0?g2num(r[cEx]):null)};
+        if(wk!=null){wkCnt[wk]=(wkCnt[wk]||0)+1;if(maxWk==null||wk>maxWk)maxWk=wk;}
         n++;
       });
       if(!n)return;
       LOCALPERF=lpBuild(raw,LOCALPERF);
+      /* 화면에 표기할 "기준 주차"는 가장 큰 주차가 아니라 가장 많이 나온 주차로 잡는다.
+         드래그 자동채움으로 주차가 한 행씩 밀려 적히면(W39,W40,W41…) 가장 큰 주차를 쓰는 순간
+         12월 기준이라고 표시돼 버린다. 값 채택은 위에서 키별 최신 주차로 이미 끝났고,
+         여기서는 라벨만 정한다. 주차가 섞여 있으면 그 사실도 같이 남긴다. */
+      {const ks=Object.keys(wkCnt).map(Number);
+       let mode=null; ks.forEach(w=>{if(mode==null||wkCnt[w]>wkCnt[mode]||(wkCnt[w]===wkCnt[mode]&&w>mode))mode=w;});
+       LOCALPERF.wk=mode; LOCALPERF.wkMix=(ks.length>1?ks.sort((a,b)=>a-b):null);}
       saveLOCALPERF();
       done.push('현지실적 '+n+'행');
       return;
