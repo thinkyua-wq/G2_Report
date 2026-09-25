@@ -2646,7 +2646,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.20-M329</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.25-M330</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5468,6 +5468,20 @@ function localPerfTiles(){
 /* 지금 화면의 현지실적이 "언제 기준"인지 한 줄로. 시트에 주차 열이 있으면 그 주차(와 금요일 날짜)를,
    없으면 종전의 asOf 날짜를 쓴다. 이게 없으면 시트가 안 올라온 건지 화면이 못 받은 건지 구분이 안 된다
    — 본사실적에서 겪은 문제와 같은 이유로 넣는다(2026-09-20). */
+/* 2026-09-25: 표 그룹헤더의 단위 표기를 법인별 실제 단위에서 만든다(시트 「단위」 열 반영).
+   중국·대만이 서로 다르면 "중국 M RMB · 대만 K TWD"처럼 이름을 붙여 나열한다. */
+function lpUnits(field){
+  const seen=[];
+  ((LOCALPERF&&LOCALPERF.corps)||[]).forEach(c=>{
+    if(c.id==='cn')return;                    /* 소계는 닝보와 같은 단위라 중복 */
+    const u=c[field]; if(!u)return;
+    const nm=(c.id==='tw')?'대만':'중국';
+    if(!seen.some(x=>x.u===u&&x.nm===nm))seen.push({nm,u});
+  });
+  if(!seen.length)return '';
+  const uniq=[...new Set(seen.map(x=>x.u))];
+  return uniq.length===1?uniq[0]:seen.map(x=>x.nm+' '+x.u).join(' · ');
+}
 function lpBasisLabel(){
   const wk=LOCALPERF&&LOCALPERF.wk;
   if(wk){
@@ -5529,8 +5543,8 @@ function renderLocalPerf(){
    +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"><col style="width:78px"><col style="width:58px"><col style="width:58px">'
    +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"></colgroup>'
    +'<thead><tr><th rowspan="2">구분</th><th rowspan="2">법인</th>'
-   +'<th class="gh bd-x" colspan="8">현지 매출 <span>중국 M RMB · 대만 K TWD</span></th>'
-   +'<th class="gh" colspan="5">현지 수금 <span>K USD</span></th></tr>'
+   +`<th class="gh bd-x" colspan="8">현지 매출 <span>${esc(lpUnits('cur'))}</span></th>`
+   +`<th class="gh" colspan="5">현지 수금 <span>${esc(lpUnits('curCash'))}</span></th></tr>`
    +'<tr class="sub"><th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th><th>예상</th><th>예상 달성율</th><th class="bd-x">예상 성장율</th>'
    +'<th>25년 실적</th><th>26년 목표</th><th>실적</th><th>달성율</th><th>성장율</th></tr></thead><tbody>';
   [['m',MONTH+'월'],['c','누적'],['y','연간']].forEach(([kk,glabel])=>{
@@ -5734,8 +5748,8 @@ function mdealWeekInfo(month){
 }
 function mdealWeekLabel(month){
   const wi=mdealWeekInfo(month); if(!wi)return '';
-  return wi.eom?'「거래처실적_주간(u)」 월말 최종값 기준'
-               :`「거래처실적_주간(u)」 W${wi.iso} 기준${wi.prov?' · 주간 잠정':' · 월간 최종'}`;
+  return wi.eom?'「수출실적」 월말 최종값 기준'
+               :`「수출실적」 W${wi.iso} 기준${wi.prov?' · 주간 잠정':' · 월간 최종'}`;
 }
 /* 해당 월의 「거래처실적_월간」 데이터가 아직 없을 때, 그 달의 「거래처실적_주간」(SPHIST) 주차별 실적을
    선택 주차까지 이어 합산해 임시 당월 거래처 행을 만든다 · exTm/suTm(당월목표)은 주차마다 동일하게 실려오므로 최신 값 사용 */
@@ -5858,7 +5872,7 @@ function mrDealTable0(){
   h+=aggRow('홍콩·대만 소계',hktw,'ov-sub-row');
   h+=aggRow('합계 · 중국·대만·홍콩',D,'ov-tot-row');
   h+='</tbody></table>';
-  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 26년목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 단위 천$ · 마스터 「거래처실적_주간(u)」 탭 연동${mdealWeekLabel(MONTH)?' ('+esc(mdealWeekLabel(MONTH).replace('「거래처실적_주간(u)」 ',''))+')':''} · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 26년목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
+  h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 26년목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 단위 천$ · 마스터 「수출실적」 탭 연동${mdealWeekLabel(MONTH)?' ('+esc(mdealWeekLabel(MONTH).replace('「거래처실적_주간(u)」 ',''))+')':''} · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 26년목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
   return h;
 }
 function renderTeamWeekCards(wk){
@@ -6181,7 +6195,7 @@ function renderOverview(){
       h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
         +`<div class="ov-sec">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
         +mrDealTable()
-        +`<div class="ov-sec" style="margin-top:18px">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「거래처실적_주간(u)」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
+        +`<div class="ov-sec" style="margin-top:18px">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「수출실적」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
         +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
         +'</div>';
     } else {
@@ -11462,7 +11476,7 @@ function importG2Master(wb,scope){
       });
       const months=Object.keys(byMonth);
       months.forEach(mo=>{const rows=Object.values(byMonth[mo]);rows._prov=rows.some(x=>x._prov);MDEAL[mo]=rows;});
-      if(months.length){saveMDEAL();done.push('거래처실적 '+months.map(m=>m+'월').join('·')+' (「거래처실적_주간(u)」 통합탭 · 월·거래처별 최신 누적값 채택, 합산 아님)');}
+      if(months.length){saveMDEAL();done.push('거래처실적 '+months.map(m=>m+'월').join('·')+' (「수출실적」 통합탭 · 월·거래처별 최신 누적값 채택, 합산 아님)');}
       return;
     }
     // ④ 거래처실적_주간(구형식·증분 방식, 현재는 매칭될 일 없음 — 위 새 탭이 「적용기준」 열을 추가로 요구하므로
@@ -11506,7 +11520,11 @@ function importG2Master(wb,scope){
       /* 주차 칸이 비어 있으면 바로 위 행의 주차를 물려받는다 — 한 번 올릴 때마다 18행에
          모두 적을 필요 없이 첫 줄에만 W40이라고 쓰면 된다. 드래그 자동채움으로 주차가
          한 행씩 밀리던 사고(W39,W40,W41…)의 근본 원인이 "행마다 적어야 한다"는 점이었다. */
-      const raw={},seen={},hit={};let n=0,lastWk=null,firstWk=null;
+      /* 2026-09-25: 단위(M RMB·K USD·K TWD)를 코드에 박아두지 않고 시트의 「단위」 열에서 읽는다.
+         원본에서 「현지 수금」 단위가 K USD → M RMB로 정정됐는데 화면은 K USD로 고정돼 있어
+         숫자는 맞는데 단위만 틀리게 나오는 상황이었다. 시트가 바뀌면 화면도 따라가게 한다. */
+      const cU=ci('단위');
+      const raw={},seen={},hit={},units={};let n=0,lastWk=null,firstWk=null;
       body.forEach(r=>{
         const k=keyOf(cG>=0?r[cG]:''),cp=corpOf(r[cC]),it=itemOf(r[cI]);
         if(!k||!cp||!it)return;
@@ -11521,10 +11539,17 @@ function importG2Master(wb,scope){
         seen[key]={wk:cur};
         raw[cp]=raw[cp]||{};raw[cp][it]=raw[cp][it]||{};
         raw[cp][it][k]={v25:(c25>=0?g2num(r[c25]):null),tgt,act,exp:(cEx>=0?g2num(r[cEx]):null)};
+        if(cU>=0){const u=String(r[cU]||'').trim(); if(u){units[cp]=units[cp]||{};units[cp][it]=u;}}
         n++;
       });
       if(!n)return;
       LOCALPERF=lpBuild(raw,LOCALPERF);
+      /* 시트에서 읽은 단위를 법인별로 반영 (중국 소계는 닝보 단위를 따른다) */
+      LOCALPERF.corps.forEach(c2=>{
+        const u=units[c2.id]||units[c2.id==='cn'?'ning':c2.id]||{};
+        if(u.sale)c2.cur=u.sale;
+        if(u.cash&&c2.cash)c2.curCash=u.cash;
+      });
       /* 화면에 표기할 "기준 주차" 라벨 (값 채택은 위에서 키별 최신 주차로 이미 끝났다).
          ① (구분·법인·항목)이 한 번씩만 나오면 = 시트에 스냅샷이 한 벌뿐이다. 이때 주차는
             "언제 기준인지" 적어둔 라벨일 뿐이고, 행마다 다를 이유가 없다. 드래그 자동채움으로
@@ -11570,7 +11595,13 @@ function cloudLoadSheet(){cloudAuth(()=>{ if(TAB==='goals'&&GOALSUB==='kpi'){doK
    한 번도 누르지 않은 기기가 코드에 미리 박혀있는 오래된 기본값(예: 주간업무 W33까지)만 보던 문제를
    해결하기 위한 것 — 로그인 여부와 무관하게 페이지를 열 때마다 조용히 1회 시도하고,
    시트가 아직 비공개(제한됨)라 실패해도 화면엔 기존 기본값이 그대로 유지된다(에러 노출 없음). */
-const PUBLIC_SYNC_TABS=['주간보고','거래처실적_주간(u)','월말보고','KPI지표','중화팀일정','출장일정','현지실적']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
+/* 2026-09-25: 마스터시트에서 「거래처실적_주간(u)」 탭 이름이 「수출실적」으로 바뀌었다.
+   이 목록은 탭 "이름"으로 받아오므로, 이름이 바뀌는 순간 본사실적이 조용히 옛 주차에 멈춘다
+   (W39가 시트에 있는데 화면은 W38 — 실제로 이번에 그렇게 됐다).
+   importG2Master는 탭 이름이 아니라 "열 제목"으로 어느 데이터인지 판별하므로, 두 이름을 모두
+   넣어두면 어느 쪽이 살아 있든 동작한다. 없는 탭은 조용히 건너뛴다(개별 실패 무시).
+   ※ 앞으로 탭 이름을 바꾸시면 이 줄에 새 이름을 추가해야 한다. */
+const PUBLIC_SYNC_TABS=['주간보고','수출실적','거래처실적_주간(u)','월말보고','KPI지표','중화팀일정','출장일정','현지실적']; /* 출장일정이 빠져 있어 [구글시트 불러오기]를 직접 누르지 않으면(공개 자동 동기화만으로는) 출장 날짜 수정이 전혀 반영되지 않던 문제 수정
   · 2026-09-06, Code.gs 디버그 응답(availableSheets)으로 실제 마스터시트의 탭 이름을 전부 대조해보니 이 목록에 두 개가 실제 탭
     이름과 달랐다: "주간업무"→실제로는 "주간보고", "일정"→실제로는 "중화팀일정"(개인 일정用 "일정"이라는 이름의 탭은 아예 존재하지
     않음 — 그 기능은 현재 시트에 없는 것으로 보임, 별도 확인 필요). gviz/Code.gs 둘 다 탭을 "이름으로" 요청하기 때문에, 로그인 안
