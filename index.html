@@ -2646,7 +2646,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.25-M331</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.25-M333</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -11141,11 +11141,15 @@ function g2wk(v){const s=String(v||'').trim();let m=s.match(/W\s*(\d{1,2})/i);if
    * 시트 원본도 고쳐야 재발하지 않음: 「거래처실적_주간」탭 E열(수출 목표(전체))의
      대만 Sunriser 행(전 주차) → 230,000 / 대만법인 행(W34~) → 770,000 으로 직접 수정 필요
      (이 세션은 라이브 시트 편집 권한이 막혀 있어 코드 쪽에서만 보정함) */
+/* 옛 시트에서 「대만 법인」·「대만 Sunriser」 두 행이 같은 1,000,000(=임플대만 연간목표)을
+   중복해 적고 있어, 합산 시 2배가 되는 걸 막으려고 넣었던 보정.
+   2026-09-25: Sunriser 행이 「대만 법인」으로 통합되면서 법인의 올바른 목표가 실제로
+   1,000,000이 되었는데, 이 보정이 그걸 770,000으로 되돌려 대만 연간목표가 3,500→3,270천$로
+   깎이고 있었다. 법인 분기는 제거하고 Sunriser 분기만 남긴다(옛 시트도 그대로 동작). */
 function fixSheetExT(dealer,exT){
   if(exT!==1000000)return exT;
   const dl=String(dealer||'');
   if(/대만\s*sunriser/i.test(dl))return 230000;
-  if(/대만\s*법인/.test(dl))return 770000;
   return exT;
 }
 function g2date(v){
@@ -11718,6 +11722,33 @@ async function fetchPublicTabViaGAS(name){
    스타트로 20초 넘게 걸린다 — 탭마다 따로 부르면 그 비용을 7번 낸다.
    Code.gs를 아직 새 버전으로 배포하지 않았으면 응답에 sheets가 없으므로 null을 돌려주고,
    호출부가 기존 탭별 방식으로 자동 대체한다(구버전 배포에서도 그대로 동작). */
+/* 2026-09-25: 마스터시트의 실제 탭 이름 목록. Code.gs 는 없는 탭을 요청하면 availableSheets 를
+   돌려주므로(배포 변경 없이) 그걸 이용한다. 탭 이름이 바뀌어도 화면이 조용히 멈추지 않게 하려는 것 —
+   실제로 「거래처실적_주간(u)」→「수출실적」, 다시 「수출실적_W39.csv」로 두 번 바뀌었다. */
+async function fetchPublicTabNames(){
+  if(!PUBLIC_SYNC_GAS_URL)return null;
+  try{
+    const sep=PUBLIC_SYNC_GAS_URL.includes('?')?'&':'?';
+    const res=await fetch(PUBLIC_SYNC_GAS_URL+sep+'sheet=__tabs__&_ts='+Date.now(),{credentials:'omit',cache:'no-store'});
+    if(!res.ok)return null;
+    const j=await res.json();
+    return (j&&j.availableSheets&&j.availableSheets.length)?j.availableSheets:null;
+  }catch(e){return null;}
+}
+/* PUBLIC_SYNC_TABS 의 각 이름을 "시작 문자열"로 보고 실제 탭 이름을 찾는다.
+   「수출실적」 → 「수출실적_W39.csv」처럼 뒤에 뭐가 붙어도 매칭된다. 못 찾으면 원래 이름 그대로 시도. */
+function resolveSyncTabs(all){
+  if(!all||!all.length)return PUBLIC_SYNC_TABS.slice();
+  const norm=x=>String(x||'').replace(/\s/g,'');
+  const out=[],used={};
+  PUBLIC_SYNC_TABS.forEach(want=>{
+    const w=norm(want);
+    let hit=all.find(t=>norm(t)===w) || all.find(t=>norm(t).indexOf(w)===0);
+    if(hit&&!used[hit]){used[hit]=1;out.push(hit);}
+    else if(!hit&&out.indexOf(want)<0)out.push(want);
+  });
+  return out;
+}
 async function fetchPublicTabsBulk(names){
   if(!PUBLIC_SYNC_GAS_URL)return null;
   try{
@@ -11787,18 +11818,20 @@ async function publicSyncMaster(silent){
       fetchPublicTab(name).then(rows=>(rows&&rows.length)?{name,rows}:null)
                           .catch(()=>null), /* 개별 탭 실패는 건너뛰고 나머지 탭으로 계속 진행 */
       ms);
-    const bulk=await withTimeout(fetchPublicTabsBulk(PUBLIC_SYNC_TABS),35000);
+    /* 실제 탭 이름을 먼저 확인해 이름이 바뀌었어도 따라가게 한다(위 resolveSyncTabs 주석 참고) */
+    const TABS=resolveSyncTabs(await withTimeout(fetchPublicTabNames(),20000));
+    const bulk=await withTimeout(fetchPublicTabsBulk(TABS),35000);
     let got;
     if(bulk){
-      got=PUBLIC_SYNC_TABS.map(name=>{const rows=bulk[name];return (rows&&rows.length)?{name,rows}:null;});
+      got=TABS.map(name=>{const rows=bulk[name];return (rows&&rows.length)?{name,rows}:null;});
     }else{
-      got=await Promise.all(PUBLIC_SYNC_TABS.map(name=>oneTab(name,35000)));
+      got=await Promise.all(TABS.map(name=>oneTab(name,35000)));
       /* 콜드 스타트 때 일부 탭이 상한에 걸려 통째로 빠지는 일이 실제로 있었다(주간보고 9주 → 4주).
          이 시점엔 서버가 이미 더워져 재요청은 2~4초면 끝나므로, 빠진 탭만 한 번 더 받아온다. */
       const miss=[];
       got.forEach((g,i)=>{if(!g)miss.push(i);});
-      if(miss.length&&miss.length<PUBLIC_SYNC_TABS.length){
-        const re=await Promise.all(miss.map(i=>oneTab(PUBLIC_SYNC_TABS[i],20000)));
+      if(miss.length&&miss.length<TABS.length){
+        const re=await Promise.all(miss.map(i=>oneTab(TABS[i],20000)));
         miss.forEach((i,k)=>{if(re[k])got[i]=re[k];});
       }
     }
