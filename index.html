@@ -2646,7 +2646,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.25-M330</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.25-M331</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2947,15 +2947,21 @@ function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 
   /* 「거래처실적_월간」이 아직 없는 달은 (당월뿐 아니라 그 이전 어느 달이든) 「거래처실적_주간」을 그 달 주차만큼
      잠정 합산해 반영한다 · 예전에는 "당월(upto)"에만 이 대체를 적용해서, 월간탭 입력이 한두 달 밀리면 그 달 실적이
      누적에서 통째로 빠지는(예: 8월 누락) 문제가 있었다 → 그냥 「거래처실적_주간」 누적을 그대로 불러오도록 수정 */
-  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null,liveMonths=[];
+  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null,liveMonths=[],lastC=null,fromCum=false;
   for(let m=1;m<=upto;m++){
     let D=MDEAL[String(m)];
     if(!D||!D.length){const mr=mrDealMonthRows(m);if(mr.rows.length){D=mr.rows;liveUpto=mr.uptoWeek;liveMonths.push(m);}}
     if(!D||!D.length)continue;
     const g=ovScopeAggFrom(D,scope);
     if(g.exA)cumA+=g.exA; if(g.suA)cumSu+=g.suA;
-    if(g.exT)T=g.exT; if(g.suT)S=g.suT; any=true; months.push(m);}
-  return {cumA,cumSu,T,S,any,months,liveUpto,liveMonths};
+    if(g.exT)T=g.exT; if(g.suT)S=g.suT; any=true; months.push(m);
+    if(m===upto&&g.hasC)lastC=g;}
+  /* 2026-09-25: 「수출 누적실적」·「수금 누적실적」 열이 시트에 있으면 그 값을 그대로 쓴다.
+     월별 값을 더해 누적을 만들던 방식은 과거 달이 「월말 최종」으로 확정되지 않고 주간 잠정값에
+     머물러 있으면(7·8월이 실제로 그랬다) 조용히 적게 나온다 — 원본 누적과 어긋나는 원인이었다.
+     열이 없으면 종전대로 월별 합산(하위호환). */
+  if(lastC){cumA=lastC.exC;cumSu=lastC.suC;fromCum=true;}
+  return {cumA,cumSu,T,S,any,months,liveUpto,liveMonths,fromCum};
 }
 function saveMReport(){try{localStorage.setItem('wr_mreports_v5',JSON.stringify(MREPORTS));}catch(e){}}
 /* ===== 市场本部 重点KPI (summary 시트 · 8월/1~8월 누적) ===== */
@@ -4733,11 +4739,13 @@ function mkKpiTable(){
 }
 /* ===== 본사실적 · 월별 누적 수출·수금 (개선안) ===== */
 function ovScopeAggFrom(D,scope){
-  const s={exT:0,exTm:0,exA:0,suT:0,suTm:0,suA:0};
+  /* 2026-09-25: exC·suC = 시트 「수출 누적실적」·「수금 누적실적」(연초~그 달 누적). 있으면 hasC=true */
+  const s={exT:0,exTm:0,exA:0,suT:0,suTm:0,suA:0,exC:0,suC:0,hasC:false};
   (D||[]).forEach(d=>{const dl=d.dealer||'';if(/소계|합계/.test(dl))return;
     const isCn=d.grp==='중국', isTw=/대만/.test(dl), isHk=/홍콩/.test(dl);
     if(scope==='중국'&&!isCn)return; if(scope==='대만'&&!isTw)return; if(scope==='홍콩'&&!isHk)return;
-    s.exT+=(+d.exT||0);s.exTm+=(+d.exTm||0);s.exA+=(+d.exA||0);s.suT+=(+d.suT||0);s.suTm+=(+d.suTm||0);s.suA+=(+d.suA||0);});
+    s.exT+=(+d.exT||0);s.exTm+=(+d.exTm||0);s.exA+=(+d.exA||0);s.suT+=(+d.suT||0);s.suTm+=(+d.suTm||0);s.suA+=(+d.suA||0);
+    if(d.exC!=null||d.suC!=null){s.hasC=true;s.exC+=(+d.exC||0);s.suC+=(+d.suC||0);}});
   return s;
 }
 function ovScopeAgg(scope){return ovScopeAggFrom(ovDealD(),scope);}
@@ -5456,10 +5464,12 @@ function localPerfTiles(){
   let h='<div class="om-tiles">';
   ['cn','ning','beij','tw'].forEach(id=>{
     const d=byId(id), s=d.sale.c, ca=d.cash?d.cash.c:null;
+    /* 2026-09-25 요청: 「목표」 앞에 연간 전체목표(연간 행의 26년 목표)를 같이 적는다 */
+    const sy=d.sale.y, cy=d.cash?d.cash.y:null;
     h+='<div class="om-tile om-combo">'
-      + sec(`${d.label} 누적 매출`, s[2], s[3], `목표 ${n(s[1])} · 잔여 ${n(Math.max(0,(s[1]||0)-(s[2]||0)))}`, d.cur, false)
+      + sec(`${d.label} 누적 매출`, s[2], s[3], `26년 연간목표 ${n(sy&&sy[1])} · 누적목표 ${n(s[1])} · 잔여 ${n(Math.max(0,(s[1]||0)-(s[2]||0)))}`, d.cur, false)
       + '<div class="om-combo-div"></div>'
-      + (ca ? sec(`${d.label} 누적 수금`, ca[2], ca[3], `목표 ${n(ca[1])} · 잔여 ${n(Math.max(0,(ca[1]||0)-(ca[2]||0)))}`, d.curCash, false)
+      + (ca ? sec(`${d.label} 누적 수금`, ca[2], ca[3], `26년 연간목표 ${n(cy&&cy[1])} · 누적목표 ${n(ca[1])} · 잔여 ${n(Math.max(0,(ca[1]||0)-(ca[2]||0)))}`, d.curCash, false)
             : sec(`${d.label} 누적 수금`, null, null, '대만법인 수금 집계 항목 없음', '', true))
       + '</div>';
   });
@@ -5619,21 +5629,25 @@ function mrMainTiles(){
   const sec=(lb,val,r,sub)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPillN(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   const combo=(exSec,suSec)=>`<div class="om-tile om-combo">${exSec}<div class="om-combo-div"></div>${suSec}</div>`;
   let h='<div class="om-tiles">';
+  /* 2026-09-25 요청: 「목표」 앞에 연간 전체목표를 같이 적는다. 이 화면의 목표(T·S)는 원래부터
+     26년 연간 목표라, 이름만 「전체목표」→「26년 연간목표」로 바로잡아 오해가 없게 한다.
+     또한 중국의 「수금」은 실제로는 법인→본사 송금이라 라벨에 병기한다(홍콩·대만은 본사 수금). */
+  const gl=v=>`26년 연간목표 ${n(v)}`;
   h+=combo(
-    sec('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`전체목표 ${n(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`),
-    sec('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`전체목표 ${n(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`)
+    sec('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`${gl(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`),
+    sec('전체 누적 수금·송금',A.cumSu,A.S?A.cumSu/A.S:null,`${gl(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`)
   );
   h+=combo(
-    sec('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`전체목표 ${n(C.T)} · 비중 ${pct(C.cumA,A.cumA)}%`),
-    sec('중국 누적 수금',C.cumSu,C.S?C.cumSu/C.S:null,`전체목표 ${n(C.S)} · 비중 ${pct(C.cumSu,A.cumSu)}%`)
+    sec('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`${gl(C.T)} · 비중 ${pct(C.cumA,A.cumA)}%`),
+    sec('중국 누적 송금',C.cumSu,C.S?C.cumSu/C.S:null,`${gl(C.S)} · 비중 ${pct(C.cumSu,A.cumSu)}%`)
   );
   h+=combo(
-    sec('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`전체목표 ${n(T.T)} · 비중 ${pct(T.cumA,A.cumA)}%`),
-    sec('대만 누적 수금',T.cumSu,T.S?T.cumSu/T.S:null,`전체목표 ${n(T.S)} · 비중 ${pct(T.cumSu,A.cumSu)}%`)
+    sec('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`${gl(T.T)} · 비중 ${pct(T.cumA,A.cumA)}%`),
+    sec('대만 누적 수금',T.cumSu,T.S?T.cumSu/T.S:null,`${gl(T.S)} · 비중 ${pct(T.cumSu,A.cumSu)}%`)
   );
   h+=combo(
-    sec('홍콩 누적 수출',HK.cumA,HK.T?HK.cumA/HK.T:null,`전체목표 ${n(HK.T)} · 비중 ${pct(HK.cumA,A.cumA)}%`),
-    sec('홍콩 누적 수금',HK.cumSu,HK.S?HK.cumSu/HK.S:null,`전체목표 ${n(HK.S)} · 비중 ${pct(HK.cumSu,A.cumSu)}%`)
+    sec('홍콩 누적 수출',HK.cumA,HK.T?HK.cumA/HK.T:null,`${gl(HK.T)} · 비중 ${pct(HK.cumA,A.cumA)}%`),
+    sec('홍콩 누적 수금',HK.cumSu,HK.S?HK.cumSu/HK.S:null,`${gl(HK.S)} · 비중 ${pct(HK.cumSu,A.cumSu)}%`)
   );
   h+='</div>';
   const liveUpto=A.liveUpto||C.liveUpto||T.liveUpto||HK.liveUpto;
@@ -5644,10 +5658,13 @@ function mrMainTiles(){
 function mrMonthChart(label,scope){
   const upto=12, k=v=>Math.round((v||0)/1000);
   // 월별 누적 포인트 (데이터 있는 달만)
-  const pts=[];let cum=0,T=0;
+  const pts=[];let cum=0,T=0,lastC=null;
   for(let m=1;m<=upto;m++){const D=MDEAL[String(m)];let a=null;
-    if(D&&D.length){const g=ovScopeAggFrom(D,scope);if(g.exA){cum+=g.exA;a=k(cum);}if(g.exT)T=k(g.exT);}
+    if(D&&D.length){const g=ovScopeAggFrom(D,scope);if(g.exA){cum+=g.exA;a=k(cum);}if(g.exT)T=k(g.exT);
+      if(g.hasC)lastC={m,v:k(g.exC)};}
     pts.push({m,a});}
+  /* 2026-09-25: 시트 「수출 누적실적」이 있으면 그 달 누적점을 그 값으로 맞춘다(표·카드와 동일 기준) */
+  if(lastC&&pts[lastC.m-1]&&pts[lastC.m-1].a!=null)pts[lastC.m-1].a=lastC.v;
   const withD=pts.filter(p=>p.a!=null);
   const W2=460,H=250,L=54,R=18,TP=16,B=36;
   const maxV=Math.max(T||1,...withD.map(p=>p.a),1)*1.12;
@@ -5693,7 +5710,10 @@ function mrScopeRows(scope){
     if(g.exT)YT=k(g.exT);
     const t=k(g.exTm||0), hasA=!!g.exA;
     if(hasA)cum+=g.exA;
-    rows.push({m,lb:m+'월',t:t||null,a:hasA?k(g.exA):null,c:hasA?k(cum):null});}
+    rows.push({m,lb:m+'월',t:t||null,a:hasA?k(g.exA):null,c:hasA?k(cum):null,_hasC:g.hasC,_c:k(g.exC)});}
+  /* 2026-09-25: 시트 「수출 누적실적」이 있으면 그 달의 누적점을 그 값으로 바꾸고, 이후 달은
+     그 값을 기준으로 이어 그린다 — 카드·표와 같은 누적 기준을 쓰기 위함. */
+  {let adj=0;rows.forEach(r=>{ if(r.c==null)return; if(r._hasC&&r._c!=null){adj=r._c-r.c;} r.c=r.c+adj; });}
   const rangeLb='1~'+curM+'월';
   return {rows,YT,curM,rangeLb};
 }
@@ -5814,7 +5834,13 @@ function mrDealTable0(){
     let D2=MDEAL[String(m)];if(!D2||!D2.length){D2=(m===MONTH?D:mrDealMonthRows(m).rows)||[];}
     return monthRowsCache[m]=D2;};
   const liveMonths=[];for(let m=1;m<=MONTH;m++){const d2=MDEAL[String(m)];if(!d2||!d2.length)liveMonths.push(m);}
-  const cumOf=(dl,f)=>{let c=0,any=false;for(let m=1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=(+x[f]||0);any=true;}});}
+  /* 2026-09-25: 시트에 「수출 누적실적」·「수금 누적실적」(exC·suC)이 들어오면 그 값을 그대로 쓴다.
+     월별 합산은 과거 달이 「월말 최종」으로 확정되지 않으면 조용히 적게 나온다(7·8월이 그랬다). */
+  const cumOf=(dl,f)=>{
+    const cf=(f==='exA'?'exC':'suC');
+    const cur=rowsForMonth(MONTH).find(x=>x.dealer===dl&&x[cf]!=null);
+    if(cur)return (+cur[cf]||0);
+    let c=0,any=false;for(let m=1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=(+x[f]||0);any=true;}});}
     return any?c:null;};
   const NCOL=14;
   let h='<table class="ov-tbl ov-perf ov-perf2">'
@@ -5823,7 +5849,7 @@ function mrDealTable0(){
     +'<thead>'
     +'<tr><th rowspan="2" class="c-grp">구분</th><th rowspan="2" class="c-dl">거래처</th>'
     +'<th colspan="6" class="gh gh-ex bd-x">수출 <span>단위 천$</span></th>'
-    +'<th colspan="6" class="gh gh-su">수금 <span>단위 천$</span></th></tr>'
+    +'<th colspan="6" class="gh gh-su">수금 · 송금 <span>단위 천$ · 중국은 본사 송금, 홍콩·대만은 본사 수금</span></th></tr>'
     +`<tr class="sub"><th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th class="bd-x">누적진도</th>`
     +`<th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th>누적진도</th></tr>`
     +'</thead><tbody>';
@@ -11459,6 +11485,8 @@ function importG2Master(wb,scope){
     if(has('주차')&&has('거래처')&&has('적용기준')){
       if(scope!=='month')return; // 「거래처실적_월간」 탭의 역할(MDEAL 채우기)을 대신하므로 월간 패스에서만 처리
       const cMo=ci('월'),cW=ci('주차'),cD2=ci('거래처'),cT1=ci('수출목표(전체)'),cTm=ci('수출목표(당월)'),cA1=ci('수출실적'),cS1=ci('수금목표(전체)'),cSm=ci('수금목표(당월)'),cSA=ci('수금실적'),cOwn=ci('담당자'),cJg=ci('적용기준');
+      /* 2026-09-25 추가: 연초~그 달까지의 누적 실적 열(선택). 있으면 화면 누적을 월별 합산 대신 이 값으로 낸다. */
+      const cAC=ci('수출누적실적'),cSC=ci('수금누적실적');
       const wkPri=v=>{const s=String(v||'').trim();if(/월말/.test(s))return 9999;const w=g2wk(s);return w||-1;}; // -1=주차 인식불가(하단 요약블록 등) → 제외
       const byMonth={};
       body.forEach(r=>{
@@ -11472,6 +11500,7 @@ function importG2Master(wb,scope){
         if(cur&&cur._pri>pri)return; // 이미 더 늦은 주차(또는 월말) 값을 채택한 상태면 더 이른 주차 값은 무시
         bucket[dl]={dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',owner:String(cOwn>=0?r[cOwn]||'':'').trim(),
           exT,exTm:g2num(r[cTm]),exA,suT:g2num(r[cS1]),suTm:g2num(r[cSm]),suA:g2num(r[cSA]),
+          exC:(cAC>=0?g2num(r[cAC]):null), suC:(cSC>=0?g2num(r[cSC]):null),
           _pri:pri,_prov:!/최종/.test(String(cJg>=0?r[cJg]||'':''))};
       });
       const months=Object.keys(byMonth);
