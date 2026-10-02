@@ -567,7 +567,13 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 /* 중화팀 행사 상세표 = 출장일정(.ptable.triptbl) 표와 글자크기·폰트 완전 동일 (2026-09-05 요청) */
 .ptable.triptbl{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;font-size:13.6px;border:1px solid #cbd5e1}
 .ptable.triptbl th{background:#eef0f3;color:var(--ink);font-weight:800;font-size:12.5px;padding:7px 5px;white-space:nowrap;border:1px solid #cbd5e1}
-.ptable.triptbl td{border:1px solid #cbd5e1;padding:7px 6px;text-align:center;vertical-align:middle;color:#000;font-size:13.6px;line-height:1.45}
+/* 2026-09-29 요청("국가에 글자 줄바꿈하고, 나머지도 다"): 셀 안에서 한글 단어가
+   중간에서 끊기던 문제(예: 「부산수어」→「부산수 / 어」, 「한국 대구/부산」이 한 줄에 눌림).
+   word-break:keep-all → 한글은 띄어쓰기에서만 줄을 바꾼다. 긴 코드·항공편처럼 공백이
+   전혀 없는 토큰만 overflow-wrap:anywhere 로 예외 처리해 칸을 넘치지 않게 한다.
+   (「중화팀 행사」 표 .miletbl 는 이미 같은 규칙 — 두 표 동작을 맞춘다) */
+.ptable.triptbl td{border:1px solid #cbd5e1;padding:7px 6px;text-align:center;vertical-align:middle;color:#000;font-size:13.6px;line-height:1.45;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.ptable.triptbl th{word-break:keep-all}
 .ptable.triptbl td.rl{text-align:left}
 .ptable.rept.miletbl,.ptable.rept.miletbl td{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",sans-serif,Arial,sans-serif;letter-spacing:normal;font-size:13.6px;border:1px solid #cbd5e1;font-variant-numeric:tabular-nums}
 .ptable.rept.miletbl th,.ptable.rept.miletbl td{border:1px solid #cbd5e1;text-align:center;vertical-align:middle!important;color:#000;font-weight:400}
@@ -607,6 +613,8 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ptable.rept.miletbl td.mile-day,.ptable.triptbl td.trip-day{white-space:nowrap}
 .ptable.rept.miletbl td.mile-day input{font-weight:700;color:#0f766e;text-align:center;padding:1px 2px}
 .ptable.triptbl td.trip-day{font-weight:700;color:#0f766e;text-align:center}
+/* 국가 칸 — 색·굵기는 날짜 칸과 같게 두되 줄바꿈은 허용한다(2026-09-29 요청) */
+.ptable.triptbl td.trip-loc{font-weight:700;color:#0f766e;text-align:center;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.3}
 .miletbl td.mile-own .mf-owntrig{min-height:18px;padding:1px 3px}
 .miletbl .mf-av{width:13.6px;height:13.6px;font-size:7.5px}
 .ptable.triptbl td.trip-mgr{white-space:normal;line-height:1.2}
@@ -1650,6 +1658,11 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .lp-warn{font-size:11.6px;color:#9a5b12;background:#fdf6ec;border:1px solid #f0e0c4;padding:8px 11px;margin-top:10px;line-height:1.6}
 /* ===== 제품성과 (ARi·BD) · mgg_pm 화면 재현 · 색은 원본 화면에서 실측 추출 ===== */
 .mgg-bar2{display:flex;align-items:center;gap:12px;margin:-4px 0 12px;flex-wrap:wrap}
+/* 2026-10-02: BD/ARi 데이터 신선도 뱃지 — 지금 보는 값이 언제 받은 것인지 */
+.mgg-fresh{font-size:11.6px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.mgg-fresh.ok{background:#eaf5ef;color:#1e6f5c}
+.mgg-fresh.load{background:#eef2f7;color:#5a6472}
+.mgg-fresh.err{background:#fdeeee;color:#b3261e}
 .mgg-src{font-size:11.2px;color:var(--faint)}
 .mgg-sec{padding:12px 14px 14px}
 .mgg-h{display:flex;align-items:center;gap:12px;margin-bottom:11px;flex-wrap:wrap}
@@ -2655,7 +2668,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.09.29-M335</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.02-M338</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -2689,7 +2702,7 @@ body,input,select,textarea,button,table{font-size:inherit}
           <div class="tb-menu hide" id="dataMenu">
             <button onclick="closeDataMenu();cloudLoad()">☁ 클라우드 불러오기</button>
             <button onclick="closeDataMenu();genGooglePPT('week')">🖼 구글 PPT · 주간</button>
-            <button onclick="closeDataMenu();genGooglePPT('month')">🖼 구글 PPT · 월간</button>
+            <button onclick="closeDataMenu();genGooglePPT('month')">🖼 구글 PPT · 월간 <span id="pptMonLb" style="opacity:.6"></span></button>
             <button onclick="closeDataMenu();document.getElementById('impXlsx').click()">엑셀 불러오기</button>
             <button onclick="closeDataMenu();document.getElementById('impWeek').click()">주차별 불러오기</button>
             <button onclick="closeDataMenu();exportXlsx()">엑셀 다운로드</button>
@@ -3528,6 +3541,9 @@ function render(){
   document.body.classList.toggle('rail-min',RAILMIN);
   WEEKS=buildWeeks(MONTH);
   if(W>=WEEKS.length)W=WEEKS.length-1;
+  try{lpSync();}catch(e){}   /* 2026-09-29: 고른 달의 현지실적 스냅샷을 LOCALPERF 에 물린다 */
+  /* 월간 PPT는 "화면에서 고른 달" 기준이라, 어느 달로 뽑히는지 버튼에 적어둔다(2026-09-29) */
+  {const pl=document.getElementById('pptMonLb'); if(pl)pl.textContent='('+MONTH+'월)';}
   // avatars
   document.getElementById('avatars').innerHTML=MGRS.filter(m=>!m.empty&&!m.retired&&mgrStarted(m)).map(m=>
     `<div class="av" style="background:${m.color}" title="${m.name} ${m.title}">${m.ini}</div>`).join('');
@@ -3588,7 +3604,10 @@ function render(){
   else if(TAB==='sales')v.innerHTML=viewSales();
   else v.innerHTML=viewPerf(rows);
   {const rt=document.getElementById('rrtop');if(rt)rt.innerHTML='';}
-  document.querySelectorAll('.rr-memo,.qc-t,.rr-cell,.md-t,.mcal-memo textarea,.mg-one,.rep-sum,.rep-ti,.miletbl .infc textarea,.mile-date,.cxs-tx,.cxs-rep-in,.cxs-memo').forEach(autogrow);
+  /* 2026-09-29: .trip-tx 추가 — 출장일정 표의 출장명·출발/도착정보·출장목적 칸은 textarea 인데
+     autogrow 가 oninput 에서만 돌아서, 화면이 좁아 두 줄을 넘기면 글자가 잘려 보였다(overflow:hidden).
+     그릴 때마다 한 번 높이를 맞춰준다. */
+  document.querySelectorAll('.rr-memo,.qc-t,.rr-cell,.md-t,.mcal-memo textarea,.mg-one,.rep-sum,.rep-ti,.miletbl .infc textarea,.mile-date,.cxs-tx,.cxs-rep-in,.cxs-memo,.trip-tx').forEach(autogrow);
   if(NEWEVFOCUS){const nid=NEWEVFOCUS;NEWEVFOCUS=null;setTimeout(()=>{const el=document.getElementById('cev_title_'+nid);if(el){el.focus();}},0);}
 }
 function autogrow(el){el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
@@ -4947,7 +4966,7 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' | 'sel'(=중화�
      시작일·종료일(2026-09-09 요청: 중화팀행사와 동일하게 월/일 간략표기·소형화)·담당자·국가·출장명·
      출발정보·도착정보·출장 목적 (동행자·구분·방문처·연계 과제·결과·상태는 이유아 팀장이 시트에서도
      숨겨 쓰는 열이라 여기서도 제외) */
-  h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%;table-layout:fixed"><thead><tr>'
+  h+='<div style="overflow-x:auto"><table class="ptable edit triptbl" style="width:100%;min-width:980px;table-layout:fixed"><thead><tr>'
     +'<th style="width:6%">시작일</th><th style="width:6%">종료일</th><th style="text-align:left;width:16%">출장명</th><th style="width:11%">담당자</th>'
     +'<th style="width:8%">국가</th>'
     +'<th style="text-align:left;width:15%">출발정보</th><th style="text-align:left;width:15%">도착정보</th>'
@@ -4960,7 +4979,7 @@ function tripPanel(mode){   /* mode: 'week' | 'month' | 'year' | 'sel'(=중화�
     h+=`<tr><td class="trip-day">${esc(tripMD(t.start))}</td><td class="trip-day">${esc(tripMD(t.end||t.start))}</td>`
       +`<td class="rl"><textarea class="trip-tx" style="font-weight:700" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'name',this.value,0,this)" placeholder="출장명">${esc(t.name||'')}</textarea></td>`
       +`<td class="trip-mgr">${g?`<span class="av" style="width:16px;height:16px;font-size:9px;background:${g.color};display:inline-grid;place-items:center;border-radius:50%;color:#fff;margin-right:3px">${esc(g.ini)}</span>`:''}${esc(t.mgr||'')}${t.with?`<div class="mut" style="font-size:10.3px">+${esc(t.with)}</div>`:''}</td>`
-      +`<td class="trip-day">${esc(loc)}</td>`
+      +`<td class="trip-loc">${esc(loc)}</td>`   /* 2026-09-29: trip-day(줄바꿈 금지) 재사용을 끊고 국가 전용 칸으로 — "한국 대구/부산"처럼 긴 값이 칸을 넘치던 문제 */
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'dep',this.value,0,this)" title="출발일시·공항/편명">${esc(t.dep||'')}</textarea></td>`
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'arr',this.value,0,this)" title="도착일시·공항/편명">${esc(t.arr||'')}</textarea></td>`
       +`<td class="rl"><textarea class="trip-tx" oninput="autogrow(this);editTrip(${tripIdxOf(t)},'purpose',this.value,0,this)" placeholder="출장 목적·주요일정">${esc(t.purpose||'')}</textarea></td></tr>`;});
@@ -5292,13 +5311,22 @@ function mggDigest(raw){
   return {week:raw.week||'',asOf:raw.asOf||'',files:raw.files||{},P:{ARi:one(raw.ARi),BD:one(raw.BD)}};
 }
 
+/* 2026-10-02: 캐시를 "쓰고 끝"에서 "쓰고 뒤에서 다시 받기"로 바꾼다.
+   종전에는 세션 캐시가 30분 안이면 그대로 쓰고 호출 자체를 안 했다. 그래서 mgg_pm 쪽
+   주간파일이 갱신돼도 탭을 열어둔 채 새로고침하면 최대 30분 동안 옛 주차가 그대로 떴다
+   (실측 재현: 캐시를 W36으로 바꿔두면 엔드포인트가 W40을 주는데도 화면은 W36).
+   이제 캐시는 첫 화면을 빨리 그리는 용도로만 쓰고, 항상 뒤에서 새로 받아 주차가 바뀌면 교체한다. */
 function mggFetch(force){
   if(MGG.state==='loading')return;
+  let bg=false;
   if(!force){
     try{const c=JSON.parse(sessionStorage.getItem('mgg_cache')||'null');
-      if(c&&c.t&&(Date.now()-c.t)<30*60*1000&&c.d){MGG={state:'ok',data:c.d,err:''};return;}}catch(e){}
+      if(c&&c.t&&(Date.now()-c.t)<30*60*1000&&c.d){
+        MGG={state:'ok',data:c.d,err:'',at:c.t,stale:true};   /* 일단 캐시로 그리고 */
+        bg=true;                                              /* 뒤에서 최신 확인 */
+      }}catch(e){}
   }
-  MGG={state:'loading',data:MGG.data,err:''};
+  MGG={state:(bg?'ok':'loading'),data:MGG.data,err:'',at:MGG.at,stale:bg,bg:bg};
   const cb='__mggCB'+Date.now();
   const sc=document.createElement('script');
   let done=false;
@@ -5306,7 +5334,9 @@ function mggFetch(force){
     if(done)return; done=true;
     try{delete window[cb];}catch(e){window[cb]=undefined;}
     try{sc.remove();}catch(e){}
-    MGG={state:st,data:d||MGG.data,err:err||''};
+    /* 백그라운드 확인 중 실패하면 화면에 있는 캐시 값을 유지한다(빈 화면으로 떨어뜨리지 않는다) */
+    if(st==='err'&&bg&&MGG.data){MGG={state:'ok',data:MGG.data,err:'',at:MGG.at,stale:true};try{render();}catch(e){}return;}
+    MGG={state:st,data:d||MGG.data,err:err||'',at:(d?Date.now():MGG.at),stale:false};
     if(st==='ok'&&d){try{sessionStorage.setItem('mgg_cache',JSON.stringify({t:Date.now(),d}));}catch(e){}}
     try{render();}catch(e){}
   };
@@ -5390,8 +5420,19 @@ function renderProductPerf(){
   if(MGG.state==='idle')mggFetch();
   const D=MGG.data;
   let h=`<div class="ov-sec">BD/ARi 성과현황 <span class="ov-sub">ARi · BD · mgg_pm 주간보고 엑셀(구글드라이브) 실시간 연동${D?` · 기준 ${esc(D.week)} · ${esc(D.asOf)}`:''}</span></div>`;
+  /* 2026-10-02: "지금 보고 있는 값이 언제 받은 것인지"를 항상 띄운다 — 이게 없어서
+     캐시된 옛 주차를 최신으로 착각하는 일이 있었다. 뒤에서 최신 확인 중이면 그것도 알린다. */
+  const fresh=(()=>{
+    if(MGG.state==='loading')return '<span class="mgg-fresh load">⟳ 불러오는 중…</span>';
+    if(MGG.state==='err')return '<span class="mgg-fresh err">⚠ 갱신 실패 · 클릭해 다시</span>';
+    if(MGG.stale)return '<span class="mgg-fresh load">⟳ 최신 확인 중… (지금은 저장된 값)</span>';
+    if(MGG.at){const t=new Date(MGG.at);const p2=n=>String(n).padStart(2,'0');
+      return `<span class="mgg-fresh ok">✅ ${p2(t.getHours())}:${p2(t.getMinutes())} 수신</span>`;}
+    return '';
+  })();
   h+='<div class="mgg-bar2">'
    +`<button class="tb-b" onclick="mggFetch(1)"${MGG.state==='loading'?' disabled':''}>${MGG.state==='loading'?'불러오는 중…':'↻ 다시 불러오기'}</button>`
+   +fresh
    +(D&&D.files?`<span class="mgg-src">원본 ${esc(D.files.ARi||'')}${D.files.BD?' / '+esc(D.files.BD):''}</span>`:'')
    +'</div>';
   if(!D){
@@ -5497,6 +5538,42 @@ LOCALPERF=lpBuildFromBase();
   if(stamp&&stamp>=LP_REV){LOCALPERF=o;return;}
   localStorage.removeItem('wr_localperf_v1'); /* 낡은 저장본 폐기 — 다음 시트 동기화 때 새로 쌓인다 */
 }catch(e){}})();
+/* ═══ 2026-09-29 요청: 현지실적 월별 보관 ═══════════════════════════════════════════
+   여태 현지실적은 "최신 한 벌"만 들고 있었다. 시트에 월 열이 없어서, 10월(W40) 값을 올리면
+   9월 값이 그 자리에서 덮여 사라지고 9월 월간보고를 다시 뽑을 수 없었다.
+   시트에 열을 새로 만들지는 않는다 — 이미 있는 「주차」만 보면 그 주 금요일이 속한 달이
+   정해진다(W39→9월, W40→10월). 월 마감분만 주차 칸에 「9월 월말」처럼 적으면 그 달에
+   최우선으로 확정 저장되고, 이후 어떤 주차를 올려도 그 달 숫자는 바뀌지 않는다.
+   본사실적(「수출실적」 탭)의 월말 우선순위와 같은 규칙이다. */
+function lpWkMonth(wk){
+  try{const mon=isoWeekMonday(2026,+wk);const f=new Date(mon);f.setUTCDate(mon.getUTCDate()+4);return f.getUTCMonth()+1;}
+  catch(e){return null;}
+}
+let LPMON={};
+try{const o=JSON.parse(localStorage.getItem('wr_localperf_mon_v1')||'null'); if(o&&typeof o==='object')LPMON=o;}catch(e){}
+function saveLPMON(){try{localStorage.setItem('wr_localperf_mon_v1',JSON.stringify(LPMON));}catch(e){}}
+function lpMonthsWith(){return Object.keys(LPMON).map(Number).filter(m=>m>=1&&m<=12&&LPMON[m]&&LPMON[m].corps&&LPMON[m].corps.length).sort((a,b)=>a-b);}
+/* 고른 달의 값 · 없으면 그 이전 가장 가까운 달로 대체하고 대체했다고 알린다
+   (없다고 빈 화면을 보여주면 "시트가 안 올라온 건지 화면이 못 받은 건지" 또 구분이 안 된다) */
+function lpPick(m){
+  const ms=lpMonthsWith(); if(!ms.length)return null;
+  if(LPMON[m]&&LPMON[m].corps&&LPMON[m].corps.length)return {o:LPMON[m],from:+m,fb:false};
+  let p=null; ms.forEach(x=>{if(x<=m&&(p==null||x>p))p=x;});
+  if(p==null)p=ms[0];
+  return {o:LPMON[p],from:p,fb:true};
+}
+let LPFB=null;   /* 지금 화면이 다른 달 값을 대신 보여주는 중이면 그 달 번호 */
+function lpSync(){
+  const r=lpPick(MONTH);
+  if(r){LOCALPERF=r.o;LPFB=r.fb?r.from:null;}else LPFB=null;
+}
+(function(){ /* 1회 이관 — 기존 단일 저장본(또는 내장 기준값)을 그 주차가 속한 달 자리에 넣는다 */
+  if(!lpMonthsWith().length&&LOCALPERF&&LOCALPERF.corps&&LOCALPERF.corps.length){
+    const m=(LOCALPERF.wk?lpWkMonth(LOCALPERF.wk):null)||9;   /* 내장 기준값은 9월 W38 스냅샷 */
+    LOCALPERF.mon=m; LPMON[m]=LOCALPERF; saveLPMON();
+  }
+  lpSync();
+})();
 const LP_S1='#4750D0';   /* 현지 매출 — MEGAGEN 인디고 계열 */
 const LP_S2='#14A3A0';   /* 현지 수금 — 색각이상 구분도 검증 통과(ΔE 21.9 deutan) */
 
@@ -5545,16 +5622,20 @@ function lpUnits(field){
   return uniq.length===1?uniq[0]:seen.map(x=>x.nm+' '+x.u).join(' · ');
 }
 function lpBasisLabel(){
+  const eom=LOCALPERF&&LOCALPERF.eom;
+  /* 다른 달 값을 대신 보여주는 중이면 그 사실을 먼저 밝힌다 */
+  const fb=(LPFB!=null&&LPFB!==MONTH)?`⚠ ${MONTH}월 현지실적 미입력 — ${LPFB}월 값 표시 · `:'';
+  if(eom)return fb+`「현지실적」 ${LOCALPERF.mon||MONTH}월 월말 최종값 기준`;
   const wk=LOCALPERF&&LOCALPERF.wk;
   if(wk){
     const mix=(LOCALPERF.wkMix&&LOCALPERF.wkMix.length>1)?` · ⚠ 시트에 주차가 섞여 있음(W${LOCALPERF.wkMix[0]}~W${LOCALPERF.wkMix[LOCALPERF.wkMix.length-1]})`:'';
     try{
       const mon=isoWeekMonday(2026,wk),fri=new Date(mon);fri.setUTCDate(mon.getUTCDate()+4);
-      return `「현지실적」 시트 W${wk} 기준 (${fri.getUTCMonth()+1}.${String(fri.getUTCDate()).padStart(2,'0')})${mix}`;
-    }catch(e){return `「현지실적」 시트 W${wk} 기준${mix}`;}
+      return fb+`「현지실적」 시트 W${wk} 기준 (${fri.getUTCMonth()+1}.${String(fri.getUTCDate()).padStart(2,'0')})${mix}`;
+    }catch(e){return fb+`「현지실적」 시트 W${wk} 기준${mix}`;}
   }
   const a=(LOCALPERF&&LOCALPERF.asOf)||{};
-  return `중국 ${a.cn||'—'} · 대만 ${a.tw||'—'} 기준`;
+  return fb+`중국 ${a.cn||'—'} · 대만 ${a.tw||'—'} 기준`;
 }
 function localPerfTilesSub(){
   return `누적(1~${MONTH}월) 기준 · 중국 합계·닝보·북경·대만의 현지 매출·수금 · 뱃지 = 26년 목표 대비 달성율 · ${lpBasisLabel()}`;
@@ -6189,7 +6270,7 @@ function renderHome(){
     up.forEach(e=>{const f=x=>x?x.slice(5).replace('-','/'):'';h+=`<div class="hm-ev" onclick="railCalPick('${e.ds}')"><div class="d hm-date">${f(e.ds)}${e.de?' → '+f(e.de):''}</div>${esc(e.title)}<div class="tags">${hmTag(e.kind,e.cls)}${hmTag(e.country,hmCtryCls(e.country))}</div></div>`;});
     h+='</div>';
     h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🔗</span>INFORMATION</div><div class="hm-lk"><a href="${MREPORT_SHEET_URL}" target="_blank" rel="noopener">마스터파일 (구글시트)</a><span onclick="setTab('mreport');setOVtab('month')">월별보고</span><span onclick="setTab('mreport');setOVtab('week')">주간보고</span><span onclick="setTab('calmonth')">중화팀 일정·행사·출장</span></div></div>`;
-    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🎬</span>REPORT DECK</div><button class="tb-b" onclick="genGooglePPT('week')" style="width:100%">🖼 구글 PPT · 주간</button><button class="tb-b" onclick="genGooglePPT('month')" style="width:100%;margin-top:5px">🖼 구글 PPT · 월간</button></div>`;
+    h+=`<div class="hm-blk"><div class="hm-sec"><span class="em">🎬</span>REPORT DECK</div><button class="tb-b" onclick="genGooglePPT('week')" style="width:100%">🖼 구글 PPT · 주간</button><button class="tb-b" onclick="genGooglePPT('month')" style="width:100%;margin-top:5px">🖼 구글 PPT · 월간 (${MONTH}월)</button></div>`;
     h+='</div>';
   }
   h+='</div>';
@@ -8666,7 +8747,10 @@ function mileMonBar(){
    중화팀 행사 탭이 쓰는 MILEMONS와는 따로 둔다 — 두 탭의 성격(행사는 월별 계획, 출장은
    연간 전체가 기본)이 달라 상태를 공유하면 탭을 옮길 때마다 서로의 선택이 바뀐다.
    기본값은 1~12월 전부 선택 = 지금까지와 똑같은 「전체」 화면. */
-let TRIPMONS=[1,2,3,4,5,6,7,8,9,10,11,12];
+/* 2026-09-29 요청("출장일정에서 우선 현재달만 선택해줘"): 기본값 = 이번 달만.
+   「중화팀 행사」 탭의 MILEMONS 와 같은 기준(실제 달력상 현재 달)으로 맞춘다.
+   전체를 보려면 칩 줄의 「전체」 버튼 — 선택은 wr_tripmons 에 저장돼 다음에도 유지된다. */
+let TRIPMONS=[new Date().getMonth()+1];
 try{const v=JSON.parse(localStorage.getItem('wr_tripmons')||'null'); if(Array.isArray(v)&&v.length)TRIPMONS=v.map(Number).filter(n=>n>=1&&n<=12);}catch(e){}
 function saveTripMons(){try{localStorage.setItem('wr_tripmons',JSON.stringify(TRIPMONS));}catch(e){}}
 function setTripMon(m){const i=TRIPMONS.indexOf(m); if(i>=0)TRIPMONS.splice(i,1); else TRIPMONS.push(m); TRIPMONS.sort((a,b)=>a-b); saveTripMons(); render();}
@@ -8785,7 +8869,7 @@ function mileTable(){
   /* 2026-09-09 요청: 시작일·종료일 간단(월/일)·소형 표기, 비고 열 삭제, 담당자 칸 20% 축소,
      너비 재배분으로 잘림·2줄바뀜 방지(일정명에 여유 폭 배분) */
   let html=`<div class="ptable-wrap" style="margin:0">
-    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:4%')}<th style="text-align:center;width:5%">시작일</th><th style="text-align:center;width:5%">종료일</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:11%')}<th style="text-align:center;width:26%">일정명</th><th style="text-align:center;width:6%">참가인원</th><th style="text-align:center;width:6%">신규고객</th><th style="text-align:center;width:9%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:7%">담당자</th><th style="width:3%"></th></tr></thead><tbody>`;
+    <div style="overflow-x:auto"><table class="ptable edit miletbl rept" style="width:100%;min-width:1060px;table-layout:fixed"><thead><tr><th style="width:3%">No</th>${th('month','월','text-align:center;width:4%')}<th style="text-align:center;width:5%">시작일</th><th style="text-align:center;width:5%">종료일</th>${th('country','국가','text-align:center;width:6%')}${th('cat','구분','text-align:center;width:11%')}<th style="text-align:center;width:26%">일정명</th><th style="text-align:center;width:6%">참가인원</th><th style="text-align:center;width:6%">신규고객</th><th style="text-align:center;width:9%">비용 <span class="thu">(백만원)</span></th><th style="text-align:center;width:9%">PKG <span class="thu">(백만원)</span></th><th style="text-align:center;width:7%">담당자</th><th style="width:3%"></th></tr></thead><tbody>`;
   if(!list.length){html+=`<tr><td colspan="13" style="text-align:center;color:var(--faint);padding:22px">${MILEMONS.length?'해당 조건의 일정이 없습니다. 「＋ 일정 추가」로 등록하세요.':'선택된 월이 없습니다 · 위에서 월을 선택하세요.'}</td></tr>`;}
   list.forEach((o,n)=>{const x=o.x,i=o.i;
     const {d1,d2}=mileDayBounds(x);
@@ -11631,9 +11715,14 @@ function importG2Master(wb,scope){
       const cG=ci('구분'),cC=ci('법인'),cI=ci('항목'),c25=ci('25년실적'),
             cTg=(ci('26년목표')>=0?ci('26년목표'):ci('목표')),cAc=ci('실적'),cEx=ci('예상');
       if(cC<0||cI<0||cTg<0)return;
+      /* 2026-09-29: 「구분」 칸을 엄격하게 읽는다. 마스터시트 A열 머리글·첫 데이터칸에 공지 문구가
+         들어가면서(「9월월말보고서 9/30 오전내로…」) 구분 열 자체를 못 찾아 현지실적이 통째로
+         안 올라오던 사고가 있었다. 길게 적힌 안내문을 「월」로 오인하지 않도록 형태를 따진다. */
       const keyOf=v=>{const t=String(v||'').replace(/\s/g,'');
-        if(/누적/.test(t))return 'c'; if(/연간|연도|연$/.test(t))return 'y';
-        if(/월|당월/.test(t))return 'm'; return null;};
+        if(!t)return null;
+        if(/누적/.test(t))return 'c'; if(/^(연간|연도|연)$/.test(t)||/^\d{2,4}년?$/.test(t))return 'y';
+        if(/^(당월|월)$/.test(t)||/^\d{1,2}월$/.test(t))return 'm';
+        return null;};
       const corpOf=v=>{const t=String(v||'').replace(/\s/g,'');
         if(/닝보|宁波|寧波/.test(t))return 'ning';
         if(/북경|베이징|北京/.test(t))return 'beij';
@@ -11653,50 +11742,77 @@ function importG2Master(wb,scope){
          원본에서 「현지 수금」 단위가 K USD → M RMB로 정정됐는데 화면은 K USD로 고정돼 있어
          숫자는 맞는데 단위만 틀리게 나오는 상황이었다. 시트가 바뀌면 화면도 따라가게 한다. */
       const cU=ci('단위');
-      const raw={},seen={},hit={},units={};let n=0,lastWk=null,firstWk=null;
+      /* 2026-09-29: 주차 → 월 자동 분류 + 월별 보관 (LPMON).
+         시트에 「월」 열을 새로 만들지 않는다 — 주차만 알면 그 주 금요일이 속한 달이 정해진다.
+           · 「W40」        → 10월 (9/28~10/2 중 금요일이 10/2)
+           · 「9월 월말」   → 9월에 최우선(9999)으로 확정 저장 = 그 달 잠금
+         「월」 열이 있으면 그 값을 우선한다(나중에 열을 추가해도 그대로 동작). */
+      const cM2=ci('월');
+      /* 구분 열 머리글이 공지 문구로 덮여 못 찾으면 첫 열을 구분으로 본다(원래 A열이다) */
+      const cG2=(cG>=0?cG:0);
+      /* 그래도 칸 내용이 안내문이면 — (법인·항목)이 당월→누적→연간 순으로 세 번 반복되는
+         시트 형태를 이용해 몇 번째로 나왔는지로 메운다 */
+      const ord={};
+      const slotOf=v=>{
+        const t=String(v||'').trim(); if(!t)return null;
+        const eom=/월말|마감|최종/.test(t);
+        const mm=t.match(/(\d{1,2})\s*월/);
+        const wm=t.match(/W\s*(\d{1,2})/i);
+        if(eom)return {mon:(mm?+mm[1]:null),wk:null,eom:true,pri:9999};
+        if(wm){const w=+wm[1];return {mon:lpWkMonth(w),wk:w,eom:false,pri:w};}
+        if(mm)return {mon:+mm[1],wk:null,eom:false,pri:0};
+        return null;
+      };
+      const B={};let n=0,last=null;
       body.forEach(r=>{
-        const k=keyOf(cG>=0?r[cG]:''),cp=corpOf(r[cC]),it=itemOf(r[cI]);
-        if(!k||!cp||!it)return;
+        const cp=corpOf(r[cC]),it=itemOf(r[cI]);
+        if(!cp||!it)return;
+        const ok=cp+'|'+it, idx=((ord[ok]=(ord[ok]||0)+1)-1)%3;
+        const k=keyOf(r[cG2])||['m','c','y'][idx];
+        if(!k)return;
         const tgt=g2num(r[cTg]),act=g2num(r[cAc]);
         if(tgt==null&&act==null)return;
-        let wk=null;
-        if(cW>=0){const w0=wkOf(r[cW]); if(w0!=null)lastWk=w0; wk=(w0!=null?w0:lastWk);}
-        if(firstWk==null&&wk!=null)firstWk=wk;
-        const cur=(wk==null?-1:wk), key=cp+'|'+it+'|'+k;
-        hit[key]=(hit[key]||0)+1;
-        if(seen[key]!==undefined&&seen[key].wk>cur)return;   /* 이미 더 최신 주차를 채택함 */
-        seen[key]={wk:cur};
-        raw[cp]=raw[cp]||{};raw[cp][it]=raw[cp][it]||{};
-        raw[cp][it][k]={v25:(c25>=0?g2num(r[c25]):null),tgt,act,exp:(cEx>=0?g2num(r[cEx]):null)};
-        if(cU>=0){const u=String(r[cU]||'').trim(); if(u){units[cp]=units[cp]||{};units[cp][it]=u;}}
-        n++;
+        /* 주차 칸이 비어 있으면 바로 위 행을 물려받는다 — 18행에 매번 다 적을 필요 없이 첫 줄에만 쓰면 된다 */
+        let sl=(cW>=0?slotOf(r[cW]):null);
+        if(sl)last=sl; else sl=last;
+        const mon=(cM2>=0?g2mon(r[cM2]):null)||(sl&&sl.mon)||MONTH;
+        const pri=sl?sl.pri:-1, wk=(sl&&sl.wk!=null)?sl.wk:null;
+        const b=B[mon]=B[mon]||{raw:{},seen:{},hit:{},units:{},n:0,firstWk:null};
+        if(b.firstWk==null&&wk!=null)b.firstWk=wk;
+        const key=cp+'|'+it+'|'+k;
+        b.hit[key]=(b.hit[key]||0)+1;
+        if(b.seen[key]!==undefined&&b.seen[key].pri>pri)return;   /* 이미 더 늦은 주차(또는 월말)를 채택함 */
+        b.seen[key]={pri,wk:(wk==null?-1:wk),eom:!!(sl&&sl.eom)};
+        b.raw[cp]=b.raw[cp]||{};b.raw[cp][it]=b.raw[cp][it]||{};
+        b.raw[cp][it][k]={v25:(c25>=0?g2num(r[c25]):null),tgt,act,exp:(cEx>=0?g2num(r[cEx]):null)};
+        if(cU>=0){const u=String(r[cU]||'').trim(); if(u){b.units[cp]=b.units[cp]||{};b.units[cp][it]=u;}}
+        b.n++;n++;
       });
       if(!n)return;
-      LOCALPERF=lpBuild(raw,LOCALPERF);
-      /* 시트에서 읽은 단위를 법인별로 반영 (중국 소계는 닝보 단위를 따른다) */
-      LOCALPERF.corps.forEach(c2=>{
-        const u=units[c2.id]||units[c2.id==='cn'?'ning':c2.id]||{};
-        if(u.sale)c2.cur=u.sale;
-        if(u.cash&&c2.cash)c2.curCash=u.cash;
+      const lpMons=Object.keys(B).map(Number).sort((x,y)=>x-y);
+      lpMons.forEach(mo=>{
+        const b=B[mo];
+        const o=lpBuild(b.raw,LPMON[mo]||LOCALPERF);
+        /* 시트에서 읽은 단위를 법인별로 반영 (중국 소계는 닝보 단위를 따른다) */
+        o.corps.forEach(c2=>{
+          const u=b.units[c2.id]||b.units[c2.id==='cn'?'ning':c2.id]||{};
+          if(u.sale)c2.cur=u.sale;
+          if(u.cash&&c2.cash)c2.curCash=u.cash;
+        });
+        const multi=Object.keys(b.hit).some(k2=>b.hit[k2]>1);
+        if(!multi){o.wk=b.firstWk;o.wkMix=null;}
+        else{
+          const cnt={};Object.keys(b.seen).forEach(k2=>{const w=b.seen[k2].wk;if(w>=0)cnt[w]=(cnt[w]||0)+1;});
+          const ks=Object.keys(cnt).map(Number);let mode=null;
+          ks.forEach(w=>{if(mode==null||cnt[w]>cnt[mode]||(cnt[w]===cnt[mode]&&w>mode))mode=w;});
+          o.wk=mode;o.wkMix=(ks.length>1?ks.sort((x,y)=>x-y):null);
+        }
+        o.eom=Object.keys(b.seen).some(k2=>b.seen[k2].eom);
+        o.mon=mo;
+        LPMON[mo]=o;
       });
-      /* 화면에 표기할 "기준 주차" 라벨 (값 채택은 위에서 키별 최신 주차로 이미 끝났다).
-         ① (구분·법인·항목)이 한 번씩만 나오면 = 시트에 스냅샷이 한 벌뿐이다. 이때 주차는
-            "언제 기준인지" 적어둔 라벨일 뿐이고, 행마다 다를 이유가 없다. 드래그 자동채움으로
-            한 행씩 밀려 적혔더라도(W39,W40,W41…) 사용자가 실제로 친 값은 첫 행의 것이므로
-            첫 행 주차를 라벨로 쓰고 경고하지 않는다.
-         ② 키가 겹치면 = 여러 주차가 쌓여 있는 정상적인 누적 입력. 이때는 실제로 채택된
-            주차들만 보고, 그중 가장 많은 주차를 라벨로 쓰되 서로 다르면 섞였다고 알린다. */
-      {const multi=Object.keys(hit).some(k2=>hit[k2]>1);
-       if(!multi){
-         LOCALPERF.wk=firstWk; LOCALPERF.wkMix=null;
-       }else{
-         const cnt={}; Object.keys(seen).forEach(k2=>{const w=seen[k2].wk; if(w>=0)cnt[w]=(cnt[w]||0)+1;});
-         const ks=Object.keys(cnt).map(Number);
-         let mode=null; ks.forEach(w=>{if(mode==null||cnt[w]>cnt[mode]||(cnt[w]===cnt[mode]&&w>mode))mode=w;});
-         LOCALPERF.wk=mode; LOCALPERF.wkMix=(ks.length>1?ks.sort((a,b)=>a-b):null);
-       }}
-      saveLOCALPERF();
-      done.push('현지실적 '+n+'행');
+      saveLPMON(); lpSync();
+      done.push('현지실적 '+lpMons.map(m=>m+'월'+(LPMON[m]&&LPMON[m].eom?'(월말 확정)':(LPMON[m]&&LPMON[m].wk?'(W'+LPMON[m].wk+')':''))).join(' · ')+' · '+n+'행');
       return;
     }
   });
@@ -12022,6 +12138,23 @@ async function pptCaptureTab(mrtab,opts){
 /* 2026-09-20 요청: PPT 마지막에 「중화팀 일정·행사·출장」 추가 — 한 장은 KPI 카드, 나머지는 달력만.
    which='kpi' → 상단 카드 3장(#kpis) · which='cal' → 달력 박스만(리스트 탭은 제외).
    캡쳐 전에 달력 섹션이 접혀 있으면 펼친다(사용자가 접어둔 상태여도 PPT에는 나와야 한다). */
+/* 2026-09-29: html2canvas 는 <textarea> 안의 글을 줄바꿈해 그리지 못하고 한 줄로 그린 뒤
+   칸 밖을 잘라낸다 — 출장일정의 출발정보·도착정보·출장목적이 PPT에서만 뒷부분이 잘려 나오던 원인.
+   캡쳐 직전에 textarea 를 같은 글꼴의 일반 div 로 바꿔치기하고(줄바꿈 허용), 끝나면 되돌린다. */
+function capFlattenTA(root,undo){
+  if(!root)return;
+  root.querySelectorAll('textarea').forEach(ta=>{
+    const cs=getComputedStyle(ta);
+    const d=document.createElement('div');
+    d.textContent=ta.value||'';
+    d.style.cssText='white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;width:100%;box-sizing:border-box'
+      +';text-align:'+cs.textAlign+';font-family:'+cs.fontFamily+';font-size:'+cs.fontSize+';font-weight:'+cs.fontWeight
+      +';line-height:'+cs.lineHeight+';color:'+cs.color+';padding:'+cs.padding;
+    ta.parentNode.insertBefore(d,ta);
+    const prev=ta.style.display; ta.style.display='none';
+    undo.push(()=>{try{d.remove();ta.style.display=prev;}catch(e){}});
+  });
+}
 async function pptCaptureCal(which){
   const prevTAB=TAB, prevLTab=(typeof CALLTAB!=='undefined'?CALLTAB:null);
   const prevMileMons=(typeof MILEMONS!=='undefined')?MILEMONS.slice():null;
@@ -12049,6 +12182,7 @@ async function pptCaptureCal(which){
       el=document.querySelector('#view .cltab-b');    /* 표 본문만 — 탭 버튼줄·월 칩 제외 */
       /* 편집용 삭제 버튼(🗑)은 보고서에 필요없으므로 캡쳐 동안만 숨긴다 */
       if(el)el.querySelectorAll('.mile-del').forEach(b=>{const d=b.style.display;b.style.display='none';undo.push(()=>{b.style.display=d;});});
+      capFlattenTA(el,undo);
     }else{
       el=document.querySelector('#view .calx-cal');   /* 달력만 — 오른쪽 상세 패널 제외 */
       if(el){ /* 달력 상단에서 제목(.calx-tt)만 남기고 조작요소(오늘·필터·상세·이동)는 모두 숨긴다 */
