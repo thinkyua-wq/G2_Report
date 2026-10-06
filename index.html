@@ -1503,6 +1503,18 @@ tr.gsub .gsub-t::before{content:'└';color:#b6bdc7;margin-right:6px;font-size:1
 .om-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
 .om-tiles5{grid-template-columns:repeat(5,minmax(0,1fr))}
 .om-tiles6{grid-template-columns:repeat(6,minmax(0,1fr))}
+/* 2026-10-06: KPI 카드 5장(본사실적·현지실적 + G2 당월) — 글자가 두 줄로 넘어가지 않게 폭 배분·여백 조정 */
+.om-tiles.om-g5{grid-template-columns:1.06fr 1fr 1fr 1fr 1.02fr;gap:10px}
+.om-g5 .om-tile{padding:11px 12px 10px}
+.om-g5 .om-tl{white-space:nowrap;gap:6px;font-size:11.6px}
+.om-g5 .om-tl .om-pill{flex-shrink:0}
+.om-g5 .om-ts{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.6px}
+.om-g5 .om-tv{font-size:24.5px}
+.om-g5 .om-g2{background:#f5f7fb;border-color:#d9e0ea}
+@media(max-width:1500px){.om-g5 .om-tl{font-size:11px}.om-g5 .om-ts{font-size:10.2px}.om-g5 .om-tv{font-size:22.5px}.om-g5 .om-tile{padding:10px 10px 9px}}
+@media(max-width:1280px){.om-tiles.om-g5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1100px){.om-tiles.om-g5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.om-tiles.om-g5{grid-template-columns:1fr}}
 .om-tiles6 .om-tile{padding:11px 12px}
 .om-tiles6 .om-tv{font-size:24.2px}
 .om-tt{font-size:10.5px;color:var(--faint);font-weight:600}
@@ -2700,7 +2712,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M350</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M351</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5678,7 +5690,7 @@ function localPerfTiles(){
     +(na?`<div class="om-tv lp-na" style="font-size:19px">—</div>`
         :`<div class="om-tv">${n(val)}<span class="om-tu">${esc(cur)}</span></div>`)
     +`<div class="om-ts">${esc(sub)}</div></div>`;
-  let h='<div class="om-tiles">';
+  let h='<div class="om-tiles om-g5">';
   /* 2026-10-06 요청(본사실적과 동일): 첫 카드(중국 소계)는 1~당월 누적 ÷ 26년 연간목표,
      닝보·북경·대만은 법인별 「당월 누적」(당월 실적 ÷ 당월 목표 · 시트의 당월 행) */
   const DM=(LOCALPERF&&LOCALPERF.mon)||MONTH;
@@ -5705,6 +5717,7 @@ function localPerfTiles(){
             : sec(`${d.label} 당월 누적 수금 (${DM}월)`, null, null, '대만법인 수금 집계 항목 없음', '', true))
       + '</div>';
   });
+  h+=g2MonthTile(DM);   /* 본사 기준(천$) — 현지 표와 같은 달 */
   return h+'</div>';
 }
 /* 지금 화면의 현지실적이 "언제 기준"인지 한 줄로. 시트에 주차 열이 있으면 그 주차(와 금요일 날짜)를,
@@ -5864,6 +5877,15 @@ function mrWeekTiles(){
   });
   return h+'</div>';
 }
+/* 2026-10-06 요청: 본사실적·현지실적 KPI 카드 맨 오른쪽에 「G2 당월 누적 수출·수금」(중화권 전체 · 본사 천$) */
+function g2MonthTile(month){
+  const MD=mrDealMonthRows(month).rows||[];
+  const g=MD.length?ovScopeAggFrom(MD,'전체'):{};
+  const a=+g.exA||0,t=+g.exTm||0,sa=+g.suA||0,st=+g.suTm||0;
+  const n=v=>Math.round((v||0)/1000).toLocaleString('en-US');
+  const sec=(lb,val,tgt)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPillN(tgt?val/tgt:null)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${month}월 목표 ${n(tgt)} · 잔여 ${n(Math.max(0,tgt-val))}</div></div>`;
+  return `<div class="om-tile om-combo om-g2" title="중국·대만·홍콩 합계 · 본사 수출·수금(천$) · ${month}월 실적 ÷ ${month}월 목표">${sec(`G2 당월 누적 수출 (${month}월)`,a,t)}<div class="om-combo-div"></div>${sec(`G2 당월 누적 수금 (${month}월)`,sa,st)}</div>`;
+}
 function mrMainTiles(){
   /* 2026-09-12 요청: 지역별 수출·수금 타일이 위(수출)·아래(수금) 두 줄로 나뉘어 있던 걸
      지역당 카드 1개로 합침(수출 위 / 구분선 / 수금 아래) + 카드 내 글자 10% 축소(.om-combo) */
@@ -5873,7 +5895,7 @@ function mrMainTiles(){
   /* 2026-09-15 요청("본사실적 kpi 카드도 현지실적처럼"): 뱃지를 .om-pill(회색·50%미만만 빨강)로 교체 */
   const sec=(lb,val,r,sub)=>`<div class="om-combo-sec"><div class="om-tl">${lb} ${omPillN(r)}</div><div class="om-tv">${n(val)}<span class="om-tu">천$</span></div><div class="om-ts">${sub}</div></div>`;
   const combo=(exSec,suSec)=>`<div class="om-tile om-combo">${exSec}<div class="om-combo-div"></div>${suSec}</div>`;
-  let h='<div class="om-tiles">';
+  let h='<div class="om-tiles om-g5">';
   /* 2026-09-25 요청: 「목표」 앞에 연간 전체목표를 같이 적는다. 이 화면의 목표(T·S)는 원래부터
      26년 연간 목표라, 이름만 「전체목표」→「26년 연간목표」로 바로잡아 오해가 없게 한다.
      또한 중국의 「수금」은 실제로는 법인→본사 송금이라 라벨에 병기한다(홍콩·대만은 본사 수금). */
@@ -5894,6 +5916,7 @@ function mrMainTiles(){
       msec(`${lb} 당월 누적 수출 (${MONTH}월)`,g.a,g.t,AM.a),
       msec(`${lb} 당월 누적 수금 (${MONTH}월)`,g.sa,g.st,AM.sa)
     );});
+  h+=g2MonthTile(MONTH);
   h+='</div>';
   const liveUpto=A.liveUpto||C.liveUpto||T.liveUpto||HK.liveUpto;
   const liveMonths=[...new Set([...(A.liveMonths||[]),...(C.liveMonths||[]),...(T.liveMonths||[]),...(HK.liveMonths||[])])].sort((a,b)=>a-b);
