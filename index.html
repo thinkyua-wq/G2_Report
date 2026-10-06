@@ -1351,6 +1351,10 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .lp-tbl td.lp-corp{padding-top:6px;padding-bottom:6px}
 /* 2026-10-02 요청: 「10월 실적상세표 높이 10%만 높여줘」 — 본사 실적상세표(.ov-perf2) 행 19.3px → 약 21.3px(+10%). 위의 1px 규칙보다 뒤에 와야 이긴다 */
 .ov-tbl.ov-perf2 tbody td{padding-top:2px;padding-bottom:2px}
+/* 2026-10-06 요청: 한 번 더 +10% (행 높이 측정값 기준으로 맞춤 · 행 28.3px → 31.1px) */
+.ov-tbl.ov-perf2 tbody td{padding-top:3.4px;padding-bottom:3.4px}
+/* 2026-10-06 2차 요청: 한 번 더 +10% · 행 31.1px → 34.2px */
+.ov-tbl.ov-perf2 tbody td{padding-top:4.95px;padding-bottom:4.95px}
 .ov-perf2 td.ov-rate{line-height:1.05}
 .ov-perf2 td.ov-rate .rb{height:3px;margin-top:2px}
 .ov-tbl.ov-perf2 tbody td.rl,.ov-tbl.ov-perf2 tbody td.c-agg{text-align:left}
@@ -2696,7 +2700,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.02-M345</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M349</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -3014,7 +3018,7 @@ function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 
   /* 「거래처실적_월간」이 아직 없는 달은 (당월뿐 아니라 그 이전 어느 달이든) 「거래처실적_주간」을 그 달 주차만큼
      잠정 합산해 반영한다 · 예전에는 "당월(upto)"에만 이 대체를 적용해서, 월간탭 입력이 한두 달 밀리면 그 달 실적이
      누적에서 통째로 빠지는(예: 8월 누락) 문제가 있었다 → 그냥 「거래처실적_주간」 누적을 그대로 불러오도록 수정 */
-  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null,liveMonths=[],lastC=null,fromCum=false;
+  let cumA=0,cumSu=0,T=0,S=0,any=false,months=[],liveUpto=null,liveMonths=[],lastC=null,fromCum=false,lastCm=0,cumA_at=0,cumSu_at=0;
   for(let m=1;m<=upto;m++){
     let D=MDEAL[String(m)];
     if(!D||!D.length){const mr=mrDealMonthRows(m);if(mr.rows.length){D=mr.rows;liveUpto=mr.uptoWeek;liveMonths.push(m);}}
@@ -3022,12 +3026,13 @@ function mdAggUpto(scope,upto){ // 1월~upto월 누적 (데이터 있는 달만 
     const g=ovScopeAggFrom(D,scope);
     if(g.exA)cumA+=g.exA; if(g.suA)cumSu+=g.suA;
     if(g.exT)T=g.exT; if(g.suT)S=g.suT; any=true; months.push(m);
-    if(m===upto&&g.hasC)lastC=g;}
+    if(g.hasC){lastC=g;lastCm=m;cumA_at=cumA;cumSu_at=cumSu;}}
   /* 2026-09-25: 「수출 누적실적」·「수금 누적실적」 열이 시트에 있으면 그 값을 그대로 쓴다.
      월별 값을 더해 누적을 만들던 방식은 과거 달이 「월말 최종」으로 확정되지 않고 주간 잠정값에
      머물러 있으면(7·8월이 실제로 그랬다) 조용히 적게 나온다 — 원본 누적과 어긋나는 원인이었다.
      열이 없으면 종전대로 월별 합산(하위호환). */
-  if(lastC){cumA=lastC.exC;cumSu=lastC.suC;fromCum=true;}
+  /* 2026-10-06: 누적 열이 있는 가장 최근 달(당월이 아니어도) 값 + 그 뒤 달 실적 */
+  if(lastC){cumA=lastC.exC+(cumA-cumA_at);cumSu=lastC.suC+(cumSu-cumSu_at);fromCum=true;}
   return {cumA,cumSu,T,S,any,months,liveUpto,liveMonths,fromCum};
 }
 function saveMReport(){try{localStorage.setItem('wr_mreports_v5',JSON.stringify(MREPORTS));}catch(e){}}
@@ -5662,6 +5667,9 @@ const LP_S2='#14A3A0';   /* 현지 수금 — 색각이상 구분도 검증 통�
    2026-09-15에는 이 카드를 본사실적·주간보고 탭까지 세 탭이 공유했으나, 2026-09-18에
    본사실적은 mrMainTiles()(본사 수출·수금 천$)로 되돌렸다 — 본사실적 탭의 나머지 내용이
    전부 USD라 카드만 RMB·TWD면 같은 화면에서 단위가 충돌한다. 카드 디자인은 양쪽이 동일하다. */
+/* 2026-10-06 요청: 중국(닝보·북경·소계) 현지실적 단위는 K RMB로 표시 — 시트 「단위」 열의 M RMB는 값 크기(닝보 월 19,132)와 맞지 않는다.
+   값은 그대로 두고 단위 글자만 바꾼다. 대만(K TWD)은 시트 값 그대로 */
+function lpCurOf(u,id){const t=String(u||'');return (id!=='tw'&&/^\s*M\s*RMB\s*$/i.test(t))?'K RMB':t;}
 function localPerfTiles(){
   const C=LOCALPERF.corps, byId=id=>C.find(x=>x.id===id);
   const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
@@ -5671,15 +5679,30 @@ function localPerfTiles(){
         :`<div class="om-tv">${n(val)}<span class="om-tu">${esc(cur)}</span></div>`)
     +`<div class="om-ts">${esc(sub)}</div></div>`;
   let h='<div class="om-tiles">';
+  /* 2026-10-06 요청(본사실적과 동일): 첫 카드(중국 소계)는 1~당월 누적 ÷ 26년 연간목표,
+     닝보·북경·대만은 법인별 「당월 누적」(당월 실적 ÷ 당월 목표 · 시트의 당월 행) */
+  const DM=(LOCALPERF&&LOCALPERF.mon)||MONTH;
+  const rt=(a,t)=>(a!=null&&t)?Math.round(a/t*100):null;
   ['cn','ning','beij','tw'].forEach(id=>{
-    const d=byId(id), s=d.sale.c, ca=d.cash?d.cash.c:null;
-    /* 2026-09-25 요청: 「목표」 앞에 연간 전체목표(연간 행의 26년 목표)를 같이 적는다 */
-    const sy=d.sale.y, cy=d.cash?d.cash.y:null;
+    const d=byId(id); if(!d)return;
+    if(id==='cn'){
+      const sc=d.sale.c||[], sy=d.sale.y||[], cc=d.cash?(d.cash.c||[]):null, cy=d.cash?(d.cash.y||[]):null;
+      const sa=sc[2], ca=cc?cc[2]:null;
+      h+='<div class="om-tile om-combo">'
+        + sec(`${d.label} 누적 매출 (1~${DM}월)`, sa, rt(sa,sy[1]), `26년 연간목표 ${n(sy[1])} · 잔여 ${n(Math.max(0,(sy[1]||0)-(sa||0)))}`, lpCurOf(d.cur,d.id), sa==null)
+        + '<div class="om-combo-div"></div>'
+        + (cc ? sec(`${d.label} 누적 수금 (1~${DM}월)`, ca, rt(ca,cy&&cy[1]), `26년 연간목표 ${n(cy&&cy[1])} · 잔여 ${n(Math.max(0,((cy&&cy[1])||0)-(ca||0)))}`, lpCurOf(d.curCash,d.id), ca==null)
+              : sec(`${d.label} 누적 수금 (1~${DM}월)`, null, null, '수금 집계 항목 없음', '', true))
+        + '</div>';
+      return;
+    }
+    const sm=d.sale.m||[], cm=d.cash?(d.cash.m||[]):null;
+    const msub=(r)=>`${DM}월 목표 ${n(r[1])} · 잔여 ${n(Math.max(0,(r[1]||0)-(r[2]||0)))}`;
     h+='<div class="om-tile om-combo">'
-      + sec(`${d.label} 누적 매출`, s[2], s[3], `26년 연간목표 ${n(sy&&sy[1])} · 누적목표 ${n(s[1])} · 잔여 ${n(Math.max(0,(s[1]||0)-(s[2]||0)))}`, d.cur, false)
+      + sec(`${d.label} 당월 누적 매출 (${DM}월)`, sm[2], rt(sm[2],sm[1]), msub(sm), lpCurOf(d.cur,d.id), sm[2]==null)
       + '<div class="om-combo-div"></div>'
-      + (ca ? sec(`${d.label} 누적 수금`, ca[2], ca[3], `26년 연간목표 ${n(cy&&cy[1])} · 누적목표 ${n(ca[1])} · 잔여 ${n(Math.max(0,(ca[1]||0)-(ca[2]||0)))}`, d.curCash, false)
-            : sec(`${d.label} 누적 수금`, null, null, '대만법인 수금 집계 항목 없음', '', true))
+      + (cm ? sec(`${d.label} 당월 누적 수금 (${DM}월)`, cm[2], rt(cm[2],cm[1]), msub(cm), lpCurOf(d.curCash,d.id), cm[2]==null)
+            : sec(`${d.label} 당월 누적 수금 (${DM}월)`, null, null, '대만법인 수금 집계 항목 없음', '', true))
       + '</div>';
   });
   return h+'</div>';
@@ -5693,7 +5716,7 @@ function lpUnits(field){
   const seen=[];
   ((LOCALPERF&&LOCALPERF.corps)||[]).forEach(c=>{
     if(c.id==='cn')return;                    /* 소계는 닝보와 같은 단위라 중복 */
-    const u=c[field]; if(!u)return;
+    const u=lpCurOf(c[field],c.id); if(!u)return;
     const nm=(c.id==='tw')?'대만':'중국';
     if(!seen.some(x=>x.u===u&&x.nm===nm))seen.push({nm,u});
   });
@@ -5718,7 +5741,8 @@ function lpBasisLabel(){
   return fb+`중국 ${a.cn||'—'} · 대만 ${a.tw||'—'} 기준`;
 }
 function localPerfTilesSub(){
-  return `누적(1~${MONTH}월) 기준 · 중국 합계·닝보·북경·대만의 현지 매출·수금 · 뱃지 = 26년 목표 대비 달성율 · ${lpBasisLabel()}`;
+  const DM=(LOCALPERF&&LOCALPERF.mon)||MONTH;
+  return `중국 소계 = 1~${DM}월 누적 ÷ 26년 연간목표 · 닝보·북경·대만 = ${DM}월 당월 누적 ÷ ${DM}월 목표 · ${lpBasisLabel()}`;
 }
 function renderLocalPerf(){
   const n=v=>(v==null||v==='')?'—':Number(v).toLocaleString('en-US');
@@ -5746,7 +5770,7 @@ function renderLocalPerf(){
       const s=d.sale[kk], ca=d.cash?d.cash[kk]:null;
       grps+=`<div class="lp-cgrp">${bar(s?s[3]:null,LP_S1)}${bar(ca?ca[3]:null,LP_S2)}</div>`;
     });
-    chartHtml+=`<div class="omc"><div class="omc-h">${esc(d.label)}<span>${esc(d.cur)}${d.curCash?' · '+esc(d.curCash):''}</span></div>`
+    chartHtml+=`<div class="omc"><div class="omc-h">${esc(d.label)}<span>${esc(lpCurOf(d.cur,d.id))}${d.curCash?' · '+esc(lpCurOf(d.curCash,d.id)):''}</span></div>`
       +`<div class="lp-plot"><div class="lp-gl" style="bottom:${H}px"><b>100%</b></div><div class="lp-gl" style="bottom:${H*0.5}px"><b>50%</b></div>`
       +`<div class="lp-groups">${grps}</div></div>`
       +`<div class="lp-xlab"><span>${MONTH}월</span><span>누적</span><span>연간</span></div>`
@@ -5787,7 +5811,7 @@ function renderLocalPerf(){
       h+=`<tr class="${d.sum?'ov-sub-row':(d.tw?'lp-tw':'')}">`;
       if(i===0)h+=`<td class="lp-grp" rowspan="${C.length}">${esc(glabel)}</td>`;
       /* 2026-09-20 요청: 법인명 아래 국가(닝보→중국 등) 줄 삭제, 통화단위는 법인명 옆으로 */
-      h+=`<td class="lp-corp">${esc(d.label)}<u>${esc(d.cur)}</u></td>`;
+      h+=`<td class="lp-corp">${esc(d.label)}<u>${esc(lpCurOf(d.cur,d.id))}</u></td>`;
       h+=cell(s[0])+cell(s[1])+`<td><b>${n(s[2])}</b></td>`+pct(s[3])+g(s[4])+nxc(nxVal(d,'sale',kk),'bd-x');
       h+= ca ? (cell(ca[0])+cell(ca[1])+`<td><b>${n(ca[2])}</b></td>`+pct(ca[3])+g(ca[4])+nxc(nxVal(d,'cash',kk)))
              : '<td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td>';
@@ -5856,20 +5880,20 @@ function mrMainTiles(){
   const gl=v=>`26년 연간목표 ${n(v)}`;
   h+=combo(
     sec('전체 누적 수출 (1~'+MONTH+'월)',A.cumA,A.T?A.cumA/A.T:null,`${gl(A.T)} · 잔여 ${n(Math.max(0,A.T-A.cumA))}`),
-    sec('전체 누적 수금',A.cumSu,A.S?A.cumSu/A.S:null,`${gl(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`)
+    sec('전체 누적 수금 (1~'+MONTH+'월)',A.cumSu,A.S?A.cumSu/A.S:null,`${gl(A.S)} · 잔여 ${n(Math.max(0,A.S-A.cumSu))}`)
   );
-  h+=combo(
-    sec('중국 누적 수출',C.cumA,C.T?C.cumA/C.T:null,`${gl(C.T)} · 비중 ${pct(C.cumA,A.cumA)}%`),
-    sec('중국 누적 수금',C.cumSu,C.S?C.cumSu/C.S:null,`${gl(C.S)} · 비중 ${pct(C.cumSu,A.cumSu)}%`)
-  );
-  h+=combo(
-    sec('대만 누적 수출',T.cumA,T.T?T.cumA/T.T:null,`${gl(T.T)} · 비중 ${pct(T.cumA,A.cumA)}%`),
-    sec('대만 누적 수금',T.cumSu,T.S?T.cumSu/T.S:null,`${gl(T.S)} · 비중 ${pct(T.cumSu,A.cumSu)}%`)
-  );
-  h+=combo(
-    sec('홍콩 누적 수출',HK.cumA,HK.T?HK.cumA/HK.T:null,`${gl(HK.T)} · 비중 ${pct(HK.cumA,A.cumA)}%`),
-    sec('홍콩 누적 수금',HK.cumSu,HK.S?HK.cumSu/HK.S:null,`${gl(HK.S)} · 비중 ${pct(HK.cumSu,A.cumSu)}%`)
-  );
+  /* 2026-10-06 요청: 전체 카드는 연간목표 기준 1~당월 누적 그대로, 중국·대만·홍콩 카드는 「당월 누적」
+     (당월 1일~현재까지의 실적 ÷ 당월 목표)으로 바꾼다. 당월 행은 실적상세표와 같은 원천(mrDealMonthRows) */
+  const MD=mrDealMonthRows(MONTH).rows||[];
+  const mAgg=sc=>{const g=MD.length?ovScopeAggFrom(MD,sc):{};return {a:+g.exA||0,t:+g.exTm||0,sa:+g.suA||0,st:+g.suTm||0};};
+  const AM=mAgg('전체');
+  const ml=v=>`${MONTH}월 목표 ${n(v)}`;
+  const msec=(lb,val,tgt,tot)=>sec(lb,val,tgt?val/tgt:null,`${ml(tgt)} · 잔여 ${n(Math.max(0,tgt-val))} · 비중 ${pct(val,tot)}%`);
+  [['중국','중국'],['대만','대만'],['홍콩','홍콩']].forEach(([lb,sc])=>{const g=mAgg(sc);
+    h+=combo(
+      msec(`${lb} 당월 누적 수출 (${MONTH}월)`,g.a,g.t,AM.a),
+      msec(`${lb} 당월 누적 수금 (${MONTH}월)`,g.sa,g.st,AM.sa)
+    );});
   h+='</div>';
   const liveUpto=A.liveUpto||C.liveUpto||T.liveUpto||HK.liveUpto;
   const liveMonths=[...new Set([...(A.liveMonths||[]),...(C.liveMonths||[]),...(T.liveMonths||[]),...(HK.liveMonths||[])])].sort((a,b)=>a-b);
@@ -5998,7 +6022,10 @@ function mrDealMonthRows(month){
   const D0=mdealRows(month);
   if(D0.length)return {rows:D0,fromWeek:false,uptoWeek:null};
   const ws=buildWeeks(month).filter(w=>w.iso);
-  if(!ws.length)return {rows:[],fromWeek:false,uptoWeek:null};
+  const tgtOnly=()=>{const nx=MDNX[String(month)];if(!nx)return {rows:[],fromWeek:false,uptoWeek:null};
+    const rows=Object.keys(nx).map(dl=>{const z=nx[dl]||{};return {dealer:dl,grp:/닝보|북경/.test(dl)?'중국':'해외',exT:z.exT??null,exTm:z.exTm??null,exA:null,suT:z.suT??null,suTm:z.suTm??null,suA:null};});
+    return {rows,fromWeek:false,uptoWeek:null,targetOnly:true};};
+  if(!ws.length)return tgtOnly();
   const acc={},order=[];let lastData=null;
   ws.forEach(w=>{
     const key='W'+w.iso;
@@ -6016,6 +6043,7 @@ function mrDealMonthRows(month){
       if(d.suT!=null)a.suT=d.suT;if(d.suTm!=null)a.suTm=d.suTm;
       if(d.owner)a.owner=d.owner;});
   });
+  if(!order.length)return tgtOnly();
   return {rows:order.map(dl=>acc[dl]),fromWeek:true,uptoWeek:lastData};
 }
 function mrEffMonth(){if(mdealRows(MONTH).length)return MONTH; if(mrDealMonthRows(MONTH).rows.length)return MONTH; const lm=mdealLastMonth();return lm||MONTH;}
@@ -6061,6 +6089,9 @@ function mrDealTable0(){
     const cf=(f==='exA'?'exC':'suC');
     const cur=rowsForMonth(MONTH).find(x=>x.dealer===dl&&x[cf]!=null);
     if(cur)return (+cur[cf]||0);
+    /* 2026-10-06: 당월에 누적 열이 없으면 누적 열이 있는 가장 최근 달 값에서 이어 더한다(월별 합산은 과거 잠정값 때문에 적게 나옴) */
+    for(let m0=MONTH-1;m0>=1;m0--){const b=rowsForMonth(m0).find(x=>x.dealer===dl&&x[cf]!=null);
+      if(b){let c=(+b[cf]||0);for(let m=m0+1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null)c+=(+x[f]||0);});}return c;}}
     let c=0,any=false;for(let m=1;m<=MONTH;m++){rowsForMonth(m).forEach(x=>{if(x.dealer===dl&&x[f]!=null){c+=(+x[f]||0);any=true;}});}
     return any?c:null;};
   /* 2026-10-02 요청: 수출·수금 각각 「누적진도」 옆에 다음달 목표 1칸(예: 9월 보기 → 10월 목표) */
@@ -6126,6 +6157,15 @@ function mrDealTable0(){
   h+=aggRow('홍콩·대만 소계',hktw,'ov-sub-row');
   h+=aggRow('합계 · 중국·대만·홍콩',D,'ov-tot-row');
   h+='</tbody></table>';
+  /* 2026-10-06: 시트 「누적실적」 열이 월별 실적 합과 크게 다르면 표 아래에 알려준다(입력 실수 조기 발견용).
+     화면 누적은 시트 누적 열을 그대로 쓰므로, 열 값이 틀리면 누적·진도·카드가 같이 틀린다 */
+  {const warn=[];
+    const bm=(()=>{for(let m=MONTH;m>=1;m--){if(rowsForMonth(m).some(x=>x.exC!=null||x.suC!=null))return m;}return 0;})();
+    if(bm){rowsForMonth(bm).forEach(x=>{[['exC','exA','수출'],['suC','suA','수금']].forEach(([cf,f,lb])=>{
+      if(x[cf]==null)return; let sm=0;for(let m=1;m<=bm;m++){rowsForMonth(m).forEach(y=>{if(y.dealer===x.dealer&&y[f]!=null)sm+=(+y[f]||0);});}
+      const a=k(+x[cf]||0),b=k(sm),own=k(+x[f]||0);
+      if(Math.abs(a-b)>=20&&(Math.abs(a-b)/Math.max(a,b,1)>0.05||a<own))warn.push(`${esc(x.dealer)} ${lb}: 시트 누적 ${num(a)} ↔ 1~${bm}월 실적 합 ${num(b)}${a<own?` (누적이 ${bm}월 한 달 실적 ${num(own)}보다 작음)`:''}`);});});}
+    if(warn.length)h+=`<div class="ov-foot" style="color:#b3261e;font-weight:700">⚠ 「수출실적26」 ${bm}월 「누적실적」 열 확인 필요 — ${warn.join(' · ')} · 화면 누적은 시트 누적 열 값을 씁니다</div>`;}
   h+=liveMonths.length?`<div class="ov-foot">※ ${liveMonths.join('·')}월은 「거래처실적_월간」 미입력 → 「거래처실적_주간」(최근 W${uptoWeek?uptoWeek.iso:''})까지 누적 잠정 집계(당월 실적·누적실적 모두 포함) · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표 · 누적진도 = 누적실적 ÷ 26년목표 · 월간 탭 입력 시 정식 수치로 자동 교체</div>`:`<div class="ov-foot">※ 단위 천$ · 마스터 「수출실적」 탭 연동${mdealWeekLabel(MONTH)?' ('+esc(mdealWeekLabel(MONTH).replace('「거래처실적_주간(u)」 ',''))+')':''} · ${MONTH}월 달성 = ${MONTH}월 실적 ÷ ${MONTH}월 목표(막대 길이·농도 = 달성율) · 누적진도 = 누적실적 ÷ 26년목표 · 누적 = 1~${MONTH}월 합(데이터 입력된 달만)</div>`;
   return h;
 }
@@ -6438,7 +6478,7 @@ function renderOverview(){
        실적상세표는 전부 천$인데 그 위 카드만 M RMB·K TWD라 같은 화면에서 단위가 충돌했다.
        카드 디자인(om-combo·om-pill)은 현지실적과 동일하게 유지하고 숫자만 본사 USD로 되돌린다.
        현지 매출·수금(RMB·TWD)은 바로 옆 「현지실적」 탭에 그대로 있다. */
-    const secSub=(isMR&&CT==='main')?`누적(1~${MONTH}월) 기준 · 전체·중국·대만·홍콩의 본사 수출·수금(천\$) · 뱃지 = 전체목표 대비 달성율`:(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
+    const secSub=(isMR&&CT==='main')?`본사 수출·수금(천\$) · 전체 = 1~${MONTH}월 누적 ÷ 26년 연간목표 · 중국·대만·홍콩 = ${MONTH}월 당월 누적 ÷ ${MONTH}월 목표`:(isMR&&CT==='focus')?`${mfMonLabel(String(MFMON||MONTH))} 중점추진과제(연간목표) KPI · 연간 기준 대비 진척·상태·지원필요`:(isMR&&CT==='month')?`${mrEffMonth2()}월 월별보고 KPI · 담당자별 주요내용·행사`:(PERIOD==='week'?`주간 수출·수금(천\$) · 기준 주차 ${esc(ovWeekKey())}`:`누적 수출·수금(천\$)·KPI 달성율 · ${periodWord()} 행사`);
     /* 2026-09-09 요청: 본사실적 탭의 핵심지표 헤더 앞에 "몇월 몇주차" 표기 추가 */
     const kpiHead=(isMR&&CT==='main')?`${MONTH}월 ${W+1}주차 핵심 지표`:'핵심 지표';
     h+=`<div class="ov-sec">${esc(kpiHead)} <span class="ov-sub">${secSub}</span></div>`;
@@ -6482,7 +6522,7 @@ function renderOverview(){
          남겨둬도 무해 — 실제로 안 쓰이는지는 grep으로 확인함) */
       const em=mrEffMonth();const dmr=mrDealMonthRows(MONTH);
       const mwl=mdealWeekLabel(MONTH); /* 2026-09-18: 지금 보고 있는 값이 몇 주차 행에서 온 건지 명시 */
-      const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:(mwl?mwl+' · ':''))+`당월 실적 + 1~${MONTH}월 누적`;
+      const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.targetOnly?`${MONTH}월 실적 미입력 · 「수출실적26」 ${MONTH}월 목표만 표시 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:(mwl?mwl+' · ':''))+`당월 실적 + 1~${MONTH}월 누적`;
       /* 2026-09-20 요청: 그래프를 표 아래로. 숫자를 먼저 확인하고 추세는 그 뒤에 보는 순서 */
       h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
         +`<div class="ov-sec">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
@@ -11844,9 +11884,14 @@ function importG2Master(wb,scope){
         if(exT==null&&exA==null)return;
         /* 실적(수출·수금)이 둘 다 비어 있고 당월 목표만 있으면 → 아직 시작 안 한 다음달 틀. 달 데이터로 만들지 않고
            「다음달 목표」로만 보관한다(빈 달이 잠기거나 「미입력」 대체를 막는 걸 방지) */
-        if(exA==null&&g2num(r[cSA])==null){
+        /* 2026-10-06: 「10월 월말 최종」 입력틀처럼 아직 끝나지 않은 달(이번 달 이후)인데 실적이 0/빈칸·누적도 빈칸이면
+           입력 전 틀로 본다 — 0을 실적으로 받으면 그 달이 「월말 최종 0」으로 잠겨 주간 잠정값까지 가린다 */
+        const _sa=g2num(r[cSA]), _ac=(cAC>=0?g2num(r[cAC]):null), _sc=(cSC>=0?g2num(r[cSC]):null);
+        const _open=mo>=(new Date().getMonth()+1);
+        const _blank=v=>v==null||v===0;
+        if((exA==null&&_sa==null)||(_open&&_blank(exA)&&_blank(_sa)&&_ac==null&&_sc==null)){
           const a1=g2num(r[cTm]),b1=g2num(r[cSm]);
-          if(a1!=null||b1!=null){(NXB[mo]=NXB[mo]||{})[dl]={exTm:a1,suTm:b1};}
+          if(a1!=null||b1!=null||exT!=null){(NXB[mo]=NXB[mo]||{})[dl]={exT,exTm:a1,suT:g2num(r[cS1]),suTm:b1};}
           return;
         }
         const bucket=(byMonth[mo]=byMonth[mo]||{});
@@ -11972,6 +12017,8 @@ function importG2Master(wb,scope){
     const months=Object.keys(EXB);
     if(EXTOUCH&&months.length){
       months.forEach(mo=>{const rows=Object.values(EXB[mo]);rows._prov=rows.some(x=>x._prov);MDEAL[mo]=rows;});
+      /* 2026-10-06: 시트에서 사라진(또는 입력틀로 바뀐) 그 뒤 달의 예전 값이 브라우저에 남아 계속 보이던 문제 */
+      {const mx=Math.max(...months.map(Number));Object.keys(MDEAL).forEach(k=>{if(+k>mx&&!EXB[k])delete MDEAL[k];});}
       saveMDEAL();
       MDNX=NXB; saveMDNX();
       done.push('거래처실적 '+months.map(m=>m+'월').join('·')+' (「수출실적26」 주간+월간 탭 · 월·거래처별 월말>최신주차 채택, 합산 아님)');
