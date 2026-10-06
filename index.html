@@ -2700,7 +2700,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M349</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M350</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -11975,7 +11975,7 @@ function importG2Master(wb,scope){
         if(mm)return {mon:+mm[1],wk:null,eom:false,pri:0};
         return null;
       };
-      const B=LPB;let n=0,last=null;
+      const B=LPB;let n=0,last=null,blockMon=null;
       body.forEach(r=>{
         const cp=corpOf(r[cC]),it=itemOf(r[cI]);
         if(!cp||!it)return;
@@ -11986,9 +11986,16 @@ function importG2Master(wb,scope){
         if(tgt==null&&act==null)return;
         /* 2026-10-02: 실적 없이 목표만 적힌 칸은 「다음달 목표」로 따로 모은다(표의 「10월 목표」 칸).
            주차 칸 상속(last)이 끊기지 않도록 슬롯 계산을 이 위로 올렸다. */
+        /* 2026-10-06: 「구분」 칸에 「11월」「12월」처럼 달이 적힌 새 블록은 그 달로 본다.
+           주차 칸이 비어 있으면 위 블록의 주차(W40=10월)를 물려받아, 11·12월 블록 목표가 10월 칸을 덮어쓰던 문제
+           (대만 10월 목표 6,100 → 12월 값 6,600으로 표시) — 블록 달과 물려받은 주차의 달이 다르면 물려받지 않는다 */
+        const gm=String(r[cG2]||'').replace(/\s/g,'').match(/^(\d{1,2})월/);
+        if(gm)blockMon=+gm[1];
         let sl=(cW>=0?slotOf(r[cW]):null);
-        if(sl)last=sl; else sl=last;
-        const mon=(cM2>=0?g2mon(r[cM2]):null)||(sl&&sl.mon)||MONTH;
+        if(sl){last=sl;}
+        else{ if(blockMon!=null&&last&&last.mon!=null&&last.mon!==blockMon){last={mon:blockMon,wk:null,eom:false,pri:0};} sl=last; }
+        if(!sl&&blockMon!=null)sl={mon:blockMon,wk:null,eom:false,pri:0};
+        const mon=(cM2>=0?g2mon(r[cM2]):null)||(sl&&sl.mon)||blockMon||MONTH;
         if(act==null){
           if(tgt!=null&&k!=='y'){((((TGT[mon]=TGT[mon]||{})[cp]=TGT[mon][cp]||{})[it]=TGT[mon][cp][it]||{}))[k]=tgt;}
         }
