@@ -2712,7 +2712,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.06-M351</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.16-M352</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -7611,7 +7611,8 @@ function viewRR(rows){
     if(!all.length)return;
     const doneN=all.filter(r=>r.p>=100).length, riskN=all.filter(r=>r.risk).length;
     const avg=Math.round(all.reduce((s,r)=>s+r.p,0)/all.length);
-    const shown=sortByKpiOrder(m.name,HIDEDONE?all.filter(r=>r.p<100):all);
+    /* 2026-10-16: 이번 주에 보고된 과제는 100% 완료여도 표시(팀업무 등 루틴 과제가 완료로 적혀 사라지던 문제) */
+    const shown=sortByKpiOrder(m.name,all);
     const body=shown.length?shown.map(r=>cardFold(r)).join(''):'';
     /* 2026-09-08 발견된 버그 수정: 예전엔 이번 주에 「KPI연결(kl)」이 채워진 과제가 하나라도 있으면
        kpiRowsForLinked()가 "매칭된 KPI만" 남기고 그 담당자의 나머지 KPI 항목을 전부 숨겼다 —
@@ -7739,7 +7740,7 @@ function renderTaskMerge(rows){
     if(!all.length)return;
     const doneN=all.filter(r=>r.p>=100).length, riskN=all.filter(r=>r.risk).length;
     const avg=Math.round(all.reduce((s,r)=>s+r.p,0)/all.length);
-    const shown=HIDEDONE?all.filter(r=>r.p<100):all;
+    const shown=(HIDEDONE&&TAB!=='mreport')?all.filter(r=>r.p<100):all;
     h+=`<div class="pcol">
       <div class="pcol-h"><div class="av" style="background:${m.color}">${m.ini}</div>
         <div style="min-width:0"><div class="nm">${esc(m.name)}<span>${esc(m.title)}</span>${m.retired?`<span class="area-chip" style="background:#8a8f98" title="퇴사일 ${esc(m.retiredAt||'')}">퇴사</span>`:''}</div><div class="meta">${esc(catsOf(m.id).slice(0,4).join(' · '))}</div></div>
@@ -7923,11 +7924,22 @@ function kpiForRow(r){
 /* 9월부터는 팀원이 제목에 KPI항목을 이미 직접 적으므로("KPI항목 - 과제") 앞에 한 번 더
    중복해서 붙이지 않는다 · kl로만 연결돼 제목에 항목명이 없는 경우(8월 이전 등)는 기존처럼
    item명을 앞에 붙여 표시 */
+/* 2026-10-16 요청: 과제 제목은 항상 「KPI 항목 - 중점추진과제」. 주간보고 시트의 「KPI 항목」 칸(kl)을 그대로 쓴다.
+   예전엔 KPI지표 탭 항목과 글자가 맞아야만 앞에 붙어서, 「제품PM - BDC제품런칭전략」·「…(화동)」·「팀운영」처럼
+   KPI지표에 없거나 표기가 조금 다른 항목은 KPI 없이 과제명만 나왔다. 칸이 비어 있을 때만 KPI지표 매칭으로 보완 */
+function rowKpiLabel(r){
+  let kl='';
+  try{const c=wkAt(r.t,W);kl=String((c&&c.kl)||(r.t&&r.t.kl)||'');}catch(e){}
+  kl=kl.split(/\n+/).map(x=>x.trim()).filter(Boolean).join(' · ');
+  if(!kl){const kr=kpiForRow(r);kl=kr?String(kr.item||'').trim():'';}
+  return kl;
+}
 function rowTitle(r){
-  const kr=kpiForRow(r); if(!kr)return r.label;
-  const label=String(r.label||'').trim(), item=String(kr.item||'').trim();
-  if(item && label.indexOf(item)===0)return r.label;
-  return kr.item+' - '+r.label;
+  const label=String(r.label||'').trim(), kl=rowKpiLabel(r);
+  if(!kl)return label;
+  const nz=x=>String(x||'').replace(/[\s·\-()]/g,'').toLowerCase();
+  if(nz(label).indexOf(nz(kl))===0)return label;
+  return kl+' - '+label;
 }
 /* 2026-09-08 요청: 담당 과제 목록을 그 담당자의 「내 KPI」 항목 순서대로 정렬하고, KPI에
    연결되지 않은 과제는 맨 아래로 내림 · 웹 담당자 카드(.pcol 개인카드)와 구글PT 과제표
@@ -11584,6 +11596,8 @@ function g2fulldate(v){
   const s=String(v||'').trim();
   const m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
   if(m)return m[1]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[3]).padStart(2,'0');
+  /* 엑셀 날짜 일련번호(예: 46311 = 2026-10-16)가 그대로 들어오면 날짜로 바꾼다 */
+  if(/^\d{5}(\.\d+)?$/.test(s)){const n=+s;if(n>40000&&n<60000){const d=new Date(Date.UTC(1899,11,30)+Math.floor(n)*86400000);const p=x=>String(x).padStart(2,'0');return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate());}}
   return s;
 }
 function importG2Master(wb,scope){
@@ -12783,7 +12797,7 @@ async function buildDeckBase64(kind){
     const prepped=list.map(r=>({
       r,
       noteLines:pptWrapLines(r.note,6.0,11,false),
-      headLines:Math.max(pptLineCount(r.label,2.7,12,true),pptLineCount(r.cat,1.0,12,false))
+      headLines:Math.max(pptLineCount(rowTitle(r),2.7,12,true),pptLineCount(r.cat,1.0,12,false))
     }));
     const chunks=[];{
       let i=0, noteAt=0;           /* noteAt = 현재 과제에서 이미 넣은 진행사항 줄 수 */
@@ -12845,14 +12859,14 @@ async function buildDeckBase64(kind){
         sl.addText(`담당 과제 계속 · 전체 ${list.length}건 · 완료 ${doneAll}${riskAll?` · 주의 ${riskAll}`:''}`,{x:0.55,y:1.0,w:12,h:0.35,fontFace:F,fontSize:15,color:MUT});
         tasksY=HEADREST;
       }
-      const th=['R&R','국가','핵심과제','완료예정일','진행률','진행사항 (비고)'];
+      const th=['R&R','국가','KPI 항목 - 중점추진과제','완료예정일','진행률','진행사항 (비고)'];
       const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:G},align:'center',valign:'middle',fontSize:13}}))];
       /* 쪼개진 과제의 뒷부분은 R&R·국가·예정일·진행률을 비우고 과제명에 「(계속)」만 남긴다 —
          같은 과제가 두 번 집계된 것처럼 보이지 않게 하려는 것이다. */
       ch.forEach(c=>{const r=c.r; tr.push([
         {text:c.contd?'':(r.cat||''),options:{align:'center',color:INK,valign:'middle'}},
         {text:c.contd?'':(r.country||''),options:{align:'center',color:INK,valign:'middle'}},
-        {text:(r.label||'')+(c.contd?' (계속)':''),options:{align:'left',color:c.contd?MUT:INK,bold:!c.contd,valign:'top'}},
+        {text:rowTitle(r)+(c.contd?' (계속)':''),options:{align:'left',color:c.contd?MUT:INK,bold:!c.contd,valign:'top'}},
         {text:c.contd?'':((r.due&&isDate(r.due))?r.due:(r.due||'상시')),options:{align:'center',color:MUT,fontSize:11,valign:'middle'}},
         {text:c.contd?'':(r.p+'%'),options:{align:'center',color:pptPC(r.p),bold:true,valign:'middle'}},
         {text:c.note||'',options:{align:'left',color:'333333',fontSize:11,valign:'top'}}]);});
