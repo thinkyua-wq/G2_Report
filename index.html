@@ -2712,7 +2712,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.16-M352</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.27-M353</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -5619,8 +5619,14 @@ function lpBuild(raw,prev){
       corp('ning',cu('ning','label','닝보'),cu('ning','sub','중국'),cu('ning','cur','M RMB'),'K USD',(it,k)=>g('ning',it,k)),
       corp('beij',cu('beij','label','북경'),cu('beij','sub','중국'),cu('beij','cur','M RMB'),'K USD',(it,k)=>g('beij',it,k)),
       corp('cn','중국 소계','닝보+북경',cu('ning','cur','M RMB'),'K USD',(it,k)=>add(g('ning',it,k),g('beij',it,k)),{sum:true}),
-      corp('tw',cu('tw','label','대만'),cu('tw','sub','Sunriser+TBMS'),cu('tw','cur','K TWD'),null,(it,k)=>g('tw',it,k),{tw:true})
-    ]};
+      corp('tw',(raw.twl||raw.tws||raw.hk)?'대만(임플)':cu('tw','label','대만'),cu('tw','sub','Sunriser+TBMS'),cu('tw','cur','K TWD'),null,(it,k)=>g('tw',it,k),{tw:true})
+    ].concat(
+      /* 2026-10-27: 시트에 대만·홍콩 세부 행이 있을 때만 표에 추가(그 전 달 데이터에는 영향 없음) */
+      raw.twl?[corp('twl','대만(레이저)','바이오레이즈','USD','USD',(it,k)=>g('twl',it,k),{tw:true})]:[],
+      (raw.tws||raw.twl)?[corp('tws','대만 소계','임플+레이저','USD','USD',(it,k)=>raw.tws?g('tws',it,k):add(g('tw',it,k),g('twl',it,k)),{sum:true})]:[],
+      raw.hk?[corp('hk','홍콩(임플)','킨월드','USD','USD',(it,k)=>g('hk',it,k),{tw:true})]:[],
+      raw.hkl?[corp('hkl','홍콩(레이저)','바이오레이즈','USD','USD',(it,k)=>g('hkl',it,k),{tw:true})]:[]
+    )};
 }
 function saveLOCALPERF(){try{localStorage.setItem('wr_localperf_v1',JSON.stringify(LOCALPERF));}catch(e){}}
 /* 내장 기준값 → 그 다음 저장본으로 덮어쓰기.
@@ -5728,9 +5734,9 @@ function localPerfTiles(){
 function lpUnits(field){
   const seen=[];
   ((LOCALPERF&&LOCALPERF.corps)||[]).forEach(c=>{
-    if(c.id==='cn')return;                    /* 소계는 닝보와 같은 단위라 중복 */
+    if(c.id==='cn'||c.id==='tws'||c.id==='hks')return;   /* 소계는 구성 법인과 같은 단위라 중복 */
     const u=lpCurOf(c[field],c.id); if(!u)return;
-    const nm=(c.id==='tw')?'대만':'중국';
+    const nm=/^tw/.test(c.id)?'대만':(/^hk/.test(c.id)?'홍콩':'중국');
     if(!seen.some(x=>x.u===u&&x.nm===nm))seen.push({nm,u});
   });
   if(!seen.length)return '';
@@ -5804,11 +5810,16 @@ function renderLocalPerf(){
   const nxVal=(d,it,kk)=>{
     if(kk==='y'||!NX||NM>12)return null;                 /* 연간 행은 26년 목표 칸이 곧 연간 목표 */
     if(d.id==='cn'){const a=nxRaw('ning',it,kk),b2=nxRaw('beij',it,kk);return (a==null&&b2==null)?null:((+a||0)+(+b2||0));}
+    /* 다음달 목표의 단위가 이번 달 표 단위와 다르면(예: 대만 11월 목표는 K TWD, 10월 표는 USD) 비운다 */
+    const o2=NX&&NX[d.id]&&NX[d.id][it];
+    const cu=it==='sale'?d.cur:d.curCash;
+    const nu=x=>String(lpCurOf(x,d.id)||'').replace(/\s/g,'').toUpperCase();
+    if(o2&&o2._u&&cu&&nu(o2._u)!==nu(cu))return null;
     return nxRaw(d.id,it,kk);};
   const nxc=(v,cls)=>v==null?`<td class="lp-na${cls?' '+cls:''}">—</td>`:`<td class="lp-fc${cls?' '+cls:''}">${n(v)}</td>`;
   const nxl=NM<=12?NM+'월 목표':'다음달 목표';
   h+='<div class="seccard" style="padding-top:10px">'
-   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">${esc(lpBasisLabel())} · 중국(닝보·북경) · 대만 · ${DM}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
+   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">${esc(lpBasisLabel())} · 중국(닝보·북경) · ${C.some(c=>/^hk/.test(c.id))?'대만·홍콩':'대만'} · ${DM}월 / 누적 / 연간 · 성장율 = 전년 동기 대비</span></div>`
    +'<table class="ov-tbl ov-perf lp-tbl">'
    +'<colgroup><col style="width:52px"><col style="width:104px">'
    +'<col style="width:78px"><col style="width:78px"><col style="width:78px"><col style="width:58px"><col style="width:58px"><col style="width:84px">'
@@ -5836,7 +5847,7 @@ function renderLocalPerf(){
       상태 변수·render 재호출이 필요 없다). 「확인 필요」 수금 단위 경고 박스는 삭제. */
    +'<details class="lp-note"><summary>※ 산출 기준·주석</summary><div>'
    +'※ 달성율 = 실적 ÷ 26년 목표 · 성장율 = (26년 − 25년) ÷ 25년 · 연간 행의 성장율은 연말 확정 후 산출 · 「다음달 목표」는 시트의 다음달 블록(예: 「10월」 구분 행)의 「26년 목표」 칸에 적은 값이며 비어 있으면 «—»<br>'
-   +'※ 대만법인은 26년 신규 법인이라 25년 실적·성장율이 없고, 현지 수금은 아직 집계 항목이 없어 전부 «—»로 둡니다<br>'
+   +'※ 10월(W42)부터 대만·홍콩은 시트의 「연결 매출·본사 수금」(USD) 기준 — 「대만(임플)」 행과 KPI 카드의 대만은 임플란트만, 「대만 소계」 = 임플+레이저(시트 「대만소계」 행) · 9월까지는 대만 현지 매출(K TWD)<br>'
    +'※ 중국 소계는 화면에서 닝보+북경을 더해 산출합니다 — 원본 소계는 반올림 전 값을 더한 것이라 1 차이가 나는 칸이 있습니다(원본 3,590·157,835·331,259 ↔ 화면 3,589·157,834·331,258)'
    +'</div></details>'
    +'</div>';
@@ -11975,7 +11986,16 @@ function importG2Master(wb,scope){
       const corpOf=v=>{const t=String(v||'').replace(/\s/g,'');
         if(/닝보|宁波|寧波/.test(t))return 'ning';
         if(/북경|베이징|北京/.test(t))return 'beij';
-        if(/대만|台湾|台灣|타이완/.test(t))return 'tw'; return null;};
+        /* 2026-10-27: W42부터 시트가 대만·홍콩을 「대만(임플)·대만(레이저)·대만소계·홍콩(임플)·홍콩(레이저)」(USD)로 나눠 적는다.
+           예전엔 「대만」이 들어간 행을 전부 같은 칸으로 받아 맨 끝 「대만소계」(임플+레이저)가 대만 카드에 들어갔고 홍콩은 버려졌다.
+           대만 카드·「대만」 행 = 대만(임플), 나머지는 표에 별도 행으로 */
+        const isTw=/대만|台湾|台灣|타이완/.test(t), isHk=/홍콩|香港/.test(t), isLz=/레이저|laser|바이오레이즈/i.test(t), isSum=/소계|합계/.test(t);
+        if(isTw&&isSum)return 'tws';
+        if(isTw&&isLz)return 'twl';
+        if(isHk&&isSum)return 'hks';
+        if(isHk&&isLz)return 'hkl';
+        if(isHk)return 'hk';
+        if(isTw)return 'tw'; return null;};
       const itemOf=v=>{const t=String(v||'').replace(/\s/g,'');
         if(/수금/.test(t))return 'cash'; if(/매출/.test(t))return 'sale'; return null;};
       /* 2026-09-20: 「주차」 열 지원. 매주 같은 18행을 지우고 덮어쓰는 대신 주차만 바꿔 아래에
@@ -12034,7 +12054,9 @@ function importG2Master(wb,scope){
         if(!sl&&blockMon!=null)sl={mon:blockMon,wk:null,eom:false,pri:0};
         const mon=(cM2>=0?g2mon(r[cM2]):null)||(sl&&sl.mon)||blockMon||MONTH;
         if(act==null){
-          if(tgt!=null&&k!=='y'){((((TGT[mon]=TGT[mon]||{})[cp]=TGT[mon][cp]||{})[it]=TGT[mon][cp][it]||{}))[k]=tgt;}
+          if(tgt!=null&&k!=='y'){((((TGT[mon]=TGT[mon]||{})[cp]=TGT[mon][cp]||{})[it]=TGT[mon][cp][it]||{}))[k]=tgt;
+            /* 단위도 같이 적어 둔다 — 다음달 블록이 옛 형식(대만 K TWD)이고 이번 달이 새 형식(USD)이면 섞어 보이지 않게 */
+            if(cU>=0){const u=String(r[cU]||'').trim();if(u)TGT[mon][cp][it]._u=u;}}
         }
         /* 실적 칸이 비어 있으면 아직 입력 안 한 틀이다. 목표만 있는 행을 그대로 받으면 「9월 월말」 틀이
            실적 없이 9월을 잠가 W39 값을 지워 버리고, 「10월」 틀은 연간 목표만 든 10월을 만들어
