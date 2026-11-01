@@ -2712,7 +2712,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.10.27-M353</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.11.01-M354</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -13356,6 +13356,8 @@ function mergeWeeklyTasks(force){
   const norm=x=>String(x||'').replace(/\s+/g,'').replace(/[()\u00b7,]/g,'').toLowerCase();
   const pnum=p=>{const v=parseInt(p);return isNaN(v)?60:v;};
   const isoIdx=iso=>{for(let m=7;m<=12;m++){const ws=buildWeeks(m);const i=ws.findIndex(x=>x.iso===+iso);if(i>=0)return {m,i,len:ws.length};}return null;};
+  /* 2026-11-01 중복 제거용 기록: 주차별로 시트 행과 연결된 과제 · 그 주에 시트에 행이 있는 담당자 · 한 번이라도 시트와 연결된 과제 */
+  const wkMatched={},wkMgrs={},everMatched=new Set();
   Object.keys(WKREPORT).forEach(wkk=>{
     const loc=isoIdx(wkk); if(!loc)return;
     (WKREPORT[wkk]||[]).forEach(r=>{
@@ -13394,6 +13396,7 @@ function mergeWeeklyTasks(force){
       if(r.g)t.cat=r.g;
       t.wk=wkMigArr(t.wk);
       const key=String(+wkk);
+      (wkMatched[key]=wkMatched[key]||new Set()).add(t);(wkMgrs[key]=wkMgrs[key]||new Set()).add(r.m);everMatched.add(t);
       if(force||!t.wk[key])t.wk[key]={p:pnum(r.p),note:r.note||''};
       if(r.kl&&t.wk[key])t.wk[key].kl=r.kl;
       if(r.kl)t.kl=r.kl;
@@ -13408,7 +13411,21 @@ function mergeWeeklyTasks(force){
       t.status=r.stx||(lastP>=100?'완료':(lastP<=0?'예정':'진행중'));
     });
   });
+  /* 2026-11-01 요청("이유아의 표 밑에 내용이 2개씩 잡힌다"): 시트에서 그 주 과제명을 고치면(예: 「화남본부 실적 및 실행관리」→
+     「화남본부 10월 월마감 및 실행관리」) 새 이름으로 과제가 하나 더 생기는데, 예전 이름 과제에 남은 그 주 값은 지워지지 않아
+     같은 내용이 두 줄씩 보였다(W44 이유아 7건 → 화면 16건). 시트가 정답이므로, 그 주에 시트 행이 있는 담당자의 과제 중
+     이번 시트 행과 연결되지 않은 「시트 출신」 과제의 그 주 값은 지운다. 대시보드에서 직접 추가한 과제(시트와 연결된 적 없음)는 그대로 둔다 */
+  let pruned=0;
+  Object.keys(wkMatched).forEach(key=>{
+    TASKS.forEach(t=>{
+      if(!t||!t.wk||!wkMgrs[key].has(t.mgr))return;
+      if(Array.isArray(t.wk))t.wk=wkMigArr(t.wk);
+      if(t.wk[key]&&!wkMatched[key].has(t)&&everMatched.has(t)){delete t.wk[key];pruned++;}
+    });
+  });
+  MERGE_PRUNED=pruned;
 }
+let MERGE_PRUNED=0;
 mergeWeeklyTasks(false);
 normalizeTasks();
 dedupTasks();
