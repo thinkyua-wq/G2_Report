@@ -2712,7 +2712,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.11.01-M354</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.11.01-M355</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -12383,13 +12383,14 @@ const WRFOLDER='1m89LgxdjzL-8HyVPo1ibqzAVqquPv4J1';
 function pptWLabel(){const wk=WEEKS[W]||{name:'',range:''};return `${YEAR}년 ${MONTH}월 · ${wk.name}${wk.range?' ('+wk.range+')':''}`;}
 function pptPC(p){return p>=100?'2E7D52':(p>=50?'222222':'B3781C');}
 /* 담당자별 「내 KPI」 표를 PPT용 데이터로 변환 · 웹 화면의 kpiStripFor()와 같은 열 구성(2026-09-05 요청) */
-function pptKpiRows(name){
+function pptKpiRows(name,month){
+  const MM=month||MONTH;   /* 월간 PPT는 마감월(예: 9월) 기준 · 주간은 화면의 달 */
   const rows=kpiRowsFor(name);
   if(!rows.length)return null;
   /* 2026-09-12: 표 머리글 색은 MEGAGEN 브랜드 인디고(BR)로, "완료" 표시는 웹 화면과 동일한
      달성율=녹색(OK) 신호등 배색을 그대로 유지 — 브랜드색 교체가 상태색 의미를 바꾸지 않도록 분리 */
-  const mi=MONTH-1,BR='2D3194',OK='2E7D52',INK='222222',MUT='6B7280';
-  const th=['KPI 항목','단위',`${MONTH}월 목표`,`${MONTH}월 실적`,`${MONTH}월 달성율`,'누적 실적','26년목표','연간 달성율'];
+  const mi=MM-1,BR='2D3194',OK='2E7D52',INK='222222',MUT='6B7280';
+  const th=['KPI 항목','단위',`${MM}월 목표`,`${MM}월 실적`,`${MM}월 달성율`,'누적 실적','26년목표','연간 달성율'];
   const tr=[th.map(h=>({text:h,options:{bold:true,color:'FFFFFF',fill:{color:BR},align:'center',valign:'middle',fontSize:11}}))];
   rows.forEach(r=>{
     const mt=r.mt[mi],ma=kpiMa(r,mi);
@@ -12679,11 +12680,23 @@ function pptMonthPeople(P,o){
     if(!ents.length)return;
     const ps=mine.map(r=>mrPctOf(r.r)).filter(p=>p!=null);
     const avg=ps.length?Math.round(ps.reduce((a,b)=>a+b,0)/ps.length):null;
+    /* 2026-11-01 요청: 월간 PPT에도 주간 PPT처럼 담당자별 「내 KPI」 표(마감월 기준)를 첫 장에 넣는다.
+       KPI 항목이 많아 첫 장에 과제가 거의 안 들어가면 첫 장은 KPI 표만, 과제는 다음 장부터 */
+    let kpiTr=null; {const svM=MONTH; try{MONTH=rm;kpiTr=pptKpiRows(m.name,rm);}catch(e){kpiTr=null;}finally{MONTH=svM;}}  /* 누적·연간 계산도 마감월 기준 */
+    /* 행 높이는 칸 글자 길이로 계산 — KPI 항목명·26년목표가 길면 두 줄로 접혀 표가 아래 제목을 덮던 문제 방지 */
+    const kpiHs=kpiTr?kpiTr.map((row,ri)=>{if(!ri)return 0.30;
+      const ln=Math.max(pptLineCount(String(row[0].text||''),3.3,10.5,true),pptLineCount(String(row[6].text||''),1.25,10,false),1);
+      return Math.max(0.28,0.1+ln*0.19);}):[];
+    const kpiTot=kpiHs.reduce((a,b)=>a+b,0);
+    const kpiBlockH=kpiTr?(0.30+kpiTot+0.16+0.30):0;
+    const firstAvail=BOTTOM-HEAD0-kpiBlockH-THEAD;
+    const kpiAlone=!!kpiTr&&firstAvail<1.1;
     /* ── 페이지 나누기 ── */
     const pages=[]; let idx=0, at=0, curKpi=null;
+    if(kpiAlone)pages.push([]);
     while(idx<ents.length){
       const first=pages.length===0;
-      let avail=BOTTOM-(first?HEAD0:HEADREST)-THEAD;
+      let avail=first?firstAvail:(BOTTOM-HEADREST-THEAD);
       const pg=[];
       /* 새 장이 항목 중간에서 시작하면 KPI 제목을 다시 붙인다 */
       if(!first&&ents[idx].k!=='kpi'&&ents[idx].k!=='sec'&&curKpi){pg.push({k:'kpi',text:curKpi.text+' (계속)',mf:curKpi.mf});avail-=KH;}
@@ -12709,6 +12722,7 @@ function pptMonthPeople(P,o){
       if(!pg.length)break;
       pages.push(pg);
     }
+    if(!pages.length&&kpiTr)pages.push([]);
     const total=pages.length;
     pages.forEach((pg,pn)=>{
       const sl=P.addSlide(); sl.background={color:'FFFFFF'}; mgBrandChrome(sl); PAGES.push(sl);
@@ -12720,6 +12734,14 @@ function pptMonthPeople(P,o){
         sl.addText(`${rm}월 월간보고`,{x:1.28,y:0.9,w:6,h:0.3,fontFace:F,fontSize:13,bold:true,color:MUT});
         sl.addText(`${rm}월 과제 ${mine.length}건 · 평균 달성률 ${avg==null?'–':avg+'%'} · ${nm}월 중점추진과제 ${mf.length}건`,{x:0.55,y:1.24,w:11.7,h:0.34,fontFace:F,fontSize:15,color:MUT});
         y=HEAD0;
+        if(kpiTr){
+          sl.addText(`내 KPI · ${rm}월`,{x:0.55,y,w:4,h:0.28,fontFace:F,fontSize:14,bold:true,color:DG});
+          y+=0.30;
+          sl.addTable(kpiTr,{x:0.55,y,w:12.23,colW:[3.43,0.7,1.35,1.35,1.15,1.35,1.35,1.55],rowH:kpiHs,fontFace:F,fontSize:10,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+          y+=kpiTot+0.16;
+          if(pg.length){sl.addText(`${rm}월 업무 · ${nm}월 계획`,{x:0.55,y,w:5,h:0.28,fontFace:F,fontSize:14,bold:true,color:DG});}
+          y+=0.30;
+        }
       }else{
         sl.addText(`${m.name} ${m.title}  (${pn+1}/${total})`,{x:0.55,y:0.4,w:12,h:0.6,fontFace:F,fontSize:28,bold:true,color:DG});
         sl.addText(`${rm}월 월간보고 계속`,{x:0.55,y:0.98,w:12,h:0.3,fontFace:F,fontSize:14,color:MUT});
@@ -12745,7 +12767,7 @@ function pptMonthPeople(P,o){
         }
         hs.push(pptRowHFromLines(c.lines));
       });
-      sl.addTable(tr,{x:0.55,y,w:12.23,colW:COLW,rowH:hs,fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
+      if(pg.length)sl.addTable(tr,{x:0.55,y,w:12.23,colW:COLW,rowH:hs,fontFace:F,fontSize:12,valign:'middle',border:{type:'solid',color:LN,pt:1}});
     });
   }catch(e){console.error('월간 PPT 담당자 슬라이드 실패',m&&m.name,e);}});
 }
