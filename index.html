@@ -1353,6 +1353,7 @@ table.mcal td.mcal-day.sel{outline:2px solid var(--tl);outline-offset:-2px;backg
 .ov-tbl.ov-perf2 tbody td{padding-top:2px;padding-bottom:2px}
 /* 2026-10-06 요청: 한 번 더 +10% (행 높이 측정값 기준으로 맞춤 · 행 28.3px → 31.1px) */
 .ov-tbl.ov-perf2 tbody td{padding-top:3.4px;padding-bottom:3.4px}
+.ov-sec .col-tg{margin-left:auto;font-size:11.5px;padding:3px 10px;font-weight:700;white-space:nowrap}
 /* 2026-10-06 2차 요청: 한 번 더 +10% · 행 31.1px → 34.2px */
 .ov-tbl.ov-perf2 tbody td{padding-top:4.95px;padding-bottom:4.95px}
 .ov-perf2 td.ov-rate{line-height:1.05}
@@ -2712,7 +2713,7 @@ body,input,select,textarea,button,table{font-size:inherit}
     <button class="rail-toggle" onclick="toggleRailMin()" title="메뉴 접기/펼치기" aria-label="메뉴 접기">◀</button>
     <div class="rail-brand">
       <div class="logo brand-ic logo4"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><defs><linearGradient id="lgP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ee4b8b"/><stop offset="1" stop-color="#c8146a"/></linearGradient><linearGradient id="lgO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb02e"/><stop offset="1" stop-color="#f28c00"/></linearGradient><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bcf3a"/><stop offset="1" stop-color="#4f9e1f"/></linearGradient><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fc3f7"/><stop offset="1" stop-color="#1e88e5"/></linearGradient></defs><rect x="14" y="16" width="38" height="38" rx="9" fill="url(#lgP)"/><rect x="44" y="6" width="26" height="26" rx="7" fill="url(#lgO)" opacity=".95"/><rect x="60" y="26" width="16" height="16" rx="5" fill="url(#lgG)"/><rect x="34" y="38" width="52" height="52" rx="12" fill="url(#lgB)" opacity=".92"/></svg></div>
-      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.11.08-M357</span></p></div>
+      <div style="min-width:0"><h1>G2 중화지역보고</h1><p>G2 中华팀 · 해외영업본부 <span id="appVer" style="opacity:.55;font-size:9.9px;font-weight:700;letter-spacing:.02em">build 26.11.08-M359</span></p></div>
     </div>
     <div class="rail-role" id="railRole"></div>
     <div class="rail-sec rail-persec" id="railPer"><h4 onclick="railSecToggle('per')" title="누르면 접기/펼치기">기간 <span class="rs-arr">▾</span></h4><div class="rs-body" id="perbarHost"></div></div>
@@ -4614,6 +4615,11 @@ function renderKPI2(){
 }
 let OVTAB='main';
 let MRTAB='main';
+/* 2026-11-08 요청: 본사 실적상세표의 누적실적·누적진도, 현지 상세표의 25년 실적·성장율은 기본 숨김 → 버튼으로 펼쳐 보기 */
+let SHOWCUM=false, SHOWLP25=false;
+try{SHOWCUM=localStorage.getItem('wr_showcum')==='1';SHOWLP25=localStorage.getItem('wr_showlp25')==='1';}catch(e){}
+function toggleCum(){SHOWCUM=!SHOWCUM;try{localStorage.setItem('wr_showcum',SHOWCUM?'1':'0');}catch(e){}render();}
+function toggleLp25(){SHOWLP25=!SHOWLP25;try{localStorage.setItem('wr_showlp25',SHOWLP25?'1':'0');}catch(e){}render();}
 function setOVtab(t){
   try{window.scrollTo(0,0);}catch(e){}
   if(TAB==='mreport'){MRTAB=t;
@@ -5868,16 +5874,16 @@ function renderLocalPerf(){
   const nxc=(v,cls)=>v==null?`<td class="lp-na${cls?' '+cls:''}">—</td>`:`<td class="lp-fc${cls?' '+cls:''}">${n(v)}</td>`;
   const nxl=NM<=12?NM+'월 목표':'다음달 목표';
   h+='<div class="seccard" style="padding-top:10px">'
-   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">${esc(lpBasisLabel())} · 중국(닝보·북경) · ${C.some(c=>/^hk/.test(c.id))?'대만·홍콩':'대만'} · ${DM}월 / 누적 / 연간${LOCALPERF&&LOCALPERF.weekly?' · 고른 주차(W'+LOCALPERF.wk+') 기준':''}</span></div>`
+   +`<div class="ov-sec">현지 매출 · 현지 수금 상세 <span class="ov-sub">${esc(lpBasisLabel())} · 중국(닝보·북경) · ${C.some(c=>/^hk/.test(c.id))?'대만·홍콩':'대만'} · ${DM}월 / 누적 / 연간${LOCALPERF&&LOCALPERF.weekly?' · 고른 주차(W'+LOCALPERF.wk+') 기준':''}</span><button class="tb-b col-tg" onclick="toggleLp25()" data-noppt="1">${SHOWLP25?'25년 실적·성장율 숨기기':'25년 실적·성장율 보기'}</button></div>`
    +'<table class="ov-tbl ov-perf lp-tbl">'
    /* 2026-11-08 요청: 25년 실적·성장율·다음달 목표 열은 숨긴다 → 매출·수금 각 3열(26년 목표 · 실적 · 달성율) */
-   +'<colgroup><col style="width:60px"><col style="width:150px">'
-   +'<col><col><col style="width:12%"><col><col><col style="width:12%"></colgroup>'
+   /* 2026-11-08: 25년 실적·성장율은 지우지 않고 기본 숨김 → [25년 실적·성장율 보기]로 펼침 */
+   +'<colgroup><col style="width:60px"><col style="width:150px"></colgroup>'
    +'<thead><tr><th rowspan="2">구분</th><th rowspan="2">법인</th>'
-   +`<th class="gh bd-x" colspan="3">현지 매출 <span>${esc(lpUnits('cur'))}</span></th>`
-   +`<th class="gh" colspan="3">현지 수금 <span>${esc(lpUnits('curCash'))}</span></th></tr>`
-   +`<tr class="sub"><th>26년 목표</th><th>${LOCALPERF&&LOCALPERF.weekly?'W'+LOCALPERF.wk+' ':DM+'월 '}실적</th><th class="bd-x">달성율</th>`
-   +`<th>26년 목표</th><th>${LOCALPERF&&LOCALPERF.weekly?'W'+LOCALPERF.wk+' ':DM+'월 '}실적</th><th>달성율</th></tr></thead><tbody>`;
+   +`<th class="gh bd-x" colspan="${SHOWLP25?5:3}">현지 매출 <span>${esc(lpUnits('cur'))}</span></th>`
+   +`<th class="gh" colspan="${SHOWLP25?5:3}">현지 수금 <span>${esc(lpUnits('curCash'))}</span></th></tr>`
+   +`<tr class="sub">${SHOWLP25?'<th>25년 실적</th>':''}<th>26년 목표</th><th>${LOCALPERF&&LOCALPERF.weekly?'W'+LOCALPERF.wk+' ':DM+'월 '}실적</th>${SHOWLP25?'<th>달성율</th><th class="bd-x">성장율</th>':'<th class="bd-x">달성율</th>'}`
+   +`${SHOWLP25?'<th>25년 실적</th>':''}<th>26년 목표</th><th>${LOCALPERF&&LOCALPERF.weekly?'W'+LOCALPERF.wk+' ':DM+'월 '}실적</th><th>달성율</th>${SHOWLP25?'<th>성장율</th>':''}</tr></thead><tbody>`;
   [['m',DM+'월'],['c','누적'],['y','연간']].forEach(([kk,glabel])=>{
     C.forEach((d,i)=>{
       const s=d.sale[kk], ca=d.cash?d.cash[kk]:null;
@@ -5885,9 +5891,12 @@ function renderLocalPerf(){
       if(i===0)h+=`<td class="lp-grp" rowspan="${C.length}">${esc(glabel)}</td>`;
       /* 2026-09-20 요청: 법인명 아래 국가(닝보→중국 등) 줄 삭제, 통화단위는 법인명 옆으로 */
       h+=`<td class="lp-corp">${esc(d.label)}<u>${esc(lpCurOf(d.cur,d.id))}</u></td>`;
-      h+=cell(s[1])+`<td><b>${n(s[2])}</b></td>`+(s[3]==null?'<td class="lp-na bd-x">—</td>':`<td class="bd-x">${s[3]}%</td>`);
-      h+= ca ? (cell(ca[1])+`<td><b>${n(ca[2])}</b></td>`+pct(ca[3]))
-             : '<td class="lp-na">—</td><td class="lp-na">—</td><td class="lp-na">—</td>';
+      const bx=(html)=>html.replace(/^<td( class="([^"]*)")?/,(m0,a,c)=>`<td class="${c?c+' ':''}bd-x"`);
+      if(SHOWLP25) h+=cell(s[0])+cell(s[1])+`<td><b>${n(s[2])}</b></td>`+pct(s[3])+bx(g(s[4]));
+      else h+=cell(s[1])+`<td><b>${n(s[2])}</b></td>`+bx(pct(s[3]));
+      const na='<td class="lp-na">—</td>';
+      h+= ca ? ((SHOWLP25?cell(ca[0]):'')+cell(ca[1])+`<td><b>${n(ca[2])}</b></td>`+pct(ca[3])+(SHOWLP25?g(ca[4]):''))
+             : na.repeat(SHOWLP25?5:3);
       h+='</tr>';
     });
   });
@@ -6183,16 +6192,18 @@ function mrDealTable0(){
   const nxOf=(dl,f)=>{const x=nxRowsAll.find(y=>y.dealer===dl&&y[f]!=null);if(x)return x[f];
     const z=(MDNX[String(NM)]||{})[dl];return (z&&z[f]!=null)?z[f]:null;};
   const nxCell=(v,cls)=>`<td class="ov-pc nx${cls?' '+cls:''}">${v==null?'—':num(k(v))}</td>`;
-  const NCOL=16;
+  const GC=SHOWCUM?7:5, NCOL=2+GC*2;
+  const cumTh=SHOWCUM?'<th>누적실적</th><th>누적진도</th>':'';
+  const cumCells=(cv,base)=>SHOWCUM?(`<td class="ov-pc">${num(k(cv))}</td>`+pcell(rt(cv,base))):'';
   let h='<table class="ov-tbl ov-perf ov-perf2">'
     +'<colgroup><col style="width:52px"><col style="width:112px">'
-    +'<col span="7"><col span="7"></colgroup>'
+    +`<col span="${GC}"><col span="${GC}"></colgroup>`
     +'<thead>'
     +'<tr><th rowspan="2" class="c-grp">구분</th><th rowspan="2" class="c-dl">거래처</th>'
-    +'<th colspan="7" class="gh gh-ex bd-x">수출 <span>단위 천$</span></th>'
-    +'<th colspan="7" class="gh gh-su">수금 <span>단위 천$</span></th></tr>'
-    +`<tr class="sub"><th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th>누적진도</th><th class="bd-x">${NM<=12?NM:'-'}월 목표</th>`
-    +`<th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th><th>누적실적</th><th>누적진도</th><th>${NM<=12?NM:'-'}월 목표</th></tr>`
+    +`<th colspan="${GC}" class="gh gh-ex bd-x">수출 <span>단위 천$</span></th>`
+    +`<th colspan="${GC}" class="gh gh-su">수금 <span>단위 천$</span></th></tr>`
+    +`<tr class="sub"><th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th>${cumTh}<th class="bd-x">${NM<=12?NM:'-'}월 목표</th>`
+    +`<th>26년목표</th><th class="cur">${MONTH}월 목표</th><th class="cur">${MONTH}월 실적</th><th class="cur">${MONTH}월 달성</th>${cumTh}<th>${NM<=12?NM:'-'}월 목표</th></tr>`
     +'</thead><tbody>';
   if(!D.length){h+=`<tr><td colspan="${NCOL}" style="text-align:center;color:var(--faint);padding:22px">${MONTH}월 거래처실적 데이터 없음 · 마스터 「거래처실적_월간」·「거래처실적_주간」 탭에 입력 후 [구글시트 불러오기]</td></tr>`;}
   /* 데이터 행 · grpCell=이 행에 구분(rowspan) 셀을 넣을지 */
@@ -6202,10 +6213,10 @@ function mrDealTable0(){
       +`<td class="rl c-dl">${esc(d.dealer.replace(/^(홍콩|대만)\s*/,''))}</td>`
       +`<td class="ov-pc">${num(k(d.exT))}</td><td class="ov-pc cur">${num(k(d.exTm))}</td><td class="ov-pc cur">${num(k(d.exA))}</td>`
       +rcell(rt(d.exA,d.exTm))
-      +`<td class="ov-pc">${num(k(cA))}</td>`+pcell(rt(cA,d.exT))+nxCell(nxOf(d.dealer,'exTm'),'bd-x')
+      +cumCells(cA,d.exT)+nxCell(nxOf(d.dealer,'exTm'),'bd-x')
       +`<td class="ov-pc">${num(k(d.suT))}</td><td class="ov-pc cur">${num(k(d.suTm))}</td><td class="ov-pc cur">${num(k(d.suA))}</td>`
       +rcell(rt(d.suA,d.suTm))
-      +`<td class="ov-pc">${num(k(cS))}</td>`+pcell(rt(cS,d.suT))+nxCell(nxOf(d.dealer,'suTm'))
+      +cumCells(cS,d.suT)+nxCell(nxOf(d.dealer,'suTm'))
       +'</tr>';};
   const sum=(list,f)=>{let c=0,a=false;list.forEach(d=>{if(d[f]!=null){c+=d[f];a=true;}});return a?c:null;};
   const nxSum=(list,f)=>{let c=0,a=false;list.forEach(d=>{const v=nxOf(d.dealer,f);if(v!=null){c+=v;a=true;}});return a?c:null;};
@@ -6217,10 +6228,10 @@ function mrDealTable0(){
     return `<tr class="${cls}"><td colspan="2" class="rl c-agg">${esc(label)}</td>`
       +`<td class="ov-pc">${num(k(sc.exT))}</td><td class="ov-pc cur">${num(k(sc.exTm))}</td><td class="ov-pc cur">${num(k(sc.exA))}</td>`
       +rcell(rt(sc.exA,sc.exTm))
-      +`<td class="ov-pc">${num(k(cA))}</td>`+pcell(rt(cA,sc.exT))+nxCell(nxSum(list,'exTm'),'bd-x')
+      +cumCells(cA,sc.exT)+nxCell(nxSum(list,'exTm'),'bd-x')
       +`<td class="ov-pc">${num(k(sc.suT))}</td><td class="ov-pc cur">${num(k(sc.suTm))}</td><td class="ov-pc cur">${num(k(sc.suA))}</td>`
       +rcell(rt(sc.suA,sc.suTm))
-      +`<td class="ov-pc">${num(k(cS))}</td>`+pcell(rt(cS,sc.suT))+nxCell(nxSum(list,'suTm'))
+      +cumCells(cS,sc.suT)+nxCell(nxSum(list,'suTm'))
       +'</tr>';
   };
   /* 2026-09-09 요청: 닝보·북경(중국) 행 바로 아래 "중국" 소계, 그 다음 홍콩·대만 행을 몰아서
@@ -6540,14 +6551,14 @@ function renderOverview(){
   const isMR=(TAB==='mreport');
   /* 2026-09-09 요청: 본사실적 다음은 주간보고 순으로, 중점추진과제는 맨 뒤로 이동
      2026-09-09 요청(2차): 「팀 종합현황」에 있던 출장일정을 업무현황 안, 중점추진과제 바로 뒤로 이동 */
-  let OVTABS=isMR?[['main','본사실적'],['local','현지실적'],['prod','BD/ARi'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
+  let OVTABS=isMR?[['main','본사실적'],['local','현지실적'],['week','주간보고'],['month','월별보고'],['kanban','과제진행율'],['sched','업무일정'],['focus','중점추진과제'],['trip','출장일정'],['ops','지시사항F/U']] /* 2026-09-12 요청: 지시사항F/U 탭을 맨 끝으로 이동 */
                  :[['main','본사실적'],['month','월별보고'],['focus','중점추진과제'],['trip','출장일정']];
   if(isMR&&RO()){
     if(GUEST)OVTABS=OVTABS.filter(([k])=>GUEST_OVTABS.includes(k)); /* 게스트(비로그인): 중점추진과제·월별보고·주간보고·출장일정만 */
     else if(LOGINUID!=='team')OVTABS=OVTABS.filter(([k])=>['main','focus','month','kanban','ops','trip'].includes(k)); /* 개별 팀원 계정 · 지시사항F/U·출장일정 포함 */
     /* 중화팀공용 로그인(GUEST=false)은 업무현황 전체 탭 열람 허용 */
   }
-  if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'&&k!=='sched'); /* 팀장 화면: 과제진행율·업무일정은 팀업무 메뉴(통합 옆)로 이동 (팀원·공용계정은 팀업무 접근이 없어 여기 유지) */
+  if(isMR&&!RO())OVTABS=OVTABS.filter(([k])=>k!=='kanban'&&k!=='sched'&&k!=='ops'); /* 2026-11-08 요청: BD/ARi 탭 삭제 · 지시사항F/U는 팀업무 메뉴로 이동(팀원 계정은 팀업무 접근이 없어 여기 유지) */ /* 팀장 화면: 과제진행율·업무일정은 팀업무 메뉴(통합 옆)로 이동 (팀원·공용계정은 팀업무 접근이 없어 여기 유지) */
   let CT=isMR?MRTAB:OVTAB;
   if(CT==='report')CT='month';
   if(!OVTABS.some(([k])=>k===CT))CT=(OVTABS[0]||['main'])[0];
@@ -6608,7 +6619,7 @@ function renderOverview(){
       const dealSub=(em!==MONTH?`${MONTH}월 데이터 없음 · `:dmr.targetOnly?`${MONTH}월 실적 미입력 · 「수출실적26」 ${MONTH}월 목표만 표시 · `:dmr.fromWeek?`「거래처실적_주간」 W${dmr.uptoWeek?dmr.uptoWeek.iso:''}까지 잠정 집계 · `:(mwl?mwl+' · ':''))+`당월 실적 + 1~${MONTH}월 누적`;
       /* 2026-09-20 요청: 그래프를 표 아래로. 숫자를 먼저 확인하고 추세는 그 뒤에 보는 순서 */
       h+='<div class="seccard" style="padding-top:10px" id="pptMainCapture">'
-        +`<div class="ov-sec">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span></div>`
+        +`<div class="ov-sec">${MONTH}월 실적상세표 <span class="ov-sub">${esc(dealSub)}</span><button class="tb-b col-tg" onclick="toggleCum()" data-noppt="1">${SHOWCUM?'누적실적·누적진도 숨기기':'누적실적·누적진도 보기'}</button></div>`
         +secSafe('실적상세표',()=>mrDealTable())
         +`<div class="ov-sec" style="margin-top:18px">년간 실적그래프 <span class="ov-sub">단위 천불 USD · 전체·중국·대만·홍콩 · 마스터 「수출실적」 연동 · 목표(회색 점선)·월별 누적(초록) · 당월 실적 미입력 시 해당 월은 공란</span></div>`
         +`<div class="om-charts om-charts4">${mrMonthChart('전체','전체')}${mrMonthChart('중국','중국')}${mrMonthChart('대만','대만')}${mrMonthChart('홍콩','홍콩')}</div>`
@@ -10448,7 +10459,7 @@ function viewGoals(){
   let html=isHomeSub?`<div class="sec-h"><h2>팀 종합현황</h2><span class="hint">실적·과제·지시·일정 한눈에</span><span class="line"></span>${gymSel()}</div>`
     :`<div class="sec-h"><h2>중화팀 성과목표</h2><span class="hint">성과목표·담당자 분기목표·R&R + 로드맵</span><span class="line"></span>${gymSel()}</div>`;
   if(GOALSUB==='story')GOALSUB='goal';
-  {let gtabs=[['home','팀 종합현황'],['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합'],['sched','업무일정']];
+  {let gtabs=[['home','팀 종합현황'],['goal','성과목표'],['focusq','분기별 중점추진과제'],['kanban','과제진행율'],['road','성장 로드맵'],['mgoal','담당자 분기목표'],['rr','업무 R&R'],['team','중화팀 R&R'],['prr','담당자 R&R'],['kpi','KPI 지표'],['table','통합'],['sched','업무일정'],['ops','지시사항F/U']];
   if(GOALSUB==='meet'||GOALSUB==='report')GOALSUB='goal'; /* 회의일정보고·주요보고=회의일정보고 메뉴 · 업무일정은 팀업무(통합 옆)로 이동(2026-09-05) */
   /* 2026-09-08 요청("팀업무의 탭은 최대한 한줄로"): 탭이 12개라 폭이 좁으면 라벨이 버튼 안에서 두 줄로
      줄바꿈되던 문제 — 각 버튼을 한 줄(nowrap)로 고정하고, 전체가 다 안 들어가면 줄바꿈 대신 가로 스크롤
@@ -10466,6 +10477,7 @@ function viewGoals(){
   if(GOALSUB==='report')return html+renderReports();
   if(GOALSUB==='table')return html+'<div style="margin-top:4px">'+renderCombined(activeRows())+'</div>';
   if(GOALSUB==='sched')return html+'<div style="margin-top:4px">'+renderRoutineMeetings()+'</div>';
+  if(GOALSUB==='ops')return html+'<div style="margin-top:4px">'+renderOps()+'</div>';
   if(GOALSUB==='road')return html+perfRoad();
   return html+goalsMain();
 }
@@ -12509,7 +12521,7 @@ async function pptCaptureTab(mrtab,opts){
     const prevDisp=tabs?tabs.style.display:null;
     if(tabs)tabs.style.display='none';
     let canvas=null;
-    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2});}
+    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2,ignoreElements:x=>!!(x&&x.dataset&&x.dataset.noppt==='1')});}
     finally{if(tabs)tabs.style.display=(prevDisp==null?'':prevDisp);}
     if(!canvas)return null;
     return {dataUrl:canvas.toDataURL('image/png'),w:canvas.width,h:canvas.height};
@@ -12576,7 +12588,7 @@ async function pptCaptureCal(which){
     if(!el||typeof html2canvas==='undefined')return null;
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
     let canvas=null;
-    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2});}
+    try{canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2,ignoreElements:x=>!!(x&&x.dataset&&x.dataset.noppt==='1')});}
     finally{undo.forEach(f=>{try{f();}catch(e){}});}
     return canvas?{dataUrl:canvas.toDataURL('image/png'),w:canvas.width,h:canvas.height}:null;
   }catch(e){return null;}
@@ -12867,8 +12879,8 @@ async function buildDeckBase64(kind){
   /* ===== 2·3·4페이지 · 본사실적 / 현지실적 / BD·ARi 탭 전체 캡쳐 (2026-09-15 요청) =====
      각 장에 해당 탭 화면만 꽉 채워 넣는다. 제목·부제 없이 캡쳐 이미지 + 태그라인 + 페이지번호만. */
   const CAPTABS=MONTHLY
-    ? [['main','본사실적'],['local','현지실적'],['prod','BD/ARi']]
-    : [['main','본사실적'],['local','현지실적'],['prod','BD/ARi']];
+    ? [['main','본사실적'],['local','현지실적']]
+    : [['main','본사실적'],['local','현지실적']];   /* 2026-11-08: BD/ARi 탭 삭제에 맞춰 PPT 캡쳐 장도 제외 */
   for(const [capTab,capName] of CAPTABS){
     const sl=P.addSlide(); sl.background={color:'FFFFFF'}; PAGES.push(sl);
     sl.addText('For Lifetime Smiles',{x:10.5,y:TAGY,w:2.68,h:0.2,fontFace:'Microsoft YaHei',fontSize:9,bold:true,color:'A6A6A6',align:'right'});
